@@ -1,0 +1,206 @@
+[
+  {
+    "Product": "Product1",
+    "WeeksBeforeDelivery": 0,
+    "Deviation": 0,
+    "DeliveryPlan": "CW1"
+  },
+  {
+    "Product": "Product1",
+    "WeeksBeforeDelivery": 1,
+    "Deviation": 0.23,
+    "DeliveryPlan": "CW1"
+  },
+  {
+    "Product": "Product1",
+    "WeeksBeforeDelivery": 2,
+    "Deviation": 0.47,
+    "DeliveryPlan": "CW1"
+  },
+  {
+    "Product": "Product1",
+    "WeeksBeforeDelivery": 3,
+    "Deviation": 0.41,
+    "DeliveryPlan": "CW1"
+  },
+  {
+    "Product": "Product1",
+    "WeeksBeforeDelivery": 4,
+    "Deviation": 0.3,
+    "DeliveryPlan": "CW1"
+  },
+  {
+    "Product": "Product1",
+    "WeeksBeforeDelivery": 5,
+    "Deviation": 0.23,
+    "DeliveryPlan": "CW1"
+  },
+  {
+    "Product": "Product1",
+    "WeeksBeforeDelivery": 6,
+    "Deviation": 0.05,
+    "DeliveryPlan": "CW1"
+  },
+  {
+    "Product": "Product1",
+    "WeeksBeforeDelivery": 7,
+    "Deviation": 0.04,
+    "DeliveryPlan": "CW1"
+  },
+  {
+    "Product": "Product1",
+    "WeeksBeforeDelivery": 8,
+    "Deviation": 0.05,
+    "DeliveryPlan": "CW1"
+  },
+  {
+    "Product": "Product1",
+    "WeeksBeforeDelivery": 9,
+    "Deviation": 0.06,
+    "DeliveryPlan": "CW1"
+  },
+  {
+    "Product": "Product2",
+    "WeeksBeforeDelivery": 0,
+    "Deviation": 0,
+    "DeliveryPlan": "CW2"
+  },
+  {
+    "Product": "Product2",
+    "WeeksBeforeDelivery": 1,
+    "Deviation": 0.29,
+    "DeliveryPlan": "CW2"
+  },
+  {
+    "Product": "Product2",
+    "WeeksBeforeDelivery": 2,
+    "Deviation": 0.43,
+    "DeliveryPlan": "CW2"
+  },
+  {
+    "Product": "Product2",
+    "WeeksBeforeDelivery": 3,
+    "Deviation": 0.5,
+    "DeliveryPlan": "CW2"
+  },
+  {
+    "Product": "Product2",
+    "WeeksBeforeDelivery": 4,
+    "Deviation": 0.24,
+    "DeliveryPlan": "CW2"
+  },
+  {
+    "Product": "Product2",
+    "WeeksBeforeDelivery": 5,
+    "Deviation": 0.2,
+    "DeliveryPlan": "CW2"
+  },
+  {
+    "Product": "Product2",
+    "WeeksBeforeDelivery": 6,
+    "Deviation": 0.15,
+    "DeliveryPlan": "CW2"
+  },
+  {
+    "Product": "Product2",
+    "WeeksBeforeDelivery": 7,
+    "Deviation": 0,
+    "DeliveryPlan": "CW2"
+  },
+  {
+    "Product": "Product2",
+    "WeeksBeforeDelivery": 8,
+    "Deviation": 0.07,
+    "DeliveryPlan": "CW2"
+  },
+  {
+    "Product": "Product3",
+    "WeeksBeforeDelivery": 0,
+    "Deviation": 0,
+    "DeliveryPlan": "CW3"
+  },
+  {
+    "Product": "Product3",
+    "WeeksBeforeDelivery": 1,
+    "Deviation": 0.26,
+    "DeliveryPlan": "CW3"
+  },
+  {
+    "Product": "Product3",
+    "WeeksBeforeDelivery": 2,
+    "Deviation": 0.32,
+    "DeliveryPlan": "CW3"
+  },
+  {
+    "Product": "Product3",
+    "WeeksBeforeDelivery": 3,
+    "Deviation": 0.57,
+    "DeliveryPlan": "CW3"
+  },
+  {
+    "Product": "Product3",
+    "WeeksBeforeDelivery": 4,
+    "Deviation": 0.16,
+    "DeliveryPlan": "CW3"
+  },
+  {
+    "Product": "Product3",
+    "WeeksBeforeDelivery": 5,
+    "Deviation": 0.17,
+    "DeliveryPlan": "CW3"
+  },
+  {
+    "Product": "Product3",
+    "WeeksBeforeDelivery": 6,
+    "Deviation": 0.12,
+    "DeliveryPlan": "CW3"
+  },
+  {
+    "Product": "Product3",
+    "WeeksBeforeDelivery": 7,
+    "Deviation": 0.09,
+    "DeliveryPlan": "CW3"
+  },
+  {
+    "Product": "Product4",
+    "WeeksBeforeDelivery": 0,
+    "Deviation": 0,
+    "DeliveryPlan": "CW4"
+  },
+  {
+    "Product": "Product4",
+    "WeeksBeforeDelivery": 1,
+    "Deviation": 0.35,
+    "DeliveryPlan": "CW4"
+  },
+  {
+    "Product": "Product4",
+    "WeeksBeforeDelivery": 2,
+    "Deviation": 0.37,
+    "DeliveryPlan": "CW4"
+  },
+  {
+    "Product": "Product4",
+    "WeeksBeforeDelivery": 3,
+    "Deviation": 0.55,
+    "DeliveryPlan": "CW4"
+  },
+  {
+    "Product": "Product4",
+    "WeeksBeforeDelivery": 4,
+    "Deviation": 0.21,
+    "DeliveryPlan": "CW4"
+  },
+  {
+    "Product": "Product4",
+    "WeeksBeforeDelivery": 5,
+    "Deviation": 0.15,
+    "DeliveryPlan": "CW4"
+  },
+  {
+    "Product": "Product4",
+    "WeeksBeforeDelivery": 6,
+    "Deviation": 0.09,
+    "DeliveryPlan": "CW4"
+  }
+]

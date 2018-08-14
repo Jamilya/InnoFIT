@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+    <meta http-equiv="X-UA-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
+        crossorigin="anonymous">
+    <style>
+    </style>
+    <title>Variance Analysis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <style>
+        body {
+            font: 12px Arial;
+        }
+
+        path {
+            stroke: rgb(52, 53, 54);
+            stroke-width: 1;
+            fill: none;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: grey;
+            stroke-width: 1;
+            shape-rendering: crispEdges;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row">
+            <section class="col-12">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">About this tool</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="deliveryplans.html">Delivery Plans</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="customerorders.html">Customer Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="varianceanalysis.html">Variance Analysis</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="avgdeliveryschedules.html">Average Delivery Schedules</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="chorddiagram.html">Chord Diagram</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="barchart.html">Bar Chart</a>
+                    </li>
+                </ul>
+            </section>
+        </div>
+    </div>
+
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+
+    <!-- <script src=".js/d3.v4.3.0.js"></script> -->
+
+    <!-- <div id="option"> -->
+    <!-- <input name="uploadButton" -->
+    <!-- type="button" -->
+    <!-- value="Upload" -->
+    <!-- onclick="uploadData()" -->
+    <!-- /> </div>  -->
+
+    <div style="padding-left:39px">
+        <br>
+        <h3>Variance Analysis</h3>
+        <p> NOTE: This graph shows data quality variation throughout each calendar week (can be modified to days/dates). The
+            variation is shown in percentage change of customer orders: the difference between the original order and the
+            final order in that particular period.
+            <br>
+            <br> The legend on the right shows the Calendar weeks depicted on the graph with different colors.</p>
+    </div>
+
+    <script>
+        d3.json("data/variance.json", function (error, data) {
+            if (error) throw error;
+            console.log(data);
+            //console.log('2', parseInt('2'));
+
+            var legendOffset = 140;
+
+
+            var margin = { top: 20, right: 25, bottom: 30, left: 55 },
+                width = 960 - margin.left - margin.right,
+                height = 640 - margin.top - margin.bottom - legendOffset;
+
+            var x = d3.scale.linear()
+                .domain([
+                    d3.min([0, d3.min(data, function (d) { return d.WeeksBeforeDelivery })]),
+                    d3.max([0, d3.max(data, function (d) { return d.WeeksBeforeDelivery })])
+                ])
+                .range([0, width])
+
+            var y = d3.scale.linear()
+                .domain([
+                    d3.min([0, d3.min(data, function (d) { return (d.Deviation * 100) })]),
+                    d3.max([0, 100])
+                ])
+                .range([height, 0])
+
+            var product = function (d) { return d.Product; },
+                color = d3.scale.category10();
+
+
+            var xAxis = d3.svg.axis()
+                .scale(x)
+                .ticks(10)
+                .orient("bottom");
+
+            var yAxis = d3.svg.axis()
+                .scale(y)
+                // .ticks(11)
+                .orient("left");
+
+            var svg = d3.select("body").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom + legendOffset)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+              // Circles
+             var circles = svg.selectAll('circle')
+                 .data(data)
+                 .enter()
+                 .append('circle')
+                 .attr('cx', function (d) { return x(d.WeeksBeforeDelivery) })
+                 .attr('cy', function (d) { return y(d.Deviation * 100) })
+                 .attr('r', '7')
+                 .attr('stroke', 'black')
+                 .attr('stroke-width', 1)
+                 .attr('fill', function (d, i) { return color(product(d)); })
+                 
+                 .on('mouseover', function (d) {  // Tooltip
+                     d3.select(this)
+                         .transition()
+                         .duration(500)
+                         .style("opacity", .9)
+                         .attr('r', 10)
+                         .attr('stroke-width', 3)
+                 })
+                 .on('mouseout', function () {
+                     d3.select(this)
+                         .transition()
+                         .duration(500)
+                         .attr('r', 7)
+                         .attr('stroke-width', 1)
+                 })
+                 .append('title') // Tooltip
+                 
+                 .text(function (d) {
+                     return d.Product +
+                         '\nDeviation: ' + d.Deviation +
+                         '\nWeeks Before Delivery: ' + d.WeeksBeforeDelivery
+                 })
+ 
+             svg.append("g")
+                 .attr("class", "x axis")
+                 .attr("transform", "translate(0," + height + ")")
+                 .call(xAxis)
+                 .append("text")
+                 .attr("class", "label")
+                 .attr("x", width)
+                 .attr("y", -10)
+                 .attr('dy', '.71em')
+                 .style("text-anchor", "end")
+                 .text("Weeks Before Delivery");
+ 
+ 
+             svg.append("g")
+                 .attr("class", "y axis")
+                 .call(yAxis)
+                 .append("text")
+                 .attr("class", "label")
+                 .attr("transform", "rotate(-90)")
+                 .attr("x", 0)
+                 .attr("y", 5)
+                 .attr("dy", ".71em")
+                 .style("text-anchor", "end")
+                 .text("Deviation from delivery plans (%)")
+ 
+ 
+             var legend = svg.selectAll(".legend")
+                 .data(color.domain())
+                 .enter().append("g")
+                 .attr("class", "legend")
+                 .attr("transform", function (d, i) {
+                     return "translate(" + (- width + margin.left + margin.right + i * 100)           // x Position
+                         + "," + (height + 50) + ")";
+                 });                                           // y Position
+ 
+             legend.append("rect")
+                 .attr("x", width - 10)
+                 .attr("width", 10)
+                 .attr("height", 10)
+                 .style("opacity", 0.5)
+                 .style("fill", color);
+ 
+             legend.append("text")
+                 .attr("x", width - 24)
+                 .attr("y", 10)
+                 .attr("yAxis", ".35em")
+                 .style("text-anchor", "end")
+                 .text(function (d) { return d; });
+
+        });
+
+    </script>
+
+    <!-- Optional JavaScript, jQuery first, then Popper.js, then Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em"
+        crossorigin="anonymous"></script>
+<!-- 
+    <svg width="960" height="640">
+        <g transform="translate(55,20)">
+            <circle cx="0" cy="450" r="7" stroke="black" stroke-width="1" fill="#1f77b4">
+                <title>Product1 Deviation: 0 Weeks Before Delivery: 0</title>
+            </circle>
+            <circle cx="97.77777777777777" cy="346.5" r="7" stroke="black" stroke-width="1" fill="#1f77b4">
+                <title>Product1 Deviation: 0.23 Weeks Before Delivery: 1</title>
+            </circle>
+            <circle cx="195.55555555555554" cy="238.5" r="7" stroke="black" stroke-width="1" fill="#1f77b4">
+                <title>Product1 Deviation: 0.47 Weeks Before Delivery: 2</title>
+            </circle>
+            <circle cx="293.3333333333333" cy="265.50000000000006" r="7" stroke="black" stroke-width="1" fill="#1f77b4">
+                <title>Product1 Deviation: 0.41 Weeks Before Delivery: 3</title>
+            </circle>
+            <circle cx="391.1111111111111" cy="315" r="7" stroke="black" stroke-width="1" fill="#1f77b4">
+                <title>Product1 Deviation: 0.3 Weeks Before Delivery: 4</title>
+            </circle>
+            <circle cx="488.8888888888889" cy="346.5" r="7" stroke="black" stroke-width="1" fill="#1f77b4">
+                <title>Product1 Deviation: 0.23 Weeks Before Delivery: 5</title>
+            </circle>
+            <circle cx="586.6666666666666" cy="427.5" r="7" stroke="black" stroke-width="1" fill="#1f77b4">
+                <title>Product1 Deviation: 0.05 Weeks Before Delivery: 6</title>
+            </circle>
+            <circle cx="684.4444444444445" cy="432" r="7" stroke="black" stroke-width="1" fill="#1f77b4">
+                <title>Product1 Deviation: 0.04 Weeks Before Delivery: 7</title>
+            </circle>
+            <circle cx="782.2222222222222" cy="427.5" r="7" stroke="black" stroke-width="1" fill="#1f77b4">
+                <title>Product1 Deviation: 0.05 Weeks Before Delivery: 8</title>
+            </circle>
+            <circle cx="880" cy="423" r="7" stroke="black" stroke-width="1" fill="#1f77b4">
+                <title>Product1 Deviation: 0.06 Weeks Before Delivery: 9</title>
+            </circle>
+            <circle cx="0" cy="450" r="7" stroke="black" stroke-width="1" fill="#ff7f0e">
+                <title>Product2 Deviation: 0 Weeks Before Delivery: 0</title>
+            </circle>
+            <circle cx="97.77777777777777" cy="319.5" r="7" stroke="black" stroke-width="1" fill="#ff7f0e">
+                <title>Product2 Deviation: 0.29 Weeks Before Delivery: 1</title>
+            </circle>
+            <circle cx="195.55555555555554" cy="256.5" r="7" stroke="black" stroke-width="1" fill="#ff7f0e">
+                <title>Product2 Deviation: 0.43 Weeks Before Delivery: 2</title>
+            </circle>
+            <circle cx="293.3333333333333" cy="225" r="7" stroke="black" stroke-width="1" fill="#ff7f0e">
+                <title>Product2 Deviation: 0.5 Weeks Before Delivery: 3</title>
+            </circle>
+            <circle cx="391.1111111111111" cy="342" r="7" stroke="black" stroke-width="1" fill="#ff7f0e">
+                <title>Product2 Deviation: 0.24 Weeks Before Delivery: 4</title>
+            </circle>
+            <circle cx="488.8888888888889" cy="360" r="7" stroke="black" stroke-width="1" fill="#ff7f0e">
+                <title>Product2 Deviation: 0.2 Weeks Before Delivery: 5</title>
+            </circle>
+            <circle cx="586.6666666666666" cy="382.5" r="7" stroke="black" stroke-width="1" fill="#ff7f0e">
+                <title>Product2 Deviation: 0.15 Weeks Before Delivery: 6</title>
+            </circle>
+            <circle cx="684.4444444444445" cy="450" r="7" stroke="black" stroke-width="1" fill="#ff7f0e">
+                <title>Product2 Deviation: 0 Weeks Before Delivery: 7</title>
+            </circle>
+            <circle cx="782.2222222222222" cy="418.5" r="7" stroke="black" stroke-width="1" fill="#ff7f0e">
+                <title>Product2 Deviation: 0.07 Weeks Before Delivery: 8</title>
+            </circle>
+            <circle cx="0" cy="450" r="7" stroke="black" stroke-width="1" fill="#2ca02c">
+                <title>Product3 Deviation: 0 Weeks Before Delivery: 0</title>
+            </circle>
+            <circle cx="97.77777777777777" cy="333" r="7" stroke="black" stroke-width="1" fill="#2ca02c">
+                <title>Product3 Deviation: 0.26 Weeks Before Delivery: 1</title>
+            </circle>
+            <circle cx="195.55555555555554" cy="306" r="7" stroke="black" stroke-width="1" fill="#2ca02c">
+                <title>Product3 Deviation: 0.32 Weeks Before Delivery: 2</title>
+            </circle>
+            <circle cx="293.3333333333333" cy="193.50000000000003" r="7" stroke="black" stroke-width="1" fill="#2ca02c">
+                <title>Product3 Deviation: 0.57 Weeks Before Delivery: 3</title>
+            </circle>
+            <circle cx="391.1111111111111" cy="378" r="7" stroke="black" stroke-width="1" fill="#2ca02c">
+                <title>Product3 Deviation: 0.16 Weeks Before Delivery: 4</title>
+            </circle>
+            <circle cx="488.8888888888889" cy="373.5" r="7" stroke="black" stroke-width="1" fill="#2ca02c">
+                <title>Product3 Deviation: 0.17 Weeks Before Delivery: 5</title>
+            </circle>
+            <circle cx="586.6666666666666" cy="396" r="7" stroke="black" stroke-width="1" fill="#2ca02c">
+                <title>Product3 Deviation: 0.12 Weeks Before Delivery: 6</title>
+            </circle>
+            <circle cx="684.4444444444445" cy="409.5" r="7" stroke="black" stroke-width="1" fill="#2ca02c">
+                <title>Product3 Deviation: 0.09 Weeks Before Delivery: 7</title>
+            </circle>
+            <circle cx="0" cy="450" r="7" stroke="black" stroke-width="1" fill="#d62728">
+                <title>Product4 Deviation: 0 Weeks Before Delivery: 0</title>
+            </circle>
+            <circle cx="97.77777777777777" cy="292.5" r="7" stroke="black" stroke-width="1" fill="#d62728">
+                <title>Product4 Deviation: 0.35 Weeks Before Delivery: 1</title>
+            </circle>
+            <circle cx="195.55555555555554" cy="283.5" r="7" stroke="black" stroke-width="1" fill="#d62728">
+                <title>Product4 Deviation: 0.37 Weeks Before Delivery: 2</title>
+            </circle>
+            <circle cx="293.3333333333333" cy="202.49999999999997" r="7" stroke="black" stroke-width="1" fill="#d62728">
+                <title>Product4 Deviation: 0.55 Weeks Before Delivery: 3</title>
+            </circle>
+            <circle cx="391.1111111111111" cy="355.5" r="7" stroke="black" stroke-width="1" fill="#d62728">
+                <title>Product4 Deviation: 0.21 Weeks Before Delivery: 4</title>
+            </circle>
+            <circle cx="488.8888888888889" cy="382.5" r="7" stroke="black" stroke-width="1" fill="#d62728">
+                <title>Product4 Deviation: 0.15 Weeks Before Delivery: 5</title>
+            </circle>
+            <circle cx="586.6666666666666" cy="409.5" r="7" stroke="black" stroke-width="1" fill="#d62728">
+                <title>Product4 Deviation: 0.09 Weeks Before Delivery: 6</title>
+            </circle>
+            <g class="x axis" transform="translate(0,450)">
+                <g class="tick" transform="translate(0,0)" style="opacity: 1;">
+                    <line y2="6" x2="0"></line>
+                    <text dy=".71em" y="9" x="0" style="text-anchor: middle;">0</text>
+                </g>
+                <g class="tick" transform="translate(97.77777777777777,0)" style="opacity: 1;">
+                    <line y2="6" x2="0"></line>
+                    <text dy=".71em" y="9" x="0" style="text-anchor: middle;">1</text>
+                </g>
+                <g class="tick" transform="translate(195.55555555555554,0)" style="opacity: 1;">
+                    <line y2="6" x2="0"></line>
+                    <text dy=".71em" y="9" x="0" style="text-anchor: middle;">2</text>
+                </g>
+                <g class="tick" transform="translate(293.3333333333333,0)" style="opacity: 1;">
+                    <line y2="6" x2="0"></line>
+                    <text dy=".71em" y="9" x="0" style="text-anchor: middle;">3</text>
+                </g>
+                <g class="tick" transform="translate(391.1111111111111,0)" style="opacity: 1;">
+                    <line y2="6" x2="0"></line>
+                    <text dy=".71em" y="9" x="0" style="text-anchor: middle;">4</text>
+                </g>
+                <g class="tick" transform="translate(488.8888888888889,0)" style="opacity: 1;">
+                    <line y2="6" x2="0"></line>
+                    <text dy=".71em" y="9" x="0" style="text-anchor: middle;">5</text>
+                </g>
+                <g class="tick" transform="translate(586.6666666666666,0)" style="opacity: 1;">
+                    <line y2="6" x2="0"></line>
+                    <text dy=".71em" y="9" x="0" style="text-anchor: middle;">6</text>
+                </g>
+                <g class="tick" transform="translate(684.4444444444445,0)" style="opacity: 1;">
+                    <line y2="6" x2="0"></line>
+                    <text dy=".71em" y="9" x="0" style="text-anchor: middle;">7</text>
+                </g>
+                <g class="tick" transform="translate(782.2222222222222,0)" style="opacity: 1;">
+                    <line y2="6" x2="0"></line>
+                    <text dy=".71em" y="9" x="0" style="text-anchor: middle;">8</text>
+                </g>
+                <g class="tick" transform="translate(880,0)" style="opacity: 1;">
+                    <line y2="6" x2="0"></line>
+                    <text dy=".71em" y="9" x="0" style="text-anchor: middle;">9</text>
+                </g>
+                <path class="domain" d="M0,6V0H880V6"></path>
+                <text class="label" x="880" y="-10" dy=".71em" style="text-anchor: end;">Weeks Before Delivery</text>
+            </g>
+            <g class="y axis">
+                <g class="tick" transform="translate(0,450)" style="opacity: 1;">
+                    <line x2="-6" y2="0"></line>
+                    <text dy=".32em" x="-9" y="0" style="text-anchor: end;">0</text>
+                </g>
+                <g class="tick" transform="translate(0,405)" style="opacity: 1;">
+                    <line x2="-6" y2="0"></line>
+                    <text dy=".32em" x="-9" y="0" style="text-anchor: end;">10</text>
+                </g>
+                <g class="tick" transform="translate(0,360)" style="opacity: 1;">
+                    <line x2="-6" y2="0"></line>
+                    <text dy=".32em" x="-9" y="0" style="text-anchor: end;">20</text>
+                </g>
+                <g class="tick" transform="translate(0,315)" style="opacity: 1;">
+                    <line x2="-6" y2="0"></line>
+                    <text dy=".32em" x="-9" y="0" style="text-anchor: end;">30</text>
+                </g>
+                <g class="tick" transform="translate(0,270)" style="opacity: 1;">
+                    <line x2="-6" y2="0"></line>
+                    <text dy=".32em" x="-9" y="0" style="text-anchor: end;">40</text>
+                </g>
+                <g class="tick" transform="translate(0,225)" style="opacity: 1;">
+                    <line x2="-6" y2="0"></line>
+                    <text dy=".32em" x="-9" y="0" style="text-anchor: end;">50</text>
+                </g>
+                <g class="tick" transform="translate(0,180)" style="opacity: 1;">
+                    <line x2="-6" y2="0"></line>
+                    <text dy=".32em" x="-9" y="0" style="text-anchor: end;">60</text>
+                </g>
+                <g class="tick" transform="translate(0,135.00000000000003)" style="opacity: 1;">
+                    <line x2="-6" y2="0"></line>
+                    <text dy=".32em" x="-9" y="0" style="text-anchor: end;">70</text>
+                </g>
+                <g class="tick" transform="translate(0,89.99999999999999)" style="opacity: 1;">
+                    <line x2="-6" y2="0"></line>
+                    <text dy=".32em" x="-9" y="0" style="text-anchor: end;">80</text>
+                </g>
+                <g class="tick" transform="translate(0,44.99999999999999)" style="opacity: 1;">
+                    <line x2="-6" y2="0"></line>
+                    <text dy=".32em" x="-9" y="0" style="text-anchor: end;">90</text>
+                </g>
+                <g class="tick" transform="translate(0,0)" style="opacity: 1;">
+                    <line x2="-6" y2="0"></line>
+                    <text dy=".32em" x="-9" y="0" style="text-anchor: end;">100</text>
+                </g>
+                <path class="domain" d="M-6,0H0V450H-6"></path>
+                <text class="label" transform="rotate(-90)" x="0" y="5" dy=".71em" style="text-anchor: end;">Deviation from delivery plans (%)</text>
+            </g>
+            <g class="legend" transform="translate(-790,470)">
+                <rect x="870" width="10" height="10" style="opacity: 0.5; fill: rgb(31, 119, 180);"></rect>
+                <text x="856" y="10" yaxis=".35em" style="text-anchor: end;">Product1</text>
+            </g>
+            <g class="legend" transform="translate(-690,470)">
+                <rect x="870" width="10" height="10" style="opacity: 0.5; fill: rgb(255, 127, 14);"></rect>
+                <text x="856" y="10" yaxis=".35em" style="text-anchor: end;">Product2</text>
+            </g>
+            <g class="legend" transform="translate(-590,470)">
+                <rect x="870" width="10" height="10" style="opacity: 0.5; fill: rgb(44, 160, 44);"></rect>
+                <text x="856" y="10" yaxis=".35em" style="text-anchor: end;">Product3</text>
+            </g>
+            <g class="legend" transform="translate(-490,470)">
+                <rect x="870" width="10" height="10" style="opacity: 0.5; fill: rgb(214, 39, 40);"></rect>
+                <text x="856" y="10" yaxis=".35em" style="text-anchor: end;">Product4
+
+                </text>
+            </g>
+        </g>
+    </svg> -->
+</body>
+
+</html>

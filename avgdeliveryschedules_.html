@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+<meta http-equiv="X-UA-compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+
+<title>Average Delivery Schedules</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"/>
+<link rel="stylesheet" type="text/css" href="css/main.css">
+<style>
+
+body { font: 12px Arial;}
+
+path { 
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+</style>
+
+</head>
+ <body>
+
+ <div class="container">
+<div class="row">
+<section class="col-12">
+<ul class="nav nav-tabs">
+<li class="nav-item"><a class="nav-link" href="index.html">Overview</a>
+    <li class="nav-item"><a class="nav-link" href="about.html">About this tool</a>
+<li class="nav-item"><a class="nav-link" href="deliveryplans.html">Delivery Plans</a>
+<li class="nav-item"><a class="nav-link" href="customerorders.html">Customer Orders</a>
+<li class="nav-item"><a class="nav-link" href="varianceanalysis.html">Variance Analysis</a>
+<li class="nav-item"><a class="nav-link active" href="avgdeliveryschedules.html">Average Delivery Schedules</a>
+<li class="nav-item"><a class="nav-link" href="chorddiagram.html">Chord Diagram</a>
+<li class="nav-item"><a class="nav-link" href="barchart.html">Bar Chart</a>
+</ul></div></div>
+
+ <script src="http://d3js.org/d3.v4.min.js"></script>
+
+ 
+ <!-- <script src=".js/d3.v4.3.0.js"></script> -->
+
+	 <!-- <div id="option"> -->
+    <!-- <input name="uploadButton" -->
+           <!-- type="button" -->
+           <!-- value="Upload" -->
+           <!-- onclick="uploadData()" -->
+     <!-- /> </div>  -->
+
+     <div style="padding-left:39px"><br/><h3>Average Delivery Schedules</h3>
+<p> NOTE: This graph shows the final customer orders received and an average line calculated from the average of those order amounts. 
+<br><br> The legend on the right shows the Calendar weeks depicted on the graph shown with different colors.</p></div>
+
+<script>
+
+d3.json("data/deliveryschedules.json", function(error, data) {
+    if (error) throw error;
+    console.log(data);
+    //console.log('2', parseInt('2'));
+
+
+var margin = {top: 20, right: 25, bottom: 30, left: 55},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var x = d3.scaleLinear()
+    .domain([
+    	d3.min([0,d3.min(data,function (d) { return d.CalendarWeeks })]),
+    	d3.max([0,d3.max(data,function (d) { return d.CalendarWeeks })])
+    	])
+    .range([0,width])
+
+var y = d3.scaleLinear()
+    .domain([
+    	d3.min([0,d3.min(data,function (d) { return (d.Orders) })]),
+    	d3.max([0,700])
+    	])
+    .range([height,0])
+
+var product = function(d) {return d.Product;},
+	color = d3.scaleOrdinal(d3.schemeCategory10);
+
+
+var xAxis = d3.axisBottom(x)
+	.ticks(10);
+
+var yAxis = d3.axisLeft(y);
+    // .ticks(11)
+    
+// Define the line
+var	valueline = d3.line()
+	.x(function(d) { return x(d.CalendarWeeks); })
+	.y(function(d) { return y(d.Orders); });
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var line = d3.line()
+        .x(function(d) {
+            return x(d.x);
+        })
+        .y(function(d) {
+            return y(d.rline);
+        });
+    
+	data.forEach(function(d) {
+        d.x = +d.x;
+        d.y = +d.y;
+        d.rline = +d.rline;
+    });
+// Circles
+  var circles = svg.selectAll('circle')
+      .data(data)
+      .enter()
+    .append('circle')
+      .attr('cx',function (d) { return x(d.CalendarWeeks) })
+      .attr('cy',function (d) { return y(d.Orders) })
+      .attr('r','7')
+      .attr('stroke','black')
+      .attr('stroke-width',1)
+      .attr('fill',function (d,i) { return color(product(d));})
+      .on('mouseover', function (d) {
+        d3.select(this)
+          .transition()
+          .duration(500)
+		  .style("opacity", .9)
+          .attr('r',10)
+          .attr('stroke-width',3)
+      })
+      .on('mouseout', function () {
+        d3.select(this)
+          .transition()
+          .duration(500)
+          .attr('r',7)
+          .attr('stroke-width',1)
+      })
+    .append('title') // Tooltip
+       .text(function (d) { return d.Product +
+                           '\nFinal Customer Order: ' + d.Orders +
+                           '\nCalendar Week: ' + d.CalendarWeeks })
+  
+  
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("x", width)
+      .attr("y", -10)
+	  .attr('dy','.71em')
+      .style("text-anchor", "end")
+      .text("Calendar Weeks");
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+	  .attr("x",0)
+      .attr("y", 5)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Final Customer Orders (pcs)")
+
+//Add value line
+/* 	svg.append("path")	
+		.attr("class", "line")
+		.attr("d", valueline)
+        .data([data]);  */
+      
+  var legend = svg.selectAll(".legend")
+      .data(color.domain())
+	.enter().append("g")
+	  .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+  legend.append("rect")
+      .attr("x", width - 10)
+      .attr("width", 10)
+      .attr("height", 10)
+	  .style("opacity", 0.5)
+      .style("fill", color);
+
+  legend.append("text")
+      .attr("x", width - 24)
+      .attr("y", 10)
+      .attr("yAxis", ".35em")
+      .style("text-anchor", "end")
+	  .text(function(d) { return d; });
+
+
+});
+
+</script>
+</body>
+</html>

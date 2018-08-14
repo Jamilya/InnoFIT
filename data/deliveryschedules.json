@@ -1,0 +1,62 @@
+[
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 1,
+    "Orders": 600,
+    "DeliveryPlan": "CW1"
+  },
+  {
+    "Product": "Product2",
+    "CalendarWeeks": 2,
+    "Orders": 520,
+    "DeliveryPlan": "CW2"
+  },
+  {
+    "Product": "Product3",
+    "CalendarWeeks": 3,
+    "Orders": 550,
+    "DeliveryPlan": "CW3"
+  },
+  {
+    "Product": "Product4",
+    "CalendarWeeks": 4,
+    "Orders": 370,
+    "DeliveryPlan": "CW4"
+  },
+  {
+    "Product": "Product5",
+    "CalendarWeeks": 5,
+    "Orders": 590,
+    "DeliveryPlan": "CW5"
+  },
+  {
+    "Product": "Product6",
+    "CalendarWeeks": 6,
+    "Orders": 470,
+    "DeliveryPlan": "CW6"
+  },
+  {
+    "Product": "Product7",
+    "CalendarWeeks": 7,
+    "Orders": 620,
+    "DeliveryPlan": "CW7"
+  },
+  {
+    "Product": "Product8",
+    "CalendarWeeks": 8,
+    "Orders": 560,
+    "DeliveryPlan": "CW8"
+  },
+  {
+    "Product": "Product9",
+    "CalendarWeeks": 9,
+    "Orders": 550,
+    "DeliveryPlan": "CW9"
+  },
+  {
+    "Product": "Product10",
+    "CalendarWeeks": 10,
+    "Orders": 450,
+    "DeliveryPlan": "CW10"
+  }
+]

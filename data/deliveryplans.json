@@ -1,0 +1,314 @@
+[
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 1,
+    "Quantity": 600,
+    "DeliveryPlan": "CW1"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 2,
+    "Quantity": 610,
+    "DeliveryPlan": "CW2"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 2,
+    "Quantity": 520,
+    "DeliveryPlan": "CW2"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 3,
+    "Quantity": 530,
+    "DeliveryPlan": "CW3"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 3,
+    "Quantity": 630,
+    "DeliveryPlan": "CW3"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 3,
+    "Quantity": 800,
+    "DeliveryPlan": "CW3"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 4,
+    "Quantity": 320,
+    "DeliveryPlan": "CW4"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 4,
+    "Quantity": 440,
+    "DeliveryPlan": "CW4"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 4,
+    "Quantity": 520,
+    "DeliveryPlan": "CW4"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 5,
+    "Quantity": 590,
+    "DeliveryPlan": "CW5"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 5,
+    "Quantity": 720,
+    "DeliveryPlan": "CW5"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 5,
+    "Quantity": 790,
+    "DeliveryPlan": "CW5"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 5,
+    "Quantity": 820,
+    "DeliveryPlan": "CW5"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 6,
+    "Quantity": 480,
+    "DeliveryPlan": "CW6"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 6,
+    "Quantity": 590,
+    "DeliveryPlan": "CW6"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 6,
+    "Quantity": 610,
+    "DeliveryPlan": "CW6"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 6,
+    "Quantity": 700,
+    "DeliveryPlan": "CW6"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 7,
+    "Quantity": 645,
+    "DeliveryPlan": "CW7"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 7,
+    "Quantity": 756,
+    "DeliveryPlan": "CW7"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 7,
+    "Quantity": 725,
+    "DeliveryPlan": "CW7"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 7,
+    "Quantity": 961,
+    "DeliveryPlan": "CW7"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 7,
+    "Quantity": 862,
+    "DeliveryPlan": "CW7"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 7,
+    "Quantity": 831,
+    "DeliveryPlan": "CW7"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 7,
+    "Quantity": 620,
+    "DeliveryPlan": "CW7"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 8,
+    "Quantity": 572,
+    "DeliveryPlan": "CW8"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 8,
+    "Quantity": 550,
+    "DeliveryPlan": "CW8"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 8,
+    "Quantity": 616,
+    "DeliveryPlan": "CW8"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 8,
+    "Quantity": 638,
+    "DeliveryPlan": "CW8"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 8,
+    "Quantity": 668,
+    "DeliveryPlan": "CW8"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 8,
+    "Quantity": 847,
+    "DeliveryPlan": "CW8"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 8,
+    "Quantity": 781,
+    "DeliveryPlan": "CW8"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 8,
+    "Quantity": 693,
+    "DeliveryPlan": "CW8"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 8,
+    "Quantity": 550,
+    "DeliveryPlan": "CW8"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 9,
+    "Quantity": 572,
+    "DeliveryPlan": "CW9"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 9,
+    "Quantity": 550,
+    "DeliveryPlan": "CW9"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 9,
+    "Quantity": 616,
+    "DeliveryPlan": "CW9"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 9,
+    "Quantity": 638,
+    "DeliveryPlan": "CW9"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 9,
+    "Quantity": 668,
+    "DeliveryPlan": "CW9"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 9,
+    "Quantity": 847,
+    "DeliveryPlan": "CW9"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 9,
+    "Quantity": 781,
+    "DeliveryPlan": "CW9"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 9,
+    "Quantity": 693,
+    "DeliveryPlan": "CW9"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 9,
+    "Quantity": 550,
+    "DeliveryPlan": "CW9"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 10,
+    "Quantity": 473,
+    "DeliveryPlan": "CW10"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 10,
+    "Quantity": 473,
+    "DeliveryPlan": "CW10"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 10,
+    "Quantity": 486,
+    "DeliveryPlan": "CW10"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 10,
+    "Quantity": 495,
+    "DeliveryPlan": "CW10"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 10,
+    "Quantity": 531,
+    "DeliveryPlan": "CW10"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 10,
+    "Quantity": 563,
+    "DeliveryPlan": "CW10"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 10,
+    "Quantity": 675,
+    "DeliveryPlan": "CW10"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 10,
+    "Quantity": 630,
+    "DeliveryPlan": "CW10"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 10,
+    "Quantity": 585,
+    "DeliveryPlan": "CW10"
+  },
+  {
+    "Product": "Product1",
+    "CalendarWeeks": 10,
+    "Quantity": 450,
+    "DeliveryPlan": "CW10"
+  }
+]
