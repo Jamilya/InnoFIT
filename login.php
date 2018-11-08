@@ -1,53 +1,56 @@
-<?php require_once("includes/connection.php"); ?>
-<?php include("includes/header.php"); ?>
-
+   
 <?php
+//phpinfo();
 session_start();
-if(isset($_SESSION["login"])){
- echo "Your Log in Session has been set"; // show a message for the logged in user, for testing purposes
-header("Location: index.html");
-}
-if(isset($_POST["username"])){
+?>
+<?php require_once("includes/connection.php"); ?>
+<?php
+print_r($_SESSION);
+if(isset($_SESSION["session_username"])){
+ echo "Your Log in Session has been set"; // show a message for the logged in user
+//header("Location: index.php")
+;}
+
+if (isset($_POST['login'])){
     if(!empty($_POST['username']) && !empty($_POST['password'])) {
-    $username=$_POST['username'];
-    $password=$_POST['password'];
+        $username=$_POST['username'];
+        $password=$_POST['password'];
+        $query =mysqli_query($conn, "SELECT * FROM users WHERE username='".$username."' AND password='".$password."'");
 
-    $query = "SELECT * FROM 'users' WHERE username='$username' and password='$password';
-    -- $result = mysqli_query($conn,$query) or die(connect_error());
-
-    $numrows=mysqli_num_rows($query);
-    if($numrows!=0)
-    {
-        while($row=mysqli_fetch_assoc($result))
+        $numrows=mysqli_num_rows($query);
+        if($numrows!=0)
+    
         {
-            $dbusername=$row['username'];
-            $dbpassword=$row['password'];
+        while($row=mysqli_fetch_assoc($query))
+        {
+        $dbusername=$row['username'];
+        $dbpassword=$row['password'];
         }
+
         if($username == $dbusername && $password == $dbpassword)
+
         {
-            $_SESSION['login']=$username;
-            /* Redirect browser */
-            header("Location: index.html");
+    
+    
+        $_SESSION['session_username']=$username;
+    
+        /* Redirect browser */
+        header("Location: index.php");
         }
         } else {
-            $message =  'Invalid username or password!';
+    
+     $message =  "Invalid username or password!";
         }
+    
     } else {
-            $message = 'All fields are required!';
-        }
-}
-?>
-<html>
-<head>
-<link rel="stylesheet" href="css/bootstrap.min.css">
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
-</head>
-<body>
+        $message = "All fields are required!";
+    }
+    }
+    ?>
+
     <div class="container mlogin">
             <div id="login">
-	 <h1>LOGIN</h1>
-	 <?php if (!empty($message)) {echo "<p class=\"error\">" . "MESSAGE: ". $message . "</p>";} ?>
+    <h1>LOGIN</h1>
 <form name="loginform" id="loginform" action="" method="POST">
     <p>
         <label for="user_login">Username<br />
@@ -60,14 +63,13 @@ if(isset($_POST["username"])){
         <p class="submit">
         <input type="submit" name="login" class="button" value="Log In" />
     </p>
-        <p class="regtext">No account yet? <a href="register.php" >Register Here</a>!</p>
+        <p class="regtext">No account yet: <a href="register.php" >Please register here</a></p>
 </form>
 
     </div>
 
-	 </div>
-</body>
-</html>
+    </div>
 	
 	
+	<?php if (!empty($message)) {echo "<p class=\"error\">" . "MESSAGE: ". $message . "</p>";} ?>
 	

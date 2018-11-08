@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+   <meta http-equiv="X-UA-compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+   <!-- Execute jquery -->
+   <script src="./jquery/jquery.min.js"></script>
+   <link rel="stylesheet" href="css/bootstrap.min.css">
+   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
+      crossorigin="anonymous">
+   <style>
+   </style>
+   <title>Variance Analysis</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <meta charset="utf-8" />
+   <link rel="stylesheet" type="text/css" href="css/main.css">
+   <style>
+      body {
+         font: 12px Arial;
+      }
+
+      path {
+         stroke: rgb(52, 53, 54);
+         stroke-width: 1;
+         fill: none;
+      }
+
+      .axis path,
+      .axis line {
+         fill: none;
+         stroke: grey;
+         stroke-width: 1;
+         shape-rendering: crispEdges;
+      }
+   </style>
+
+</head>
+
+<body>
+
+   <div class="container">
+      <div class="row">
+         <section class="col-12">
+            <ul class="nav nav-tabs">
+               <li class="nav-item">
+                  <a class="nav-link" href="index.php">Overview</a>
+                  <li class="nav-item">
+                     <a class="nav-link" href="about.html">About This Tool</a>
+                     <li class="nav-item">
+                        <a class="nav-link" href="finalorder.html">Final Order Amount</a>
+                        <li class="nav-item">
+                           <a class="nav-link" href="deliveryplans.html">Delivery Plans</a>
+                           <li class="nav-item">
+                              <a class="nav-link active" href="varianceanalysis.html">Variance Analysis</a>
+                              <li class="nav-item">
+                                 <a class="nav-link" href="matrix.html">Delivery Plans Matrix</a>
+                                 <li class="nav-item">
+                                    <a class="nav-link" href="matrixvariance.html">Delivery Plans Matrix - With Variance</a>
+                                    <li class="nav-item">
+                                       <a class="nav-link" href="customerorders.html">Customer Orders</a>
+                                       <li class="nav-item">
+                                          <a class="nav-link" href="correlationmatrix.html">Correlation Matrix</a>
+            </ul>
+         </section>
+      </div>
+   </div>
+
+   <script src="http://d3js.org/d3.v4.min.js"></script>
+   <script src="http://d3js.org/d3.v3.min.js"></script>
+
+   <div style="padding-left:39px">
+      <br>
+      <h3>Variance Analysis</h3>
+      <p> NOTE: This graph shows data quality variation throughout each calendar week. The variation is shown in percentage change
+         according to the original order and the final order difference on a specific week before it was actually delivered
+         (Weeks Before Delivery).
+      </p>
+   </div>
+
+   <script>
+      fetch("data/data.json")
+         .then(response => response.json())
+         .then(json => {
+            console.log("LOADED: ", json.length);
+         });
+
+      d3.json("data/data.json", function (error, data) {
+         if (error) throw error;
+         console.log(data);
+
+         let calcDeviation = function (orignalEl, finalOrder) {
+            return (orignalEl.OrderAmount - finalOrder) / finalOrder;
+         }
+
+         let filterValues = data.filter((el) => {
+            return el.WeeksBeforeDelivery === 0;
+         });
+
+         console.log("filterValues: ", filterValues);
+
+         let valueMap = new Map();
+
+         filterValues.forEach((val) => {
+            let keyString = val.ActualWeek;
+            let valueString = val.OrderAmount;
+            valueMap.set(keyString, valueString);
+         });
+
+         console.log("valueMap: ", valueMap);
+
+         let finalArray = data.map((el) => {
+            let deviation = calcDeviation(el, valueMap.get(el.ForecastWeek));
+            return {
+               ActualWeek: el.ActualWeek,
+               ForecastWeek: el.ForecastWeek,
+               OrderAmount: el.OrderAmount,
+               Product: el.Product,
+               FinalOrder: valueMap.get(el.ForecastWeek),
+               WeeksBeforeDelivery: el.WeeksBeforeDelivery,
+               Deviation: deviation
+            };
+         })
+         console.log("TEST CALC: ", calcDeviation(data[0], 630));
+         console.log("FINAL ARRAY: ", finalArray);
+
+
+         var legendOffset = 140;
+         //Specify Deviation
+
+         var Deviation = function (d) {
+            return d.Deviation === ((d.OrderAmount - d.FinalOrder) / d.FinalOrder);
+         };
+
+         var margin = { top: 20, right: 25, bottom: 30, left: 55 },
+            width = 960 - margin.left - margin.right,
+            height = 590 - margin.top - margin.bottom - legendOffset;
+
+         var x = d3.scale.linear()
+            .domain([
+               d3.min([0, d3.min(finalArray, function (d) { return d.WeeksBeforeDelivery })]),
+               d3.max([0, d3.max(finalArray, function (d) { return d.WeeksBeforeDelivery })])
+            ])
+            .range([0, width])
+
+         var y = d3.scale.linear()
+            .domain([
+               d3.min([0, d3.min(finalArray, function (d) { return (d.Deviation * 100) })]),
+               d3.max([0, 100])
+            ])
+            .range([height, 0])
+
+         var ActualWeek = function (d) { return d.ActualWeek; },
+            color = d3.scale.category10();
+
+         var xAxis = d3.svg.axis()
+            .scale(x)
+            .ticks(10)
+            .orient("bottom");
+
+         var yAxis = d3.svg.axis()
+            .scale(y)
+            // .ticks(11)
+            .orient("left");
+
+         var svg = d3.select("body").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom + legendOffset)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+         // Circles
+         var circles = svg.selectAll('circle')
+            .data(finalArray)
+            .enter()
+            .append('circle')
+            .attr('cx', function (d) { return x(d.WeeksBeforeDelivery) })
+            .attr('cy', function (d) { return y(d.Deviation * 100) })
+            .attr('r', '7')
+            .attr('stroke', 'black')
+            .attr('stroke-width', 1)
+            .attr('fill', function (d, i) { return color(ActualWeek(d)); })
+
+            .on('mouseover', function (d) {  // Tooltip
+               d3.select(this)
+                  .transition()
+                  .duration(500)
+                  .style("opacity", .9)
+                  .attr('r', 10)
+                  .attr('stroke-width', 3)
+            })
+            .on('mouseout', function () {
+               d3.select(this)
+                  .transition()
+                  .duration(500)
+                  .attr('r', 7)
+                  .attr('stroke-width', 1)
+            })
+            .append('title') // Tooltip
+
+            .text(function (d) {
+               return d.Product +
+                  '\nDeviation: ' + d.Deviation +
+                  '\nWeeks Before Delivery: ' + d.WeeksBeforeDelivery +
+                  '\nOrder Amount: ' + d.OrderAmount
+            })
+
+         svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .append("text")
+            .attr("class", "label")
+            .attr("x", width)
+            .attr("y", -10)
+            .attr('dy', '.71em')
+            .style("text-anchor", "end")
+            .text("Weeks Before Delivery");
+
+
+         svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("class", "label")
+            .attr("transform", "rotate(-90)")
+            .attr("x", 0)
+            .attr("y", 5)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Deviation from delivery plans (%)")
+
+
+         var legend = svg.selectAll(".legend")
+            .data(color.domain())
+            .enter().append("g")
+            .attr("class", "legend")
+            .attr("transform", function (d, i) {
+               return "translate(" + (- width + margin.left + margin.right + i * 90)           // x Position
+                  + "," + (height + 42) + ")";
+            });                                           // y Position
+
+         legend.append("rect")
+            .attr("x", width - 50)
+            .attr("y", 7)
+            .attr("width", 10)
+            .attr("height", 10)
+            .style("opacity", 0.5)
+            .style("fill", color);
+
+         legend.append("text")
+            .attr("x", width + 5)
+            .attr("y", 0)
+            .attr("yAxis", ".35em")
+            .style("text-anchor", "end")
+            .text(function (d) { return 'DP for W' + d; });
+
+      });
+
+   </script>
+
+   <!-- Optional JavaScript, jQuery first, then Popper.js, then Bootstrap -->
+   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+      crossorigin="anonymous"></script>
+   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em"
+      crossorigin="anonymous"></script>
+
+</body>
+
+</html>

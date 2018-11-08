@@ -38,14 +38,19 @@
 <div class="row">
 <section class="col-12">
 <ul class="nav nav-tabs">
-<li class="nav-item"><a class="nav-link" href="index.html">Overview</a>
-  <li class="nav-item"><a class="nav-link" href="about.html">About this tool</a>
-<li class="nav-item"><a class="nav-link active" href="deliveryplans.html">Delivery Plans</a>
-<li class="nav-item"><a class="nav-link" href="customerorders.html">Customer Orders</a>
-<li class="nav-item"><a class="nav-link" href="varianceanalysis.html">Variance Analysis</a>
-<li class="nav-item"><a class="nav-link" href="avgdeliveryschedules.html">Average Delivery Schedules</a>
-<li class="nav-item"><a class="nav-link" href="chorddiagram.html">Chord Diagram</a>
-<li class="nav-item"><a class="nav-link" href="barchart.html">Bar Chart</a>
+  <li class="nav-item"><a class="nav-link" href="index.php">Overview</a>
+    <li class="nav-item"><a class="nav-link" href="about.html">About This Tool</a>
+    <li class="nav-item"><a class="nav-link" href="finalorder.html">Final Order Amount</a>
+    <li class="nav-item"><a class="nav-link active" href="deliveryplans.html">Delivery Plans</a>
+      <li class="nav-item"><a class="nav-link" href="forecastbias.html">Forecast Bias Analysis</a>
+        <li class="nav-item"> <a class="nav-link" href="mad_graph.html">Mean Absolute Deviation (MAD) graph</a>
+          <li class="nav-item"> <a class="nav-link" href="mse_graph.html">Mean Square Error (MSE)</a>
+            <li class="nav-item"> <a class="nav-link" href="rmse_graph.html">Root Mean Square Error (RMSE)</a>
+
+    <li class="nav-item"><a class="nav-link" href="matrix.html">Delivery Plans Matrix</a>
+    <li class="nav-item"><a class="nav-link" href="matrixvariance.html">Delivery Plans Matrix - With Variance</a>
+    <li class="nav-item"><a class="nav-link" href="customerorders.html">Customer Orders</a>
+    <li class="nav-item"><a class="nav-link" href="correlationmatrix.html">Correlation Matrix</a>
 </ul></div></div>
 
 <script src="http://d3js.org/d3.v4.min.js"></script>
@@ -58,36 +63,38 @@
 <!-- /> </div>  -->
 	
 <div style="padding-left:39px"><br/><h3>Delivery plans</h3></div>
-<div style="padding-left:39px"><p> NOTE: This graph contains data variation showing the items (products) delivered to a customer, and how that amount of delivered items varies. </div>
-	<div style="padding-left:39px"> The legend on the right shows the color notation of each calendar week.</p></div>
+<div style="padding-left:39px"><p> NOTE: This graph shows how the amount of products ordered by the customer varied on each calendar week. *FO = Final Order </div>
+	
 
 
 
 <script>
-d3.json("data/integrateddata.json", function(error, data) {
+d3.json("data/data.json", function(error, data) {
 if (error) throw error;
 console.log(data);
 //console.log('2', parseInt('2'));
+var legendOffset = 140;
 
 var margin = {top: 20, right: 25, bottom: 30, left: 55},
     width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    height = 590 - margin.top - margin.bottom - legendOffset;
 
 var x = d3.scaleLinear()
     .domain([
-    	d3.min([0,d3.min(data,function (d) { return d.CalendarWeeks })]),
-    	d3.max([0,d3.max(data,function (d) { return d.CalendarWeeks })])
+    	d3.min([0,d3.min(data,function (d) { return d.ForecastWeek })]),
+    	d3.max([0,d3.max(data,function (d) { return d.ForecastWeek })])
     	])
     .range([0,width])
 
 var y = d3.scaleLinear()
     .domain([
-    	d3.min([0,d3.min(data,function (d) { return d.Quantity })]),
-    	d3.max([0,d3.max(data,function (d) { return d.Quantity * 1.5 })])
+    	d3.min([0,d3.min(data,function (d) { return d.OrderAmount })]),
+    	d3.max([0,d3.max(data,function (d) { return d.OrderAmount })])
     	])
     .range([height,0])
 
 var color = d3.scaleOrdinal(d3.schemeCategory10);
+var color2 = d3.scaleOrdinal(d3.schemeCategory10);
 
 var xAxis = d3.axisBottom(x);
 
@@ -97,7 +104,7 @@ var yAxis = d3.axisLeft(y);
 
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("height", height + margin.top + margin.bottom + legendOffset)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -107,15 +114,16 @@ var svg = d3.select("body").append("svg")
       .data(data)
       .enter()
     .append('circle')
-      .attr('cx',function (d) { return x(d.CalendarWeeks) })
-      .attr('cy',function (d) { return y(d.Quantity) })
+      .attr('cx',function (d) { return x(d.ForecastWeek) })
+      .attr('cy',function (d) { return y(d.OrderAmount) })
       .attr('r','7')
       .attr('stroke','black')
       .attr('stroke-width',1)
-      .attr('fill',function (d,i) { return color(d.DeliveryPlan) })
+      //.attr('fill',function (d,i) { return color(d.ForecastWeek)  })
+      .attr('fill',function (d) { return color2(d.ActualWeek===d.ForecastWeek)  })
       .on('mouseover', function (d) {
         d3.select(this)
-          .transition()
+          .transition() 
           .duration(500)
           .attr('r',10)
           .attr('stroke-width',3)
@@ -130,8 +138,10 @@ var svg = d3.select("body").append("svg")
       })
     .append('title') // Tooltip
       .text(function (d) { return d.Product +
-                           '\nReleased Quantity: ' + d.Quantity +
-                           '\nCalendar Weeks: ' + d.CalendarWeeks })
+                           '\nActual Week: ' + d.ActualWeek +
+                           '\nForecast Week: ' + d.ForecastWeek +
+                           '\nWeeks Before Delivery: ' + d.WeeksBeforeDelivery +
+                           '\nReleased Quantity: ' + d.OrderAmount })
 
   svg.append("g")
       .attr("class", "x")
@@ -143,7 +153,7 @@ var svg = d3.select("body").append("svg")
       .attr("y", -10)
 	  .attr('dy','.71em')
       .style("text-anchor", "end")
-      .text("Calendar Weeks");
+      .text("Forecast Week");
 
   svg.append("g")
       .attr("class", "y")
@@ -181,26 +191,30 @@ svg.select(".legend")
 
 
 	var legend = svg.selectAll(".legend")
-      .data(color.domain())
+      .data(color2.domain())
 	.enter().append("g")
 	  .attr("class", "legend")
 		//.scale(xAxis)
   		//.shape('circle')
-      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+      .attr("transform", function (d, i) {
+                    return "translate(" + (- width + margin.left + margin.right + i * 90)           // x Position
+                        + "," + (height + 42) + ")";
+                });                                           // y Position
 
    legend.append("rect")
       .attr("x", width - 10)
       .attr("width", 10)
       .attr("height", 10)
 	  .style("opacity", 0.5)
-      .style("fill", color); 
+    .style("fill", color2);
+      //.style("fill", color); 
 
   legend.append("text")
       .attr("x", width - 24)
       .attr("y", 10)
       .attr("yAxis", ".35em")
       .style("text-anchor", "end")
-	  .text(function(d) { return d; });
+	  .text(function(d) { return 'FO' + '\n ' + d; });
      
 });
 

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+
+<head>
+    <meta http-equiv="X-UA-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
+        crossorigin="anonymous">
+
+    <title>Final Order Amount</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <style>
+        body {
+            font: 12px Arial;
+        }
+
+        path {
+            stroke: steelblue;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: grey;
+            stroke-width: 1;
+            shape-rendering: crispEdges;
+        }
+
+        div.average {
+            position: absolute;
+            top: 0;
+            left: 790;
+        }
+
+        /* .tooltip{
+            position: relative;
+            display: inline-block;
+         }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 10px;
+            background-color: beige;
+            color:grey;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip .tooltiptext::after{
+            content: "";
+            position:absolute;
+            top:100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: grey transparent transparent transparent;
+        }
+        .tooltip: hover .tooltiptext{
+            visibility: visible;
+            opacity: 1;
+        }
+ */
+    </style>
+    <!-- Execute jquery -->
+    <script src="./jquery/jquery.min.js"></script>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row">
+            <section class="col-12">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.php">Overview</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="about.html">About This Tool</a>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="finalorder.html">Final Order Amount</a>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="deliveryplans.html">Delivery Plans</a>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="forecastbias.html">Forecast Bias Analysis</a>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="mad_graph.html">Mean Absolute Deviation (MAD) graph</a>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="mse_graph.html">Mean Square Error (MSE)</a>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" href="rmse_graph.html">Root Mean Square Error (RMSE)</a>
+
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="matrix.html">Delivery Plans Matrix</a>
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" href="matrixvariance.html">Delivery Plans Matrix - With Variance</a>
+                                                            <li class="nav-item">
+                                                                <a class="nav-link" href="customerorders.html">Customer Orders</a>
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link" href="correlationmatrix.html">Correlation Matrix</a>
+                </ul>
+        </div>
+    </div>
+
+    <div style="padding-left:39px">
+        <br/>
+        <h3>Final Order Amount</h3>
+    </div>
+
+    <!--   <div class ="tooltip"><img src="img/info.png" alt="Description of this graph">
+        <span class="tooltiptext">NOTE: This graph shows the final customer orders received and an average line calculated from the average of those
+                order amounts.<br>The legend below shows the Calendar weeks depicted on the graph shown with different colors</span>
+    </div>  -->
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+
+
+    <script>
+
+        d3.json("data/data.json", function (error, data) {
+            if (error) throw error;
+            console.log(data);
+
+            let dataFiltered = data.filter((el) => { return el.ActualWeek === el.ForecastWeek; });
+
+            console.log(dataFiltered);
+
+            //console.log('2', parseInt('2'));
+            var legendOffset = 140;
+
+            var margin = { top: 20, right: 25, bottom: 30, left: 55 },
+                width = 960 - margin.left - margin.right,
+                height = 590 - margin.top - margin.bottom - legendOffset;
+
+            var margin2 = { top2: 100, right2: 25, bottom2: 30, left2: 55 },
+                width2 = 60 - margin.left - margin.right,
+                height2 = 60 - margin.top - margin.bottom - legendOffset;
+
+            var x = d3.scaleLinear()
+                .domain([
+                    d3.min([0, d3.min(dataFiltered, function (d) { return d.ActualWeek })]),
+                    d3.max([0, d3.max(dataFiltered, function (d) { return d.ActualWeek })])
+                ])
+                .range([0, width])
+
+            var y = d3.scaleLinear()
+                .domain([
+                    d3.min([0, d3.min(dataFiltered, function (d) {
+                        if (d.ActualWeek === d.ForecastWeek)
+                            return d.OrderAmount
+                    })]),
+                    d3.max([0, d3.max(dataFiltered, function (d) {
+                        if (d.ActualWeek === d.ForecastWeek)
+                            return d.OrderAmount
+                    })])
+                ])
+                .range([height, 0])
+
+            var product = function (d) { return d.Product; },
+                color = d3.scaleOrdinal(d3.schemeCategory10);
+
+
+            var xAxis = d3.axisBottom(x)
+                .ticks(10);
+
+            var yAxis = d3.axisLeft(y);
+            // .ticks(11)
+
+
+            var svg = d3.select("body").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom + legendOffset)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            var dataMean = d3.mean(dataFiltered, function (d) { //Define mean value of Order Amount, i.e. Avg. Order Amount
+                return d.OrderAmount;
+            });
+            console.log(dataMean);
+
+            function printMean(dataFiltered) {
+                document.write(dataFiltered);
+            }
+
+       
+            var dataMax = d3.max(dataFiltered, function (d) { //Define max number of weeks
+                return d.ActualWeek;
+            });
+            console.log(dataMax);
+
+            var standardDev = d3.deviation(dataFiltered, function (d) { //Define a standard deviation variable
+                return d.OrderAmount;
+            });
+            console.log(standardDev);
+            document.innerHTML = standardDev;
+
+            var varKo = standardDev / dataMean;
+            console.log(varKo);
+
+     document.getElementById("average", "varKo", "standardDev").innerHTML = " Average:" + dataMean + " ;  " + " VarKo:" + varKo + " ;  " + " St. Dev.:" + standardDev;
+     document.getElementById("average", "varKo", "standardDev").style.fontWeight = "700";
+     document.getElementById("average", "varKo", "standardDev").style.color = "blue";
+     //document.getElementById("standardDev").style.color = "lightblue";
+            
+
+            //Define a tooltip
+            /*             var tooltip = d3.select("body").append("div")
+                            .attr("class", "tooltip")
+                            .style("position", "absolute")
+                            .style("visibility", "hidden")
+                            .text("NOTE: This graph shows the final customer orders received and an average line calculated from the average of those order amounts");
+            
+                        svg.selectAll("div")
+                            .enter()
+                            .on("mouseover", function (d) {
+                                div.transition()
+                                    .duration(500)
+                                    .style("opacity", .9);
+                                //    var string="<img src=+" img/info.png "+ />";
+                            })
+                            .on('mouseout', function (d) {
+                                div.transition()
+                                    .duration(500)
+                                    .style("opacity", .9);
+                            });
+            
+            */
+            svg.append("line")
+                .style("stroke", "orange")
+                .attr("x1", 0)
+                .attr("y1", dataMean + margin.bottom - 490)
+                .attr("x2", dataMax + margin.left + margin.right + 800)
+                .attr("y2", dataMean + margin.bottom - 490);
+
+            var circles = svg.selectAll('circle')
+                .data(dataFiltered)
+                .enter()
+                .append('circle')
+                .attr('cx', function (d) { return x(d.ActualWeek) })
+                .attr('cy', function (d) {
+                    return y(d.OrderAmount)
+                })
+
+                .attr('r', '7')
+                .attr('stroke', 'black')
+                .attr('stroke-width', 1)
+                .attr('fill', function (d, i) { return color(product(d)); })
+                .on('mouseover', function (d) {
+                    d3.select(this)
+                        .transition()
+                        .duration(500)
+                        .style("opacity", .9)
+                        .attr('r', 10)
+                        .attr('stroke-width', 3)
+                })
+                .on('mouseout', function () {
+                    d3.select(this)
+                        .transition()
+                        .duration(500)
+                        .attr('r', 7)
+                        .attr('stroke-width', 1)
+                })
+                .append('title') // Tooltip
+                .text(function (d) {
+                    return d.Product +
+                        '\nFinal Customer Order: ' + d.OrderAmount +
+                        '\nCalendar Week: ' + d.ActualWeek
+                })
+
+
+
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis)
+                .append("text")
+                .attr("class", "label")
+                .attr("x", width)
+                .attr("y", -10)
+                .attr('dy', '.71em')
+                .style("text-anchor", "end")
+                .text("Calendar Weeks");
+
+
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis)
+                .append("text")
+                .attr("class", "label")
+                .attr("transform", "rotate(-90)")
+                .attr("x", 0)
+                .attr("y", 5)
+                .attr("dy", ".71em")
+                .style("text-anchor", "end")
+                .text("Final Customer Order (pcs)")
+
+
+            var legend = svg.selectAll(".legend")
+                .data(color.domain())
+                .enter().append("g")
+                .attr("class", "legend")
+                .attr("transform", function (d, i) {
+                    return "translate(" + (- width + margin.left + margin.right + i * 90)           // x Position
+                        + "," + (height + 42) + ")";
+                });                                           // y Position
+
+            legend.append("rect")
+                .attr("x", width - 60)
+                .attr("y", 7)
+                .attr("width", 10)
+                .attr("height", 10)
+                .style("opacity", 0.5)
+                .style("fill", color);
+
+            legend.append("text")
+                .attr("x", width + 88)
+                .attr("y", 0)
+                .attr("yAxis", ".35em")
+                .style("text-anchor", "end")
+                .text(function (d) { return 'Delivered Quantity ' + 'of ' + d; });
+
+      legend.append("rect")
+                .attr("x", width + 140)
+                .attr("y", 7)
+                .attr("width", 20)
+                .attr("height", 2)
+                .style("opacity", 0.5)
+                .style("fill", "orange");
+
+            legend.append("text")
+                .attr("x", width + 198)
+                .attr("y", 0)
+                .attr("yAxis", ".35em")
+                .style("text-anchor", "end")
+                .text(function (d) { return 'Average line '; });
+            var lineSize = d3.scaleLinear()
+                .domain([
+                    d3.min([0, d3.min(dataFiltered, function (d) { return d.ActualWeek })]),
+                    d3.max([0, d3.max(dataFiltered, function (d) { return d.ActualWeek })])
+                ])
+                .range([0, dataMax])
+                .style("stroke", "orange");
+
+            var svg = d3.select("svg");
+            svg.append("g")
+                .attr("class", "legendSizeLine")
+                .attr("transform", function (d, i) {
+                    return "translate(" + (- width + margin.left + margin.right + i * 190)           // x Position
+                        + "," + (height + 42) + ")";
+                });                                           // y Position
+            var legendSizeLine = d3.legend.size()
+                .scale(lineSize)
+                .shape("line")
+                .orient("horizontal")
+                //otherwise labels would have displayed:
+                // 0, 2.5, 5, 10
+                .labels(["tiny testing at the beginning",
+                    "small", "medium", "large"])
+                .labelWrap(30)
+                .shapeWidth(40)
+                .labelAlign("start")
+                .shapePadding(10);
+
+            svg.select(".legendSizeLine")
+                .call(legendSizeLine);
+
+        });
+
+    </script>
+
+    <script> function placeDiv(x_pos, y_pos) {
+            var d = document.getElementById('average');
+            d.style.position = "absolute";
+            d.style.left = x_pos + '790';
+            d.style.top = y_pos + '70';
+        }
+    </script>
+
+    <div class="rTable" id="average">
+        <div class="rTableColumn" id="average">
+            <strong>Avg.</strong>
+            <div class="rTableCell" id="average">
+            </div>
+        </div>
+    </div>
+    <!-- Optional JavaScript, jQuery first, then Popper.js, then Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

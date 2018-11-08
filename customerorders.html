@@ -25,6 +25,26 @@ line {
     stroke-width: 1;
     shape-rendering: crispEdges;
 }
+.line {
+  fill: none;
+  stroke: rgb(44, 98, 180);
+  stroke-width: 5px;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+.tooltip circle {
+  fill: #F1F3F3;
+  stroke: #6F257F;
+  stroke-width: 5px;
+}
+.hover-line {
+  stroke: #6F257F;
+  stroke-width: 2px;
+  stroke-dasharray: 3,3;
+}
 
 </style>
 
@@ -36,29 +56,35 @@ line {
 <div class="row">
 <section class="col-12">
 <ul class="nav nav-tabs">
-<li class="nav-item"><a class="nav-link" href="index.html">Overview</a>
-	<li class="nav-item"><a class="nav-link" href="about.html">About this tool</a>
-<li class="nav-item"><a class="nav-link" href="deliveryplans.html">Delivery Plans</a>
-<li class="nav-item"><a class="nav-link active" href="customerorders.html">Customer Orders</a>
-<li class="nav-item"><a class="nav-link" href="varianceanalysis.html">Variance Analysis</a>
-<li class="nav-item"><a class="nav-link" href="avgdeliveryschedules.html">Average Delivery Schedules</a>
-<li class="nav-item"><a class="nav-link" href="chorddiagram.html">Chord Diagram</a>
-<li class="nav-item"><a class="nav-link" href="barchart.html">Bar Chart</a>
+	<li class="nav-item"><a class="nav-link" href="index.php">Overview</a>
+		<li class="nav-item"><a class="nav-link" href="about.html">About This Tool</a>
+		<li class="nav-item"><a class="nav-link" href="finalorder.html">Final Order Amount</a>
+		<li class="nav-item"><a class="nav-link" href="deliveryplans.html">Delivery Plans</a>
+        <li class="nav-item"><a class="nav-link" href="forecastbias.html">Forecast Bias Analysis</a>
+            <li class="nav-item"> <a class="nav-link" href="mad_graph.html">Mean Absolute Deviation (MAD) graph</a>
+                <li class="nav-item"> <a class="nav-link" href="mse_graph.html">Mean Square Error (MSE)</a>
+                    <li class="nav-item"> <a class="nav-link" href="rmse_graph.html">Root Mean Square Error (RMSE)</a>
+
+		<li class="nav-item"><a class="nav-link" href="matrix.html">Delivery Plans Matrix</a>
+		<li class="nav-item"><a class="nav-link" href="matrixvariance.html">Delivery Plans Matrix - With Variance</a>
+		<li class="nav-item"><a class="nav-link active" href="customerorders.html">Customer Orders</a>
+		<li class="nav-item"><a class="nav-link" href="correlationmatrix.html">Correlation Matrix</a>
 </ul></div></div>
 
 
 <div style="padding-left:39px"><br/><h3>Customer orders</h3>
-<p> NOTE: This graph shows historical orders received from customers and registered throughout the year from January until December 2007. <br><br> It shows plain customer orders data without comparisons or any data processing.</p></div>
+<p> NOTE: This graph shows historical orders received from customers and registered throughout the year from January until December 2017.</p></div>
 
 <script src="http://d3js.org/d3.v4.min.js"></script>
 
 <script>
 
 var	margin = {top: 20, right: 25, bottom: 30, left: 55},
-	width = 960 - margin.left - margin.right,
+	width = 900 - margin.left - margin.right,
 	height = 500 - margin.top - margin.bottom;
  
-var	parseTime = d3.timeParse("%d-%B-%Y");
+var	parseTime = d3.timeParse("%d-%b-%y")
+bisectDate = d3.bisector(function(d) { return d.date; }).left;
  
 var	x = d3.scaleTime().range([0, width]);
 var	y = d3.scaleLinear().range([height, 0]);
@@ -68,9 +94,9 @@ var xAxis = d3.axisBottom(x);
 var yAxis = d3.axisLeft(y);
 
 // Define the line
-var	valueline = d3.line()
+ var valueline = d3.line()
 	.x(function(d) { return x(d.date); })
-	.y(function(d) { return y(d.orders); });
+	.y(function(d) { return y(d.orders); }); 
 //Append svg object to the body of the page, append the group element to svg, move the group element to the top left    
 var	svg = d3.select("body").append("svg")
 	.attr("width", width + margin.left + margin.right)
@@ -78,13 +104,13 @@ var	svg = d3.select("body").append("svg")
 	.append("g")
 	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
  
-d3.json("data/orders.json", function(error, data) {
+d3.json("./data/orders.json", function(error, data) {
 	if (error) throw error;
 
-	data.forEach(function(d) {
+ 	data.forEach(function(d) {
 		d.date = parseTime(d.date);
 		d.orders = +d.orders; 
-		});
+		}); 
 
    	x.domain(d3.extent(data, function(d) { return d.date; }));
 	y.domain(d3.extent(data, function(d) { return d.orders; }));
@@ -115,18 +141,99 @@ d3.json("data/orders.json", function(error, data) {
 		 .style("text-anchor", "end")
 		 .text("Date")
 		
-		//XAxis.select("path").attr("marker-end", "url(#arrowhead)"); 
-		//.select(".domain")
-		//.remove()
-	
  	svg.append("g")		
 		.call(d3.axisLeft(y))
 		.append("text")
 		.attr("yAxis", 6)
 		.attr("dy", "0.72em")
 		.attr("text-anchor", "end")
-		.text("Customer Orders (pcs)");});
-	//yAxis.select("path").attr("marker-end", "url(#arrowhead)"); 
+		.text("Customer Orders (pcs)");
+		
+		var colorline = function (d) { return d.date; },
+                color = d3.scaleOrdinal(d3.schemeCategory10);
+            var circles = svg.selectAll('circle')
+                .data(data)
+                .enter()
+                .append('circle')
+                .attr('cx', function (d) { return x(d.date) })
+                .attr('cy', function (d) { 
+                   return y(d.orders)
+                    })
+                    
+                .attr('r', '7')
+                .attr('stroke', 'black')
+                .attr('stroke-width', 1)
+                .attr('fill', function (d, i) { return color(colorline(d)); })
+                .on('mouseover', function (d) {
+                    d3.select(this)
+                        .transition()
+                        .duration(500)
+                        .style("opacity", .9)
+                        .attr('r', 10)
+                        .attr('stroke-width', 3)
+                })
+                .on('mouseout', function () {
+                    d3.select(this)
+                        .transition()
+                        .duration(500)
+                        .attr('r', 7)
+                        .attr('stroke-width', 1)
+                })
+                .append('title') // Tooltip
+                .text(function (d) {
+                        return d.date +
+                        '\nOrder Amount Ordered: ' + d.orders
+                })
+
+
+
+
+
+		var tooltip = svg.append("g")
+        .attr("class", "tooltip")
+        .style("display", "none");
+
+    tooltip.append("line")
+        .attr("class", "x-hover-line hover-line")
+        .attr("y1", 0)
+        .attr("y2", height);
+
+    tooltip.append("line")
+        .attr("class", "y-hover-line hover-line")
+        .attr("x1", width)
+        .attr("x2", width);
+
+    tooltip.append("circle")
+        .attr("r", 7.5)
+        .on("click", function(d) {
+            console.log("clicked on: ", d);
+        });
+
+    tooltip.append("text")
+        .attr("x", 15)
+      	.attr("dy", ".31em");
+
+    // svg.append("rect")
+    //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    //     .attr("class", "overlay")
+    //     .attr("width", width)
+    //     .attr("height", height)
+    //     .on("mouseover", function() { tooltip.style("display", null); })
+    //     .on("mouseout", function() { tooltip.style("display", "none"); })
+    //     .on("mousemove", mousemove);
+
+    function mousemove() {
+      var x0 = x.invert(d3.mouse(this)[0]),
+          i = bisectDate(data, x0, 1),
+          d0 = data[i - 1],
+          d1 = data[i],
+          d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+      tooltip.attr("transform", "translate(" + x(d.date) + "," + y(d.orders) + ")");
+      tooltip.select("text").text(function() { return d.orders; });
+      tooltip.select(".x-hover-line").attr("y2", height - y(d.orders));
+      tooltip.select(".y-hover-line").attr("x2", width + width);
+    }
+		});
 </script>
 
 <!-- Optional JavaScript, jQuery first, then Popper.js, then Bootstrap.js  -->
