@@ -1,4 +1,4 @@
-<?php require_once("./includes/connection.php"); ?>
+<?php require_once("/includes/connection.php"); ?>
 
 	<?php
 if(isset($_POST["username"])){
@@ -31,7 +31,9 @@ if ($conn->query($sql) === TRUE) {
         $message = "All fields are required";
     }  
     $conn->close();
-}    }}
+}   
+ }
+}
 ?>
 
 
@@ -40,7 +42,7 @@ if ($conn->query($sql) === TRUE) {
 	<div class="container mregister">
 				<div id="login">
 		<h1>Register</h1>
-	<form name="registerform" id="registerform" action="register.php" method="post">
+	<form name="registerform" id="registerform" action="/includes/register.php" method="post">
 		<p>	<label for="user_login">Full Name<br />
 			<input type="text" name="full_name" id="full_name" class="input" size="32" value=""  /></label>	</p>
 			
@@ -55,7 +57,7 @@ if ($conn->query($sql) === TRUE) {
 		
 		<p class="submit"><input type="submit" name="register" id="register" class="button" value="Register" />	</p>
 		
-		<p class="regtext">Already have an account? <a href="login.php" >Login Here</a></p>
+		<p class="regtext">Already have an account? <a href="/includes/login.php" >Login Here</a></p>
 	</form>
 		
 		</div>

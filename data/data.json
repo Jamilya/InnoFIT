@@ -10,6 +10,27 @@
     "Product": "Product 1",
     "ActualWeek": 1,
     "ForecastWeek": 2,
+    "OrderAmount": 690,
+    "WeeksBeforeDelivery": 1
+  },
+  {
+    "Product": "Product 1",
+    "ActualWeek": 1,
+    "ForecastWeek": 2,
+    "OrderAmount": 700,
+    "WeeksBeforeDelivery": 1
+  },
+  {
+    "Product": "Product 1",
+    "ActualWeek": 1,
+    "ForecastWeek": 2,
+    "OrderAmount": 790,
+    "WeeksBeforeDelivery": 1
+  },
+  {
+    "Product": "Product 1",
+    "ActualWeek": 1,
+    "ForecastWeek": 2,
     "OrderAmount": 640,
     "WeeksBeforeDelivery": 1
   },

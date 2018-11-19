@@ -1,7 +1,7 @@
 <?php
 session_start(); ?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'].'/includes/connection.php'; ?>
 
-<?php require_once("./includes/connection.php"); ?>
 
 
 <?php
@@ -29,7 +29,7 @@ if (isset($_POST['login'])){
         $_SESSION['session_username']=$username;
     
         /* Redirect browser */
-         header("Location: intropage.php");
+         header("Location: index.php");
         } 
         } else {
     
@@ -56,7 +56,7 @@ if (isset($_POST['login'])){
         <p class="submit">
         <input type="submit" name="login" class="button" value="Log In" />
     </p>
-        <p class="regtext">No account yet: <a href="register.php" >Please register here</a></p>
+        <p class="regtext">No account yet: <a href="./register.php" >Please register here</a></p>
 </form>
 
     </div>

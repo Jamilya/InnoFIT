@@ -1,3 +1,11 @@
+<?php
+if(session_id() == '' || !isset($_SESSION)) {
+    // session isn't started
+    session_start();
+}
+else {
+    header("Location: includes/login.php");
+};?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,9 +15,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="./ico/innofit.ico">
+    <link rel="icon" href="/data/ico/innofit.ico">
     <title>Customer orders</title>
-    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="/lib/css/bootstrap.min.css" rel="stylesheet">
 
 
     <style>
@@ -66,7 +74,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.php">Web tool home</a>
+                <a class="navbar-brand" href="/index.php">Web tool home</a>
             </div>
             <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
@@ -74,7 +82,7 @@
                                 <a class="nav-link" href="index.php">Home</a>
                             </li > -->
                     <li>
-                        <a class="nav-link" href="about.html">About this tool</a>
+                        <a class="nav-link" href="./about.php">About this tool</a>
                     </li>
                     <div class="dropdown">
                         <a class="nav-link active" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations
@@ -82,53 +90,51 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                             <li>
-                                <a class="dropdown-item" href="finalorder.html">Final Order Amount</a>
+                                <a class="dropdown-item" href="./finalorder.php">Final Order Amount</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="deliveryplans.html">Delivery Plans</a>
+                                <a class="dropdown-item" href="./deliveryplans.php">Delivery Plans</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="forecastbias.html">Forecast Bias Analysis</a>
+                                <a class="dropdown-item" href="./forecastbias.php">Forecast Bias Analysis</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="mad_graph.html">Mean Absolute Deviation (MAD)</a>
+                                <a class="dropdown-item" href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="mse_graph.html">Mean Squared Error (MSE)</a>
+                                <a class="dropdown-item" href="./mse_graph.php">Mean Squared Error (MSE)</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="rmse_graph.html">Root Mean Square Error (RMSE)</a>
+                                <a class="dropdown-item" href="./rmse_graph.php">Root Mean Square Error (RMSE)</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="mape.html">Mean Absolute Percentage Error (MAPE)</a>
+                                <a class="dropdown-item" href="./mape.php">Mean Absolute Percentage Error (MAPE)</a>
                             </li>
                             <li>
-                                <a class="dropdown-item active" href="customerorders.html">Customer Orders</a>
+                                <a class="dropdown-item active" href="./customerorders.php">Customer Orders</a>
                             </li>
 
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Matrices</li>
                             <li>
-                                <a class="dropdown-item" href="matrix.html">Delivery Plans Matrix</a>
+                                <a class="dropdown-item" href="./matrix.html">Delivery Plans Matrix</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="matrixvariance.html">Delivery Plans Matrix - With Variance</a>
+                                <a class="dropdown-item" href="./matrixvariance.html">Delivery Plans Matrix - With Variance</a>
                             </li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">New Graphs</li>
                             <li>
-                                <a class="dropdown-item" href="boxplot.html">Box Plot</a>
+                                <a class="dropdown-item" href="./boxplot.html">Box Plot</a>
                             </li>
                         </ul>
                         </li>
                 </ul>
                 </div>
                 <ul class="nav navbar-nav navbar-right">
+
                     <li>
-                        <a class="nav-link" href="#">Property 1</a>
-                    </li>
-                    <li>
-                        <a class="nav-link" href="logout.php">Logout
+                        <a class="nav-link" href="/includes/logout.php">Logout
                             <span class="sr-only">(current)</span>
                         </a>
                     </li>
@@ -145,8 +151,14 @@
 
     <div style="padding-left:39px">
         <h3>Customer orders Graph</h3>
-        <p> NOTE: This graph shows historical customer order amount registered throughout from January until December 2017 (to
-            be modified).</p>
+        <small>
+            <?php
+            echo "You are logged in as: ";
+            print_r($_SESSION["session_username"]);
+            echo ".";
+            ?></small>
+            <br><br>
+        <p> NOTE: This graph shows historical customer order amount registered throughout the period of data upload.</p>
     </div>
     </div>
 
@@ -156,22 +168,28 @@
             width = 900 - margin.left - margin.right,
             height = 500 - margin.top - margin.bottom;
 
-        var parseDate = d3.timeFormat("%d-%B-%y").parse,
-            bisectDate = d3.bisector(function (d) { return d.date; }).left;
+/*         var parseDate = d3.timeFormat("%Y-%m-%d").parse,
+            bisectDate = d3.bisector(function (d) { return d.Date; }).left; */
 
         var x = d3.scaleTime().range([0, width]);
         var y = d3.scaleTime().range([height, 0]);
 
-        var parseTime = d3.timeParse("%d-%b-%y");
+        var parseTime = d3.timeParse("%Y-%m-%d");
+        d3.json("/includes/getdata.php", function (error, data) {
+            if (error) throw error;
 
+/*             data.forEach(function (d) {
+                d.Date = parseTime(d.Date);
+                
+            }); */
         //Define the axes
         var xAxis = d3.axisBottom(x);
         var yAxis = d3.axisLeft(y);
 
         // Define the line
         var valueline = d3.line()
-            .x(function (d) { return x(d.date); })
-            .y(function (d) { return y(d.orders); });
+            .x(function (d) { return x(d.Date); })
+            .y(function (d) { return y(d.OrderAmount); });
         //Append svg object to the body of the page, append the group element to svg, move the group element to the top left    
         var svg = d3.select("body").append("svg")
             .attr("width", width + margin.left + margin.right)
@@ -179,16 +197,10 @@
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        d3.json("./data/orders.json", function (error, data) {
-            if (error) throw error;
 
-            data.forEach(function (d) {
-                d.date = parseTime(d.date);
-                d.orders = +d.orders;
-            });
 
-            x.domain(d3.extent(data, function (d) { return d.date; }));
-            y.domain(d3.extent(data, function (d) { return d.orders; }));
+            x.domain(d3.extent(data, function (d) { return d.Date; }));
+            y.domain(d3.extent(data, function (d) { return d.OrderAmount; }));
 
             //Add the value line
             svg.append("path")
@@ -212,7 +224,7 @@
                 .attr("class", "xAxis")
                 .attr("transform", "translate(0," + height + ")")
                 .call(d3.axisBottom(x)
-                    .tickFormat(d3.timeFormat("%b-%d-%y")))
+                    .tickFormat(d3.timeFormat("%m-%Y")))
 
                 .selectAll("text")
                 .style("text-anchor", "end")
@@ -229,7 +241,7 @@
                 .attr("text-anchor", "end")
                 .text("Customer Orders (pcs)");
 
-            var colorline = function (d) { return d.date; },
+            var colorline = function (d) { return d.Date; },
                 color = d3.scaleOrdinal(d3.schemeCategory10);
 
 
@@ -237,9 +249,9 @@
                 .data(data)
                 .enter()
                 .append('circle')
-                .attr('cx', function (d) { return x(d.date) })
+                .attr('cx', function (d) { return x(d.Date) })
                 .attr('cy', function (d) {
-                    return y(d.orders)
+                    return y(d.OrderAmount)
                 })
 
                 .attr('r', '7')
@@ -263,13 +275,9 @@
                 })
                 .append('title') // Tooltip
                 .text(function (d) {
-                    return d.date +
-                        '\nOrder Amount Ordered: ' + d.orders
+                    return d.Date +
+                        '\nOrder Amount Ordered: ' + d.OrderAmount
                 })
-
-
-
-
 
             var tooltip = svg.append("g")
                 .attr("class", "tooltip")
@@ -306,16 +314,16 @@
                     i = bisectDate(data, x0, 1),
                     d0 = data[i - 1],
                     d1 = data[i],
-                    d = x0 - d0.date > d1.date - x0 ? d1 : d0;
-                tooltip.attr("transform", "translate(" + x(d.date) + "," + y(d.orders) + ")");
-                tooltip.select("text").text(function () { return d.orders; });
-                tooltip.select(".x-hover-line").attr("y2", height - y(d.orders));
+                    d = x0 - d0.Date > d1.Date - x0 ? d1 : d0;
+                tooltip.attr("transform", "translate(" + x(d.Date) + "," + y(d.OrderAmount) + ")");
+                tooltip.select("text").text(function () { return d.OrderAmount; });
+                tooltip.select(".x-hover-line").attr("y2", height - y(d.OrderAmount));
                 tooltip.select(".y-hover-line").attr("x2", width + width);
             }
         });
     </script>
 
-    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="/lib/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
 
