@@ -1,1 +1,2 @@
 # reposit
+This tool is designed to show the user various graphs based on the data uploaded to the web tool. In the perfect scenario it should use one uploaded file to show the graphs in order to simplify the outlook of data and the visual analysis of current and historical data.

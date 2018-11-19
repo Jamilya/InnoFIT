@@ -1,0 +1,1388 @@
+[
+  {
+    "ActualWeek": 8,
+    "Product": 1,
+    "ForecastWeek": 19,
+    "OrderAmount": 879,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 9,
+    "Product": 1,
+    "ForecastWeek": 19,
+    "OrderAmount": 1054,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 9,
+    "Product": 2,
+    "ForecastWeek": 20,
+    "OrderAmount": 880,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 10,
+    "Product": 1,
+    "ForecastWeek": 19,
+    "OrderAmount": 1159,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 10,
+    "Product": 2,
+    "ForecastWeek": 20,
+    "OrderAmount": 1056,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 10,
+    "Product": 3,
+    "ForecastWeek": 21,
+    "OrderAmount": 880,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 11,
+    "Product": 1,
+    "ForecastWeek": 19,
+    "OrderAmount": 1507,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 11,
+    "Product": 2,
+    "ForecastWeek": 20,
+    "OrderAmount": 1162,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 11,
+    "Product": 3,
+    "ForecastWeek": 21,
+    "OrderAmount": 1056,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 11,
+    "Product": 4,
+    "ForecastWeek": 22,
+    "OrderAmount": 881,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 12,
+    "Product": 1,
+    "ForecastWeek": 19,
+    "OrderAmount": 1205,
+    "WeeksBeforeDelivery": 7
+  },
+  {
+    "ActualWeek": 12,
+    "Product": 2,
+    "ForecastWeek": 20,
+    "OrderAmount": 1512,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 12,
+    "Product": 3,
+    "ForecastWeek": 21,
+    "OrderAmount": 1161,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 12,
+    "Product": 4,
+    "ForecastWeek": 22,
+    "OrderAmount": 1056,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 12,
+    "Product": 5,
+    "ForecastWeek": 23,
+    "OrderAmount": 880,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 13,
+    "Product": 1,
+    "ForecastWeek": 19,
+    "OrderAmount": 1084,
+    "WeeksBeforeDelivery": 6
+  },
+  {
+    "ActualWeek": 13,
+    "Product": 2,
+    "ForecastWeek": 20,
+    "OrderAmount": 1209,
+    "WeeksBeforeDelivery": 7
+  },
+  {
+    "ActualWeek": 13,
+    "Product": 3,
+    "ForecastWeek": 21,
+    "OrderAmount": 1509,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 13,
+    "Product": 4,
+    "ForecastWeek": 22,
+    "OrderAmount": 1162,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 13,
+    "Product": 5,
+    "ForecastWeek": 23,
+    "OrderAmount": 1056,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 13,
+    "Product": 6,
+    "ForecastWeek": 24,
+    "OrderAmount": 879,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 14,
+    "Product": 1,
+    "ForecastWeek": 19,
+    "OrderAmount": 975,
+    "WeeksBeforeDelivery": 5
+  },
+  {
+    "ActualWeek": 14,
+    "Product": 2,
+    "ForecastWeek": 20,
+    "OrderAmount": 1088,
+    "WeeksBeforeDelivery": 6
+  },
+  {
+    "ActualWeek": 14,
+    "Product": 3,
+    "ForecastWeek": 21,
+    "OrderAmount": 1207,
+    "WeeksBeforeDelivery": 7
+  },
+  {
+    "ActualWeek": 14,
+    "Product": 4,
+    "ForecastWeek": 22,
+    "OrderAmount": 1511,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 14,
+    "Product": 5,
+    "ForecastWeek": 23,
+    "OrderAmount": 1163,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 14,
+    "Product": 6,
+    "ForecastWeek": 24,
+    "OrderAmount": 1055,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 14,
+    "Product": 7,
+    "ForecastWeek": 25,
+    "OrderAmount": 880,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 15,
+    "Product": 1,
+    "ForecastWeek": 19,
+    "OrderAmount": 1072,
+    "WeeksBeforeDelivery": 4
+  },
+  {
+    "ActualWeek": 15,
+    "Product": 2,
+    "ForecastWeek": 20,
+    "OrderAmount": 979,
+    "WeeksBeforeDelivery": 5
+  },
+  {
+    "ActualWeek": 15,
+    "Product": 3,
+    "ForecastWeek": 21,
+    "OrderAmount": 1086,
+    "WeeksBeforeDelivery": 6
+  },
+  {
+    "ActualWeek": 15,
+    "Product": 4,
+    "ForecastWeek": 22,
+    "OrderAmount": 1208,
+    "WeeksBeforeDelivery": 7
+  },
+  {
+    "ActualWeek": 15,
+    "Product": 5,
+    "ForecastWeek": 23,
+    "OrderAmount": 1510,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 15,
+    "Product": 6,
+    "ForecastWeek": 24,
+    "OrderAmount": 1160,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 15,
+    "Product": 7,
+    "ForecastWeek": 25,
+    "OrderAmount": 1057,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 15,
+    "Product": 8,
+    "ForecastWeek": 26,
+    "OrderAmount": 880,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 16,
+    "Product": 1,
+    "ForecastWeek": 19,
+    "OrderAmount": 1393,
+    "WeeksBeforeDelivery": 3
+  },
+  {
+    "ActualWeek": 16,
+    "Product": 2,
+    "ForecastWeek": 20,
+    "OrderAmount": 1076,
+    "WeeksBeforeDelivery": 4
+  },
+  {
+    "ActualWeek": 16,
+    "Product": 3,
+    "ForecastWeek": 21,
+    "OrderAmount": 977,
+    "WeeksBeforeDelivery": 5
+  },
+  {
+    "ActualWeek": 16,
+    "Product": 4,
+    "ForecastWeek": 22,
+    "OrderAmount": 1087,
+    "WeeksBeforeDelivery": 6
+  },
+  {
+    "ActualWeek": 16,
+    "Product": 5,
+    "ForecastWeek": 23,
+    "OrderAmount": 1209,
+    "WeeksBeforeDelivery": 7
+  },
+  {
+    "ActualWeek": 16,
+    "Product": 6,
+    "ForecastWeek": 24,
+    "OrderAmount": 1509,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 16,
+    "Product": 7,
+    "ForecastWeek": 25,
+    "OrderAmount": 1163,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 16,
+    "Product": 8,
+    "ForecastWeek": 26,
+    "OrderAmount": 1057,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 16,
+    "Product": 9,
+    "ForecastWeek": 27,
+    "OrderAmount": 880,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 17,
+    "Product": 1,
+    "ForecastWeek": 19,
+    "OrderAmount": 1114,
+    "WeeksBeforeDelivery": 2
+  },
+  {
+    "ActualWeek": 17,
+    "Product": 2,
+    "ForecastWeek": 20,
+    "OrderAmount": 1400,
+    "WeeksBeforeDelivery": 3
+  },
+  {
+    "ActualWeek": 17,
+    "Product": 3,
+    "ForecastWeek": 21,
+    "OrderAmount": 1074,
+    "WeeksBeforeDelivery": 4
+  },
+  {
+    "ActualWeek": 17,
+    "Product": 4,
+    "ForecastWeek": 22,
+    "OrderAmount": 978,
+    "WeeksBeforeDelivery": 5
+  },
+  {
+    "ActualWeek": 17,
+    "Product": 5,
+    "ForecastWeek": 23,
+    "OrderAmount": 1088,
+    "WeeksBeforeDelivery": 6
+  },
+  {
+    "ActualWeek": 17,
+    "Product": 6,
+    "ForecastWeek": 24,
+    "OrderAmount": 1208,
+    "WeeksBeforeDelivery": 7
+  },
+  {
+    "ActualWeek": 17,
+    "Product": 7,
+    "ForecastWeek": 25,
+    "OrderAmount": 1511,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 17,
+    "Product": 8,
+    "ForecastWeek": 26,
+    "OrderAmount": 1163,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 17,
+    "Product": 9,
+    "ForecastWeek": 27,
+    "OrderAmount": 1057,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 17,
+    "Product": 10,
+    "ForecastWeek": 28,
+    "OrderAmount": 881,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 18,
+    "Product": 1,
+    "ForecastWeek": 19,
+    "OrderAmount": 1003,
+    "WeeksBeforeDelivery": 1
+  },
+  {
+    "ActualWeek": 18,
+    "Product": 2,
+    "ForecastWeek": 20,
+    "OrderAmount": 1119,
+    "WeeksBeforeDelivery": 2
+  },
+  {
+    "ActualWeek": 18,
+    "Product": 3,
+    "ForecastWeek": 21,
+    "OrderAmount": 1397,
+    "WeeksBeforeDelivery": 3
+  },
+  {
+    "ActualWeek": 18,
+    "Product": 4,
+    "ForecastWeek": 22,
+    "OrderAmount": 1076,
+    "WeeksBeforeDelivery": 4
+  },
+  {
+    "ActualWeek": 18,
+    "Product": 5,
+    "ForecastWeek": 23,
+    "OrderAmount": 979,
+    "WeeksBeforeDelivery": 5
+  },
+  {
+    "ActualWeek": 18,
+    "Product": 6,
+    "ForecastWeek": 24,
+    "OrderAmount": 1088,
+    "WeeksBeforeDelivery": 6
+  },
+  {
+    "ActualWeek": 18,
+    "Product": 7,
+    "ForecastWeek": 25,
+    "OrderAmount": 1208,
+    "WeeksBeforeDelivery": 7
+  },
+  {
+    "ActualWeek": 18,
+    "Product": 8,
+    "ForecastWeek": 26,
+    "OrderAmount": 1511,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 18,
+    "Product": 9,
+    "ForecastWeek": 27,
+    "OrderAmount": 1162,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 18,
+    "Product": 10,
+    "ForecastWeek": 28,
+    "OrderAmount": 1057,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 18,
+    "Product": 11,
+    "ForecastWeek": 29,
+    "OrderAmount": 880,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 19,
+    "Product": 1,
+    "ForecastWeek": 19,
+    "OrderAmount": 902,
+    "WeeksBeforeDelivery": 0
+  },
+  {
+    "ActualWeek": 19,
+    "Product": 2,
+    "ForecastWeek": 20,
+    "OrderAmount": 1007,
+    "WeeksBeforeDelivery": 1
+  },
+  {
+    "ActualWeek": 19,
+    "Product": 3,
+    "ForecastWeek": 21,
+    "OrderAmount": 1117,
+    "WeeksBeforeDelivery": 2
+  },
+  {
+    "ActualWeek": 19,
+    "Product": 4,
+    "ForecastWeek": 22,
+    "OrderAmount": 1399,
+    "WeeksBeforeDelivery": 3
+  },
+  {
+    "ActualWeek": 19,
+    "Product": 5,
+    "ForecastWeek": 23,
+    "OrderAmount": 1078,
+    "WeeksBeforeDelivery": 4
+  },
+  {
+    "ActualWeek": 19,
+    "Product": 6,
+    "ForecastWeek": 24,
+    "OrderAmount": 979,
+    "WeeksBeforeDelivery": 5
+  },
+  {
+    "ActualWeek": 19,
+    "Product": 7,
+    "ForecastWeek": 25,
+    "OrderAmount": 1088,
+    "WeeksBeforeDelivery": 6
+  },
+  {
+    "ActualWeek": 19,
+    "Product": 8,
+    "ForecastWeek": 26,
+    "OrderAmount": 1208,
+    "WeeksBeforeDelivery": 7
+  },
+  {
+    "ActualWeek": 19,
+    "Product": 9,
+    "ForecastWeek": 27,
+    "OrderAmount": 1511,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 19,
+    "Product": 10,
+    "ForecastWeek": 28,
+    "OrderAmount": 1163,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 19,
+    "Product": 11,
+    "ForecastWeek": 29,
+    "OrderAmount": 1055,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 19,
+    "Product": 12,
+    "ForecastWeek": 30,
+    "OrderAmount": 879,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 20,
+    "Product": 2,
+    "ForecastWeek": 20,
+    "OrderAmount": 907,
+    "WeeksBeforeDelivery": 0
+  },
+  {
+    "ActualWeek": 20,
+    "Product": 3,
+    "ForecastWeek": 21,
+    "OrderAmount": 1005,
+    "WeeksBeforeDelivery": 1
+  },
+  {
+    "ActualWeek": 20,
+    "Product": 4,
+    "ForecastWeek": 22,
+    "OrderAmount": 1119,
+    "WeeksBeforeDelivery": 2
+  },
+  {
+    "ActualWeek": 20,
+    "Product": 5,
+    "ForecastWeek": 23,
+    "OrderAmount": 1401,
+    "WeeksBeforeDelivery": 3
+  },
+  {
+    "ActualWeek": 20,
+    "Product": 6,
+    "ForecastWeek": 24,
+    "OrderAmount": 1077,
+    "WeeksBeforeDelivery": 4
+  },
+  {
+    "ActualWeek": 20,
+    "Product": 7,
+    "ForecastWeek": 25,
+    "OrderAmount": 979,
+    "WeeksBeforeDelivery": 5
+  },
+  {
+    "ActualWeek": 20,
+    "Product": 8,
+    "ForecastWeek": 26,
+    "OrderAmount": 1088,
+    "WeeksBeforeDelivery": 6
+  },
+  {
+    "ActualWeek": 20,
+    "Product": 9,
+    "ForecastWeek": 27,
+    "OrderAmount": 1210,
+    "WeeksBeforeDelivery": 7
+  },
+  {
+    "ActualWeek": 20,
+    "Product": 10,
+    "ForecastWeek": 28,
+    "OrderAmount": 1512,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 20,
+    "Product": 11,
+    "ForecastWeek": 29,
+    "OrderAmount": 1161,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 20,
+    "Product": 12,
+    "ForecastWeek": 30,
+    "OrderAmount": 1054,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 20,
+    "Product": 13,
+    "ForecastWeek": 31,
+    "OrderAmount": 880,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 21,
+    "Product": 3,
+    "ForecastWeek": 21,
+    "OrderAmount": 905,
+    "WeeksBeforeDelivery": 0
+  },
+  {
+    "ActualWeek": 21,
+    "Product": 4,
+    "ForecastWeek": 22,
+    "OrderAmount": 1006,
+    "WeeksBeforeDelivery": 1
+  },
+  {
+    "ActualWeek": 21,
+    "Product": 5,
+    "ForecastWeek": 23,
+    "OrderAmount": 1121,
+    "WeeksBeforeDelivery": 2
+  },
+  {
+    "ActualWeek": 21,
+    "Product": 6,
+    "ForecastWeek": 24,
+    "OrderAmount": 1400,
+    "WeeksBeforeDelivery": 3
+  },
+  {
+    "ActualWeek": 21,
+    "Product": 7,
+    "ForecastWeek": 25,
+    "OrderAmount": 1076,
+    "WeeksBeforeDelivery": 4
+  },
+  {
+    "ActualWeek": 21,
+    "Product": 8,
+    "ForecastWeek": 26,
+    "OrderAmount": 979,
+    "WeeksBeforeDelivery": 5
+  },
+  {
+    "ActualWeek": 21,
+    "Product": 9,
+    "ForecastWeek": 27,
+    "OrderAmount": 1089,
+    "WeeksBeforeDelivery": 6
+  },
+  {
+    "ActualWeek": 21,
+    "Product": 10,
+    "ForecastWeek": 28,
+    "OrderAmount": 1210,
+    "WeeksBeforeDelivery": 7
+  },
+  {
+    "ActualWeek": 21,
+    "Product": 11,
+    "ForecastWeek": 29,
+    "OrderAmount": 1510,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 21,
+    "Product": 12,
+    "ForecastWeek": 30,
+    "OrderAmount": 1160,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 21,
+    "Product": 13,
+    "ForecastWeek": 31,
+    "OrderAmount": 1057,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 21,
+    "Product": 14,
+    "ForecastWeek": 32,
+    "OrderAmount": 880,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 22,
+    "Product": 4,
+    "ForecastWeek": 22,
+    "OrderAmount": 906,
+    "WeeksBeforeDelivery": 0
+  },
+  {
+    "ActualWeek": 22,
+    "Product": 5,
+    "ForecastWeek": 23,
+    "OrderAmount": 1009,
+    "WeeksBeforeDelivery": 1
+  },
+  {
+    "ActualWeek": 22,
+    "Product": 6,
+    "ForecastWeek": 24,
+    "OrderAmount": 1120,
+    "WeeksBeforeDelivery": 2
+  },
+  {
+    "ActualWeek": 22,
+    "Product": 7,
+    "ForecastWeek": 25,
+    "OrderAmount": 1399,
+    "WeeksBeforeDelivery": 3
+  },
+  {
+    "ActualWeek": 22,
+    "Product": 8,
+    "ForecastWeek": 26,
+    "OrderAmount": 1077,
+    "WeeksBeforeDelivery": 4
+  },
+  {
+    "ActualWeek": 22,
+    "Product": 9,
+    "ForecastWeek": 27,
+    "OrderAmount": 980,
+    "WeeksBeforeDelivery": 5
+  },
+  {
+    "ActualWeek": 22,
+    "Product": 10,
+    "ForecastWeek": 28,
+    "OrderAmount": 1088,
+    "WeeksBeforeDelivery": 6
+  },
+  {
+    "ActualWeek": 22,
+    "Product": 11,
+    "ForecastWeek": 29,
+    "OrderAmount": 1208,
+    "WeeksBeforeDelivery": 7
+  },
+  {
+    "ActualWeek": 22,
+    "Product": 12,
+    "ForecastWeek": 30,
+    "OrderAmount": 1508,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 22,
+    "Product": 13,
+    "ForecastWeek": 31,
+    "OrderAmount": 1163,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 22,
+    "Product": 14,
+    "ForecastWeek": 32,
+    "OrderAmount": 1056,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 22,
+    "Product": 15,
+    "ForecastWeek": 33,
+    "OrderAmount": 880,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 23,
+    "Product": 5,
+    "ForecastWeek": 23,
+    "OrderAmount": 909,
+    "WeeksBeforeDelivery": 0
+  },
+  {
+    "ActualWeek": 23,
+    "Product": 6,
+    "ForecastWeek": 24,
+    "OrderAmount": 1007,
+    "WeeksBeforeDelivery": 1
+  },
+  {
+    "ActualWeek": 23,
+    "Product": 7,
+    "ForecastWeek": 25,
+    "OrderAmount": 1119,
+    "WeeksBeforeDelivery": 2
+  },
+  {
+    "ActualWeek": 23,
+    "Product": 8,
+    "ForecastWeek": 26,
+    "OrderAmount": 1400,
+    "WeeksBeforeDelivery": 3
+  },
+  {
+    "ActualWeek": 23,
+    "Product": 9,
+    "ForecastWeek": 27,
+    "OrderAmount": 1078,
+    "WeeksBeforeDelivery": 4
+  },
+  {
+    "ActualWeek": 23,
+    "Product": 10,
+    "ForecastWeek": 28,
+    "OrderAmount": 980,
+    "WeeksBeforeDelivery": 5
+  },
+  {
+    "ActualWeek": 23,
+    "Product": 11,
+    "ForecastWeek": 29,
+    "OrderAmount": 1086,
+    "WeeksBeforeDelivery": 6
+  },
+  {
+    "ActualWeek": 23,
+    "Product": 12,
+    "ForecastWeek": 30,
+    "OrderAmount": 1207,
+    "WeeksBeforeDelivery": 7
+  },
+  {
+    "ActualWeek": 23,
+    "Product": 13,
+    "ForecastWeek": 31,
+    "OrderAmount": 1512,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 23,
+    "Product": 14,
+    "ForecastWeek": 32,
+    "OrderAmount": 1161,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 23,
+    "Product": 15,
+    "ForecastWeek": 33,
+    "OrderAmount": 1055,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 23,
+    "Product": 16,
+    "ForecastWeek": 34,
+    "OrderAmount": 880,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 24,
+    "Product": 6,
+    "ForecastWeek": 24,
+    "OrderAmount": 907,
+    "WeeksBeforeDelivery": 0
+  },
+  {
+    "ActualWeek": 24,
+    "Product": 7,
+    "ForecastWeek": 25,
+    "OrderAmount": 1008,
+    "WeeksBeforeDelivery": 1
+  },
+  {
+    "ActualWeek": 24,
+    "Product": 8,
+    "ForecastWeek": 26,
+    "OrderAmount": 1120,
+    "WeeksBeforeDelivery": 2
+  },
+  {
+    "ActualWeek": 24,
+    "Product": 9,
+    "ForecastWeek": 27,
+    "OrderAmount": 1401,
+    "WeeksBeforeDelivery": 3
+  },
+  {
+    "ActualWeek": 24,
+    "Product": 10,
+    "ForecastWeek": 28,
+    "OrderAmount": 1077,
+    "WeeksBeforeDelivery": 4
+  },
+  {
+    "ActualWeek": 24,
+    "Product": 11,
+    "ForecastWeek": 29,
+    "OrderAmount": 977,
+    "WeeksBeforeDelivery": 5
+  },
+  {
+    "ActualWeek": 24,
+    "Product": 12,
+    "ForecastWeek": 30,
+    "OrderAmount": 1086,
+    "WeeksBeforeDelivery": 6
+  },
+  {
+    "ActualWeek": 24,
+    "Product": 13,
+    "ForecastWeek": 31,
+    "OrderAmount": 1209,
+    "WeeksBeforeDelivery": 7
+  },
+  {
+    "ActualWeek": 24,
+    "Product": 14,
+    "ForecastWeek": 32,
+    "OrderAmount": 1511,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 24,
+    "Product": 15,
+    "ForecastWeek": 33,
+    "OrderAmount": 1161,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 24,
+    "Product": 16,
+    "ForecastWeek": 34,
+    "OrderAmount": 1056,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 24,
+    "Product": 17,
+    "ForecastWeek": 35,
+    "OrderAmount": 879,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 25,
+    "Product": 7,
+    "ForecastWeek": 25,
+    "OrderAmount": 907,
+    "WeeksBeforeDelivery": 0
+  },
+  {
+    "ActualWeek": 25,
+    "Product": 8,
+    "ForecastWeek": 26,
+    "OrderAmount": 1008,
+    "WeeksBeforeDelivery": 1
+  },
+  {
+    "ActualWeek": 25,
+    "Product": 9,
+    "ForecastWeek": 27,
+    "OrderAmount": 1121,
+    "WeeksBeforeDelivery": 2
+  },
+  {
+    "ActualWeek": 25,
+    "Product": 10,
+    "ForecastWeek": 28,
+    "OrderAmount": 1400,
+    "WeeksBeforeDelivery": 3
+  },
+  {
+    "ActualWeek": 25,
+    "Product": 11,
+    "ForecastWeek": 29,
+    "OrderAmount": 1075,
+    "WeeksBeforeDelivery": 4
+  },
+  {
+    "ActualWeek": 25,
+    "Product": 12,
+    "ForecastWeek": 30,
+    "OrderAmount": 978,
+    "WeeksBeforeDelivery": 5
+  },
+  {
+    "ActualWeek": 25,
+    "Product": 13,
+    "ForecastWeek": 31,
+    "OrderAmount": 1089,
+    "WeeksBeforeDelivery": 6
+  },
+  {
+    "ActualWeek": 25,
+    "Product": 14,
+    "ForecastWeek": 32,
+    "OrderAmount": 1209,
+    "WeeksBeforeDelivery": 7
+  },
+  {
+    "ActualWeek": 25,
+    "Product": 15,
+    "ForecastWeek": 33,
+    "OrderAmount": 1510,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 25,
+    "Product": 16,
+    "ForecastWeek": 34,
+    "OrderAmount": 1162,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 25,
+    "Product": 17,
+    "ForecastWeek": 35,
+    "OrderAmount": 1055,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 25,
+    "Product": 18,
+    "ForecastWeek": 36,
+    "OrderAmount": 880,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 26,
+    "Product": 8,
+    "ForecastWeek": 26,
+    "OrderAmount": 907,
+    "WeeksBeforeDelivery": 0
+  },
+  {
+    "ActualWeek": 26,
+    "Product": 9,
+    "ForecastWeek": 27,
+    "OrderAmount": 1008,
+    "WeeksBeforeDelivery": 1
+  },
+  {
+    "ActualWeek": 26,
+    "Product": 10,
+    "ForecastWeek": 28,
+    "OrderAmount": 1120,
+    "WeeksBeforeDelivery": 2
+  },
+  {
+    "ActualWeek": 26,
+    "Product": 11,
+    "ForecastWeek": 29,
+    "OrderAmount": 1398,
+    "WeeksBeforeDelivery": 3
+  },
+  {
+    "ActualWeek": 26,
+    "Product": 12,
+    "ForecastWeek": 30,
+    "OrderAmount": 1075,
+    "WeeksBeforeDelivery": 4
+  },
+  {
+    "ActualWeek": 26,
+    "Product": 13,
+    "ForecastWeek": 31,
+    "OrderAmount": 980,
+    "WeeksBeforeDelivery": 5
+  },
+  {
+    "ActualWeek": 26,
+    "Product": 14,
+    "ForecastWeek": 32,
+    "OrderAmount": 1088,
+    "WeeksBeforeDelivery": 6
+  },
+  {
+    "ActualWeek": 26,
+    "Product": 15,
+    "ForecastWeek": 33,
+    "OrderAmount": 1208,
+    "WeeksBeforeDelivery": 7
+  },
+  {
+    "ActualWeek": 26,
+    "Product": 16,
+    "ForecastWeek": 34,
+    "OrderAmount": 1510,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 26,
+    "Product": 17,
+    "ForecastWeek": 35,
+    "OrderAmount": 1161,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 26,
+    "Product": 18,
+    "ForecastWeek": 36,
+    "OrderAmount": 1056,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 26,
+    "Product": 19,
+    "ForecastWeek": 37,
+    "OrderAmount": 879,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 27,
+    "Product": 9,
+    "ForecastWeek": 27,
+    "OrderAmount": 908,
+    "WeeksBeforeDelivery": 0
+  },
+  {
+    "ActualWeek": 27,
+    "Product": 10,
+    "ForecastWeek": 28,
+    "OrderAmount": 1008,
+    "WeeksBeforeDelivery": 1
+  },
+  {
+    "ActualWeek": 27,
+    "Product": 11,
+    "ForecastWeek": 29,
+    "OrderAmount": 1118,
+    "WeeksBeforeDelivery": 2
+  },
+  {
+    "ActualWeek": 27,
+    "Product": 12,
+    "ForecastWeek": 30,
+    "OrderAmount": 1397,
+    "WeeksBeforeDelivery": 3
+  },
+  {
+    "ActualWeek": 27,
+    "Product": 13,
+    "ForecastWeek": 31,
+    "OrderAmount": 1078,
+    "WeeksBeforeDelivery": 4
+  },
+  {
+    "ActualWeek": 27,
+    "Product": 14,
+    "ForecastWeek": 32,
+    "OrderAmount": 980,
+    "WeeksBeforeDelivery": 5
+  },
+  {
+    "ActualWeek": 27,
+    "Product": 15,
+    "ForecastWeek": 33,
+    "OrderAmount": 1087,
+    "WeeksBeforeDelivery": 6
+  },
+  {
+    "ActualWeek": 27,
+    "Product": 16,
+    "ForecastWeek": 34,
+    "OrderAmount": 1207,
+    "WeeksBeforeDelivery": 7
+  },
+  {
+    "ActualWeek": 27,
+    "Product": 17,
+    "ForecastWeek": 35,
+    "OrderAmount": 1509,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 27,
+    "Product": 18,
+    "ForecastWeek": 36,
+    "OrderAmount": 1162,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 27,
+    "Product": 19,
+    "ForecastWeek": 37,
+    "OrderAmount": 1056,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 27,
+    "Product": 20,
+    "ForecastWeek": 38,
+    "OrderAmount": 880,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 28,
+    "Product": 10,
+    "ForecastWeek": 28,
+    "OrderAmount": 907,
+    "WeeksBeforeDelivery": 0
+  },
+  {
+    "ActualWeek": 28,
+    "Product": 11,
+    "ForecastWeek": 29,
+    "OrderAmount": 1006,
+    "WeeksBeforeDelivery": 1
+  },
+  {
+    "ActualWeek": 28,
+    "Product": 12,
+    "ForecastWeek": 30,
+    "OrderAmount": 1117,
+    "WeeksBeforeDelivery": 2
+  },
+  {
+    "ActualWeek": 28,
+    "Product": 13,
+    "ForecastWeek": 31,
+    "OrderAmount": 1401,
+    "WeeksBeforeDelivery": 3
+  },
+  {
+    "ActualWeek": 28,
+    "Product": 14,
+    "ForecastWeek": 32,
+    "OrderAmount": 1079,
+    "WeeksBeforeDelivery": 4
+  },
+  {
+    "ActualWeek": 28,
+    "Product": 15,
+    "ForecastWeek": 33,
+    "OrderAmount": 978,
+    "WeeksBeforeDelivery": 5
+  },
+  {
+    "ActualWeek": 28,
+    "Product": 16,
+    "ForecastWeek": 34,
+    "OrderAmount": 1086,
+    "WeeksBeforeDelivery": 6
+  },
+  {
+    "ActualWeek": 28,
+    "Product": 17,
+    "ForecastWeek": 35,
+    "OrderAmount": 1207,
+    "WeeksBeforeDelivery": 7
+  },
+  {
+    "ActualWeek": 28,
+    "Product": 18,
+    "ForecastWeek": 36,
+    "OrderAmount": 1511,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 28,
+    "Product": 19,
+    "ForecastWeek": 37,
+    "OrderAmount": 1161,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 28,
+    "Product": 20,
+    "ForecastWeek": 38,
+    "OrderAmount": 1058,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 28,
+    "Product": 21,
+    "ForecastWeek": 39,
+    "OrderAmount": 881,
+    "WeeksBeforeDelivery": 11
+  },
+  {
+    "ActualWeek": 29,
+    "Product": 11,
+    "ForecastWeek": 29,
+    "OrderAmount": 906,
+    "WeeksBeforeDelivery": 0
+  },
+  {
+    "ActualWeek": 29,
+    "Product": 12,
+    "ForecastWeek": 30,
+    "OrderAmount": 1005,
+    "WeeksBeforeDelivery": 1
+  },
+  {
+    "ActualWeek": 29,
+    "Product": 13,
+    "ForecastWeek": 31,
+    "OrderAmount": 1120,
+    "WeeksBeforeDelivery": 2
+  },
+  {
+    "ActualWeek": 29,
+    "Product": 14,
+    "ForecastWeek": 32,
+    "OrderAmount": 1402,
+    "WeeksBeforeDelivery": 3
+  },
+  {
+    "ActualWeek": 29,
+    "Product": 15,
+    "ForecastWeek": 33,
+    "OrderAmount": 1075,
+    "WeeksBeforeDelivery": 4
+  },
+  {
+    "ActualWeek": 29,
+    "Product": 16,
+    "ForecastWeek": 34,
+    "OrderAmount": 977,
+    "WeeksBeforeDelivery": 5
+  },
+  {
+    "ActualWeek": 29,
+    "Product": 17,
+    "ForecastWeek": 35,
+    "OrderAmount": 1087,
+    "WeeksBeforeDelivery": 6
+  },
+  {
+    "ActualWeek": 29,
+    "Product": 18,
+    "ForecastWeek": 36,
+    "OrderAmount": 1208,
+    "WeeksBeforeDelivery": 7
+  },
+  {
+    "ActualWeek": 29,
+    "Product": 19,
+    "ForecastWeek": 37,
+    "OrderAmount": 1509,
+    "WeeksBeforeDelivery": 8
+  },
+  {
+    "ActualWeek": 29,
+    "Product": 20,
+    "ForecastWeek": 38,
+    "OrderAmount": 1164,
+    "WeeksBeforeDelivery": 9
+  },
+  {
+    "ActualWeek": 29,
+    "Product": 21,
+    "ForecastWeek": 39,
+    "OrderAmount": 1057,
+    "WeeksBeforeDelivery": 10
+  },
+  {
+    "ActualWeek": 29,
+    "Product": 22,
+    "ForecastWeek": 40,
+    "OrderAmount": 880,
+    "WeeksBeforeDelivery": 11
+  }
+]
