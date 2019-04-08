@@ -9,7 +9,6 @@ else {
 
 <!DOCTYPE html>
 <html lang="en">
-<meta charset="utf-8">
 
 <head>
     <meta charset="utf-8">
@@ -41,10 +40,10 @@ else {
         }
     </style>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
-        crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
-        crossorigin="anonymous"></script>
+    crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+    crossorigin="anonymous"></script>
 
 </head>
 
@@ -58,7 +57,7 @@ else {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-light" href="/index.php">Web tool home</a>
+                <a class="navbar-brand" href="/index.php">Web tool home</a>
             </div>
             <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
@@ -80,7 +79,7 @@ else {
                                 <a class="dropdown-item" href="./deliveryplans.php">Delivery Plans</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="./forecastbias.php">Forecast Bias Analysis</a>
+                                <a class="dropdown-item" href="./forecasterror.php">Forecast Error</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>
@@ -92,24 +91,32 @@ else {
                                 <a class="dropdown-item" href="./rmse_graph.php">Root Mean Squared Error (RMSE)</a>
                             </li>
                             <li>
+                                <a class="dropdown-item" href="./mpe.php">Mean Percentage Error (MPE)</a>
+                            </li>
+                            <li>
                                 <a class="dropdown-item " href="./mape.php">Mean Absolute Percentage Error (MAPE)</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="./customerorders.php">Customer Orders</a>
+                                <a class="dropdown-item " href="./meanforecastbias.php">Mean Forecast Bias</a>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">Corrected Error Measures</li>
+                            <li>
+                                <a class="dropdown-item" href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
                             </li>
 
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Matrices</li>
                             <li>
-                                <a class="dropdown-item" href="./matrix.html">Delivery Plans Matrix</a>
+                                <a class="dropdown-item" href="./matrix.php">Delivery Plans Matrix</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="./matrixvariance.html">Delivery Plans Matrix - With Variance</a>
+                                <a class="dropdown-item" href="./matrixvariance.php">Delivery Plans Matrix - With Variance</a>
                             </li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">New Graphs</li>
                             <li>
-                                <a class="dropdown-item" href="./boxplot.html">Box Plot</a>
+                                <a class="dropdown-item" href="./boxplot.php">Box Plot</a>
                             </li>
                         </ul>
                         </li>
@@ -132,7 +139,7 @@ else {
     <script src="http://d3js.org/d3.v3.min.js"></script>
 
 
-    <div style="padding-left:39px">
+    <div style="padding-left:3px">
 
         <h3>Mean Squared Error (MSE) Graph</h3>
         <small>
@@ -142,9 +149,11 @@ else {
             echo ".";
             ?></small>
             <br><br>
-        <p> NOTE: This graph shows an estimate of the average squared difference between the final customer orders and all the rest (forecasted) customer orders with respect to periods before delivery (PBD). <br>
-        The Formula of the Mean Squared Error is: <img src = "https://i.stack.imgur.com/19Cmk.gif" alt="MSE formula" height="50" width="165">, where <b>y</b> is the forecasted customer orders,
-          <b>ỹ</b> is the final customer orders, and <b>n</b> is the number of periods. </p>
+        <p> <b>Graph Description:</b> This graph shows the average squared difference between forecasted and final customer orders with respect to periods before delivery (PBD). <br>
+        Mean Squared Error (the mean/average of the squared errors) measures the quality of an estimation (zero meaning perfect accuracy). <br>
+        The Formula of the Mean Squared Error (MSE) is: 
+        <img src="https://latex.codecogs.com/gif.latex?MSE_{j} = \frac{1}{n}\sum_{i=1}^{n}(x_{i,j}-x_{i,0})^{2}" title="MSE formula" />. </p> 
+        <!-- \frac{1}{n}\sum_{i=1}^{n} ( x_{i,j} - x_{i,0})^{2} -->
     </div>
 
     <script>
@@ -255,7 +264,7 @@ else {
             var legendOffset = 140;
 
 
-            var margin = { top: 20, right: 25, bottom: 30, left: 55 },
+            var margin = { top: 20, right: 15, bottom: 30, left: 80 },
                 width = 960 - margin.left - margin.right,
                 height = 590 - margin.top - margin.bottom - legendOffset;
 
@@ -391,6 +400,8 @@ else {
         crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
+
+
 </body>
 
 </html>

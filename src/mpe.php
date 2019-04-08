@@ -17,7 +17,7 @@ else {
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/data/ico/innofit.ico">
-    <title>Mean Absolute Percentage Error (MAPE) Graph</title>
+    <title>Mean Percentage Error (MPE) Graph</title>
     <link href="/lib/css/bootstrap.min.css" rel="stylesheet">
 
 
@@ -95,12 +95,11 @@ else {
                             <li>
                                 <a class="dropdown-item" href="./rmse_graph.php">Root Mean Square Error (RMSE)</a>
                             </li>
-
-                            <li>
-                                <a class="dropdown-item" href="./mpe.php">Mean Percentage Error (MPE)</a>
-                            </li>
                             <li class="active">
-                                <a class="dropdown-item active" href="./mape.php">Mean Absolute Percentage Error (MAPE)</a>
+                                <a class="dropdown-item active" href="./mpe.php">Mean Percentage Error (MPE)</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item " href="./mape.php">Mean Absolute Percentage Error (MAPE)</a>
                             </li>
                             <li>
                                 <a class="dropdown-item " href="./meanforecastbias.php">Mean Forecast Bias</a>
@@ -110,7 +109,6 @@ else {
                             <li>
                                 <a class="dropdown-item" href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
                             </li>
-
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Matrices</li>
                             <li>
@@ -147,7 +145,7 @@ else {
     
         <div style="padding-left:39px">
         
-            <h3>Mean Absolute Percentage Error (MAPE) Graph</h3>
+            <h3>Mean Percentage Error (MPE) Graph</h3>
             <small>
                 <?php
                 echo "You are logged in as: ";
@@ -155,11 +153,11 @@ else {
                 echo ".";
                 ?></small>
                 <br><br>
-            <p> <b>Graph Description:</b> This graph shows the calculation of the Mean Absolute Percentage Error (MAPE), which is the evaluation of forecasting accuracy, calculated by
+            <p> <b>Graph Description: </b> This graph shows the calculation of the Mean Percentage Error (MPE), which is the evaluation of forecasting accuracy, calculated by
                the difference between forecasted customer orders and the final customer orders and divided by the final customer orders. The result is divided by a number of 
                 periods with respect to periods before delivery (PBD). 
                 <br>The formula of the MAPE is the following:
-                    <img src="https://latex.codecogs.com/gif.latex?MAPE_{j} = \frac {\sum_{i=1}^{n}|x_{i,j}-x_{i,0}|}{\sum_{i=1}^{n}x_{i,0}}" title="MAPE formula" /> 
+                    <img src="https://latex.codecogs.com/gif.latex?MPE_{j} = \frac {\sum_{i=1}^{n}x_{i,j}-x_{i,0}}{\sum_{i=1}^{n}x_{i,0}}" title="MAPE formula" /> 
                  </p> <!-- \frac{1}{n}\sum_{i=1}^{n} \frac{\left | x_{i,j} - x_{i,0} \right |}{x_{i,0}} -->
         
         </div>
@@ -171,57 +169,27 @@ else {
 
                 console.log('Original Data (All Data): ', data);
 
-                
                 let finalOrder = data.filter((el) => {
-                    return el.ActualPeriod == el.ForecastPeriod;
+                    return el.PeriodsBeforeDelivery == 0;
                 });
                 console.log('Final order array: ', finalOrder);
 
                 let uniqueArray = data.filter(function (obj) { return finalOrder.indexOf(obj) == -1; });
                 console.log("Unique array: ", uniqueArray);
 
-                
-                let calcDifference = function (originalEl, finalOrder) {
-                return Math.abs(originalEl.OrderAmount - finalOrder);
-                }
-
-                let diffMap = new Map();
-
-                uniqueArray.forEach((val) => {     //map of forecasted order amounts
-                    let keyString = val.ActualPeriod;
-                    let valueString = val.OrderAmount;
-                    diffMap.set(keyString, valueString);
-                });
-
-                let diffArray = uniqueArray.map((el) => {
-                let difference = calcDifference(el, diffMap.get(el.ActualPeriod));
-                return {
-                    ActualPeriod: el.ActualPeriod,
-                    ForecastPeriod: el.ForecastPeriod,
-                    OrderAmount: el.OrderAmount,
-                    Product: el.Product,
-                    FinalOrder: diffMap.get(el.PeriodsBeforeDelivery),
-                    PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                    Difference: difference
-                    };
-                })
-                
-                // let sumOfAllDifferences = diffArray.map(item => item.Difference).reduce((a, b) => +a + +b);
-                //     console.log('Sum of all differences: ', sumOfAllDifferences);
-
                 let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
                 console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
 
                 let dataGroupedByPBD = d3.nest()
                     .key(function(d) { return d.PeriodsBeforeDelivery; })
-                    .entries(diffArray);
+                    .entries(uniqueArray);
 
                 console.log('Grouped data: ', dataGroupedByPBD);
 
                 let finalMape = dataGroupedByPBD.map((val) => {
-                    let sum = val.values.map(item => item.Difference).reduce((a, b) => +a + +b);          //sum of differences
+                    let sum = val.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
                     console.log('sum for pbd: ', val.key, ' sum: ', sum);
-                    let mapeCurrentPBD = sum / sumOfAllFinalOrders;
+                    let mapeCurrentPBD = (sum - sumOfAllFinalOrders) / sumOfAllFinalOrders;
                     console.log('current mape: ', mapeCurrentPBD);
 
                     return {
@@ -231,45 +199,66 @@ else {
                 });
 
                 console.log('Final Mape: ', finalMape);
-        
+                // /**  Function for calculating the difference between forecast and final orders   */
+
+                // let diffArr = function (orignalEl, finalOrder) {
+                //     let result = new Map()
+                    
+                //     orignalEl.forEach(el => {
+                //         let prevVal = result.get(el.ForecastPeriod);
+                //         if (prevVal === undefined) {
+                //             prevVal = 0;
+                //         }
+                //         var currVal = 0 + Math.abs(el.OrderAmount - finalOrderSums.get(el.ForecastPeriod));   
+                //         result.set(el.ForecastPeriod, currVal);
+                //     });
+                //     return result;
+                // }
+                               
+                // let difference = diffArr(uniqueArray, finalOrder)
 
 
 
+                // function calculate_difference(finalOrder, uniqueArray) {
+            	//     var result2 = 0;
+                //     uniqueArray.forEach(el => {
+                //         for (var i = 0; i <= finalOrder.length; i++) {
+		        //         result2 += Math.abs(el.OrderAmount - finalOrder[i]);
+	            //     }
+                //     });
+	                
+            	//     return result2;
+                // }
 
-
-
-
-                // let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-                // console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
-
-                // let dataGroupedByPBD = d3.nest()
-                //     .key(function(d) { return d.PeriodsBeforeDelivery; })
-                //     .entries(uniqueArray);
-
-                // console.log('Grouped data: ', dataGroupedByPBD);
-
-                // let finalMape = dataGroupedByPBD.map((val) => {
-                //     let sum = val.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-                //     console.log('sum for pbd: ', val.key, ' sum: ', sum);
-                //     let mapeCurrentPBD = Math.abs((sum - sumOfAllFinalOrders) / sumOfAllFinalOrders);
-                //     console.log('current mape: ', mapeCurrentPBD);
-
+                // let absValuesArray = uniqueArray.map((el) => {
+                //     let value = (finalOrderSums/differenceSums);
                 //     return {
-                //         PeriodsBeforeDelivery: val.key,
-                //         MapeForPBD: mapeCurrentPBD
+                //         ActualPeriod: el.ActualPeriod,
+                //         ForecastPeriod: el.ForecastPeriod,
+                //         OrderAmount: el.OrderAmount,
+                //         Product: el.Product,
+                //         PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                //         MAPE: value
                 //     };
                 // });
 
-                // console.log('Final Mape: ', finalMape);
+               // console.log("Absolute Difference: ", absValuesArray);
+                // let seperatedByPeriods = d3.nest()
+                //     .key(function (d) { return d.PeriodsBeforeDelivery })
+                //     .entries(absValuesArray);
+                // let finalArray = seperatedByPeriods.map((el) => {
+                //     let finalMAPE = reduce(el.values, function (d) { return d.MAPE; });      /// do not take the mean
+                //     return {
+                //         Product: el.Product,
+                //         ActualPeriod: el.ActualPeriod,
+                //         ForecastPeriod: el.ForecastPeriod,
+                //         OrderAmount: el.OrderAmount,
+                //         PeriodsBeforeDelivery: el.key,
+                //         CalcMape: finalMAPE
+                //     };
+                // });
+                // console.log("final array: ", finalArray);
 
-
-
-
-
-                
-
-        
-               
                 var legendOffset = 120;
 
                 var margin = { top: 15, right: 5, bottom: 15, left: 30 },
@@ -344,7 +333,7 @@ else {
 
                     .text(function (d) {
                         return 'Periods Before Delivery: ' +d.PeriodsBeforeDelivery +
-                            '\nMAPE of the Period: ' + d.MapeForPBD 
+                            '\nMPE of the Period: ' + d.MapeForPBD 
                             //'\nWeeks Before Delivery: ' + d.WeeksBeforeDelivery
                         //'\nOrder Amount: ' + d.OrderAmount
                     })
@@ -372,7 +361,7 @@ else {
                     .attr("y", 5)
                     .attr("dy", ".45em")
                     .style("text-anchor", "end")
-                    .text("Mean Absolute Percentage Error (MAPE)")
+                    .text("Mean Percentage Error (MPE)")
 
 
                 var legend = svg.selectAll(".legend")

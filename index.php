@@ -1,11 +1,18 @@
 <?php
-if(session_id() == '' || !isset($_SESSION)) {
+ob_start(); ?>
+<?php
+// if(!isset($_SESSION["session_username"])){
+//     header("Location: includes/login.php");
+// }
+
+if(session_id() == '' || !isset($_SESSION["session_username"])) {
     // session isn't started
     session_start();
 }
 else {
     header("Location: includes/login.php");
-};?>
+ };
+ ?>
 <?php 
 require_once("includes/connection.php"); ?>
 <!DOCTYPE html>
@@ -41,36 +48,45 @@ require_once("includes/connection.php"); ?>
             stroke-width: 1;
             shape-rendering: crispEdges;
         } 
-/* .row {
-    text-align: center;
-    position: absolute;
-    background-color: #adc8e6;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #adc8e6;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
 
-.dropdown-content a {
-color: black;
-padding: 12px 16px;
-text-decoration: none;
-display: block;
-text-align: left;
-}
+        .sidenav {
+            height: 60%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 60px;
+            left: 0;
+            background-color: #143b85;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
 
-.dropdown-content a:hover {background-color: #f1f1f1}
+        .sidenav a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 21px;
+            color: #cce4d7;
+            display: block;
+            transition: 0.3s
+        }
 
-.dropdown:hover .dropdown-content {
-display: block;
-} */
+        .sidenav a:hover, .offcanvas a:focus{
+            color: #f1f1f1;
+        }
+
+        .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 30px !important;
+            margin-left: 50px;
+        }
+
+        @media screen and (max-height: 250px) {
+        .sidenav {padding-top: 35px;}
+        .sidenav a {font-size: 18px;}
+        }
 </style>
 
  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -135,7 +151,7 @@ $(document).ready(function() {
                                 <a class="dropdown-item"  href="src/deliveryplans.php">Delivery Plans</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="src/forecastbias.php">Forecast Bias Analysis</a>
+                                <a class="dropdown-item" href="src/forecasterror.php">Forecast Error</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="src/mad_graph.php">Mean Absolute Deviation (MAD)</a>
@@ -147,24 +163,32 @@ $(document).ready(function() {
                                 <a class="dropdown-item" href="src/rmse_graph.php">Root Mean Square Error (RMSE)</a>
                             </li>
                             <li>
+                                <a class="dropdown-item" href="src/mpe.php">Mean Percentage Error (MPE)</a>
+                            </li>                            
+                            <li>
                                 <a class="dropdown-item " href="src/mape.php">Mean Absolute Percentage Error (MAPE)</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="src/customerorders.php">Customer Orders</a>
+                                <a class="dropdown-item " href="src/meanforecastbias.php">Mean Forecast Bias</a>
                             </li>
-
+                            <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">Corrected Error Measures</li>
+                            <li>
+                                <a class="dropdown-item" href="src/cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
+                            </li>
+ 
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Matrices</li>
                             <li>
-                                <a class="dropdown-item" href="src/matrix.html">Delivery Plans Matrix</a>
+                                <a class="dropdown-item" href="src/matrix.php">Delivery Plans Matrix</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="src/matrixvariance.html">Delivery Plans Matrix - With Variance</a>
+                                <a class="dropdown-item" href="src/matrixvariance.php">Delivery Plans Matrix - With Variance</a>
                             </li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">New Graphs</li>
                             <li>
-                                <a class="dropdown-item" href="src/boxplot.html">Box Plot</a>
+                                <a class="dropdown-item" href="src/boxplot.php">Box Plot</a>
                             </li>
                         </ul>
                     </li>
@@ -184,8 +208,7 @@ $(document).ready(function() {
     </nav>
     
 
-<!-- <span style="font-size:15px;cursor:pointer" onclick="openNav()">&#9776; Open scenarios</span>
-<br><br> -->
+
 
 <div style="padding-left:39px">
   <h3>Forecast Quality Visualization</h3>
@@ -202,21 +225,19 @@ echo ",";
 
  <br> Here you can find the overview of the Forecast Quality Visualization tool. 
  
-<br>Final Order Amount, Delivery Plans, Forecast Bias Analysis, MAD, MSE, RMSE and MAPE graphs are already connected to a database.<br>
-<br> <b> NOTE: Please upload the data in csv format in the following structure: <br>Product	 ActualPeriod	 ForecastPeriod	 OrderAmount	 PeriodsBeforeDelivery
+<br>All graphs except matrices and new graphs (box plot) are connected to a database.<br>
+<br> <b> NOTE: Please upload the data in .csv format in the following data structure: <br>Product	 ActualPeriod	 ForecastPeriod	 OrderAmount	 PeriodsBeforeDelivery
 </b><br>
 
 <br>Happy exploring!</p>
 </div>
-
-<!-- <div id="mySidenav" class="sidenav">
+<span style="font-size:15px;cursor:pointer" onclick="openNav()">&#9776; Open scenarios</span>
+<div id="mySidenav" class="sidenav">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
   <a href="#">Scenario 1</a>
   <a href="#">Scenario 2</a>
-  <a href="#">Scenario 3</a>
-  
+  <a href="#">Scenario 3</a>  
 </div>
- -->
 <script>
 function openNav() {
     document.getElementById("mySidenav").style.width = "200px";
@@ -226,6 +247,7 @@ function closeNav() {
     document.getElementById("mySidenav").style.width = "0";
 }
 </script>
+
 <?php
 
 
@@ -250,8 +272,8 @@ if (isset($_POST["import"])) {
             
             if (! empty($result)) {
                 $type = "success";
-                $message = "CSV Data Imported into the Database";
-            //    echo "Import was successful";
+                $message = "CSV Data was imported into the database";
+                //echo "Import was successful";
             } else {
                 printf( "Error: %s\n", mysqli_error( $conn ) );
                 $type = "error";
@@ -261,9 +283,7 @@ if (isset($_POST["import"])) {
         }
         $i++;
         }
-        
     }
-   
 }
 ?>
     <div class="outer-scontainer">
@@ -272,27 +292,55 @@ if (isset($_POST["import"])) {
             <form class="form-horizontal" action="" method="post"
                 name="frmCSVImport" id="frmCSVImport" enctype="multipart/form-data"><br>
                 <div class="input-row">
-                    <label class="col-md-4 control-label">Choose CSV
-                        File</label> <input type="file" name="file"
+                    <label class="col-md-4 control-label">Choose CSV File</label> <input type="file" name="file"
                         id="file" accept=".csv">
                         <button type = "submit" id= "submit" name ="import" class="w3-button w3-light-blue">Import</button><br>
                     <!-- <button type="submit" id="submit" name="import" class="btn-submit btn-blue">Import</button> -->
                     <br />
-
                 </div>
-
             </form>
-
         </div>
-      
     </div>
 
-    <script src="lib/js/bootstrap.bundle.min.js"></script>
+    <?php
+      if (!empty($_GET['act'])) {
+        //echo "to remove the data in my table"; 
+    } else {
+    ?>
+    <br/><br>
+    <div style="padding-left:39px">
+    <div class="outer-scontainer">
+        You can remove all your order data from the database by clicking on the button below.
+    <div class="input-row">
+    <form action="includes/delete.php" method="get" onsubmit="return confirm('Are you sure you want to remove all data?');">
+    <input type="hidden" name="act" value="run">
+    <input type="submit" value="Delete All Data">
+    </form>
+    <?php
+    }
+    ?>
+    </div>
+</div>
+</div><br><br>
+<div style="background-color:lavender;padding-left:39px">
+    <i><img src = "/data/ico/icon.png" alt = "Information Icon" height="15" width="15"><b> Instructions to upload data in CSV format:</i></b> <br>
+    Step 1: Create a new Excel file and add the data, so that values of each column (Product, ActualPeriod, ForecastPeriod, OrderAmount, PeriodsBeforeDelivery) are in a separate column.
+    <br> Please keep all numbers in <b>Integer</b> format.<br>
+    Step 2: For MS Office in German, please add a new line in the beginning of the file: <b><br>sep=;<br></b>
+    This will create a delimiter so that the file format can be used for both English and German-based MS Office documents.<br>
+    Step 3: Save the file as "CSV (Comma delimited) (*.csv)"<br>
+    Step 4: Close the file.<br>
+    Step 5: Please open the newly-created CSV file. The data in the file should stay in the table/column structure. <br>
+    An example of data in the suitable format:<br> <img src = "/data/img/example.jpg" alt = "Data Format Example" height="150" width="450"><br>
+<br></div>
+
+
+    <!-- <script src="lib/js/bootstrap.bundle.min.js"></script> -->
     <!-- Bootstrap core JavaScript -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="lib/jquery/jquery.min.js"><\/script>')</script>
-    <script src="lib/js/bootstrap.min.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
+    <!-- <script>window.jQuery || document.write('<script src="lib/jquery/jquery.min.js"><\/script>')</script> -->
+    <!-- <script src="lib/js/bootstrap.min.js"></script> -->
 
 </body>
 

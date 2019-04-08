@@ -43,7 +43,7 @@ else {
  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script> 
-
+<script type="text/javascript" src="lib/js/bootstrap.min.js"></script>
  </head>
 
 <body>
@@ -56,7 +56,7 @@ else {
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a class="navbar-light" href="/index.php">Web tool home</a>
+						<a class="navbar-brand" href="/index.php">Web tool home</a>
 					</div>
 					<div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
 						<ul class="nav navbar-nav">
@@ -78,7 +78,7 @@ else {
 										<a class="dropdown-item"  href="./deliveryplans.php">Delivery Plans</a>
 									</li>
 									<li>
-										<a class="dropdown-item" href="./forecastbias.php">Forecast Bias Analysis</a>
+										<a class="dropdown-item" href="./forecasterror.php">Forecast Error</a>
 									</li>
 									<li>
 										<a class="dropdown-item" href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>
@@ -90,24 +90,32 @@ else {
 										<a class="dropdown-item" href="./rmse_graph.php">Root Mean Square Error (RMSE)</a>
 									</li>
 									<li>
+										<a class="dropdown-item " href="./mpe.php">Mean Percentage Error (MPE)</a>
+									</li>
+									<li>
 										<a class="dropdown-item " href="./mape.php">Mean Absolute Percentage Error (MAPE)</a>
 									</li>
 									<li>
-										<a class="dropdown-item" href="./customerorders.php">Customer Orders</a>
-									</li>
+                               		 <a class="dropdown-item " href="./meanforecastbias.php">Mean Forecast Bias</a>
+                        		    </li>
+									<li role="separator" class="divider"></li>
+                       			    <li class="dropdown-header">Corrected Error Measures</li>
+                        		    <li>
+                        	        <a class="dropdown-item" href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
+                        		    </li>
 		
 									<li role="separator" class="divider"></li>
 									<li class="dropdown-header">Matrices</li>
 									<li>
-										<a class="dropdown-item" href="./matrix.html">Delivery Plans Matrix</a>
+										<a class="dropdown-item" href="./matrix.php">Delivery Plans Matrix</a>
 									</li>
 									<li>
-										<a class="dropdown-item" href="./matrixvariance.html">Delivery Plans Matrix - With Variance</a>
+										<a class="dropdown-item" href="./matrixvariance.php">Delivery Plans Matrix - With Variance</a>
 									</li>
 									<li role="separator" class="divider"></li>
 									<li class="dropdown-header">New Graphs</li>
 									<li>
-										<a class="dropdown-item" href="./boxplot.html">Box Plot</a>
+										<a class="dropdown-item" href="./boxplot.php">Box Plot</a>
 									</li>
 								</ul>
 							</li>
@@ -142,18 +150,8 @@ echo ".";
 		<div class = "row1"> 
 		<div class="col-sm-6">
 		<p class = "class-text"> 
-		The lack of information exchange between customers and suppliers leads to
-		<b>overproduction</b>,
-		<b>high levels of stock </b> and
-		<b>overtime</b>.
-		<br>Furthermore, it can result in
-		<b>a loss of customers</b> and
-		<b>additional transportation costs</b>. The quality of planning and handling of information
-		 can significantly influence these key aspects and therefore potentially increase the competitiveness of Austrian companies
-		in the global market.
 		<br>
-		<br>
-		This tool was created as a part of the <strong>InnoFIT project</strong>, which aims at developing innovative forecasting tools for improved production
+		This tool was created as a part of the <strong>InnoFIT research project</strong>, which aims at developing innovative forecasting tools for improved production
 		planning. The project is funded by the Austrian Research Promotion Agency 
 		<a href="https://www.ffg.at/en/content/about-ffg" title="Austrian Research Promotion Agency">(FFG)</a> and runs from 1 June 2018 until 31 May 2021.
 		<br></p>
@@ -183,7 +181,8 @@ echo ".";
 	</div><br><br>
 	<div style="padding-left:39px">
 			<br><br><h5><i>Download a poster of the InnoFIT project:</i> </h5>
-			<a href="https://fhstp.sharepoint.com/sites/InnoFIT/Freigegebene%20Dokumente/General/Posters/InnoFIT_one%20version.pdf" target="_blank">Download the poster</a>
+For Office 365:	<a href="https://fhstp.sharepoint.com/sites/InnoFIT/Freigegebene%20Dokumente/General/Posters/InnoFIT_one%20version.pdf" target="_blank">Download link 1</a><br>
+For other: <a href="https://www.dropbox.com/s/c2a2ew6o48wdubs/InnoFIT_one%20version.pdf?dl=0" target="blank"> Download link 2 </a>
 			</div>
 			<br><br>
 <div style="padding-left:39px">

@@ -56,7 +56,7 @@ else {
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a class="navbar-light" href="/index.php">Web tool home</a>
+						<a class="navbar-brand" href="/index.php">Web tool home</a>
 					</div>
 					<div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
 						<ul class="nav navbar-nav">
@@ -78,7 +78,7 @@ else {
 										<a class="dropdown-item active"  href="./deliveryplans.php">Delivery Plans</a>
 									</li>
 									<li>
-										<a class="dropdown-item" href="./forecastbias.php">Forecast Bias Analysis</a>
+										<a class="dropdown-item" href="./forecasterror.php">Forecast Error</a>
 									</li>
 									<li>
 										<a class="dropdown-item" href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>
@@ -90,24 +90,33 @@ else {
 										<a class="dropdown-item" href="./rmse_graph.php">Root Mean Square Error (RMSE)</a>
 									</li>
 									<li>
+										<a class="dropdown-item " href="./mpe.php">Mean Percentage Error (MPE)</a>
+									</li>
+									<li>
 										<a class="dropdown-item " href="./mape.php">Mean Absolute Percentage Error (MAPE)</a>
 									</li>
 									<li>
-										<a class="dropdown-item" href="./customerorders.php">Customer Orders</a>
-									</li>
+                             	   <a class="dropdown-item " href="./meanforecastbias.php">Mean Forecast Bias</a>
+                           			 </li>
+									<li role="separator" class="divider"></li>
+                            		<li class="dropdown-header">Corrected Error Measures</li>
+                         		   <li>
+                          	      <a class="dropdown-item" href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
+                         		   </li>
+
 		
 									<li role="separator" class="divider"></li>
 									<li class="dropdown-header">Matrices</li>
 									<li>
-										<a class="dropdown-item" href="./matrix.html">Delivery Plans Matrix</a>
+										<a class="dropdown-item" href="./matrix.php">Delivery Plans Matrix</a>
 									</li>
 									<li>
-										<a class="dropdown-item" href="./matrixvariance.html">Delivery Plans Matrix - With Variance</a>
+										<a class="dropdown-item" href="./matrixvariance.php">Delivery Plans Matrix - With Variance</a>
 									</li>
 									<li role="separator" class="divider"></li>
 									<li class="dropdown-header">New Graphs</li>
 									<li>
-										<a class="dropdown-item" href="./boxplot.html">Box Plot</a>
+										<a class="dropdown-item" href="./boxplot.php">Box Plot</a>
 									</li>
 								</ul>
 							</li>
@@ -146,7 +155,8 @@ else {
 		echo ".";
 		?></small>
 		<br><br>
-<p> NOTE: This graph shows how the amount of products ordered by the customer varied on each period or calendar week. *FO = Final Order </p>
+<p> <b>Graph Description: </b>The graph shows the amount of Order Amounts for each period or calendar week. <br>
+<font color="orange">Orange-coloured circles </font> designate forecasted order amounts, and <font color="blue"> blue-coloured circles </font> designate final order amounts.</p>
 </div>
 	
 
@@ -177,9 +187,13 @@ var y = d3.scale.linear()
     	])
     .range([height,0])
 
-var color = d3.scale.category10();
-var color2 = d3.scale.category10();
 
+var colorFinalOrder = d3.scale.category10();
+var color = d3.scale.category10();
+var finalProduct = function (d) { return d.Product; };
+
+	var forecast = function (d) { return d.Product; };
+	
        var xAxis = d3.svg.axis()
             .scale(x)
             .ticks(10)
@@ -208,8 +222,8 @@ var svg = d3.select("body").append("svg")
       .attr('r','7')
       .attr('stroke','black')
       .attr('stroke-width',1)
-      //.attr('fill',function (d,i) { return color(d.ForecastWeek)  })
-      .attr('fill',function (d) { return color2(d.ActualPeriod===d.ForecastPeriod)  })
+      //.attr('fill',function (d,i) { return color(forecast(d.ForecastPeriod)) })
+      .attr('fill',function (d) { return color((d.ActualPeriod===d.ForecastPeriod))  })
       .on('mouseover', function (d) {
         d3.select(this)
           .transition() 
@@ -280,7 +294,7 @@ svg.select(".legend")
 
 
 	var legend = svg.selectAll(".legend")
-      .data(color2.domain())
+      .data(color.domain())
 	.enter().append("g")
 	  .attr("class", "legend")
 		//.scale(xAxis)
@@ -295,7 +309,7 @@ svg.select(".legend")
       .attr("width", 10)
       .attr("height", 10)
 	  .style("opacity", 0.5)
-    .style("fill", color2);
+    .style("fill", color);
       //.style("fill", color); 
 
   legend.append("text")
@@ -303,7 +317,7 @@ svg.select(".legend")
       .attr("y", 10)
       .attr("yAxis", ".35em")
       .style("text-anchor", "end")
-	  .text(function(d) { return 'FO ' + d ; });
+	  .text(function(d) { return ' ' + d ; });
      
 });
 

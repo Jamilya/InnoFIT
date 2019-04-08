@@ -18,7 +18,7 @@ else {
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/data/ico/innofit.ico">
-    <title>Mean Absolute Deviation (MAD) Graph</title>
+    <title>Forecast Bias</title>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
     <link href="/lib/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -86,7 +86,7 @@ else {
                                 <a class="dropdown-item" href="./forecasterror.php">Forecast Error</a>
                             </li>
                             <li>
-                                <a class="dropdown-item active" href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>
+                                <a class="dropdown-item" href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="./mse_graph.php">Mean Squared Error (MSE)</a>
@@ -95,32 +95,30 @@ else {
                                 <a class="dropdown-item" href="./rmse_graph.php">Root Mean Square Error (RMSE)</a>
                             </li>
                             <li>
-								<a class="dropdown-item " href="./mpe.php">Mean Percentage Error (MPE)</a>
-                            </li>
-                            <li>
                                 <a class="dropdown-item " href="./mape.php">Mean Absolute Percentage Error (MAPE)</a>
                             </li>
                             <li>
-                                <a class="dropdown-item " href="./meanforecastbias.php">Mean Forecast Bias</a>
+                                <a class="dropdown-item active" href="./forecastbias.php">Forecast Bias</a>
                             </li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Corrected Error Measures</li>
                             <li>
                                 <a class="dropdown-item" href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="./customerorders.php">Customer Orders</a>
                             </li>
 
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Matrices</li>
                             <li>
-                                <a class="dropdown-item" href="./matrix.php">Delivery Plans Matrix</a>
+                                <a class="dropdown-item" href="./matrix.html">Delivery Plans Matrix</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="./matrixvariance.php">Delivery Plans Matrix - With Variance</a>
+                                <a class="dropdown-item" href="./matrixvariance.html">Delivery Plans Matrix - With Variance</a>
                             </li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">New Graphs</li>
                             <li>
-                                <a class="dropdown-item" href="./boxplot.php">Box Plot</a>
+                                <a class="dropdown-item" href="./boxplot.html">Box Plot</a>
                             </li>
                         </ul>
                         </li>
@@ -145,7 +143,7 @@ else {
 
     <div style="padding-left:39px">
         
-        <h3>Mean Absolute Deviation (MAD) Graph</h3>
+        <h3>Forecast Bias</h3>
         <small>
             <?php
             echo "You are logged in as: ";
@@ -155,8 +153,8 @@ else {
             <br>
             
             <br>
-        <p><b> Graph Description: </b>This graph shows calculation of the Mean Absolute Deviation (MAD) of customer orders with respect to periods before delivery (PBD). The mean absolute deviation describes the absolute average error between the forecasted and the final order amounts. 
-            <br>The formula of the MAD: <img src="https://latex.codecogs.com/gif.latex?MAD_{j} = \frac{1}{n}\sum_{i=1}^{n}{\left | x_{i,j}-x_{i,0} \right |}" title="MAD_formula" />. </p>
+        <p> NOTE: This graph shows the calculation of the Forecast Bias, which is the description of the forecast error with respect to periods before delivery (PBD). 
+            <br>The formula of the Forecast Bias is: <img src="https://latex.codecogs.com/gif.latex?FB_{i,j} = \frac{x_{i,j}}{x_{i,0}}" title="Forecast Bias_formula" />. </p>
             
     </div>
 
@@ -166,12 +164,12 @@ else {
             if (error) throw error;
             //console.log(data);
 
-            let absDiff = function (orignalEl, finalOrder) {
-                return Math.abs(orignalEl.OrderAmount - finalOrder);
+            let orderDiff = function (orignalEl, finalOrder) {
+                return orignalEl.OrderAmount / finalOrder;
             }
 
             let finalOrder = data.filter((el) => {
-                return el.PeriodsBeforeDelivery == 0;
+                return el.ActualPeriod == el.ForecastPeriod;
             });
             console.log("FINAL Orders array: ", finalOrder);
 
@@ -184,38 +182,38 @@ else {
                 let valueString = val.OrderAmount;
                 valueMap.set(keyString, valueString);
             });
-            console.log("valueMap: ", valueMap);
+            console.log("Actual period and  Order amount of final orders: ", valueMap);
 
-            let absValuesArray = uniqueArray.map((el) => {
-                let value = absDiff(el, valueMap.get(el.ForecastPeriod));
+            let valuesArray = uniqueArray.map((el) => {
+                let value = orderDiff(el, valueMap.get(el.ForecastPeriod));
                 return {
                     ActualPeriod: el.ActualPeriod,
                     ForecastPeriod: el.ForecastPeriod,
                     OrderAmount: el.OrderAmount,
                     Product: el.Product,
                     PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                    AbsoluteDiff: value
+                    OrderDiff: value
                 };
             });
 
-            console.log("FINAL: ", absValuesArray);
+            console.log("Final array of forecast bias calculation: ", valuesArray);
 
-            let seperatedByPeriods = d3.nest()
-                .key(function (d) { return d.PeriodsBeforeDelivery })
-                .entries(absValuesArray);
+            // let seperatedByPeriods = d3.nest()
+            //     .key(function (d) { return d.PeriodsBeforeDelivery })
+            //     .entries(valuesArray);
 
-            let bubu = seperatedByPeriods.map((el) => {
-                let meanValue = d3.mean(el.values, function (d) { return d.AbsoluteDiff; });
-                return {
-                    Product: el.Product,
-                    ActualPeriod: el.ActualPeriod,
-                    ForecastPeriod: el.ForecastPeriod,
-                    OrderAmount: el.OrderAmount,
-                    PeriodsBeforeDelivery: el.key,
-                    MeanOfThisPeriod: meanValue
-                };
-            });
-            console.log("separatedArray: ", bubu);
+            // let bubu = seperatedByPeriods.map((el) => {
+            //     let meanValue = d3.mean(el.values, function (d) { return d.OrderDiff; });
+            //     return {
+            //         Product: el.Product,
+            //         ActualPeriod: el.ActualPeriod,
+            //         ForecastPeriod: el.ForecastPeriod,
+            //         OrderAmount: el.OrderAmount,
+            //         PeriodsBeforeDelivery: el.key,
+            //         MeanOfThisPeriod: meanValue
+            //     };
+            // });
+            // console.log("separatedArray: ", bubu);
 
             /*     uniqueArray.forEach((el, i) => {         // indexing
                     console.log("Index: ", i);
@@ -278,15 +276,15 @@ else {
 
             var x = d3.scale.linear()
                 .domain([
-                    d3.min([0, d3.min(bubu, function (d) { return d.PeriodsBeforeDelivery })]),
-                    d3.max([0, d3.max(bubu, function (d) { return d.PeriodsBeforeDelivery })])
+                    d3.min([0, d3.min(valuesArray, function (d) { return d.PeriodsBeforeDelivery })]),
+                    d3.max([0, d3.max(valuesArray, function (d) { return d.PeriodsBeforeDelivery })])
                 ])
                 .range([0, width])
 
             var y = d3.scale.linear()
                 .domain([
-                    d3.min([0, d3.min(bubu, function (d) { return (d.MeanOfThisPeriod) })]),
-                    d3.max([0, d3.max(bubu, function (d) { return (d.MeanOfThisPeriod) })])
+                    d3.min([0, d3.min(valuesArray, function (d) { return (d.OrderDiff) })]),
+                    d3.max([0, d3.max(valuesArray, function (d) { return (d.OrderDiff) })])
                 ])
                 .range([height, 0])
 
@@ -312,11 +310,11 @@ else {
 
             // Circles
             var circles = svg.selectAll('circle')
-                .data(bubu)
+                .data(valuesArray)
                 .enter()
                 .append('circle')
                 .attr('cx', function (d) { return x(d.PeriodsBeforeDelivery) })
-                .attr('cy', function (d) { return y(d.MeanOfThisPeriod) })
+                .attr('cy', function (d) { return y(d.OrderDiff) })
                 .attr('r', '7')
                 .attr('stroke', 'black')
                 .attr('stroke-width', 1)
@@ -341,9 +339,10 @@ else {
 
                 .text(function (d) {
                     return ' Periods Before Delivery: '+d.PeriodsBeforeDelivery + 
-                        '\nMAD of the Period: ' + d.MeanOfThisPeriod 
-                        //'\nPeriods Before Delivery: ' + d.PeriodsBeforeDelivery
-                    //'\nOrder Amount: ' + d.OrderAmount
+                        '\nForecast Bias of the Period: ' + d.OrderDiff +
+                        '\nActual Period: ' + d.ActualPeriod +
+                        '\nForecast Period: ' + d.ForecastPeriod +
+                        '\nProduct: ' + d.Product 
                 })
 
             svg.append("g")
@@ -369,7 +368,7 @@ else {
                 .attr("y", 5)
                 .attr("dy", ".55em")
                 .style("text-anchor", "end")
-                .text("Mean Absolute Deviation (MAD)")
+                .text("Forecast Bias")
 
 
             var legend = svg.selectAll(".legend")

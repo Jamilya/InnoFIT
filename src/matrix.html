@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -84,7 +83,7 @@
                                 <a class="dropdown-item" href="./deliveryplans.php">Delivery Plans</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="./forecastbias.php">Forecast Bias Analysis</a>
+                                <a class="dropdown-item" href="./forecasterror.php">Forecast Error</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>
@@ -98,6 +97,12 @@
                             <li>
                                 <a class="dropdown-item" href="./mape.php">Mean Absolute Percentage Error (MAPE)</a>
                             </li>
+                            <li>
+                                    <a class="dropdown-item " href="./forecastbias.php">Forecast Bias</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
+                                </li>
                             <li>
                                 <a class="dropdown-item" href="./customerorders.php">Customer Orders</a>
                             </li>
@@ -137,14 +142,67 @@
         <div style="padding-left:39px">
             <br>
             <h3>Delivery Plans Matrix</h3>
+            <br><br>
+            <p> NOTE: This is Delivery plans correlation matrix. <font color="red">(Note: the matrix calculation is still under development!)</font></p>
+    
         </div>
         <div style="display:inline-block;" id="legend"></div>
-        <div style="display:inline-block; float:left" id="container"></div>
+        <div style="display:inline-block" id="container"></div>
         <script>
 
         d3.json("/includes/getdata.php", function (error, data) {
             if (error) throw error;
             //console.log(data);
+            // var n = 10; //Create an empty array first in the structure of a triangular matrix
+            // var newArray = new Array [n];
+            // for (var i=1; i<n; i++){
+            //     newArray [i] = new Array [n-1];
+            // }
+
+
+            var myArray = new Array();
+            myArray = new Array();
+            myArray.push(data);
+//            console.log ("The new array:", myArray);
+
+            // var cols =10; 
+            // var rows=10;
+            // var matrix = [];
+            // for (var i =0; i<rows-1; i++) {
+            //     for (var j=0; j<cols; j++) {
+            //         matrix[j].push (0);
+            //     }
+            //     matrix[i].push (0);
+            // }
+            // for (var i=0; i<data.length; i++){
+            // }
+
+            console.log('My data: ', data);
+
+
+            function convertToMatrix (array, elementsPerSubArray){    // function to convert the array from json into 2-D array
+                var matrix = [], i, k;
+
+                for (i=0, k =-1; i<array.length; i++){
+                    if (i% elementsPerSubArray === 0){
+                        k++;
+                        matrix [k] = [];
+                    }
+                    matrix[k].push(array[i]);
+                }
+                return matrix;
+            }
+            var matrix = convertToMatrix ([myArray], 10);
+            console.log("The matrix:", matrix);
+
+
+
+
+
+
+
+
+
             let correlationMatrix = [];
                 for(let i=0; i < data.length; i++ ) {
                     let row = data [i];
@@ -340,10 +398,6 @@
 
 
 
-
-
-
-
                 var tempScale = d3.scale.linear()
                     .domain([minValue, maxValue])
                     .range([0, width]);
@@ -437,40 +491,40 @@
                     .call(yAxis)
             }
 
-            function createTable(tableData) {
-                var table = document.createElement('table');
-                var tableBody = document.createElement('tbody');
+            // function createTable(tableData) {
+            //     var table = document.createElement('table');
+            //     var tableBody = document.createElement('tbody');
 
-                tableData.forEach(function (rowData) {
-                    var row = document.createElement('tr');
+            //     tableData.forEach(function (rowData) {
+            //         var row = document.createElement('tr');
 
-                    rowData.forEach(function (cellData) {
-                        var cell = document.createElement('td');
-                        cell.appendChild(document.createTextNode(cellData));
-                        row.appendChild(cell);
-                    });
+            //         rowData.forEach(function (cellData) {
+            //             var cell = document.createElement('td');
+            //             cell.appendChild(document.createTextNode(cellData));
+            //             row.appendChild(cell);
+            //         });
 
-                    tableBody.appendChild(row);
-                });
+            //         tableBody.appendChild(row);
+            //     });
 
-                table.appendChild(tableBody);
-                document.body.appendChild(table);
-            }
+            //     table.appendChild(tableBody);
+            //     document.body.appendChild(table);
+            // };
 
-            createTable([["ActualWeek", "ForecastWeek", "OrderAmount"],
-            ["1", "1", "620"],
-            ["1", "2", "639.6"],
-            ["1", "3", "814"],
-            ["1", "4", "525.4"],
-            ["1", "5", "761.1"],
-            ["1", "6", "582.8"],
-            ["1", "7", "644.8"],
-            ["1", "8", "576.8"],
-            ["1", "9", "572"],
-            ["1", "10", "472.5"]
-            ]);
+//             createTable([["ActualWeek", "ForecastWeek", "OrderAmount"],
+//             ["1", "1", "620"],
+//             ["1", "2", "639.6"],
+//             ["1", "3", "814"],
+//             ["1", "4", "525.4"],
+//             ["1", "5", "761.1"],
+//             ["1", "6", "582.8"],
+//             ["1", "7", "644.8"],
+//             ["1", "8", "576.8"],
+//             ["1", "9", "572"],
+//             ["1", "10", "472.5"]
+//             ]);
 
-
+ });
         </script>
 
 

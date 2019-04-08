@@ -1,3 +1,14 @@
+<?php
+if(session_id() == '' || !isset($_SESSION)) {
+    // session isn't started
+    session_start();
+}
+else {
+    header("Location: includes/login.php");
+};?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -96,17 +107,20 @@
                 <a class="dropdown-item" href="./rmse_graph.php">Root Mean Square Error (RMSE)</a>
               </li>
               <li>
+                  <a class="dropdown-item" href="./mpe.php">Mean Percentage Error (MPE)</a>
+                  </li>
+              <li>
                 <a class="dropdown-item" href="./mape.php">Mean Absolute Percentage Error (MAPE)</a>
               </li>
               <li>
-                  <a class="dropdown-item " href="./forecastbias.php">Forecast Bias</a>
+                  <a class="dropdown-item " href="./meanforecastbias.php">Mean Forecast Bias</a>
               </li>
+              <li role="separator" class="divider"></li>
+              <li class="dropdown-header">Corrected Error Measures</li>
               <li>
                   <a class="dropdown-item" href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
               </li>
-              <li>
-                <a class="dropdown-item" href="./customerorders.php">Customer Orders</a>
-              </li>
+
 
               <li role="separator" class="divider"></li>
               <li class="dropdown-header">Matrices</li>
@@ -119,7 +133,7 @@
               <li role="separator" class="divider"></li>
               <li class="dropdown-header">New Graphs</li>
               <li>
-                <a class="dropdown-item" href="./boxplot.html">Box Plot</a>
+                <a class="dropdown-item" href="./boxplot.php">Box Plot</a>
               </li>
             </ul>
             </li>
@@ -143,6 +157,13 @@
     <div style="padding-left:39px">
       <br>
       <h3>Delivery Plans Correlation Matrix With Variance</h3>
+
+      <small>
+        <?php
+        echo "You are logged in as: ";
+        print_r($_SESSION["session_username"]);
+        echo ".";
+        ?></small>
       <br><br>
       <p> NOTE: This is Delivery plans correlation matrix with the calculation of variance. <font color="red">(Note: the matrix calculation is still under development!)</font></p>
 

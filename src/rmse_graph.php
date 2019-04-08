@@ -80,7 +80,7 @@ else {
                                 <a class="dropdown-item" href="./deliveryplans.php">Delivery Plans</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="./forecastbias.php">Forecast Bias Analysis</a>
+                                <a class="dropdown-item" href="./forecasterror.php">Forecast Error</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>
@@ -92,24 +92,32 @@ else {
                                 <a class="dropdown-item active" href="./rmse_graph.php">Root Mean Square Error (RMSE)</a>
                             </li>
                             <li>
+                                <a class="dropdown-item" href="./mpe.php">Mean Percentage Error (MPE)</a>
+                            </li>
+                            <li>
                                 <a class="dropdown-item " href="./mape.php">Mean Absolute Percentage Error (MAPE)</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="./customerorders.php">Customer Orders</a>
+                                <a class="dropdown-item " href="./meanforecastbias.php">Mean Forecast Bias</a>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">Corrected Error Measures</li>
+                            <li>
+                                <a class="dropdown-item" href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
                             </li>
 
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Matrices</li>
                             <li>
-                                <a class="dropdown-item" href="./matrix.html">Delivery Plans Matrix</a>
+                                <a class="dropdown-item" href="./matrix.php">Delivery Plans Matrix</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="./matrixvariance.html">Delivery Plans Matrix - With Variance</a>
+                                <a class="dropdown-item" href="./matrixvariance.php">Delivery Plans Matrix - With Variance</a>
                             </li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">New Graphs</li>
                             <li>
-                                <a class="dropdown-item" href="./boxplot.html">Box Plot</a>
+                                <a class="dropdown-item" href="./boxplot.php">Box Plot</a>
                             </li>
                         </ul>
                         </li>
@@ -142,14 +150,11 @@ else {
                 echo ".";
                 ?></small>
                 <br><br>
-            <p> NOTE: This graph shows an estimate of the square root of the MSE (Mean Squared Error), which is the quadratic
+            <p> <b>Graph Description:</b>  This graph shows an estimate of the square root of the Mean Squared Error (MSE), which is the quadratic
                 mean of differences between forecasted and final customer orders with respect to periods before delivery (PBD).
-                <br> The Formula of the Root Mean Square Error (RMSE) is:
-                <img src="https://s3-ap-south-1.amazonaws.com/av-blog-media/wp-content/uploads/2018/05/rmse.png"
-                    alt="RMSE formula" height="60" width="165">, where
-                <b>Predicted</b> represents the forecasted customer orders,
-                <b>Actual</b> is the final customer orders, and
-                <b>N</b> is the number of periods. </p>
+                <br> Root Mean Square Error (square root of the squared errors), like the Mean Squared error, also measures accuracy (zero meaning perfect score). The Formula of the Root Mean Square Error (RMSE) is:
+                <img src="https://latex.codecogs.com/gif.latex?RMSE_{j} = \sqrt{\frac{1}{n}\sum_{i=1}^{n} ( x_{i,j} - x_{i,0})^{2}}" 
+                title="RMSE formula" />. </p> <!-- \sqrt{\frac{1}{n}\sum_{i=1}^{n} ( x_{i,j} - x_{i,0})^{2}} -->
         </div>
 
         <script>
@@ -184,7 +189,7 @@ else {
                 //console.log("valueMap: ", valueMap);
 
                 let squaredAbsValuesArray = uniqueArray.map((el) => {
-                    let value = Math.sqrt(powerDiff(el, valueMap.get(el.ForecastPeriod)), 2);
+                    let value = powerDiff(el, valueMap.get(el.ForecastPeriod));
                     return {
                         ActualPeriod: el.ActualPeriod,
                         ForecastPeriod: el.ForecastPeriod,
@@ -215,7 +220,7 @@ else {
                     .entries(squaredAbsValuesArray);
 
                 let bubu = seperatedByPeriods.map((el) => {
-                    let meanValue = d3.mean(el.values, function (d) { return d.SquaredAbsoluteDiff; });
+                    let meanValue = Math.sqrt (d3.mean(el.values, function (d) { return d.SquaredAbsoluteDiff; }),2);
                     return {
                         Product: el.Product,
                         ActualPeriod: el.ActualPeriod,
