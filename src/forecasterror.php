@@ -17,7 +17,7 @@ else {
 		<meta name="description" content="">
 		<meta name="author" content="">
 		<link rel="icon" href="/data/ico/innofit.ico">
-		<title>Forecast Bias Analysis</title>
+		<title>Forecast Error</title>
 		<link href="/lib/css/bootstrap.min.css" rel="stylesheet">
 	<style>
 
@@ -78,36 +78,44 @@ else {
 										<a class="dropdown-item"  href="./deliveryplans.php">Delivery Plans</a>
 									</li>
 									<li>
-										<a class="dropdown-item active" href="./forecastbias.php">Forecast Bias Analysis</a>
+										<a class="dropdown-item active" href="./forecasterror.php">Forecast Error</a>
 									</li>
 									<li>
 										<a class="dropdown-item" href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>
 									</li>
 									<li>
-										<a class="dropdown-item" href="./mse_graph.html">Mean Square Error (MSE)</a>
+										<a class="dropdown-item" href="./mse_graph.php">Mean Square Error (MSE)</a>
 									</li>
 									<li>
 										<a class="dropdown-item" href="./rmse_graph.php">Root Mean Square Error (RMSE)</a>
-									</li>
+                                    </li>
+                                    <li>
+										<a class="dropdown-item " href="./mpe.php">Mean Percentage Error (MPE)</a>
+                                    </li>
 									<li>
 										<a class="dropdown-item " href="./mape.php">Mean Absolute Percentage Error (MAPE)</a>
-									</li>
-									<li>
-										<a class="dropdown-item" href="./customerorders.php">Customer Orders</a>
-									</li>
+                                    </li>
+                                    <li>
+                                <a class="dropdown-item " href="./meanforecastbias.php">Mean Forecast Bias</a>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">Corrected Error Measures</li>
+                            <li>
+                                <a class="dropdown-item" href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
+                            </li>
 		
 									<li role="separator" class="divider"></li>
 									<li class="dropdown-header">Matrices</li>
 									<li>
-										<a class="dropdown-item" href="./matrix.html">Delivery Plans Matrix</a>
+										<a class="dropdown-item" href="./matrix.php">Delivery Plans Matrix</a>
 									</li>
 									<li>
-										<a class="dropdown-item" href="./matrixvariance.html">Delivery Plans Matrix - With Variance</a>
+										<a class="dropdown-item" href="./matrixvariance.php">Delivery Plans Matrix - With Variance</a>
 									</li>
 									<li role="separator" class="divider"></li>
 									<li class="dropdown-header">New Graphs</li>
 									<li>
-										<a class="dropdown-item" href="./boxplot.html">Box Plot</a>
+										<a class="dropdown-item" href="./boxplot.php">Box Plot</a>
 									</li>
 								</ul>
 							</li>
@@ -133,7 +141,7 @@ else {
 
    <div style="padding-left:39px">
       
-      <h3>Forecast Bias Analysis</h3>
+      <h3>Forecast Error</h3>
       <small>
         <?php
         echo "You are logged in as: ";
@@ -141,9 +149,10 @@ else {
         echo ".";
         ?></small>
         <br><br>
-      <p> NOTE: This graph shows the Information Quality (IQ) for each final order with respect to the 
-            period (for example, calendar week). The relative deviation is calculated 
-         comparing the forecasted order amount to the final order amount with respect to the periods (P) before delivery.
+      <p><b> Graph Description:</b> This graph shows the Information Quality (IQ) for each final order with respect to the 
+            period before delivery (PBD). The relative deviation is calculated 
+         comparing the forecasted order amount to the final order amount with respect to periods before delivery.<br> The formula of the Forecast Error: 
+        <img src="https://latex.codecogs.com/gif.latex?e_{i,j} = (\frac{ x_{i,j} - x_{i,0} }{x_{i,0}})*100" title="Forecast Error formula" /> (Note: different from the formula in the list of notations).
       </p>
    </div>
 
@@ -159,7 +168,7 @@ else {
          console.log(data);
 
           let calcDeviation = function (orignalEl, finalOrder) {
-            return (orignalEl.OrderAmount - finalOrder) / finalOrder;
+            return Math.abs(orignalEl.OrderAmount - finalOrder) / finalOrder;
          } 
 
          let filterValues = data.filter((el) => {
@@ -325,7 +334,7 @@ else {
             .attr("y", 0)
             .attr("yAxis", ".55em")
             .style("text-anchor", "end")
-            .text(function (d) { return 'IQ for P' + d; });
+            .text(function (d) { return 'PBD' + d; });
 
       });
 

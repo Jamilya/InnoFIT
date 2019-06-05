@@ -95,34 +95,31 @@ else {
                             <li>
                                 <a class="dropdown-item" href="./rmse_graph.php">Root Mean Square Error (RMSE)</a>
                             </li>
-
-                            <li>
-                                <a class="dropdown-item" href="./mpe.php">Mean Percentage Error (MPE)</a>
-                            </li>
                             <li class="active">
                                 <a class="dropdown-item active" href="./mape.php">Mean Absolute Percentage Error (MAPE)</a>
                             </li>
                             <li>
-                                <a class="dropdown-item " href="./meanforecastbias.php">Mean Forecast Bias</a>
+                                <a class="dropdown-item " href="./forecastbias.php">Forecast Bias</a>
                             </li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Corrected Error Measures</li>
                             <li>
                                 <a class="dropdown-item" href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="./customerorders.php">Customer Orders</a>
                             </li>
 
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Matrices</li>
                             <li>
-                                <a class="dropdown-item" href="./matrix.php">Delivery Plans Matrix</a>
+                                <a class="dropdown-item" href="./matrix.html">Delivery Plans Matrix</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="./matrixvariance.php">Delivery Plans Matrix - With Variance</a>
+                                <a class="dropdown-item" href="./matrixvariance.html">Delivery Plans Matrix - With Variance</a>
                             </li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">New Graphs</li>
                             <li>
-                                <a class="dropdown-item" href="./boxplot.php">Box Plot</a>
+                                <a class="dropdown-item" href="./boxplot.html">Box Plot</a>
                             </li>
                         </ul>
                     </li>
@@ -155,150 +152,108 @@ else {
                 echo ".";
                 ?></small>
                 <br><br>
-            <p> <b>Graph Description:</b> This graph shows the calculation of the Mean Absolute Percentage Error (MAPE), which is the evaluation of forecasting accuracy, calculated by
-               the difference between forecasted customer orders and the final customer orders and divided by the final customer orders. The result is divided by a number of 
-                periods with respect to periods before delivery (PBD). 
+            <p> NOTE: This graph shows the calculation of the Mean Absolute Percentage Error (MAPE), which is the evaluation of forecasting accuracy, calculated by
+               the difference between the forecasted customer orders and the final customer orders and divided by the final customer orders. The result is divided by a number of 
+                periods with respect to periods before delivery (PBD). In the graph the result is also multiplied by 100 to show the values in the percentage estimatation.
                 <br>The formula of the MAPE is the following:
-                    <img src="https://latex.codecogs.com/gif.latex?MAPE_{j} = \frac {\sum_{i=1}^{n}|x_{i,j}-x_{i,0}|}{\sum_{i=1}^{n}x_{i,0}}" title="MAPE formula" /> 
+                    <img src="https://latex.codecogs.com/gif.latex?\frac{1}{n}\sum_{i=1}^{n} \frac{\left | x_{i,j} - x_{i,0} \right |}{x_{i,0}}" title="MAPE formula" />. 
                  </p> <!-- \frac{1}{n}\sum_{i=1}^{n} \frac{\left | x_{i,j} - x_{i,0} \right |}{x_{i,0}} -->
         
         </div>
         
         <script>
 
-             d3.json("/includes/getdata.php", function (error, data) {
+            d3.json("/includes/getdata.php", function (error, data) {
                 if (error) throw error;
+                //console.log(data);
 
-                console.log('Original Data (All Data): ', data);
+                let absDiff = function (orignalEl, finalOrder) {
+                    return Math.abs(finalOrder - orignalEl.OrderAmount);
+                }
 
-                
                 let finalOrder = data.filter((el) => {
-                    return el.ActualPeriod == el.ForecastPeriod;
+                    return el.PeriodsBeforeDelivery == 0;
                 });
-                console.log('Final order array: ', finalOrder);
+                console.log("FINAL ORDERS: ", finalOrder);
 
                 let uniqueArray = data.filter(function (obj) { return finalOrder.indexOf(obj) == -1; });
                 console.log("Unique array: ", uniqueArray);
 
-                
-                let calcDifference = function (originalEl, finalOrder) {
-                return Math.abs(originalEl.OrderAmount - finalOrder);
-                }
-
-                let diffMap = new Map();
-
-                uniqueArray.forEach((val) => {     //map of forecasted order amounts
+                let valueMap = new Map();
+                finalOrder.forEach((val) => {
                     let keyString = val.ActualPeriod;
                     let valueString = val.OrderAmount;
-                    diffMap.set(keyString, valueString);
+                    valueMap.set(keyString, valueString);
                 });
+                console.log("valueMap: ", valueMap);
 
-                let diffArray = uniqueArray.map((el) => {
-                let difference = calcDifference(el, diffMap.get(el.ActualPeriod));
-                return {
-                    ActualPeriod: el.ActualPeriod,
-                    ForecastPeriod: el.ForecastPeriod,
-                    OrderAmount: el.OrderAmount,
-                    Product: el.Product,
-                    FinalOrder: diffMap.get(el.PeriodsBeforeDelivery),
-                    PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                    Difference: difference
-                    };
-                })
-                
-                // let sumOfAllDifferences = diffArray.map(item => item.Difference).reduce((a, b) => +a + +b);
-                //     console.log('Sum of all differences: ', sumOfAllDifferences);
-
-                let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-                console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
-
-                let dataGroupedByPBD = d3.nest()
-                    .key(function(d) { return d.PeriodsBeforeDelivery; })
-                    .entries(diffArray);
-
-                console.log('Grouped data: ', dataGroupedByPBD);
-
-                let finalMape = dataGroupedByPBD.map((val) => {
-                    let sum = val.values.map(item => item.Difference).reduce((a, b) => +a + +b);          //sum of differences
-                    console.log('sum for pbd: ', val.key, ' sum: ', sum);
-                    let mapeCurrentPBD = sum / sumOfAllFinalOrders;
-                    console.log('current mape: ', mapeCurrentPBD);
-
+                let absValuesArray = uniqueArray.map((el) => {
+                    let value = absDiff(el, valueMap.get(el.ForecastPeriod));
                     return {
-                        PeriodsBeforeDelivery: val.key,
-                        MapeForPBD: mapeCurrentPBD
+                        ActualPeriod: el.ActualPeriod,
+                        ForecastPeriod: el.ForecastPeriod,
+                        OrderAmount: el.OrderAmount,
+                        Product: el.Product,
+                        PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                        AbsoluteDiff: value
                     };
                 });
 
-                console.log('Final Mape: ', finalMape);
-        
+                console.log("Absolute Difference: ", absValuesArray);
+                var sumOfFinals= d3.sum (finalOrder, function (d) {
+                    return d.OrderAmount;
+                });
+                var sumOfDifference = d3.sum (absDiff, function (d){
+                    return d.OrderAmount;
 
+                });
+                let resultMAPE = function (sumOfDifference, SumOfFinals){
+                    return (sumOfDifference/sumOfFinals);
+                }
+                console.log("MAPE: ", resultMAPE);
+                let seperatedByPeriods = d3.nest()
+                    .key(function (d) { return d.PeriodsBeforeDelivery })
+                    .entries(absValuesArray);
 
+                let bubu = seperatedByPeriods.map((el) => {
+                    let meanValue = d3.mean(el.values, function (d) { return d.AbsoluteDiff; });
+                    return {
+                        Product: el.Product,
+                        ActualPeriod: el.ActualPeriod,
+                        ForecastPeriod: el.ForecastPeriod,
+                        OrderAmount: el.OrderAmount,
+                        PeriodsBeforeDelivery: el.key,
+                        MeanOfThisPeriod: meanValue
+                    };
+                });
+                console.log("seperated: ", bubu);
 
+                var legendOffset = 140;
 
+                var margin = { top: 20, right: 25, bottom: 30, left: 55 },
+                    width = 960 - margin.left - margin.right,
+                    height = 590 - margin.top - margin.bottom - legendOffset;
 
-
-
-                // let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-                // console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
-
-                // let dataGroupedByPBD = d3.nest()
-                //     .key(function(d) { return d.PeriodsBeforeDelivery; })
-                //     .entries(uniqueArray);
-
-                // console.log('Grouped data: ', dataGroupedByPBD);
-
-                // let finalMape = dataGroupedByPBD.map((val) => {
-                //     let sum = val.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-                //     console.log('sum for pbd: ', val.key, ' sum: ', sum);
-                //     let mapeCurrentPBD = Math.abs((sum - sumOfAllFinalOrders) / sumOfAllFinalOrders);
-                //     console.log('current mape: ', mapeCurrentPBD);
-
-                //     return {
-                //         PeriodsBeforeDelivery: val.key,
-                //         MapeForPBD: mapeCurrentPBD
-                //     };
-                // });
-
-                // console.log('Final Mape: ', finalMape);
-
-
-
-
-
-                
-
-        
-               
-                var legendOffset = 120;
-
-                var margin = { top: 15, right: 5, bottom: 15, left: 30 },
-                    width = 1250 - margin.left - margin.right,
-                    height = 600 - margin.top - margin.bottom - legendOffset;
-
-                    // var valueArray = Array.from(mape.values());
-                    // var keyArray = Array.from(mape.keys());
-                    var x = d3.scale.linear()
+                var x = d3.scale.linear()
                     .domain([
-                        d3.min([1, d3.min(finalMape, function (d) { return d.PeriodsBeforeDelivery; })]),
-                        d3.max([1, d3.max(finalMape, function (d) { return d.PeriodsBeforeDelivery; })])
+                        d3.min([0, d3.min(bubu, function (d) { return d.PeriodsBeforeDelivery })]),
+                        d3.max([0, d3.max(bubu, function (d) { return d.PeriodsBeforeDelivery })])
                     ])
                     .range([0, width])
-                    
-                
+
                 var y = d3.scale.linear()
                     .domain([
-                        d3.min([0, d3.min(finalMape, function (d) { return d.MapeForPBD; })]),
-                        d3.max([0, d3.max(finalMape, function (d) { return d.MapeForPBD; })])
+                        d3.min([0, d3.min(bubu, function (d) { return (d.MeanOfThisPeriod) })]),
+                        d3.max([0, d3.max(bubu, function (d) { return (d.MeanOfThisPeriod) })])
                     ])
                     .range([height, 0])
 
-            var PeriodsBeforeDelivery = function (d) { return d.PeriodsBeforeDelivery; },
-                color = d3.scale.category10();
+                var PeriodsBeforeDelivery = function (d) { return d.PeriodsBeforeDelivery; },
+                    color = d3.scale.category10();
 
                 var xAxis = d3.svg.axis()
                     .scale(x)
-                    .ticks(11)
+                    .ticks(10)
                     .orient("bottom");
 
                 var yAxis = d3.svg.axis()
@@ -315,15 +270,15 @@ else {
 
                 // Circles
                 var circles = svg.selectAll('circle')
-                    .data(finalMape)
+                    .data(bubu)
                     .enter()
                     .append('circle')
                     .attr('cx', function (d) { return x(d.PeriodsBeforeDelivery) })
-                    .attr('cy', function (d) { return y(d.MapeForPBD) })
+                    .attr('cy', function (d) { return y(d.MeanOfThisPeriod) })
                     .attr('r', '7')
                     .attr('stroke', 'black')
                     .attr('stroke-width', 1)
-                    .attr('fill', function (d) { return color(PeriodsBeforeDelivery(d)); })
+                    .attr('fill', function (d, i) { return color(PeriodsBeforeDelivery(d)); })
 
                     .on('mouseover', function (d) {  // Tooltip
                         d3.select(this)
@@ -344,7 +299,7 @@ else {
 
                     .text(function (d) {
                         return 'Periods Before Delivery: ' +d.PeriodsBeforeDelivery +
-                            '\nMAPE of the Period: ' + d.MapeForPBD 
+                            '\nMAPE of the Period: ' + d.MeanOfThisPeriod 
                             //'\nWeeks Before Delivery: ' + d.WeeksBeforeDelivery
                         //'\nOrder Amount: ' + d.OrderAmount
                     })
@@ -372,7 +327,7 @@ else {
                     .attr("y", 5)
                     .attr("dy", ".45em")
                     .style("text-anchor", "end")
-                    .text("Mean Absolute Percentage Error (MAPE)")
+                    .text("Mean Absolute Percentage Error (MAPE, %)")
 
 
                 var legend = svg.selectAll(".legend")

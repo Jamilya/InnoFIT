@@ -1,3 +1,5 @@
+<?php ob_start();
+?>
 <?php
 session_start(); ?>
 <?php require_once $_SERVER['DOCUMENT_ROOT'].'/includes/connection.php'; ?>
@@ -24,27 +26,48 @@ if (isset($_POST['login'])){
         if($username == $dbusername && $password == $dbpassword)
 
         {
-    
-    
         $_SESSION['session_username']=$username;
-    
         /* Redirect browser */
-         header("Location: index.php");
-        } 
-        } else {
-    
-     $message =  "Invalid username or password!";
+         header ("Location: /index.php");
+        } } else {
+         $message =  "Invalid username or password!";
         }
-    
     } else {
         $message = "All fields are required!";
     }
     } ?>
 
-    <div class="container mlogin">
+    <?php
+    $profpic = "/data/img/background2.jpg";
+    ?>
+<html>
+<head>
+<style type="text/css">
+
+body {
+background-image: url('<?php echo $profpic;?>');
+background-attachment: fixed; 
+
+overflow: scroll;
+}
+div::after {
+  content: "";
+  opacity:0.5;
+} 
+.container {
+  padding: 16px;
+}
+
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Login page</title>
+</head>
+<body>
+<div id="id01" class="modal" style="width:800px; margin:0 auto ">
+<div class="container mlogin">
             <div id="login">
     <h1>LOGIN</h1>
-<form name="loginform" id="loginform" action="" method="POST">
+    <form name="loginform" id="loginform" action="" method="POST">
     <p>
         <label for="user_login">Username<br />
         <input type="text" name="username" id="username" class="input" value="" size="20" /></label>
@@ -62,7 +85,11 @@ if (isset($_POST['login'])){
     </div>
 
     </div>
+</div>
+
+
+</body>
+</html>
 	
-	
-	<?php if (!empty($message)) {echo "<p class=\"error\">" . "MESSAGE: ". $message . "</p>";} ?>
+<?php if (!empty($message)) {echo "<p class=\"error\">" . "MESSAGE: ". $message . "</p>";} ?>
 	

@@ -1,3 +1,13 @@
+<?php
+if(session_id() == '' || !isset($_SESSION)) {
+    // session isn't started
+    session_start();
+}
+else {
+    header("Location: includes/login.php");
+};?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <meta charset="utf-8">
@@ -74,7 +84,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-light" href="/index.php">Web tool home</a>
+                <a class="navbar-brand" href="/index.php">Web tool home</a>
             </div>
             <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
@@ -96,7 +106,7 @@
                                 <a class="dropdown-item" href="./deliveryplans.php">Delivery Plans</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="./forecastbias.php">Forecast Bias Analysis</a>
+                                <a class="dropdown-item" href="./forecasterror.php">Forecast Error</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>
@@ -108,24 +118,32 @@
                                 <a class="dropdown-item" href="./rmse_graph.php">Root Mean Square Error (RMSE)</a>
                             </li>
                             <li>
+                                <a class="dropdown-item" href="./mpe.php">Mean Percentage Error (MPE)</a>
+                            </li>
+                            <li>
                                 <a class="dropdown-item " href="./mape.php">Mean Absolute Percentage Error (MAPE)</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="./customerorders.php">Customer Orders</a>
-                            </li>
+                                    <a class="dropdown-item " href="./meanforecastbias.php">Mean Forecast Bias</a>
+                                </li>
+                                <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">Corrected Error Measures</li>
+                                <li>
+                                    <a class="dropdown-item" href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
+                                </li>
 
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Matrices</li>
                             <li>
-                                <a class="dropdown-item" href="./matrix.html">Delivery Plans Matrix</a>
+                                <a class="dropdown-item" href="./matrix.php">Delivery Plans Matrix</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="./matrixvariance.html">Delivery Plans Matrix - With Variance</a>
+                                <a class="dropdown-item" href="./matrixvariance.php">Delivery Plans Matrix - With Variance</a>
                             </li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">New Graphs</li>
                             <li>
-                                <a class="dropdown-item active" href="./boxplot.html">Box Plot</a>
+                                <a class="dropdown-item active" href="./boxplot.php">Box Plot</a>
                             </li>
                         </ul>
                         </li>
@@ -153,14 +171,23 @@
         <br>
         <h3>Box Plot Graph </h3>
         <p>
-            <br>
+        <small>
+                <?php
+                echo "You are logged in as: ";
+                print_r($_SESSION["session_username"]);
+                echo ".";
+                ?></small>
+            <br><br>
+            <p> NOTE: This is the box plot graph. <font color="red">(Note: the graph calculation is still under development!)</font></p>
         </p>
     </div>
 
     <script>
-        /*   d3.json("data/data.json", function (error, data) {
-                    if (error) throw error;
-                    //console.log(data); */
+
+        d3.json("/includes/getdata.php", function (error, data) {
+            if (error) throw error;
+            //console.log(data);
+
 
         var labels = true; // show the text labels beside individual boxplots?
 
@@ -654,7 +681,7 @@
                 ];
             }
 
-        })();
+        });
     </script>
 
 
