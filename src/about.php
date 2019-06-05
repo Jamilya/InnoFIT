@@ -21,11 +21,9 @@ else {
 		<link href="/lib/css/bootstrap.min.css" rel="stylesheet">
 	<style>
 
-        body {
-            min-height: 2000px;
-            padding-top: 70px;
-        }
-
+      body {
+        margin: 0px;
+      }
          path {
             stroke: steelblue;
             stroke-width: 2;
@@ -96,44 +94,43 @@ else {
 										<a class="dropdown-item " href="./mape.php">Mean Absolute Percentage Error (MAPE)</a>
 									</li>
 									<li>
-                               		 <a class="dropdown-item " href="./meanforecastbias.php">Mean Forecast Bias</a>
-                        		    </li>
-									<li role="separator" class="divider"></li>
-                       			    <li class="dropdown-header">Corrected Error Measures</li>
-                        		    <li>
-                        	        <a class="dropdown-item" href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
-                        		    </li>
-		
-									<li role="separator" class="divider"></li>
-									<li class="dropdown-header">Matrices</li>
-									<li>
-										<a class="dropdown-item" href="./matrix.php">Delivery Plans Matrix</a>
-									</li>
-									<li>
-										<a class="dropdown-item" href="./matrixvariance.php">Delivery Plans Matrix - With Variance</a>
-									</li>
-									<li role="separator" class="divider"></li>
-									<li class="dropdown-header">New Graphs</li>
-									<li>
-										<a class="dropdown-item" href="./boxplot.php">Box Plot</a>
-									</li>
-								</ul>
-							</li>
-						</ul>
-						</div>
-						<ul class="nav navbar-nav navbar-right">
-							
-							<li>
-								<a class = "nav-link" href="/includes/logout.php">Logout
-									<span class="sr-only">(current)</span>
-								</a>
-							</li>
-						</ul>
-			</nav>
-			<!--/.nav-collapse -->
-			</div>
-			</nav>
+                                <a class="dropdown-item" href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a>
+                            </li>
+                            <li class="dropdown-header">Matrices</li>
+                            <li>
+                                <a class="dropdown-item" href="./matrix.php">Delivery Plans Matrix</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="./matrixvariance.php">Delivery Plans Matrix - With Variance</a>
+                            </li>
+                            <!-- <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">New Graphs</li>
+                            <li>
+                                <a class="dropdown-item" href="./boxplot.php">Box Plot</a>
+                            </li> -->
+                        </ul>
+                </div>
+                <div class="nav-link dropdown">
+                        <a class="nav-link " href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Corrections
+                            <span class="caret"></span> </a>
+                            <ul class="nav-link dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li>
+                                <a class="dropdown-item " href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
+                            </li>
+                            </ul>
+                </div>
+                </ul>  
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a class="nav-link" href="/includes/logout.php">Logout
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
 
+                </ul>
+            </div>
+    </div>
+    </nav>
 
 
 
@@ -165,7 +162,7 @@ echo ".";
 </div>
 </div>
 </div>
-	<div style="padding-left:39px"><br><br>
+	<div style="padding-left:39px">
 			<br><br><h5><strong> Project Partners</strong> </h5><br>
 				<small><ul>
 				<li>University of Applied Sciences Upper Austria, Campus Steyr (Steyr) 

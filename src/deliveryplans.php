@@ -21,10 +21,9 @@ else {
 		<link href="/lib/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
-        body {
-            min-height: 2000px;
-            padding-top: 70px;
-        }
+      body {
+        margin: 0px;
+      }
 
          path {
             stroke: rgb(65, 69, 73);
@@ -47,97 +46,96 @@ else {
 
 </head>
  <body>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-				<div class="container-fluid">
-					<div class="navbar-header">
-						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
-							aria-controls="navbar">
-							<span class="sr-only">Toggle navigation</span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-						</button>
-						<a class="navbar-brand" href="/index.php">Web tool home</a>
-					</div>
-					<div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
-						<ul class="nav navbar-nav">
-						   <!--  <li class="nav-item">
-								<a class="nav-link" href="index.php">Home</a>
-							</li > -->
-							<li>
-								<a class="nav-link " href="./about.php">About this tool</a>
-							</li>
-							<div class="nav-link dropdown">
-								<a class="nav-link active" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations
-									<span class="caret"></span>
-								</a>
-								<ul class="nav-link dropdown-menu" aria-labelledby="dropdownMenu1">
-									<li>
-										<a class="dropdown-item" href="./finalorder.php">Final Order Amount</a>
-									</li>
-									<li>
-										<a class="dropdown-item active"  href="./deliveryplans.php">Delivery Plans</a>
-									</li>
-									<li>
-										<a class="dropdown-item" href="./forecasterror.php">Forecast Error</a>
-									</li>
-									<li>
-										<a class="dropdown-item" href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>
-									</li>
-									<li>
-										<a class="dropdown-item" href="./mse_graph.php">Mean Square Error (MSE)</a>
-									</li>
-									<li>
-										<a class="dropdown-item" href="./rmse_graph.php">Root Mean Square Error (RMSE)</a>
-									</li>
-									<li>
-										<a class="dropdown-item " href="./mpe.php">Mean Percentage Error (MPE)</a>
-									</li>
-									<li>
-										<a class="dropdown-item " href="./mape.php">Mean Absolute Percentage Error (MAPE)</a>
-									</li>
-									<li>
-                             	   <a class="dropdown-item " href="./meanforecastbias.php">Mean Forecast Bias</a>
-                           			 </li>
-									<li role="separator" class="divider"></li>
-                            		<li class="dropdown-header">Corrected Error Measures</li>
-                         		   <li>
-                          	      <a class="dropdown-item" href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
-                         		   </li>
+ <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+                    aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/index.php">Web tool home</a>
+            </div>
+            <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <!--  <li class="nav-item">
+                        <a class="nav-link" href="index.php">Home</a>
+                    </li > -->
+                    <li>
+                        <a class="nav-link" href="./about.php">About this tool</a>
+                    </li>
+                    <div class="nav-link dropdown">
+                        <a class="nav-link active" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="nav-link dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li>
+                                <a class="dropdown-item" href="./finalorder.php">Final Order Amount</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item active" href="./deliveryplans.php">Delivery Plans</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="./forecasterror.php">Forecast Error</a>
+                            </li>
+                            <li class="dropdown-header">Eror Measures</li>
+                            <li>
+                                <a class="dropdown-item" href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="./mse_graph.php">Mean Square Error (MSE)</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item " href="./rmse_graph.php">Root Mean Square Error (RMSE)</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="./mpe.php">Mean Percentage Error (MPE)</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item " href="./mape.php">Mean Absolute Percentage Error (MAPE)</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a>
+                            </li>
+                            <li class="dropdown-header">Matrices</li>
+                            <li>
+                                <a class="dropdown-item" href="./matrix.php">Delivery Plans Matrix</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="./matrixvariance.php">Delivery Plans Matrix - With Variance</a>
+                            </li>
+                            <!-- <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">New Graphs</li>
+                            <li>
+                                <a class="dropdown-item" href="./boxplot.php">Box Plot</a>
+                            </li> -->
+                        </ul>
+                </div>
+                <div class="nav-link dropdown">
+                        <a class="nav-link " href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Corrections
+                            <span class="caret"></span> </a>
+                            <ul class="nav-link dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li>
+                                <a class="dropdown-item " href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
+                            </li>
+                            </ul>
+                </div>
+                </ul>  
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a class="nav-link" href="/includes/logout.php">Logout
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
 
-		
-									<li role="separator" class="divider"></li>
-									<li class="dropdown-header">Matrices</li>
-									<li>
-										<a class="dropdown-item" href="./matrix.php">Delivery Plans Matrix</a>
-									</li>
-									<li>
-										<a class="dropdown-item" href="./matrixvariance.php">Delivery Plans Matrix - With Variance</a>
-									</li>
-									<li role="separator" class="divider"></li>
-									<li class="dropdown-header">New Graphs</li>
-									<li>
-										<a class="dropdown-item" href="./boxplot.php">Box Plot</a>
-									</li>
-								</ul>
-							</li>
-						</ul>
-						</div>
-						<ul class="nav navbar-nav navbar-right">
-
-							<li>
-								<a class = "nav-link" href="/includes/logout.php">Logout
-									<span class="sr-only">(current)</span>
-								</a>
-							</li>
-						</ul>
-			</nav>
-			<!--/.nav-collapse -->
-			</div>
-			</nav>
-
+                </ul>
+            </div>
+    </div>
+    </nav>
 
 			<script src="http://d3js.org/d3.v4.min.js"></script>
-			<script src="http://d3js.org/d3.v3.min.js"></script> 
+			<!-- <script src="http://d3js.org/d3.v3.min.js"></script>  -->
  
 <!-- <div id="option"> -->
 	<!-- <input name="uploadButton" -->
@@ -158,14 +156,38 @@ else {
 <p> <b>Graph Description: </b>The graph shows the amount of Order Amounts for each period or calendar week. <br>
 <font color="orange">Orange-coloured circles </font> designate forecasted order amounts, and <font color="blue"> blue-coloured circles </font> designate final order amounts.</p>
 </div>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.3/localforage.js"></script> -->
+<div class="row">
+    <div class="col-md-9">
+        <div id="chart"></div>
+            <svg id="new_legend" height=150 width=350></svg>
+    </div>
+</div>
+
 	
 
 
-
+<script src="https://cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js"></script>
 <script>
-d3.json("/includes/getdata.php", function(error, data) {
+        var finalOrder = JSON.parse(localStorage['finalOrder']);
+        var data = JSON.parse(localStorage['data']);
+
+    // localforage.getItem['finalOrder'].then(function(finalOrder) {
+    // }).catch(function(err) {
+    // console.log(err);
+    // });
+
+    //var data = localforage.getItem['data'];
+
+    // localforage.getItem['data'].then(function(data) {
+    // }).catch(function(err) {
+    // console.log(err);
+    // });
+
+
+d3.json("/includes/getdata.php", function(error, data2) {
 if (error) throw error;
-console.log(data);
+console.log(data2);
 //console.log('2', parseInt('2'));
 var legendOffset = 140;
 
@@ -173,14 +195,14 @@ var margin = {top: 20, right: 25, bottom: 30, left: 55},
     width = 960 - margin.left - margin.right,
     height = 590 - margin.top - margin.bottom - legendOffset;
 
- var x = d3.scale.linear()
+ var x = d3.scaleLinear()
     .domain([
     	d3.min([0,d3.min(data,function (d) { return d.ForecastPeriod })]),
     	d3.max([0,d3.max(data,function (d) { return d.ForecastPeriod })])
     	])
     .range([0,width])
 
-var y = d3.scale.linear()
+var y = d3.scaleLinear()
     .domain([
     	d3.min([0,d3.min(data,function (d) { return d.OrderAmount })]),
     	d3.max([0,d3.max(data,function (d) { return d.OrderAmount })])
@@ -188,21 +210,16 @@ var y = d3.scale.linear()
     .range([height,0])
 
 
-var colorFinalOrder = d3.scale.category10();
-var color = d3.scale.category10();
-var finalProduct = function (d) { return d.Product; };
-
-	var forecast = function (d) { return d.Product; };
+var FinalOrder = function (d) { if (d.ActualPeriod===d.ForecastPeriod) return "Final Order"; else return "Forecast Order"; },
+    color = d3.scaleOrdinal(d3.schemeCategory10);
+// var ForecastOrder = function (d) { return d.ForecastOrder = d.ActualPeriod!==d.ForecastPeriod; },
+//     color2 = d3.scale.category10();
 	
-       var xAxis = d3.svg.axis()
-            .scale(x)
-            .ticks(10)
-            .orient("bottom");
 
-         var yAxis = d3.svg.axis()
-            .scale(y)
-            // .ticks(11)
-            .orient("left");
+            var xAxis = d3.axisBottom(x)
+                .ticks(10);
+
+            var yAxis = d3.axisLeft(y);
 
 
 var svg = d3.select("body").append("svg")
@@ -210,6 +227,12 @@ var svg = d3.select("body").append("svg")
     .attr("height", height + margin.top + margin.bottom + legendOffset)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            var svg = d3.select("#chart").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
 // Circles
@@ -223,7 +246,8 @@ var svg = d3.select("body").append("svg")
       .attr('stroke','black')
       .attr('stroke-width',1)
       //.attr('fill',function (d,i) { return color(forecast(d.ForecastPeriod)) })
-      .attr('fill',function (d) { return color((d.ActualPeriod===d.ForecastPeriod))  })
+      .attr('fill',function (d) { return color(FinalOrder(d));
+      })
       .on('mouseover', function (d) {
         d3.select(this)
           .transition() 
@@ -235,7 +259,7 @@ var svg = d3.select("body").append("svg")
         d3.select(this)
           .transition()
           .duration(500)
-		  .style("opacity", .9)
+		  .style("opacity", 1)
           .attr('r',7)
           .attr('stroke-width',1)
       })
@@ -252,11 +276,19 @@ var svg = d3.select("body").append("svg")
       .call(xAxis)
     .append("text")
       .attr("class", "label")
-      .attr("x", width)
-      .attr("y", 2)
-	  .attr('dy','.71em')
-      .style("text-anchor", "end")
-      .text("Forecast Period");
+      .attr("x", width-385)
+      .attr("y", 20)
+	  .attr('dy','1em')
+      .style("font-size","14px")
+      .style("text-anchor", "middle")
+      .text("Forecast Period")
+
+    svg.append("text")
+        .attr("x", width-385)
+        .attr("y", 415)
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Forecast Period");
 
   svg.append("g")
       .attr("class", "y")
@@ -264,62 +296,65 @@ var svg = d3.select("body").append("svg")
     .append("text")
       .attr("class", "label")
       .attr("transform", "rotate(-90)")
-	  .attr("x",0)
-      .attr("y", 5)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
+	  .attr("x",-160)
+      .attr("y", -79)
+      .attr("dy", "3.9em")
+      .style("font-size","14px")
+      .style("text-anchor", "middle")
       .text("Order Quantity(pcs)")
+
+    svg.append("text")
+        .attr("x", -160)
+        .attr("y", -83)
+        .attr("dy", "3.9em")
+        .attr("transform", "rotate(-90)")
+        .style("text-anchor", "middle")
+        .text("Order Quantity(pcs)");
+
+
+        
+        var svg = d3.select("#new_legend")
+
+        svg.append("circle").attr("cx",70).attr("cy",15).attr("r", 6).style("fill","3366CC")
+        svg.append("circle").attr("cx",180).attr("cy",15).attr("r", 6).style("fill", "orange")
+            
+        //svg.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#404080")
+        svg.append("text").attr("x", 90).attr("y", 15).text("Final Order").style("font-size", "15px").attr("alignment-baseline","middle")
+        svg.append("text").attr("x", 200).attr("y", 15).text("Forecast Order").style("font-size", "15px").attr("alignment-baseline","middle")
+            
+
+
+
+
+
+// 	var legend = svg.selectAll(".legend")
+//       .data(color.domain())
+// 	.enter().append("g")
+// 	  .attr("class", "legend")
+// 		//.scale(xAxis)
+//   		//.shape('circle')
+//       .attr("transform", function (d, i) {
+//                     return "translate(" + (- width + margin.left + margin.right + i * 120)           // x Position
+//                         + "," + (height + 42) + ")";
+//                 });                                           // y Position
+
+//    legend.append("rect")
+//       .attr("x", width - 70)
+//       .attr("y", - 10)
+//       .attr("width", 10)
+//       .attr("height", 10)
+// 	  .style("opacity", 1)
+//     .style("fill", color);
+//       //.style("fill", color); 
+
+//   legend.append("text")
+//       .attr("x", width )
+//       .attr("y", 17)
+//       .attr("yAxis", ".25em")
+//       .style("text-anchor", "end")
+// 	  .text(function(d) { return ' ' + d ; });
      
-
-
-/* var linearSize = d3.scaleLinear()
-.data(color.domain())
-.range([0, height]);
-
-var svg = d3.select("svg");
-
-svg.append("g")
-  .attr("class", "legend")
-  .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-var legendSize = d3.legendSize()
-  .scale(linearSize)
-  .shape('circle')
-  //.shapePadding(15)
-  .labelOffset(20)
-  .orient('horizontal');
-
-svg.select(".legend")
-  .call(legendSize); */
-
-
-	var legend = svg.selectAll(".legend")
-      .data(color.domain())
-	.enter().append("g")
-	  .attr("class", "legend")
-		//.scale(xAxis)
-  		//.shape('circle')
-      .attr("transform", function (d, i) {
-                    return "translate(" + (- width + margin.left + margin.right + i * 90)           // x Position
-                        + "," + (height + 42) + ")";
-                });                                           // y Position
-
-   legend.append("rect")
-      .attr("x", width - 10)
-      .attr("width", 10)
-      .attr("height", 10)
-	  .style("opacity", 0.5)
-    .style("fill", color);
-      //.style("fill", color); 
-
-  legend.append("text")
-      .attr("x", width - 24)
-      .attr("y", 10)
-      .attr("yAxis", ".35em")
-      .style("text-anchor", "end")
-	  .text(function(d) { return ' ' + d ; });
-     
-});
+ });
 
   
 </script>

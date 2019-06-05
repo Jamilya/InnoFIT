@@ -20,11 +20,9 @@ else {
     <link href="/lib/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        body {
-            min-height: 2000px;
-            padding-top: 70px;
-        }
-
+      body {
+        margin: 0px;
+      }
         path {
             stroke: steelblue;
             stroke-width: 2;
@@ -69,7 +67,7 @@ else {
                         <a class="nav-link" href="./about.php">About this tool</a>
                     </li>
                     <div class="nav-link dropdown">
-                        <a class="nav-link active" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations
+                        <a class="nav-link" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations
                             <span class="caret"></span>
                         </a>
                         <ul class="nav-link dropdown-menu" aria-labelledby="dropdownMenu1">
@@ -82,6 +80,7 @@ else {
                             <li>
                                 <a class="dropdown-item" href="./forecasterror.php">Forecast Error</a>
                             </li>
+                            <li class="dropdown-header">Eror Measures</li>
                             <li>
                                 <a class="dropdown-item" href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>
                             </li>
@@ -98,15 +97,11 @@ else {
                                 <a class="dropdown-item " href="./mape.php">Mean Absolute Percentage Error (MAPE)</a>
                             </li>
                             <li>
-                                <a class="dropdown-item " href="./meanforecastbias.php">Mean Forecast Bias</a>
+                                <a class="dropdown-item " href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a>
                             </li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Corrected Error Measures</li>
-                            <li>
-                                <a class="dropdown-item active" href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
-                            </li>
+                            <!-- <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">Corrected Error Measures</li> -->
 
-                            <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Matrices</li>
                             <li>
                                 <a class="dropdown-item" href="./matrix.php">Delivery Plans Matrix</a>
@@ -114,25 +109,36 @@ else {
                             <li>
                                 <a class="dropdown-item" href="./matrixvariance.php">Delivery Plans Matrix - With Variance</a>
                             </li>
-                            <li role="separator" class="divider"></li>
+                            <!-- <li role="separator" class="divider"></li>
                             <li class="dropdown-header">New Graphs</li>
                             <li>
                                 <a class="dropdown-item" href="./boxplot.php">Box Plot</a>
-                            </li>
+                            </li> -->
                         </ul>
-                        </li>
-                </ul>
-                </div>
-                <ul class="nav navbar-nav navbar-right">
 
+                </div>
+                <div class="nav-link dropdown">
+                        <a class="nav-link active" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Corrections
+                            <span class="caret"></span> </a>
+                            <ul class="nav-link dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li>
+                                <a class="dropdown-item active" href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
+                            </li>
+                            </ul>
+                </div>
+                </ul>
+                           
+                <ul class="nav navbar-nav navbar-right">
                     <li>
                         <a class="nav-link" href="/includes/logout.php">Logout
                             <span class="sr-only">(current)</span>
                         </a>
                     </li>
+
                 </ul>
-    </nav>
+            </div>
     <!--/.nav-collapse -->
+
     </div>
     </nav>
 
@@ -161,36 +167,32 @@ else {
             if (error) throw error;
             //console.log(data);
 
-                let forecastOrderDiv = function (originalEl, finalForecastBias){
-                    return originalEl.OrderAmount/finalForecastBias;
-                }
-
-
-                let powerDiff = function (orignalEl, finalOrder) {
-                    return Math.pow((finalOrder - orignalEl.OrderAmount), 2);
-                }
-
                 let finalOrder = data.filter((el) => {
                     return el.PeriodsBeforeDelivery == 0;
                 });
-             //   console.log("FINAL ORDERS: ", finalOrder);
+               // console.log("FINAL ORDERS: ", finalOrder);
+
+                /*             let squaredVal = function (absDiff){
+                                    return Math.sqrt(absDiff);
+                            };
+                            console.log("SQUARED VAL: ", squaredVal); */
 
                 let uniqueArray = data.filter(function (obj) { return finalOrder.indexOf(obj) == -1; });
-                console.log("Unique array: ", uniqueArray);
- 
-                let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-                console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
+              //  console.log("Unique array: ", uniqueArray);
+
+            let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
+            console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
 
                 let dataGroupedByPBD = d3.nest()
                     .key(function(d) { return d.PeriodsBeforeDelivery; })
                     .entries(uniqueArray);
-                console.log('Grouped data: ', dataGroupedByPBD);
+               // console.log('Grouped data: ', dataGroupedByPBD);
 
-                let finalForecastBias = dataGroupedByPBD.map((val) => {
+                let finalMFB = dataGroupedByPBD.map((val) => {
                     let sum = val.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-                        console.log('sum for pbd: ', val.key, ' sum: ', sum);
+                      //  console.log('sum for pbd: ', val.key, ' sum: ', sum);
                         let finalForecastBiasPBD = sum / sumOfAllFinalOrders;
-                        console.log('MFB by PBD: ', finalForecastBiasPBD);
+                      //  console.log('MFB by PBD: ', finalForecastBiasPBD);
 
                         return {
                             PeriodsBeforeDelivery: val.key,
@@ -198,46 +200,103 @@ else {
                         };
                     });
 
-                console.log('MFB: ', finalForecastBias);
+                let divis = function (orignalEl, finalMFB) {
+                return orignalEl.OrderAmount / finalMFB;
+                }
+ 
+                let finalMFBgroup = new Map();
+                 finalMFB.forEach((val) => {
+                 let keyString = val.PeriodsBeforeDelivery;
+                 let valueString = val.ForecastBiasPBD;
+                 finalMFBgroup.set(keyString, valueString);
+                });
+               // console.log('Division calculation: ', finalMFBgroup);
 
-                let valueMap = new Map();
-                uniqueArray.forEach((val) => {
+
+               let divCalc = uniqueArray.map((el) => {
+                let division = divis(el, finalMFBgroup.get(el.PeriodsBeforeDelivery));
+                return {
+                    ActualPeriod: el.ActualPeriod,
+                    ForecastPeriod: el.ForecastPeriod,
+                    OrderAmount: el.OrderAmount,
+                    Product: el.Product,
+                    PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                    Division: division
+
+                };
+             });
+           //  console.log('Division calculation: ', divCalc);
+
+                     let divisionGroup = new Map();
+                     divCalc.forEach((value) => {
+                     let keyString = value.ForecastPeriod;
+                     let valueString = value.Division;
+                     divisionGroup.set(keyString, valueString);
+                      });
+                      console.log('Division group: ', divisionGroup);
+
+                      let powerDiff = function (orignalEl, finalOrder) {
+                        return Math.pow((finalOrder - orignalEl.Division ), 2);
+                      }
+
+                     let valueMap = new Map();
+                    finalOrder.forEach((val) => {
                     let keyString = val.ActualPeriod;
                     let valueString = val.OrderAmount;
                     valueMap.set(keyString, valueString);
-                });
-                //console.log("valueMap: ", valueMap);
+                    });
 
-                let correctedForecastOrder = uniqueArray.map((el) => {
-                    let value = forecastOrderDiv (el, valueMap.get(el.ForecastPeriod));
-                    
+                    let squaredDiffArray = divCalc.map((el) => {
+                    let difference = powerDiff(el, valueMap.get(el.PeriodsBeforeDelivery));
                     return {
                         ActualPeriod: el.ActualPeriod,
                         ForecastPeriod: el.ForecastPeriod,
                         OrderAmount: el.OrderAmount,
                         Product: el.Product,
                         PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                        ForecastOrderDiv: value
+                        Difference: difference
                     };
                 });
-                console.log("Corrected Forecast Order: ", correctedForecastOrder);
+               console.log("Squared Diff Array: ", squaredDiffArray);
 
                 let seperatedByPeriods = d3.nest()
                     .key(function (d) { return d.PeriodsBeforeDelivery })
-                    .entries(correctedForecastOrder);
+                    .entries(squaredDiffArray);
 
-                let crmseArray = seperatedByPeriods.map((el) => {
-                    let meanValue = Math.sqrt (d3.mean(el.values, function (d) { return d.ForecastOrderDiv; }),2);
+                let finalCrmse = seperatedByPeriods.map((el) => {
+                    let crmseCalc = Math.sqrt (d3.mean(el.values, function (d) { return d.Difference; }),2);
                     return {
-                        // Product: el.Product,
-                        // ActualPeriod: el.ActualPeriod,
-                        // ForecastPeriod: el.ForecastPeriod,
-                        // OrderAmount: el.OrderAmount,
+                     //   Product: el.Product,
+                     //   ActualPeriod: el.ActualPeriod,
+                     //   ForecastPeriod: el.ForecastPeriod,
+                     //   OrderAmount: el.OrderAmount,
                         PeriodsBeforeDelivery: el.key,
-                        CRMSEOfThisPeriod: meanValue
+                        CRMSEOfThisPeriod: crmseCalc
                     };
                 });
-                console.log("final CRMSE: ", crmseArray);
+                console.log("Final CRMSE: ", finalCrmse);
+
+                        
+
+            //     });
+                    
+
+
+                /*            let squaredValuesArray = absValuesArray.map((el) =>  {
+                               let squared = Math.sqrt (el.AbsoluteDiff, 2);
+                               return {
+                                   ActualWeek: el.ActualWeek,
+                                   ForecastWeek: el.ForecastWeek,
+                                   OrderAmount: el.OrderAmount,
+                                   Product: el.Product,
+                                   WeeksBeforeDelivery: el.WeeksBeforeDelivery,
+                                   SquaredValue: squared
+                               };
+                           });
+                           console.log("squared values array: ", squaredValuesArray);
+               
+                */
+
 
                 var legendOffset = 140;
 
@@ -247,15 +306,15 @@ else {
 
                 var x = d3.scale.linear()
                     .domain([
-                        d3.min([0, d3.min(crmseArray, function (d) { return d.PeriodsBeforeDelivery })]),
-                        d3.max([0, d3.max(crmseArray, function (d) { return d.PeriodsBeforeDelivery })])
+                        d3.min([0, d3.min(finalCrmse, function (d) { return d.PeriodsBeforeDelivery })]),
+                        d3.max([0, d3.max(finalCrmse, function (d) { return d.PeriodsBeforeDelivery })])
                     ])
                     .range([0, width])
 
                 var y = d3.scale.linear()
                     .domain([
-                        d3.min([0, d3.min(crmseArray, function (d) { return (d.CRMSEOfThisPeriod) })]),
-                        d3.max([0, d3.max(crmseArray, function (d) { return (d.CRMSEOfThisPeriod) })])
+                        d3.min([0, d3.min(finalCrmse, function (d) { return (d.CRMSEOfThisPeriod) })]),
+                        d3.max([0, d3.max(finalCrmse, function (d) { return (d.CRMSEOfThisPeriod) })])
                     ])
                     .range([height, 0])
 
@@ -281,7 +340,7 @@ else {
 
                 // Circles
                 var circles = svg.selectAll('circle')
-                    .data(crmseArray)
+                    .data(finalCrmse)
                     .enter()
                     .append('circle')
                     .attr('cx', function (d) { return x(d.PeriodsBeforeDelivery) })

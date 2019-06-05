@@ -29,11 +29,9 @@ require_once("includes/connection.php"); ?>
     
 <style>
 
-
-        body {
-            min-height: 2000px;
-            padding-top: 70px;
-        }
+      body {
+        margin: 0px;
+      }
 
          path {
             stroke: steelblue;
@@ -169,10 +167,8 @@ $(document).ready(function() {
                                 <a class="dropdown-item " href="src/mape.php">Mean Absolute Percentage Error (MAPE)</a>
                             </li>
                             <li>
-                                <a class="dropdown-item " href="src/meanforecastbias.php">Mean Forecast Bias</a>
+                                <a class="dropdown-item " href="src/meanforecastbias.php">Mean Forecast Bias (MFB)</a>
                             </li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Corrected Error Measures</li>
                             <li>
                                 <a class="dropdown-item" href="src/cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
                             </li>
@@ -185,25 +181,35 @@ $(document).ready(function() {
                             <li>
                                 <a class="dropdown-item" href="src/matrixvariance.php">Delivery Plans Matrix - With Variance</a>
                             </li>
-                            <li role="separator" class="divider"></li>
+                            <!-- <li role="separator" class="divider"></li>
                             <li class="dropdown-header">New Graphs</li>
                             <li>
                                 <a class="dropdown-item" href="src/boxplot.php">Box Plot</a>
-                            </li>
+                            </li> -->
                         </ul>
-                    </li>
-                </ul>
+                        </div>
+                <div class="nav-link dropdown">
+                        <a class="nav-link" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Corrections
+                            <span class="caret"></span> </a>
+                            <ul class="nav-link dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li>
+                                <a class="dropdown-item " href="src/cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
+                            </li>
+                            </ul>
                 </div>
+                </ul>
+                           
                 <ul class="nav navbar-nav navbar-right">
-
                     <li>
-                        <a class = "nav-link" href="includes/logout.php">Logout
+                        <a class="nav-link" href="includes/logout.php">Logout
                             <span class="sr-only">(current)</span>
                         </a>
                     </li>
+
                 </ul>
-    </nav>
+            </div>
     <!--/.nav-collapse -->
+
     </div>
     </nav>
     
@@ -225,8 +231,8 @@ echo ",";
 
  <br> Here you can find the overview of the Forecast Quality Visualization tool. 
  
-<br>All graphs except matrices and new graphs (box plot) are connected to a database.<br>
-<br> <b> NOTE: Please upload the data in .csv format in the following data structure: <br>Product	 ActualPeriod	 ForecastPeriod	 OrderAmount	 PeriodsBeforeDelivery
+
+<br> <b> NOTE: Please upload the data in .csv format in the data structure defined below
 </b><br>
 
 <br>Happy exploring!</p>
@@ -238,6 +244,8 @@ echo ",";
   <a href="#">Scenario 2</a>
   <a href="#">Scenario 3</a>  
 </div>
+<script src="http://d3js.org/d3.v4.min.js"></script>
+<script src="https://cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js"></script>
 <script>
 function openNav() {
     document.getElementById("mySidenav").style.width = "200px";
@@ -247,7 +255,69 @@ function closeNav() {
     document.getElementById("mySidenav").style.width = "0";
 }
 </script>
+<script>
+        
+        d3.json("/includes/getdata.php", function (error, data) {
+            if (error) throw error;
+            //console.log(data);
+            let calcDeviation = function (orignalEl, finalOrder) {
+            return (orignalEl.OrderAmount - finalOrder) / finalOrder;
+             } 
+             let filterValues = data.filter((el) => {
+            return el.PeriodsBeforeDelivery == 0;
+         });
+         let finalOrder = data.filter((el) => { return el.PeriodsBeforeDelivery==0; });
 
+         let valueMap = new Map();
+
+         filterValues.forEach((val) => {
+            let keyString = val.ActualPeriod;
+            let valueString = val.OrderAmount;
+            valueMap.set(keyString, valueString);
+         });
+             let finalArray = data.map((el) => {
+            let deviation = calcDeviation(el, valueMap.get(el.ForecastPeriod));
+            return {
+               ActualPeriod: el.ActualPeriod,
+               ForecastPeriod: el.ForecastPeriod,
+               OrderAmount: el.OrderAmount,
+               Product: el.Product,
+               FinalOrder: valueMap.get(el.ForecastPeriod),
+               PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+               Deviation: deviation.toFixed(2)
+            };
+         })
+
+         localStorage.setItem('finalOrder', JSON.stringify(finalOrder));
+         localStorage.setItem('deviation', JSON.stringify(finalArray));
+         localStorage.setItem('data', JSON.stringify(data));
+
+        //  localforage.config({
+        //     driver      : localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+        //     name        : 'myApp',
+        //     version     : 1.0,
+        //     size        : 4980736, // Size of database, in bytes. WebSQL-only for now.
+        //     storeName   : 'keyvaluepairs', // Should be alphanumeric, with underscores.
+        //     description : 'some description'
+        // });
+
+        //  localforage.setItem ('deviation', finalArray, function(result){
+        //      console.log(result);
+        //  });
+
+        //  localforage.setItem ('finalOrder', finalOrder).then(console.log);
+        //     localforage.getItem('finalOrder', function (err, finalOrder) {
+        //     });             
+    
+        
+             
+        //  localforage.getItem('deviation', function(err, val) { alert(finalArray) });
+
+        //  localforage.setItem ('data', data, function(){     })
+
+        });
+
+</script>
 <?php
 
 
@@ -261,13 +331,13 @@ if (isset($_POST["import"])) {
         
 
         while (($column = fgetcsv($file, 0, ",")) !== FALSE) {
-           // echo '<pre>';
-           // var_dump ($column[0]);
-           // echo '</pre>';
+            
+
             if ($i>0){
+                $pbd = $column[2] - $column[1];
            //$session_username = mysql_real_escape_string($_SESSION["session_username"]);
             $sqlInsert = "INSERT into orders (Product, ActualPeriod, ForecastPeriod, OrderAmount, PeriodsBeforeDelivery, username, Date)
-            values ('$column[0]','$column[1]','$column[2]','$column[3]','$column[4]','{$_SESSION['session_username']}',NOW())";
+            values ('$column[0]','$column[1]','$column[2]','$column[3]','$pbd','{$_SESSION['session_username']}',NOW())";
             $result = mysqli_query($conn, $sqlInsert);
             
             if (! empty($result)) {
@@ -286,6 +356,8 @@ if (isset($_POST["import"])) {
     }
 }
 ?>
+
+
     <div class="outer-scontainer">
         <div class="row2">
 
@@ -309,6 +381,19 @@ if (isset($_POST["import"])) {
     ?>
     <br/><br>
     <div style="padding-left:39px">
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+    <script>
+    d3.json("includes/getdata.php", function(error, data) {
+    if (error) throw error;
+    //console.log(data);
+
+    });
+    </script>
+
+
+
+
+
     <div class="outer-scontainer">
         You can remove all your order data from the database by clicking on the button below.
     <div class="input-row">
@@ -320,27 +405,20 @@ if (isset($_POST["import"])) {
     }
     ?>
     </div>
-</div>
-</div><br><br>
+</div>    </div>
+<br><br>
 <div style="background-color:lavender;padding-left:39px">
     <i><img src = "/data/ico/icon.png" alt = "Information Icon" height="15" width="15"><b> Instructions to upload data in CSV format:</i></b> <br>
-    Step 1: Create a new Excel file and add the data, so that values of each column (Product, ActualPeriod, ForecastPeriod, OrderAmount, PeriodsBeforeDelivery) are in a separate column.
+    Step 1: Create a new Excel file and add the data, so that values of each column (Product, ActualPeriod, ForecastPeriod, OrderAmount) are in a separate column.
     <br> Please keep all numbers in <b>Integer</b> format.<br>
     Step 2: For MS Office in German, please add a new line in the beginning of the file: <b><br>sep=;<br></b>
     This will create a delimiter so that the file format can be used for both English and German-based MS Office documents.<br>
     Step 3: Save the file as "CSV (Comma delimited) (*.csv)"<br>
     Step 4: Close the file.<br>
     Step 5: Please open the newly-created CSV file. The data in the file should stay in the table/column structure. <br>
-    An example of data in the suitable format:<br> <img src = "/data/img/example.jpg" alt = "Data Format Example" height="150" width="450"><br>
+    An example of data in the suitable format:<br> <img src = "/data/img/example_2.jpg" alt = "Data Format Example" height="250" width="420"><br>
 <br></div>
 
-
-    <!-- <script src="lib/js/bootstrap.bundle.min.js"></script> -->
-    <!-- Bootstrap core JavaScript -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
-    <!-- <script>window.jQuery || document.write('<script src="lib/jquery/jquery.min.js"><\/script>')</script> -->
-    <!-- <script src="lib/js/bootstrap.min.js"></script> -->
 
 </body>
 
