@@ -37,11 +37,14 @@ if (isset($_POST['login'])){
     }
     } ?>
 
+
+
     <?php
     $profpic = "/data/img/background2.jpg";
     ?>
 <html>
 <head>
+
 <style type="text/css">
 
 body {
@@ -63,6 +66,9 @@ div::after {
 <title>Login page</title>
 </head>
 <body>
+<script type="text/javascript">
+    localStorage.clear();
+</script>   
 <div id="id01" class="modal" style="width:800px; margin:0 auto ">
 <div class="container mlogin">
             <div id="login">

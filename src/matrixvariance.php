@@ -23,12 +23,13 @@ else {
 
   <title>Delivery Plans Correlation Matrix with Variance</title>
 
-  <link rel="stylesheet" href="/lib/css/bootstrap.min.css">
+  <!-- <link href="/lib/css/bootstrap.min.css" rel="stylesheet"> -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+        crossorigin="anonymous">
   <style>
-    body {
-      font: 12px Arial;
-    }
-
+      body {
+        margin: 0px;
+      }
     path {
       stroke: steelblue;
       stroke-width: 2;
@@ -52,111 +53,115 @@ else {
     th {
       font-weight: bold;
     }
+
   </style>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
-    crossorigin="anonymous">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
-    crossorigin="anonymous"></script>
+
 
 
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+
+
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+<nav class="navbar navbar-default">
     <div class="container-fluid">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
-          aria-controls="navbar">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="/index.php">Web tool home</a>
-      </div>
-      <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
-        <ul class="nav navbar-nav">
-          <!--  <li class="nav-item">
+        <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/index.php">Web tool home</a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="nav navbar-nav">
+                    <!--  <li class="nav-item">
                         <a class="nav-link" href="index.php">Home</a>
                     </li > -->
-          <li>
-            <a class="nav-link" href="./about.php">About this tool</a>
-          </li>
-          <div class="dropdown">
-            <a class="nav-link active" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations
-              <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-              <li>
-                <a class="dropdown-item" href="./finalorder.php">Final Order Amount</a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="./deliveryplans.php">Delivery Plans</a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="./forecasterror.php">Forecast Error</a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="./mse_graph.php">Mean Square Error (MSE)</a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="./rmse_graph.php">Root Mean Square Error (RMSE)</a>
-              </li>
-              <li>
-                  <a class="dropdown-item" href="./mpe.php">Mean Percentage Error (MPE)</a>
-                  </li>
-              <li>
-                <a class="dropdown-item" href="./mape.php">Mean Absolute Percentage Error (MAPE)</a>
-              </li>
-              <li>
-                  <a class="dropdown-item " href="./meanforecastbias.php">Mean Forecast Bias</a>
-              </li>
-              <li role="separator" class="divider"></li>
-              <li class="dropdown-header">Corrected Error Measures</li>
-              <li>
-                  <a class="dropdown-item" href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
-              </li>
-
-
-              <li role="separator" class="divider"></li>
-              <li class="dropdown-header">Matrices</li>
-              <li>
-                <a class="dropdown-item " href="./matrix.php">Delivery Plans Matrix</a>
-              </li>
-              <li>
-                <a class="dropdown-item active" href="./matrixvariance.php">Delivery Plans Matrix - With Variance</a>
-              </li>
-              <li role="separator" class="divider"></li>
-              <li class="dropdown-header">New Graphs</li>
-              <li>
-                <a class="dropdown-item" href="./boxplot.php">Box Plot</a>
-              </li>
-            </ul>
+            <li><a href="./about.php">About this tool</a></li>
+            <li class="dropdown" class = "active">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a  href="./finalorder.php">Final Order Amount</a></li>
+                    <li><a href="./deliveryplans.php">Delivery Plans</a></li>
+                     <li><a href="./forecasterror.php">Forecast Error</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li class="dropdown-header">Error Measures</li>                            
+                    <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD)</a></li>
+                    <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
+                    <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
+                    <li><a href="./mpe.php">Mean Percentage Error (MPE)</a></li>
+                    <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
+                    <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li class="dropdown-header">Matrices</li>
+                    <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
+                    <li class = "active"><a href="./matrixvariance.php">Delivery Plans Matrix - With Variance <span class="sr-only">(current)</span></a></li>
+                            <!-- <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">New Graphs</li>
+                            <li>
+                                <a class="dropdown-item" href="./boxplot.php">Box Plot</a>
+                            </li> -->
+                </ul>
             </li>
-        </ul>
-        </div>
-        <ul class="nav navbar-nav navbar-right">
+          <!-- </ul> -->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
+                        </ul>
+                </li>
+        </ul>  
+                <ul class="nav navbar-nav navbar-right">
+                <li>
+<!-- GTranslate: https://gtranslate.io/ -->
+<a href="#" onclick="doGTranslate('en|en');return false;" title="English" class="gflag nturl" style="background-position:-0px -0px;"><img src="//gtranslate.net/flags/blank.png" height="12" width="12" alt="English" /></a><a href="#" onclick="doGTranslate('en|de');return false;" title="German" class="gflag nturl" style="background-position:-300px -100px;"><img src="//gtranslate.net/flags/blank.png" height="12" width="12" alt="German" /></a>
 
-          <li>
-            <a class="nav-link" href="/includes/logout.php">Logout
-              <span class="sr-only">(current)</span>
-            </a>
-          </li>
-        </ul>
-  </nav>
-  <!--/.nav-collapse -->
-  </div>
-  </nav>
+<style type="text/css">
+
+a.gflag {vertical-align:middle;font-size:16px;padding:1px 0;background-repeat:no-repeat;background-image:url(//gtranslate.net/flags/16.png);}
+a.gflag img {border:0;}
+a.gflag:hover {background-image:url(//gtranslate.net/flags/16a.png);}
+#goog-gt-tt {display:none !important;}
+.goog-te-banner-frame {display:none !important;}
+.goog-te-menu-value:hover {text-decoration:none !important;}
+body {top:0 !important;}
+#google_translate_element2 {display:none!important;}
+
+</style>
+
+<div id="google_translate_element2"></div>
+<script type="text/javascript">
+function googleTranslateElementInit2() {new google.translate.TranslateElement({pageLanguage: 'en',autoDisplay: false}, 'google_translate_element2');}
+</script><script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit2"></script>
+
+
+<script type="text/javascript">
+/* <![CDATA[ */
+eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--)r[e(c)]=k[c]||e(c);k=[function(e){return r[e]}];e=function(){return'\\w+'};c=1};while(c--)if(k[c])p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c]);return p}('6 7(a,b){n{4(2.9){3 c=2.9("o");c.p(b,f,f);a.q(c)}g{3 c=2.r();a.s(\'t\'+b,c)}}u(e){}}6 h(a){4(a.8)a=a.8;4(a==\'\')v;3 b=a.w(\'|\')[1];3 c;3 d=2.x(\'y\');z(3 i=0;i<d.5;i++)4(d[i].A==\'B-C-D\')c=d[i];4(2.j(\'k\')==E||2.j(\'k\').l.5==0||c.5==0||c.l.5==0){F(6(){h(a)},G)}g{c.8=b;7(c,\'m\');7(c,\'m\')}}',43,43,'||document|var|if|length|function|GTranslateFireEvent|value|createEvent||||||true|else|doGTranslate||getElementById|google_translate_element2|innerHTML|change|try|HTMLEvents|initEvent|dispatchEvent|createEventObject|fireEvent|on|catch|return|split|getElementsByTagName|select|for|className|goog|te|combo|null|setTimeout|500'.split('|'),0,{}))
+/* ]]> */
+</script>
+                </li>
+                    <li><a href="/includes/logout.php">Logout</a></li>
+
+            </ul>
+        </div> <!--/.nav-collapse -->
+    </div> <!--/.container-fluid -->
+    </nav>
+
+
+  
+  <!-- <script src="https://d3js.org/d3-color.v1.min.js"></script>
+<script src="https://d3js.org/d3-interpolate.v1.min.js"></script> -->
+
+  <!-- <div class="container"> -->
   <script src="http://d3js.org/d3.v4.min.js"></script>
-  <div class="container">
-
+  <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <div style="padding-left:39px">
       <br>
-      <h3>Delivery Plans Correlation Matrix With Variance</h3>
+      <h3>Delivery Plans Matrix With Variance</h3>
 
       <small>
         <?php
@@ -165,207 +170,345 @@ else {
         echo ".";
         ?></small>
       <br><br>
-      <p> NOTE: This is Delivery plans correlation matrix with the calculation of variance. <font color="red">(Note: the matrix calculation is still under development!)</font></p>
+      <p> <b>Graph Description:</b> Delivery plans matrix with the calculation of variance. </p>
 
     </div>
     <div style="display:inline-block;" id="legend"></div>
     <div style="display:inline-block; float:left" id="container"></div>
     <script>
-      var correlationMatrix = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0.23, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0.48, 0.29, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0.42, 0.44, 0.27, 0, 0, 0, 0, 0, 0, 0],
-        [0.29, 0.5, 0.35, 0.36, 0, 0, 0, 0, 0, 0],
-        [0.24, 0.24, 0.57, 0.38, 0.32, 0, 0, 0, 0, 0],
-        [0.04, 0.22, 0.17, 0.55, 0.39, 0.34, 0, 0, 0, 0],
-        [0.03, 0.15, 0.15, 0.23, 0.46, 0.45, 0.24, 0, 0, 0],
-        [0.04, 0, 0.12, 0.16, 0.22, 0.54, 0.42, 0.26, 0, 0],
-        [0.05, 0.05, 0.08, 0.1, 0.18, 0.25, 0.5, 0.4, 0.3, 0]
-      ];
+    
+    let array = [];
 
-      var labels = ['CW 1', 'CW 2', 'CW 3', 'CW 4', 'CW 5', 'CW 6', 'CW 7', 'CW 8', 'CW 9', 'CW 10'];
 
-      Matrix({
-        container: '#container',
-        data: correlationMatrix,
-        labels: labels,
-        start_color: '#ffffff',
-        middle_color: '#B40404',
-        end_color: '#3498db'
-      });
+    var deviation = JSON.parse(localStorage['deviation']);
+    console.log(deviation);
+    var data = JSON.parse(localStorage['data']);
+    
+    
+    d3.json("/includes/getdata.php", function (error, data2) {
+    
+         var row;
+         var matrix = [];
+         
+         var k,j, i ;
+         
+         var item;
+         k=-1;    
 
-      function Matrix(options) {
-        var margin = { top: 50, right: 50, bottom: 100, left: 100 },
-          width = 350,
-          height = 350,
-          data = options.data,
-          container = options.container,
-          labelsData = options.labels,
-          startColor = options.start_color,
-          endColor = options.end_color;
+        for ( i=0; i<10; i++){
+                var tempArray = [];
+   
+            for (j=0; j<10; j++ ){
+               
+                if(i<=j) {
+                    k++; 
+                tempArray.push((deviation[k].Deviation));
 
-        var widthLegend = 100;
+                 } else {
+                    tempArray.push(0);
 
-        if (!data) {
-          throw new Error('Please pass data');
+                 }
+            }
+                 matrix.push(tempArray);
+                 
         }
+                  
+            function transposeArray(array, arrayLength){
+                var newArray = [];
+                for(var i = 0; i < array.length; i++){
+                    newArray.push([]);
+                };
 
-        if (!Array.isArray(data) || !data.length || !Array.isArray(data[0])) {
-          throw new Error('It should be a 2-D array');
-        }
+                for(var i = 0; i < array.length; i++){
+                    for(var j = 0; j < arrayLength; j++){
+                        newArray[j].push(array[i][j]);
+                    };
+                };
 
-        var maxValue = d3.max(data, function (layer) { return d3.max(layer, function (d) { return d; }); });
-        var minValue = d3.min(data, function (layer) { return d3.min(layer, function (d) { return d; }); });
+                return newArray;
+            }
+            var matrixLen = matrix.length;
+            var newMatrix;
+            newMatrix = transposeArray(matrix, matrixLen);
 
-        var numrows = data.length;
-        var numcols = data[0].length;
 
-        var svg = d3.select(container).append("svg")
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom)
-          .append("g")
-          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+               // tempArray[i].push(data[i].OrderAmount);
+                //matrix[i].push(0);
+              //  tempArray.push(data[i][j].OrderAmount);
+                // const matrix = new Array(columns).fill(tempArray[j]);  
+                //matrix[j].push(data[j].OrderAmount);
+                //}
+                //tempArray.push(data[j].OrderAmount);   
+                //tempArray  = [];
+          
+             //   matrix[j].push(data[k].OrderAmount);
+              //  matrix[j].push(data[i].OrderAmount);
+                //matrix[j]=0;
+            //    const matrix = new Array(9).fill(tempArray[i]);
+            //   for (var j=0; i<data.length; j++){
+            //     tempArray.push(data[j].OrderAmount);
+            //     matrix.fill(tempArray[j]);
+            //   }
+ 
+                 
+        console.log ("matrix:", newMatrix);
+        console.log ("tempArray:", tempArray);
+        console.log ("data[10]:", d3.max(deviation[10].ActualPeriod));
+        console.log ("data[10].OrderAmount:", deviation[10].OrderAmount);
+        console.log ("data:", data);
+        
+    //     for (let i = 0; i < data.length; i++) {
+    //     if (i === 3) {
+    //     break;
+    //     }
+    //     const tempArray = [];
+    //     tempArray.push(data[i]);
+    
+    //     const finalArray = fillZeros(tempArray, maxLen);
+    //     array.push(finalArray);
+    //     }
 
-        var background = svg.append("rect")
-          .style("stroke", "black")
-          .style("stroke-width", "2px")
-          .attr("width", width)
-          .attr("height", height);
+    // function fillZeros(array, maxLen) {
+    //    let realLength = maxLen - array.length;
+    
+    //     for (let k = 0; k < realLength; k++) {
+    //     array.push(0);
+    //     }
+    // return array;
+    // }
 
-        var x = d3.scale.ordinal()
-          .domain(d3.range(numcols))
-          .rangeBands([0, width]);
+    // console.log('Array: ', array);
 
-        var y = d3.scale.ordinal()
-          .domain(d3.range(numrows))
-          .rangeBands([0, height]);
 
-        var colorMap = d3.scale.linear()
-          .domain([minValue, maxValue])
-          .range([startColor, endColor]);
+    var labels = ['CW1', 'CW2', 'CW3', 'CW4', 'CW5', 'CW6', 'CW7', 'CW8', 'CW9', 'CW10'];
 
-        var row = svg.selectAll(".row")
-          .data(data)
-          .enter().append("g")
-          .attr("class", "row")
-          .attr("transform", function (d, i) { return "translate(0," + y(i) + ")"; });
+    
+// var startColor2 = d3.interpolateRdBu(0), // red
+//     middleColor2 = d3.interpolateRdBu(0.5), // white
+//     endColor = d3.interpolateRdBu(1); // blue
 
-        var cell = row.selectAll(".cell")
-          .data(function (d) { return d; })
-          .enter().append("g")
-          .attr("class", "cell")
-          .attr("transform", function (d, i) { return "translate(" + x(i) + ", 0)"; });
 
-        cell.append('rect')
-          .attr("width", x.rangeBand())
-          .attr("height", y.rangeBand())
-          .style("stroke-width", 0);
+    Matrix({
+        container : '#container',
+        data      : newMatrix,
+        labels    : labels,
+        start_color : '#8B0000', //red 
+        middle_color : '#ffffff',
+        end_color : '#3498db' //blue color
+    });
 
-        cell.append("text")
-          .attr("dy", ".32em")
-          .attr("x", x.rangeBand() / 2)
-          .attr("y", y.rangeBand() / 2)
-          .attr("text-anchor", "middle")
-          .style("fill", function (d, i) { return d >= maxValue / 2 ? 'white' : 'black'; })
-          .text(function (d, i) { return d; });
+    function Matrix(options) {
+	var margin = {top: 50, right: 50, bottom: 100, left: 100},
+	    width = 450,
+	    height = 450,
+	    data = options.data,
+	    container = options.container,
+	    labelsData = options.labels,
+	    startColor = options.start_color,
+        middleColor = options.middle_color,
+	    endColor = options.end_color;
 
-        row.selectAll(".cell")
-          .data(function (d, i) { return data[i]; })
-          .style("fill", colorMap);
+	var widthLegend = 100;
 
-        var labels = svg.append('g')
-          .attr('class', "labels");
+	if(!tempArray){
+		throw new Error('Please pass data');
+	}
 
-        var columnLabels = labels.selectAll(".column-label")
-          .data(labelsData)
-          .enter().append("g")
-          .attr("class", "column-label")
-          .attr("transform", function (d, i) { return "translate(" + x(i) + "," + height + ")"; });
+	if(!Array.isArray(newMatrix) || !newMatrix.length || !Array.isArray(newMatrix[0])){
+		throw new Error('It should be a 2-D array');
+	}
 
-        columnLabels.append("line")
-          .style("stroke", "black")
-          .style("stroke-width", "1px")
-          .attr("x1", x.rangeBand() / 2)
-          .attr("x2", x.rangeBand() / 2)
-          .attr("y1", 0)
-          .attr("y2", 5);
+    var maxValue = d3.max(data, function(layer) { return d3.max(layer, function(d) { return d; }); });
+    var minValue = d3.min(data, function(layer) { return d3.min(layer, function(d) { return d; }); });
 
-        columnLabels.append("text")
-          .attr("x", 0)
-          .attr("y", y.rangeBand() / 2)
-          .attr("dy", ".82em")
-          .attr("text-anchor", "end")
-          .attr("transform", "rotate(-60)")
-          .text(function (d, i) { return d; });
+	var numrows = data.length;
+	var numcols = data[0].length;
 
-        var rowLabels = labels.selectAll(".row-label")
-          .data(labelsData)
-          .enter().append("g")
-          .attr("class", "row-label")
-          .attr("transform", function (d, i) { return "translate(" + 0 + "," + y(i) + ")"; });
+	var svg = d3.select(container).append("svg")
+	    .attr("width", width + margin.left + margin.right)
+	    .attr("height", height + margin.top + margin.bottom)
+		.append("g")
+	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        rowLabels.append("line")
-          .style("stroke", "black")
-          .style("stroke-width", "1px")
-          .attr("x1", 0)
-          .attr("x2", -5)
-          .attr("y1", y.rangeBand() / 2)
-          .attr("y2", y.rangeBand() / 2);
+	var background = svg.append("rect")
+	    .style("stroke", "black")
+	    .style("stroke-width", "2px")
+	    .attr("width", width)
+	    .attr("height", height);
 
-        rowLabels.append("text")
-          .attr("x", -8)
-          .attr("y", y.rangeBand() / 2)
-          .attr("dy", ".32em")
-          .attr("text-anchor", "end")
-          .text(function (d, i) { return d; });
+	var x = d3.scale.ordinal()
+	    .domain(d3.range(numcols))
+	    .rangeBands([0, width]);
 
-        var key = d3.select("#legend")
-          .append("svg")
-          .attr("width", widthLegend)
-          .attr("height", height + margin.top + margin.bottom);
+	var y = d3.scale.ordinal()
+	    .domain(d3.range(numrows))
+	    .rangeBands([0, height]);
 
-        var legend = key
-          .append("defs")
-          .append("svg:linearGradient")
-          .attr("id", "gradient")
-          .attr("x1", "100%")
-          .attr("y1", "0%")
-          .attr("x2", "100%")
-          .attr("y2", "100%")
-          .attr("spreadMethod", "pad");
+	var colorMap = d3.scale.linear()
+	    .domain([minValue, 0, maxValue])
+	    .range([startColor, middleColor, endColor]);
 
-        legend
-          .append("stop")
-          .attr("offset", "0%")
-          .attr("stop-color", endColor)
-          .attr("stop-opacity", 1);
+  
 
-        legend
-          .append("stop")
-          .attr("offset", "100%")
-          .attr("stop-color", startColor)
-          .attr("stop-opacity", 1);
+	var row = svg.selectAll(".row")
+	    .data(data)
+	  	.enter().append("g")
+	    .attr("class", "row")
+	    .attr("transform", function(d, i) { return "translate(0," + y(i) + ")"; });
 
-        key.append("rect")
-          .attr("width", widthLegend / 2 - 10)
-          .attr("height", height)
-          .style("fill", "url(#gradient)")
-          .attr("transform", "translate(0," + margin.top + ")");
+	var cell = row.selectAll(".cell")
+	    .data(function(d) { return d; })
+			.enter().append("g")
+	    .attr("class", "cell")
+	    .attr("transform", function(d, i) { return "translate(" + x(i) + ", 0)"; });
 
-        var y = d3.scale.linear()
-          .range([height, 0])
-          .domain([minValue, maxValue]);
+	cell.append('rect')
+	    .attr("width", x.rangeBand())
+	    .attr("height", y.rangeBand())
+	    .style("stroke-width", 0);
 
-        var yAxis = d3.svg.axis()
-          .scale(y)
-          .orient("right");
+    cell.append("text")
+	    .attr("dy", ".32em")
+	    .attr("x", x.rangeBand() / 2)
+	    .attr("y", y.rangeBand() / 2)
+	    .attr("text-anchor", "middle")
+	    .style("fill", function(d, i) { return d >= 0 ? 'black' : 'white'; })
+	    .text(function(d, i) { return d; });
 
-        key.append("g")
-          .attr("class", "y axis")
-          .attr("transform", "translate(41," + margin.top + ")")
-          .call(yAxis)
-      }
+	row.selectAll(".cell")
+	    .data(function(d, i) { return data[i]; })
+	    .style("fill", colorMap);
+
+	var labels = svg.append('g')
+		.attr('class', "labels");
+
+	var columnLabels = labels.selectAll(".column-label")
+	    .data(labelsData)
+	    .enter().append("g")
+	    .attr("class", "column-label")
+	    .attr("transform", function(d, i) { return "translate(" + x(i) + "," + height + ")"; });
+
+	columnLabels.append("line")
+		.style("stroke", "black")
+	    .style("stroke-width", "1px")
+	    .attr("x1", x.rangeBand() / 2)
+	    .attr("x2", x.rangeBand() / 2)
+	    .attr("y1", 0)
+	    .attr("y2", 5);
+
+	columnLabels.append("text")
+	    .attr("x", 0)
+	    .attr("y", y.rangeBand() / 2)
+	    .attr("dy", ".82em")
+	    .attr("text-anchor", "end")
+	    .attr("transform", "rotate(-60)")
+	    .text(function(d, i) { return d; });
+
+	var rowLabels = labels.selectAll(".row-label")
+	    .data(labelsData)
+	  .enter().append("g")
+	    .attr("class", "row-label")
+	    .attr("transform", function(d, i) { return "translate(" + 0 + "," + y(i) + ")"; });
+
+	rowLabels.append("line")
+		.style("stroke", "black")
+	    .style("stroke-width", "1px")
+	    .attr("x1", 0)
+	    .attr("x2", -5)
+	    .attr("y1", y.rangeBand() / 2)
+	    .attr("y2", y.rangeBand() / 2);
+
+	rowLabels.append("text")
+	    .attr("x", -8)
+	    .attr("y", y.rangeBand() / 2)
+	    .attr("dy", ".32em")
+	    .attr("text-anchor", "end")
+	    .text(function(d, i) { return d; });
+
+    var key = d3.select("#legend")
+    .append("svg")
+    .attr("width", widthLegend)
+    .attr("height", height + margin.top + margin.bottom);
+
+
+//   var stops = [{offset: 0, color: "tomato", value: extent[0]}, {offset: .5, color: "white", value: 0}, {offset: 1, color: "steelblue", value: extent[1]}];
+  
+//   gradient.selectAll("stop")
+//       .data(stops)
+//     .enter().append("stop")
+//       .attr("offset", function(d){ return (100 * d.offset) + "%"; })
+//       .attr("stop-color", function(d){ return d.color; });
+
+
+
+
+    var legend = key
+    .append("defs")
+    .append("svg:linearGradient")
+    .attr("id", "gradient")
+    .attr("x1", "50%")
+    .attr("y1", "50%")
+    .attr("x2", "50%")
+    .attr("y2", "100%")
+    .attr("spreadMethod", "pad");
+
+    legend
+    .append("stop")
+    .attr("offset", "0%")
+    .attr("stop-color", endColor)
+    .attr("stop-opacity", 1);
+
+    legend
+    .append("stop")
+    .attr("offset", "33%")
+    .attr("stop-color", endColor)
+    .attr("stop-opacity", 0.1);
+
+    legend
+    .append("stop")
+    .attr("offset", "66%")
+    .attr("stop-color", middleColor)
+    .attr("stop-opacity", 0.5);
+
+    legend
+    .append("stop")
+    .attr("offset", "53%")
+    .attr("stop-color", startColor)
+    .attr("stop-opacity", 0.1);
+
+    legend
+    .append("stop")
+    .attr("offset", "100%")
+    .attr("stop-color", startColor)
+    .attr("stop-opacity", 1);
+
+
+
+    key.append("rect")
+    .attr("width", widthLegend/2-10)
+    .attr("height", height)
+    .style("fill", "url(#gradient)")
+    .attr("transform", "translate(0," + margin.top + ")");
+
+    var y = d3.scale.linear()
+    .range([height, 0])
+    .domain([minValue, maxValue]);
+
+    var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("right");
+
+
+    key.append("g")
+    .attr("class", "y axis")
+    .attr("transform", "translate(41," + margin.top + ")")
+    .call(yAxis)
+};
+//};
+
+    });
+
+
     </script>
     </div>
 
@@ -373,7 +516,10 @@ else {
     <div id="container" style="padding-left: 39px">
       <script type="text/javascript"> 
       </script>
-    </div>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+    <script src="/lib/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
 
 </body>
 

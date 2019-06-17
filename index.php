@@ -25,15 +25,15 @@ require_once("includes/connection.php"); ?>
     <meta name="author" content="">
     <link rel="icon" href="data/ico/innofit.ico">
     <title>Forecast Quality Visualization</title>
-    <link href="lib/css/bootstrap.min.css" rel="stylesheet">	
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+        crossorigin="anonymous">
     
 <style>
 
-
-        body {
-            min-height: 2000px;
-            padding-top: 70px;
-        }
+      body {
+        margin: 0px;
+      }
 
          path {
             stroke: steelblue;
@@ -89,15 +89,6 @@ require_once("includes/connection.php"); ?>
         }
 </style>
 
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script> 
-<script type="text/javascript" src="lib/js/bootstrap.min.js"></script> 
-
-<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script> 
-<script type="text/javascript" src="js/bootstrap.min.js"></script>  -->
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -122,89 +113,90 @@ $(document).ready(function() {
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
-                    aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand active" href="index.php">Web tool home</a>
-            </div>
-            <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
-                <ul class="nav navbar-nav">
-
-                    <li>
-                        <a class="nav-link" href="src/about.php">About this tool</a>
-                    </li>
-                    <div class="nav-link dropdown">
-								<a class="nav-link" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations
-									<span class="caret"></span>
-								</a>
-                        <ul class=" dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <li>
-                                <a class="dropdown-item" href="src/finalorder.php">Final Order Amount</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item"  href="src/deliveryplans.php">Delivery Plans</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="src/forecasterror.php">Forecast Error</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="src/mad_graph.php">Mean Absolute Deviation (MAD)</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="src/mse_graph.php">Mean Square Error (MSE)</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="src/rmse_graph.php">Root Mean Square Error (RMSE)</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="src/mpe.php">Mean Percentage Error (MPE)</a>
-                            </li>                            
-                            <li>
-                                <a class="dropdown-item " href="src/mape.php">Mean Absolute Percentage Error (MAPE)</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item " href="src/meanforecastbias.php">Mean Forecast Bias</a>
-                            </li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Corrected Error Measures</li>
-                            <li>
-                                <a class="dropdown-item" href="src/cor_rmse.php">Corrected Root Mean Square Error (CRMSE)</a>
-                            </li>
- 
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Matrices</li>
-                            <li>
-                                <a class="dropdown-item" href="src/matrix.php">Delivery Plans Matrix</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="src/matrixvariance.php">Delivery Plans Matrix - With Variance</a>
-                            </li>
-                            <li role="separator" class="divider"></li>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header active">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand active" href="/index.php">Web tool home <span class="sr-only">(current)</span></a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="nav navbar-nav">
+                    <!--  <li class="nav-item">
+                        <a class="nav-link" href="index.php">Home</a>
+                    </li > -->
+            <li><a href="src/about.php">About this tool</a></li>
+            <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li ><a href="src/finalorder.php">Final Order Amount </a></li>
+                    <li ><a href="src/deliveryplans.php">Delivery Plans </a></li>
+                     <li><a href="src/forecasterror.php">Forecast Error</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li class="dropdown-header">Error Measures</li>                            
+                    <li><a href="src/mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
+                    <li> <a href="src/mse_graph.php">Mean Square Error (MSE)</a></li>
+                    <li><a href="src/rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
+                    <li><a href="src/mpe.php">Mean Percentage Error (MPE) </a></li>
+                    <li><a href="src/mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
+                    <li><a href="src/meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li class="dropdown-header">Matrices</li>
+                    <li><a href="src/matrix.php">Delivery Plans Matrix</a></li>
+                    <li><a href="src/matrixvariance.php">Delivery Plans Matrix - With Variance </a></li>
+                            <!-- <li role="separator" class="divider"></li>
                             <li class="dropdown-header">New Graphs</li>
                             <li>
-                                <a class="dropdown-item" href="src/boxplot.php">Box Plot</a>
-                            </li>
+                                <a class="dropdown-item" href="./boxplot.php">Box Plot</a>
+                            </li> -->
+                </ul>
+            </li>
+          <!-- </ul> -->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="src/cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
-                    </li>
-                </ul>
-                </div>
+                </li>
+        </ul>  
                 <ul class="nav navbar-nav navbar-right">
+                <li>
+<!-- GTranslate: https://gtranslate.io/ -->
+<a href="#" onclick="doGTranslate('en|en');return false;" title="English" class="gflag nturl" style="background-position:-0px -0px;"><img src="//gtranslate.net/flags/blank.png" height="12" width="12" alt="English" /></a><a href="#" onclick="doGTranslate('en|de');return false;" title="German" class="gflag nturl" style="background-position:-300px -100px;"><img src="//gtranslate.net/flags/blank.png" height="12" width="12" alt="German" /></a>
 
-                    <li>
-                        <a class = "nav-link" href="includes/logout.php">Logout
-                            <span class="sr-only">(current)</span>
-                        </a>
-                    </li>
-                </ul>
-    </nav>
-    <!--/.nav-collapse -->
-    </div>
+<style type="text/css">
+
+a.gflag {vertical-align:middle;font-size:16px;padding:1px 0;background-repeat:no-repeat;background-image:url(//gtranslate.net/flags/16.png);}
+a.gflag img {border:0;}
+a.gflag:hover {background-image:url(//gtranslate.net/flags/16a.png);}
+#goog-gt-tt {display:none !important;}
+.goog-te-banner-frame {display:none !important;}
+.goog-te-menu-value:hover {text-decoration:none !important;}
+body {top:0 !important;}
+#google_translate_element2 {display:none!important;}
+
+</style>
+
+<div id="google_translate_element2"></div>
+<script type="text/javascript">
+function googleTranslateElementInit2() {new google.translate.TranslateElement({pageLanguage: 'en',autoDisplay: false}, 'google_translate_element2');}
+</script><script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit2"></script>
+
+
+<script type="text/javascript">
+/* <![CDATA[ */
+eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--)r[e(c)]=k[c]||e(c);k=[function(e){return r[e]}];e=function(){return'\\w+'};c=1};while(c--)if(k[c])p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c]);return p}('6 7(a,b){n{4(2.9){3 c=2.9("o");c.p(b,f,f);a.q(c)}g{3 c=2.r();a.s(\'t\'+b,c)}}u(e){}}6 h(a){4(a.8)a=a.8;4(a==\'\')v;3 b=a.w(\'|\')[1];3 c;3 d=2.x(\'y\');z(3 i=0;i<d.5;i++)4(d[i].A==\'B-C-D\')c=d[i];4(2.j(\'k\')==E||2.j(\'k\').l.5==0||c.5==0||c.l.5==0){F(6(){h(a)},G)}g{c.8=b;7(c,\'m\');7(c,\'m\')}}',43,43,'||document|var|if|length|function|GTranslateFireEvent|value|createEvent||||||true|else|doGTranslate||getElementById|google_translate_element2|innerHTML|change|try|HTMLEvents|initEvent|dispatchEvent|createEventObject|fireEvent|on|catch|return|split|getElementsByTagName|select|for|className|goog|te|combo|null|setTimeout|500'.split('|'),0,{}))
+/* ]]> */
+</script>
+                </li>
+                    <li><a href="/includes/logout.php">Logout</a></li>
+
+            </ul>
+        </div> <!--/.nav-collapse -->
+    </div> <!--/.container-fluid -->
     </nav>
     
 
@@ -225,8 +217,8 @@ echo ",";
 
  <br> Here you can find the overview of the Forecast Quality Visualization tool. 
  
-<br>All graphs except matrices and new graphs (box plot) are connected to a database.<br>
-<br> <b> NOTE: Please upload the data in .csv format in the following data structure: <br>Product	 ActualPeriod	 ForecastPeriod	 OrderAmount	 PeriodsBeforeDelivery
+
+<br> <b> NOTE: Please upload the data in .csv format in the data structure defined below
 </b><br>
 
 <br>Happy exploring!</p>
@@ -238,6 +230,8 @@ echo ",";
   <a href="#">Scenario 2</a>
   <a href="#">Scenario 3</a>  
 </div>
+<script src="http://d3js.org/d3.v4.min.js"></script>
+<script src="https://cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js"></script>
 <script>
 function openNav() {
     document.getElementById("mySidenav").style.width = "200px";
@@ -247,7 +241,69 @@ function closeNav() {
     document.getElementById("mySidenav").style.width = "0";
 }
 </script>
+<script>
+        
+        d3.json("/includes/getdata.php", function (error, data) {
+            if (error) throw error;
+            //console.log(data);
+            let calcDeviation = function (orignalEl, finalOrder) {
+            return (orignalEl.OrderAmount - finalOrder) / finalOrder;
+             } 
+             let filterValues = data.filter((el) => {
+            return el.PeriodsBeforeDelivery == 0;
+         });
+         let finalOrder = data.filter((el) => { return el.PeriodsBeforeDelivery==0; });
 
+         let valueMap = new Map();
+
+         filterValues.forEach((val) => {
+            let keyString = val.ActualPeriod;
+            let valueString = val.OrderAmount;
+            valueMap.set(keyString, valueString);
+         });
+             let finalArray = data.map((el) => {
+            let deviation = calcDeviation(el, valueMap.get(el.ForecastPeriod));
+            return {
+               ActualPeriod: el.ActualPeriod,
+               ForecastPeriod: el.ForecastPeriod,
+               OrderAmount: el.OrderAmount,
+               Product: el.Product,
+               FinalOrder: valueMap.get(el.ForecastPeriod),
+               PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+               Deviation: deviation.toFixed(2)
+            };
+         })
+
+         localStorage.setItem('finalOrder', JSON.stringify(finalOrder));
+         localStorage.setItem('deviation', JSON.stringify(finalArray));
+         localStorage.setItem('data', JSON.stringify(data));
+
+        //  localforage.config({
+        //     driver      : localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+        //     name        : 'myApp',
+        //     version     : 1.0,
+        //     size        : 4980736, // Size of database, in bytes. WebSQL-only for now.
+        //     storeName   : 'keyvaluepairs', // Should be alphanumeric, with underscores.
+        //     description : 'some description'
+        // });
+
+        //  localforage.setItem ('deviation', finalArray, function(result){
+        //      console.log(result);
+        //  });
+
+        //  localforage.setItem ('finalOrder', finalOrder).then(console.log);
+        //     localforage.getItem('finalOrder', function (err, finalOrder) {
+        //     });             
+    
+        
+             
+        //  localforage.getItem('deviation', function(err, val) { alert(finalArray) });
+
+        //  localforage.setItem ('data', data, function(){     })
+
+        });
+
+</script>
 <?php
 
 
@@ -261,13 +317,16 @@ if (isset($_POST["import"])) {
         
 
         while (($column = fgetcsv($file, 0, ",")) !== FALSE) {
-           // echo '<pre>';
-           // var_dump ($column[0]);
-           // echo '</pre>';
+            
+
             if ($i>0){
+                $pbd = $column[2] - $column[1];
            //$session_username = mysql_real_escape_string($_SESSION["session_username"]);
             $sqlInsert = "INSERT into orders (Product, ActualPeriod, ForecastPeriod, OrderAmount, PeriodsBeforeDelivery, username, Date)
-            values ('$column[0]','$column[1]','$column[2]','$column[3]','$column[4]','{$_SESSION['session_username']}',NOW())";
+            values ('$column[0]','$column[1]','$column[2]','$column[3]','$pbd','{$_SESSION['session_username']}',NOW())";
+
+            $sqlInsert = "INSERT into orders (Product, ActualPeriod, ForecastPeriod, OrderAmount, PeriodsBeforeDelivery, username, Date)
+            values ('$column[0]','$column[1]','$column[2]','$column[3]','$pbd','{$_SESSION['session_username']}',NOW())";
             $result = mysqli_query($conn, $sqlInsert);
             
             if (! empty($result)) {
@@ -286,6 +345,8 @@ if (isset($_POST["import"])) {
     }
 }
 ?>
+
+
     <div class="outer-scontainer">
         <div class="row2">
 
@@ -309,6 +370,19 @@ if (isset($_POST["import"])) {
     ?>
     <br/><br>
     <div style="padding-left:39px">
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+    <script>
+    d3.json("includes/getdata.php", function(error, data) {
+    if (error) throw error;
+    //console.log(data);
+
+    });
+    </script>
+
+
+
+
+
     <div class="outer-scontainer">
         You can remove all your order data from the database by clicking on the button below.
     <div class="input-row">
@@ -320,27 +394,24 @@ if (isset($_POST["import"])) {
     }
     ?>
     </div>
-</div>
-</div><br><br>
+</div>    </div>
+<br><br>
 <div style="background-color:lavender;padding-left:39px">
     <i><img src = "/data/ico/icon.png" alt = "Information Icon" height="15" width="15"><b> Instructions to upload data in CSV format:</i></b> <br>
-    Step 1: Create a new Excel file and add the data, so that values of each column (Product, ActualPeriod, ForecastPeriod, OrderAmount, PeriodsBeforeDelivery) are in a separate column.
+    Step 1: Create a new Excel file and add the data, so that values of each column (Product, ActualPeriod, ForecastPeriod, OrderAmount) are in a separate column.
     <br> Please keep all numbers in <b>Integer</b> format.<br>
     Step 2: For MS Office in German, please add a new line in the beginning of the file: <b><br>sep=;<br></b>
     This will create a delimiter so that the file format can be used for both English and German-based MS Office documents.<br>
     Step 3: Save the file as "CSV (Comma delimited) (*.csv)"<br>
     Step 4: Close the file.<br>
     Step 5: Please open the newly-created CSV file. The data in the file should stay in the table/column structure. <br>
-    An example of data in the suitable format:<br> <img src = "/data/img/example.jpg" alt = "Data Format Example" height="150" width="450"><br>
+    An example of data in the suitable format:<br> <img src = "/data/img/example_2.jpg" alt = "Data Format Example" height="250" width="420"><br>
 <br></div>
 
-
-    <!-- <script src="lib/js/bootstrap.bundle.min.js"></script> -->
-    <!-- Bootstrap core JavaScript -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
-    <!-- <script>window.jQuery || document.write('<script src="lib/jquery/jquery.min.js"><\/script>')</script> -->
-    <!-- <script src="lib/js/bootstrap.min.js"></script> -->
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+    <script src="/lib/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
 
 </body>
 
