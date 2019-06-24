@@ -28,7 +28,7 @@ require_once("includes/connection.php"); ?>
     
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
         crossorigin="anonymous">
-    
+        <script src="lib/jquery/jquery-3.2.1.min.js"></script>
 <style>
 
       body {
@@ -90,6 +90,7 @@ require_once("includes/connection.php"); ?>
 </style>
 
 
+
 <script type="text/javascript">
 $(document).ready(function() {
     $("#frmCSVImport").on("submit", function () {
@@ -111,6 +112,8 @@ $(document).ready(function() {
 
 
 </head>
+<!-- Execute jquery -->
+<!-- <script src="./jquery/jquery.min.js"></script> -->
 
 <body>
 <nav class="navbar navbar-default">
@@ -218,7 +221,7 @@ echo ",";
  <br> Here you can find the overview of the Forecast Quality Visualization tool. 
  
 
-<br> <b> NOTE: Please upload the data in .csv format in the data structure defined below
+<br> <b> NOTE: Please upload the data in .csv format in the data structure described below
 </b><br>
 
 <br>Happy exploring!</p>
@@ -226,12 +229,12 @@ echo ",";
 <span style="font-size:15px;cursor:pointer" onclick="openNav()">&#9776; Open scenarios</span>
 <div id="mySidenav" class="sidenav">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-  <a href="#">Scenario 1</a>
-  <a href="#">Scenario 2</a>
-  <a href="#">Scenario 3</a>  
+  <a href="#">Scenario 1: Weekly visualization</a>
+  <a href="#">Scenario 2: Monthly visualization</a>
+  <!-- <a href="#">Scenario 3</a>   -->
 </div>
 <script src="http://d3js.org/d3.v4.min.js"></script>
-<script src="https://cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js"></script>
+<!-- <script src="https://cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js"></script> -->
 <script>
 function openNav() {
     document.getElementById("mySidenav").style.width = "200px";
@@ -245,18 +248,24 @@ function closeNav() {
         
         d3.json("/includes/getdata.php", function (error, data) {
             if (error) throw error;
-            //console.log(data);
+        
+        var stringData = JSON.stringify (data);
+        var newData = Number(data);
+            console.log("data:", newData, stringData, data);
+
             let calcDeviation = function (orignalEl, finalOrder) {
             return (orignalEl.OrderAmount - finalOrder) / finalOrder;
              } 
-             let filterValues = data.filter((el) => {
-            return el.PeriodsBeforeDelivery == 0;
-         });
-         let finalOrder = data.filter((el) => { return el.PeriodsBeforeDelivery==0; });
+         let finalOrder = data.filter((el) => {
+             console.log('element: ', el);
+            //  return el.PeriodsBeforeDelivery==0;
+            return el.PeriodsBeforeDelivery == "0";
+            });
+         console.log("final Orders:", finalOrder);
 
          let valueMap = new Map();
 
-         filterValues.forEach((val) => {
+         finalOrder.forEach((val) => {
             let keyString = val.ActualPeriod;
             let valueString = val.OrderAmount;
             valueMap.set(keyString, valueString);
@@ -311,22 +320,33 @@ if (isset($_POST["import"])) {
     
     $i=0; //the first row is skipped
     $fileName = $_FILES["file"]["tmp_name"];
-    $result = mysqli_query($conn, 'SELECT * from orders');    
+    $result = mysqli_query($conn, 'SELECT * from newOrders');    
     if ($_FILES["file"]["size"] > 0) {
         $file = fopen($fileName, "r");
+
+
         
 
         while (($column = fgetcsv($file, 0, ",")) !== FALSE) {
             
+            
 
             if ($i>0){
-                $pbd = $column[2] - $column[1];
-           //$session_username = mysql_real_escape_string($_SESSION["session_username"]);
-            $sqlInsert = "INSERT into orders (Product, ActualPeriod, ForecastPeriod, OrderAmount, PeriodsBeforeDelivery, username, Date)
-            values ('$column[0]','$column[1]','$column[2]','$column[3]','$pbd','{$_SESSION['session_username']}',NOW())";
+                $actualWeek = date("W", strtotime("$column[1]"));
+                $forecastWeek = date("W", strtotime("$column[2]"));
+                //$forecastWeek = "SELECT WEEK ($column[2])";
+                $pbd = $forecastWeek - $actualWeek;
+              //  $pbd = "SELECT WEEKOFYEAR ('$column[2]') - SELECT WEEKOFYEAR ('$column[1]')";
+                $actualDay = date("d", strtotime("$column[1]"));
+                $forecastDay = date("d", strtotime("$column[2]"));
+                
 
-            $sqlInsert = "INSERT into orders (Product, ActualPeriod, ForecastPeriod, OrderAmount, PeriodsBeforeDelivery, username, Date)
-            values ('$column[0]','$column[1]','$column[2]','$column[3]','$pbd','{$_SESSION['session_username']}',NOW())";
+           //$session_username = mysql_real_escape_string($_SESSION["session_username"]);
+            $sqlInsert = "INSERT into newOrders (Product, ActualDate, ForecastDate, OrderAmount, ActualDay, ActualPeriod, ForecastDay, ForecastPeriod, PeriodsBeforeDelivery, username, Date )
+            values ('$column[0]','$column[1]','$column[2]','$column[3]', $actualDay, $actualWeek, $forecastDay, $forecastWeek, $pbd, '{$_SESSION['session_username']}', NOW())";
+
+            // $sqlInsert = "INSERT into `newOrders` (Product, ActualPeriod, ForecastPeriod, OrderAmount, PeriodsBeforeDelivery, username, Date)
+            // values ('$column[0]','$column[1]','$column[2]','$column[3]', $pbd, SELECT WEEKOFYEAR ('$column[1]') AS 'ActualWeek', $pbd, SELECT WEEKOFYEAR ('$column[2]') AS 'ForecastWeek', '$pbd', '{$_SESSION['session_username']}',NOW())";
             $result = mysqli_query($conn, $sqlInsert);
             
             if (! empty($result)) {
@@ -369,22 +389,10 @@ if (isset($_POST["import"])) {
     } else {
     ?>
     <br/><br>
-    <div style="padding-left:39px">
-    <script src="http://d3js.org/d3.v4.min.js"></script>
-    <script>
-    d3.json("includes/getdata.php", function(error, data) {
-    if (error) throw error;
-    //console.log(data);
-
-    });
-    </script>
-
-
-
-
+    
 
     <div class="outer-scontainer">
-        You can remove all your order data from the database by clicking on the button below.
+        You can remove all your data from the database by clicking on the button below.
     <div class="input-row">
     <form action="includes/delete.php" method="get" onsubmit="return confirm('Are you sure you want to remove all data?');">
     <input type="hidden" name="act" value="run">
@@ -393,19 +401,17 @@ if (isset($_POST["import"])) {
     <?php
     }
     ?>
-    </div>
 </div>    </div>
 <br><br>
 <div style="background-color:lavender;padding-left:39px">
     <i><img src = "/data/ico/icon.png" alt = "Information Icon" height="15" width="15"><b> Instructions to upload data in CSV format:</i></b> <br>
-    Step 1: Create a new Excel file and add the data, so that values of each column (Product, ActualPeriod, ForecastPeriod, OrderAmount) are in a separate column.
-    <br> Please keep all numbers in <b>Integer</b> format.<br>
-    Step 2: For MS Office in German, please add a new line in the beginning of the file: <b><br>sep=;<br></b>
+    <u>Step 1:</u> Create a new Excel file and add the data, so that values of each column (Product, ActualDate, ForecastDate, OrderAmount) are in a separate column.
+    <br> Please keep the date in the following format: <b>YYYY-MM-DD</b>.<br>
+    <u>Step 2:</u> For MS Office in German, please add a new line in the beginning of the file: <b><br>sep=;<br></b>
     This will create a delimiter so that the file format can be used for both English and German-based MS Office documents.<br>
-    Step 3: Save the file as "CSV (Comma delimited) (*.csv)"<br>
-    Step 4: Close the file.<br>
-    Step 5: Please open the newly-created CSV file. The data in the file should stay in the table/column structure. <br>
-    An example of data in the suitable format:<br> <img src = "/data/img/example_2.jpg" alt = "Data Format Example" height="250" width="420"><br>
+    <u>Step 3:</u> Save the file as "CSV (Comma delimited) (*.csv)"
+    <br>
+    An example of data in the suitable format:<br><br> <img src = "/data/img/newExampleData.jpg" alt = "Data Format Example" height="210" width="420"><br>
 <br></div>
 
 <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>

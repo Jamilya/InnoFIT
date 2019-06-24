@@ -37,7 +37,7 @@ else {
       }
       .axis-label, .legend-label {
         fill: #635F5D;
-        font-size: 10pt;
+        font-size: 8pt;
         font-family: sans-serif;
       }
 
@@ -174,8 +174,8 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
       const xLabel = 'Periods Before Delivery';
       const yValue = d => d.MeanOfThisPeriod;
       const yLabel = 'MSE';
-      const colorValue = d => d.PeriodsBeforeDelivery;
-      const colorLabel = 'Actual Period';
+      const colorValue = d => d.Product;
+      const colorLabel = '';
       const margin = { left: 55, right: 25, top: 20, bottom: 30 };
       const legendOffset = 52;
 
@@ -205,17 +205,17 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 
       yAxisG.append('text')
           .attr('class', 'axis-label')
-          .attr('x', (-innerHeight / 2)+45)
+          .attr('x', -185)
           .attr('y', -45)
           .attr('transform', `rotate(-90)`)
           .style('text-anchor', 'middle')
           .text(yLabel);
 
-      colorLegendG.append('text')
-          .attr('class', 'legend-label')
-          .attr('x', -30)
-          .attr('y', -12)
-          .text(colorLabel);
+    //   colorLegendG.append('text')
+    //       .attr('class', 'legend-label')
+    //       .attr('x', -30)
+    //       .attr('y', -12)
+    //       .text(colorLabel);
 
       const xScale = d3.scaleLinear();
       const yScale = d3.scaleLinear();
@@ -229,9 +229,9 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
         .ticks(10);
 
 
-      const colorLegend = d3.legendColor()
-        .scale(colorScale)
-        .shape('circle');
+    //   const colorLegend = d3.legendColor()
+    //     .scale(colorScale)
+    //     .shape('circle');
 
             let absDiff = function (orignalEl, finalOrder) {
                 return Math.pow((orignalEl.OrderAmount - finalOrder), 2);

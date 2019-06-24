@@ -30,30 +30,23 @@ else {
       body {
         margin: 0px;
       }
-    path {
-      stroke: steelblue;
-      stroke-width: 2;
-      fill: none;
-    }
+        td,
+        th {
+            padding: 2px 4px;
+        }
 
-    .axis path,
-    .axis line {
-      fill: none;
-      stroke: grey;
-      stroke-width: 1;
-      shape-rendering: crispEdges;
-    }
+        th {
+            font-weight: bold;
+        }
+        .axis text {
+            font: 10px sans-serif;
+        }
 
-
-    td,
-    th {
-      padding: 2px 4px;
-    }
-
-    th {
-      font-weight: bold;
-    }
-
+        .axis line, .axis path {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
   </style>
 
 
@@ -120,7 +113,6 @@ else {
 <a href="#" onclick="doGTranslate('en|en');return false;" title="English" class="gflag nturl" style="background-position:-0px -0px;"><img src="//gtranslate.net/flags/blank.png" height="12" width="12" alt="English" /></a><a href="#" onclick="doGTranslate('en|de');return false;" title="German" class="gflag nturl" style="background-position:-300px -100px;"><img src="//gtranslate.net/flags/blank.png" height="12" width="12" alt="German" /></a>
 
 <style type="text/css">
-
 a.gflag {vertical-align:middle;font-size:16px;padding:1px 0;background-repeat:no-repeat;background-image:url(//gtranslate.net/flags/16.png);}
 a.gflag img {border:0;}
 a.gflag:hover {background-image:url(//gtranslate.net/flags/16a.png);}
@@ -129,7 +121,6 @@ a.gflag:hover {background-image:url(//gtranslate.net/flags/16a.png);}
 .goog-te-menu-value:hover {text-decoration:none !important;}
 body {top:0 !important;}
 #google_translate_element2 {display:none!important;}
-
 </style>
 
 <div id="google_translate_element2"></div>
@@ -157,7 +148,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 <script src="https://d3js.org/d3-interpolate.v1.min.js"></script> -->
 
   <!-- <div class="container"> -->
-  <script src="http://d3js.org/d3.v4.min.js"></script>
+  <!-- <script src="http://d3js.org/d3.v4.min.js"></script> -->
   <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <div style="padding-left:39px">
       <br>
@@ -178,8 +169,6 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
     <script>
     
     let array = [];
-
-
     var deviation = JSON.parse(localStorage['deviation']);
     console.log(deviation);
     var data = JSON.parse(localStorage['data']);
@@ -194,7 +183,6 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
          
          var item;
          k=-1;    
-
         for ( i=0; i<10; i++){
                 var tempArray = [];
    
@@ -203,10 +191,8 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
                 if(i<=j) {
                     k++; 
                 tempArray.push((deviation[k].Deviation));
-
                  } else {
                     tempArray.push(0);
-
                  }
             }
                  matrix.push(tempArray);
@@ -218,20 +204,16 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
                 for(var i = 0; i < array.length; i++){
                     newArray.push([]);
                 };
-
                 for(var i = 0; i < array.length; i++){
                     for(var j = 0; j < arrayLength; j++){
                         newArray[j].push(array[i][j]);
                     };
                 };
-
                 return newArray;
             }
             var matrixLen = matrix.length;
             var newMatrix;
             newMatrix = transposeArray(matrix, matrixLen);
-
-
                // tempArray[i].push(data[i].OrderAmount);
                 //matrix[i].push(0);
               //  tempArray.push(data[i][j].OrderAmount);
@@ -267,7 +249,6 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
     //     const finalArray = fillZeros(tempArray, maxLen);
     //     array.push(finalArray);
     //     }
-
     // function fillZeros(array, maxLen) {
     //    let realLength = maxLen - array.length;
     
@@ -276,18 +257,12 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
     //     }
     // return array;
     // }
-
     // console.log('Array: ', array);
-
-
     var labels = ['CW1', 'CW2', 'CW3', 'CW4', 'CW5', 'CW6', 'CW7', 'CW8', 'CW9', 'CW10'];
-
     
 // var startColor2 = d3.interpolateRdBu(0), // red
 //     middleColor2 = d3.interpolateRdBu(0.5), // white
 //     endColor = d3.interpolateRdBu(1); // blue
-
-
     Matrix({
         container : '#container',
         data      : newMatrix,
@@ -296,7 +271,6 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
         middle_color : '#ffffff',
         end_color : '#3498db' //blue color
     });
-
     function Matrix(options) {
 	var margin = {top: 50, right: 50, bottom: 100, left: 100},
 	    width = 450,
@@ -307,66 +281,51 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 	    startColor = options.start_color,
         middleColor = options.middle_color,
 	    endColor = options.end_color;
-
 	var widthLegend = 100;
-
 	if(!tempArray){
 		throw new Error('Please pass data');
 	}
-
 	if(!Array.isArray(newMatrix) || !newMatrix.length || !Array.isArray(newMatrix[0])){
 		throw new Error('It should be a 2-D array');
 	}
-
     var maxValue = d3.max(data, function(layer) { return d3.max(layer, function(d) { return d; }); });
     var minValue = d3.min(data, function(layer) { return d3.min(layer, function(d) { return d; }); });
-
 	var numrows = data.length;
 	var numcols = data[0].length;
-
 	var svg = d3.select(container).append("svg")
 	    .attr("width", width + margin.left + margin.right)
 	    .attr("height", height + margin.top + margin.bottom)
 		.append("g")
 	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
 	var background = svg.append("rect")
 	    .style("stroke", "black")
 	    .style("stroke-width", "2px")
 	    .attr("width", width)
 	    .attr("height", height);
-
 	var x = d3.scale.ordinal()
 	    .domain(d3.range(numcols))
 	    .rangeBands([0, width]);
-
 	var y = d3.scale.ordinal()
 	    .domain(d3.range(numrows))
 	    .rangeBands([0, height]);
-
 	var colorMap = d3.scale.linear()
 	    .domain([minValue, 0, maxValue])
 	    .range([startColor, middleColor, endColor]);
-
   
-
 	var row = svg.selectAll(".row")
 	    .data(data)
 	  	.enter().append("g")
 	    .attr("class", "row")
 	    .attr("transform", function(d, i) { return "translate(0," + y(i) + ")"; });
-
 	var cell = row.selectAll(".cell")
 	    .data(function(d) { return d; })
 			.enter().append("g")
 	    .attr("class", "cell")
 	    .attr("transform", function(d, i) { return "translate(" + x(i) + ", 0)"; });
-
 	cell.append('rect')
 	    .attr("width", x.rangeBand())
 	    .attr("height", y.rangeBand())
 	    .style("stroke-width", 0);
-
     cell.append("text")
 	    .attr("dy", ".32em")
 	    .attr("x", x.rangeBand() / 2)
@@ -374,20 +333,16 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 	    .attr("text-anchor", "middle")
 	    .style("fill", function(d, i) { return d >= 0 ? 'black' : 'white'; })
 	    .text(function(d, i) { return d; });
-
 	row.selectAll(".cell")
 	    .data(function(d, i) { return data[i]; })
 	    .style("fill", colorMap);
-
 	var labels = svg.append('g')
 		.attr('class', "labels");
-
 	var columnLabels = labels.selectAll(".column-label")
 	    .data(labelsData)
 	    .enter().append("g")
 	    .attr("class", "column-label")
 	    .attr("transform", function(d, i) { return "translate(" + x(i) + "," + height + ")"; });
-
 	columnLabels.append("line")
 		.style("stroke", "black")
 	    .style("stroke-width", "1px")
@@ -395,7 +350,6 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 	    .attr("x2", x.rangeBand() / 2)
 	    .attr("y1", 0)
 	    .attr("y2", 5);
-
 	columnLabels.append("text")
 	    .attr("x", 0)
 	    .attr("y", y.rangeBand() / 2)
@@ -403,13 +357,11 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 	    .attr("text-anchor", "end")
 	    .attr("transform", "rotate(-60)")
 	    .text(function(d, i) { return d; });
-
 	var rowLabels = labels.selectAll(".row-label")
 	    .data(labelsData)
 	  .enter().append("g")
 	    .attr("class", "row-label")
 	    .attr("transform", function(d, i) { return "translate(" + 0 + "," + y(i) + ")"; });
-
 	rowLabels.append("line")
 		.style("stroke", "black")
 	    .style("stroke-width", "1px")
@@ -417,20 +369,16 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 	    .attr("x2", -5)
 	    .attr("y1", y.rangeBand() / 2)
 	    .attr("y2", y.rangeBand() / 2);
-
 	rowLabels.append("text")
 	    .attr("x", -8)
 	    .attr("y", y.rangeBand() / 2)
 	    .attr("dy", ".32em")
 	    .attr("text-anchor", "end")
 	    .text(function(d, i) { return d; });
-
     var key = d3.select("#legend")
     .append("svg")
     .attr("width", widthLegend)
     .attr("height", height + margin.top + margin.bottom);
-
-
 //   var stops = [{offset: 0, color: "tomato", value: extent[0]}, {offset: .5, color: "white", value: 0}, {offset: 1, color: "steelblue", value: extent[1]}];
   
 //   gradient.selectAll("stop")
@@ -438,10 +386,6 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 //     .enter().append("stop")
 //       .attr("offset", function(d){ return (100 * d.offset) + "%"; })
 //       .attr("stop-color", function(d){ return d.color; });
-
-
-
-
     var legend = key
     .append("defs")
     .append("svg:linearGradient")
@@ -451,71 +395,52 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
     .attr("x2", "50%")
     .attr("y2", "100%")
     .attr("spreadMethod", "pad");
-
     legend
     .append("stop")
     .attr("offset", "0%")
     .attr("stop-color", endColor)
     .attr("stop-opacity", 1);
-
     legend
     .append("stop")
     .attr("offset", "33%")
     .attr("stop-color", endColor)
     .attr("stop-opacity", 0.1);
-
     legend
     .append("stop")
     .attr("offset", "66%")
     .attr("stop-color", middleColor)
     .attr("stop-opacity", 0.5);
-
-    legend
-    .append("stop")
-    .attr("offset", "53%")
-    .attr("stop-color", startColor)
-    .attr("stop-opacity", 0.1);
-
-    legend
-    .append("stop")
-    .attr("offset", "100%")
-    .attr("stop-color", startColor)
-    .attr("stop-opacity", 1);
-
-
-
+    // legend
+    // .append("stop")
+    // .attr("offset", "0%")
+    // .attr("stop-color", startColor)
+    // .attr("stop-opacity", 0.1);
+    // legend
+    // .append("stop")
+    // .attr("offset", "100%")
+    // .attr("stop-color", startColor)
+    // .attr("stop-opacity", 1);
     key.append("rect")
     .attr("width", widthLegend/2-10)
     .attr("height", height)
     .style("fill", "url(#gradient)")
     .attr("transform", "translate(0," + margin.top + ")");
-
     var y = d3.scale.linear()
     .range([height, 0])
     .domain([minValue, maxValue]);
-
     var yAxis = d3.svg.axis()
     .scale(y)
     .orient("right");
-
-
     key.append("g")
     .attr("class", "y axis")
     .attr("transform", "translate(41," + margin.top + ")")
     .call(yAxis)
 };
 //};
-
     });
-
-
     </script>
-    </div>
+    
 
-
-    <div id="container" style="padding-left: 39px">
-      <script type="text/javascript"> 
-      </script>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
     <script src="/lib/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"

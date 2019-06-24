@@ -39,12 +39,17 @@ else {
       }
       .tick text, .legendCells text {
         fill: #635F5D;
+        font-size: 7.5pt;
+        font-family: sans-serif;
+      }
+      .axis-label {
+        fill: #635F5D;
         font-size: 10pt;
         font-family: sans-serif;
       }
-      .axis-label, .legend-label {
+      .legend-label {
         fill: #635F5D;
-        font-size: 10pt;
+        font-size: 7.5t;
         font-family: sans-serif;
       }
       .legend rect {
@@ -195,7 +200,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
     </div>
 
 <!-- <script src="https://cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js"></script> -->
-<svg width=1000 height=500 xmlns='http://www.w3.org/2000/svg' xmlnsxlink='http://www.w3.org/1999/xlink'>
+<svg width="960" height="500"></svg>
 <script> 
     var valuesToPrint = [];
 
@@ -209,11 +214,12 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
             // }
 </script>
 
-<g id='columnGroup' class='table'>
-      <rect x='850' y='7' width='150' height='100' fill='gainsboro' fill-opacity="1"/>
+
+<!-- <g id='columnGroup' class='table'>
+    <rect x='850' y='7' width='150' height='100' fill='gainsboro' fill-opacity="1"/>
+</g> -->
 
 
-   </g>
    <!-- <g id='rowGroup' class='table' transform='translate(0, 150)'>
    <rect x='850' y='-15' width='150' height='150' fill='gainsboro' fill-opacity="1"/>
    <text x='840' y='18' font-size='12px' font-weight='bold' fill='grey'>
@@ -243,14 +249,15 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
       const colorValue = d => d.Product;
       const colorLabel = 'Product';
       const margin = { left: 55, right: 25, top: 20, bottom: 30 };
-      const legendOffset = 140;
+      const legendOffset = 57;
 
-    const svg = d3.select('svg');
+ const svg = d3.select('svg');
       const width = svg.attr('width');
       const height = svg.attr('height');
       const innerWidth = width - margin.left - margin.right - legendOffset;
       const innerHeight = height - margin.top - margin.bottom-35;
-    
+
+
       
       const g = svg.append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
@@ -258,24 +265,20 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
         .attr('transform', `translate(0, ${innerHeight})`);
       const yAxisG = g.append('g');
       const colorLegendG = g.append('g')
-        .attr('transform', `translate(${innerWidth+32}, 38)`)
+        .attr('transform', `translate(${innerWidth + 32}, 28)`)
         .attr('stroke','black')
         .attr('stroke-width',0.5);
 
-        
-
         xAxisG.append('text')
           .attr('class', 'axis-label')
-          .attr('x', innerWidth / 2 )
-          .attr('y', 28)
-          .text(xLabel)
-          .attr('dy', '.60em') 
-          .style("stroke-width", "1px");
+          .attr('x', innerWidth / 2)
+          .attr('y', 41)
+          .text(xLabel);
 
       yAxisG.append('text')
           .attr('class', 'axis-label')
           .attr('x', -innerHeight / 2)
-          .attr('y', -39)
+          .attr('y', -35)
           .attr('transform', `rotate(-90)`)
           .style('text-anchor', 'middle')
           .text(yLabel);
@@ -318,11 +321,11 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
           yScale
             .domain([
                 d3.min([0, d3.min(finalOrder, function (d) {
-                    if (d.PeriodsBeforeDelivery==0)
+                    if (d.PeriodsBeforeDelivery=="0")
                             return d.OrderAmount
                     })]),
                 d3.max([0, d3.max(finalOrder, function (d) {
-                        if (d.PeriodsBeforeDelivery==0)
+                        if (d.PeriodsBeforeDelivery=="0")
                             return d.OrderAmount
                     })])
                 ])
@@ -562,7 +565,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
             .data (finalOrder)
             .attr('x1', 0)
             .attr('y1', yScale(dataMean))
-            .attr('x2', width-215)
+            .attr('x2', width-131)
             .attr('y2', yScale(dataMean))
             .on('mouseover', function (d) {  // Tooltip
                d3.select(this)
@@ -578,7 +581,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
                   .duration(500)
                   .attr('x1', 0)
                   .attr('y1', yScale(dataMean))
-                  .attr('x2', width-221)
+                  .attr('x2', width-131)
                  .attr('y2', yScale(dataMean))
                   //.attr('r', 7)
                   .attr('stroke-width', 3)
@@ -596,18 +599,18 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
             colorLegendG.call(colorLegend)
             .attr('class', 'legendCells')
             .selectAll('.cell text')
-            .attr("x", -29)
+            .attr("x", -43)
             .attr("y", -10);
 
             colorLegendG.call(colorLegend)
             .attr('class', 'legendCells')
             .selectAll('.cell circle')
-            .attr("cx", 115)
+            .attr("cx", 35)
             .attr("cy", -11);
             //.attr('dy', '0.1em')
 
-            colorLegendG.append('rect').attr("x",104).attr("y",12).attr("width", 21).attr("height", 2).style("fill", "green")
-            colorLegendG.append("text").attr("x", -10).attr("y", 20).text("Average \nline").style("font-size", "12px")
+            colorLegendG.append('rect').attr("x",23).attr("y",12).attr("width", 21).attr("height", 2).style("fill", "green")
+            colorLegendG.append("text").attr("x", -23).attr("y", 18).text("Av. \nline").style("font-size", "12px")
 
        var _lsTotal=0,_xLen,_x;for(_x in localStorage){ if(!localStorage.hasOwnProperty(_x)){continue;} _xLen= ((localStorage[_x].length + _x.length)* 2);_lsTotal+=_xLen; console.log(_x.substr(0,50)+" = "+ (_xLen/1024).toFixed(2)+" KB")};console.log("Total Localstorage size = " + (_lsTotal / 1024).toFixed(2) + " KB");
             // var svg = d3.select("#new_legend")

@@ -37,7 +37,7 @@ else {
       }
       .axis-label, .legend-label {
         fill: #635F5D;
-        font-size: 10pt;
+        font-size: 8pt;
         font-family: sans-serif;
       }
 
@@ -173,8 +173,8 @@ var data = JSON.parse(localStorage['data']);
       const xLabel = 'Periods Before Delivery';
       const yValue = d => d.ForecastBiasPBD;
       const yLabel = 'Mean Forecast Bias (MFB)';
-      const colorValue = d => d.PeriodsBeforeDelivery;
-      const colorLabel = 'Actual Period';
+      const colorValue = d => d.Product;
+      const colorLabel = 'Product';
       const margin = { left: 55, right: 25, top: 20, bottom: 30 };
       const legendOffset = 52;
 
@@ -210,11 +210,11 @@ var data = JSON.parse(localStorage['data']);
           .style('text-anchor', 'middle')
           .text(yLabel);
 
-      colorLegendG.append('text')
-          .attr('class', 'legend-label')
-          .attr('x', -30)
-          .attr('y', -12)
-          .text(colorLabel);
+    //   colorLegendG.append('text')
+    //       .attr('class', 'legend-label')
+    //       .attr('x', -30)
+    //       .attr('y', -12)
+    //       .text(colorLabel);
 
       const xScale = d3.scaleLinear();
       const yScale = d3.scaleLinear();
@@ -227,9 +227,9 @@ var data = JSON.parse(localStorage['data']);
       const yAxis = d3.axisLeft(yScale)
         .ticks(10);
 
-      const colorLegend = d3.legendColor()
-        .scale(colorScale)
-        .shape('circle');
+    //   const colorLegend = d3.legendColor()
+    //     .scale(colorScale)
+    //     .shape('circle');
 
 
         let finalOrder = data.filter((el) => {
@@ -338,10 +338,6 @@ var data = JSON.parse(localStorage['data']);
         colorLegendG.call(colorLegend)
           .selectAll('.cell text')
             .attr('dy', '0.1em');
-
-
-
-            var legendOffset = 140;
 
 
             // var margin = { top: 20, right: 15, bottom: 30, left: 80 },

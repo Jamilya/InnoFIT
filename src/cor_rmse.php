@@ -24,19 +24,32 @@ else {
       body {
         margin: 0px;
       }
-        path {
-            stroke: steelblue;
-            stroke-width: 2;
-            fill: none;
-        }
+      .domain {
+       /* display: none; */
+        stroke: #635F5D;
+        stroke-width: 1;
+      }
+      .tick text, .legendCells text {
+        fill: #635F5D;
+        font-size: 10pt;
+        font-family: sans-serif;
+      }
+      .axis-label, .legend-label {
+        fill: #635F5D;
+        font-size: 8pt;
+        font-family: sans-serif;
+      }
 
-        .axis path,
+       /*  .axis path, */
         .axis line {
             fill: none;
             stroke: grey;
             stroke-width: 1;
             shape-rendering: crispEdges;
-        }
+        } 
+      .tick line {
+        stroke: #C0C0BB;
+      }
     </style>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
 </head>
@@ -130,7 +143,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
     </nav>
 
     <script src="http://d3js.org/d3.v4.min.js"></script>
-    <script src="http://d3js.org/d3.v3.min.js"></script>
+    
 
     
        <div style="padding-left:3px"> 
@@ -148,400 +161,258 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
                  where MFB (Mean Forecast Bias) = <img src="https://latex.codecogs.com/gif.latex?MFB_{j} = \frac {\sum_{i=1}^{n}x_{i,j}}{\sum_{i=1}^{n}x_{i,0}}" title="Mean Forecast Bias formula"/>
                 </p> 
         </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script>
+        <svg width="960" height="500"></svg>
 
         <script>
+        var data = JSON.parse(localStorage['data']);
+         const xValue = d => d.PeriodsBeforeDelivery;
+      const xLabel = 'Periods Before Delivery';
+      const yValue = d => d.MeanOfThisPeriod;
+      const yLabel = 'Corrected RMSE';
+      const colorValue = d => d.Product;
+      const colorLabel = '';
+      const margin = { left: 55, right: 25, top: 20, bottom: 30 };
+      const legendOffset = 52;
+
+    const svg = d3.select('svg');
+      const width = svg.attr('width');
+      const height = svg.attr('height');
+      const innerWidth = width - margin.left - margin.right - legendOffset;
+      const innerHeight = height - margin.top - margin.bottom-35;
+
+
+      
+      const g = svg.append('g')
+        .attr('transform', `translate(${margin.left},${margin.top})`);
+      const xAxisG = g.append('g')
+        .attr('transform', `translate(0, ${innerHeight})`);
+      const yAxisG = g.append('g');
+      const colorLegendG = g.append('g')
+        .attr('transform', `translate(${innerWidth + 32}, 28)`)
+        .attr('stroke','black')
+        .attr('stroke-width',0.5);
+
+        xAxisG.append('text')
+          .attr('class', 'axis-label')
+          .attr('x', innerWidth / 2)
+          .attr('y', 41)
+          .text(xLabel);
+
+      yAxisG.append('text')
+          .attr('class', 'axis-label')
+          .attr('x', -innerHeight / 2)
+          .attr('y', -42)
+          .attr('transform', `rotate(-90)`)
+          .style('text-anchor', 'middle')
+          .text(yLabel);
+
+           //   colorLegendG.append('text')
+    //       .attr('class', 'legend-label')
+    //       .attr('x', -30)
+    //       .attr('y', -12)
+    //       .text(colorLabel);
+
+      const xScale = d3.scaleLinear();
+      const yScale = d3.scaleLinear();
+      const colorScale = d3.scaleOrdinal()
+        .range(d3.schemeCategory10);
+
+        const xAxis = d3.axisBottom(xScale)
+        .ticks(10);
+
+      const yAxis = d3.axisLeft(yScale)
+        .ticks(10);
+
+
+    //   const colorLegend = d3.legendColor()
+    //     .scale(colorScale)
+    //     .shape('circle');
+        
+        let finalOrder = data.filter((el) => {
+            return el.PeriodsBeforeDelivery == 0;
+        });
+        
+        let uniqueArray = data.filter(function (obj) { return finalOrder.indexOf(obj) == -1; });
+
+let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
+console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
+
+    let dataGroupedByPBD = d3.nest()
+        .key(function(d) { return d.PeriodsBeforeDelivery; })
+        .entries(uniqueArray);
+
+
+let finalForecastBias = dataGroupedByPBD.map((val) => {
+    let sum = val.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
+        //console.log('sum for pbd: ', val.key, ' sum: ', sum);
+        let finalForecastBiasPBD = sum / sumOfAllFinalOrders;
+        //console.log('Final Forecast Bias by PBD: ', finalForecastBiasPBD);
+
+        return {
+            PeriodsBeforeDelivery: val.key,
+            ForecastBiasPBD: finalForecastBiasPBD
+        };
+    });
+
+console.log('Final Forecast Bias: ', finalForecastBias);
+
+var dataMean = d3.mean(finalForecastBias, function (d) { //Define mean value of Order Amount, i.e. Avg. Order Amount
+    return d.ForecastBiasPBD;
+});
+
+    // let finalMFB = dataGroupedByPBD.map((val) => {
+    //     let sum = val.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
+    //       //  console.log('sum for pbd: ', val.key, ' sum: ', sum);
+    //         let finalForecastBiasPBD = sum / sumOfAllFinalOrders;
+    //       //  console.log('MFB by PBD: ', finalForecastBiasPBD);
+
+    //         return {
+    //             PeriodsBeforeDelivery: val.key,
+    //             ForecastBiasPBD: finalForecastBiasPBD
+    //         };
+    //     });
+
+let newValueMap = new Map();
+finalForecastBias.forEach((val) => {
+    let keyString = val.PeriodsBeforeDelivery;
+    let valueString = val.ForecastBiasPBD;
+    newValueMap.set(keyString, valueString);
+});
+
+    let divisionArray = uniqueArray.map((el) => {
+    let divisionOne = (el.OrderAmount/ newValueMap.get(el.ForecastPeriod));
+    return {
+        ActualPeriod: el.ActualPeriod,
+        ForecastPeriod: el.ForecastPeriod,
+        OrderAmount: el.OrderAmount,
+        Product: el.Product,
+        PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+        AbsoluteDiff: divisionOne
+    };
+});
+
+
+let seperatedByPeriods = d3.nest()
+    .key(function (d) { return d.PeriodsBeforeDelivery })
+    .entries(divisionArray);
+
+    let squaredDiff = function (orignalEl, divisionArray) {
+    return Math.pow((orignalEl.OrderAmount - divisionArray), 2);
+    }
+
+    let squaredDifference = uniqueArray.map((el) => {
+    let value = squaredDiff(el, newValueMap.get(el.PeriodsBeforeDelivery));
+    return {
+        ActualPeriod: el.ActualPeriod,
+        ForecastPeriod: el.ForecastPeriod,
+        OrderAmount: el.OrderAmount,
+        Product: el.Product,
+        PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+        SquaredDiff: value
+    };
+});
+    console.log("squared Diff: ", squaredDifference);
+
+    let newCalcMap = new Map();
+    let divisionCalc = finalForecastBias.forEach((el) =>{
+        uniqueArray.forEach((val) => {
+        let keyString = val.PeriodsBeforeDelivery;
+        let valueString = val.OrderAmount / el.ForecastBiasPBD;
+        newCalcMap.set(keyString, valueString);
+
+    })
+    });
+
+    let seperatedByPeriodsTwo = d3.nest()
+        .key(function (d) { return d.PeriodsBeforeDelivery })
+        .entries(squaredDifference);
+
+    let bubu = seperatedByPeriodsTwo.map((el) => {
+        let CRMSE = Math.sqrt (d3.mean(el.values, function (d) { return d.SquaredDiff; }),2);
+        return {
+            Product: el.Product,
+            ActualPeriod: el.ActualPeriod,
+            ForecastPeriod: el.ForecastPeriod,
+            OrderAmount: el.OrderAmount,
+            PeriodsBeforeDelivery: el.key,
+            MeanOfThisPeriod: CRMSE
+        };
+    });
+    console.log("final Array: ", bubu);
+
+
+
+
         d3.json("/includes/getdata.php", function (error, data) {
-            if (error) throw error;
+            //if (error) throw error;
             //console.log(data);
-
-                let finalOrder = data.filter((el) => {
-                    return el.PeriodsBeforeDelivery == 0;
-                });
-               // console.log("FINAL ORDERS: ", finalOrder);
-
-                /*             let squaredVal = function (absDiff){
-                                    return Math.sqrt(absDiff);
-                            };
-                            console.log("SQUARED VAL: ", squaredVal); */
-
-            let uniqueArray = data.filter(function (obj) { return finalOrder.indexOf(obj) == -1; });
-              //  console.log("Unique array: ", uniqueArray);
-
-            let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-            console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
-
-                let dataGroupedByPBD = d3.nest()
-                    .key(function(d) { return d.PeriodsBeforeDelivery; })
-                    .entries(uniqueArray);
-               // console.log('Grouped data: ', dataGroupedByPBD);
-
-               
-
-            let finalForecastBias = dataGroupedByPBD.map((val) => {
-                let sum = val.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-                    //console.log('sum for pbd: ', val.key, ' sum: ', sum);
-                    let finalForecastBiasPBD = sum / sumOfAllFinalOrders;
-                    //console.log('Final Forecast Bias by PBD: ', finalForecastBiasPBD);
-
-                    return {
-                        PeriodsBeforeDelivery: val.key,
-                        ForecastBiasPBD: finalForecastBiasPBD
-                    };
-                });
-
-            console.log('Final Forecast Bias: ', finalForecastBias);
-
-            var dataMean = d3.mean(finalForecastBias, function (d) { //Define mean value of Order Amount, i.e. Avg. Order Amount
-                return d.ForecastBiasPBD;
-            });
-
-                // let finalMFB = dataGroupedByPBD.map((val) => {
-                //     let sum = val.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-                //       //  console.log('sum for pbd: ', val.key, ' sum: ', sum);
-                //         let finalForecastBiasPBD = sum / sumOfAllFinalOrders;
-                //       //  console.log('MFB by PBD: ', finalForecastBiasPBD);
-
-                //         return {
-                //             PeriodsBeforeDelivery: val.key,
-                //             ForecastBiasPBD: finalForecastBiasPBD
-                //         };
-                //     });
-
-            let newValueMap = new Map();
-            finalForecastBias.forEach((val) => {
-                let keyString = val.PeriodsBeforeDelivery;
-                let valueString = val.ForecastBiasPBD;
-                newValueMap.set(keyString, valueString);
-            });
-
-                let divisionArray = uniqueArray.map((el) => {
-                let divisionOne = (el.OrderAmount/ newValueMap.get(el.ForecastPeriod));
-                return {
-                    ActualPeriod: el.ActualPeriod,
-                    ForecastPeriod: el.ForecastPeriod,
-                    OrderAmount: el.OrderAmount,
-                    Product: el.Product,
-                    PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                    AbsoluteDiff: divisionOne
-                };
-            });
-
+            var allGroup = ["RMSE", "CRMSE"]
             
-            let seperatedByPeriods = d3.nest()
-                .key(function (d) { return d.PeriodsBeforeDelivery })
-                .entries(divisionArray);
-
-                let squaredDiff = function (orignalEl, divisionArray) {
-                return Math.pow((orignalEl.OrderAmount - divisionArray), 2);
-                }
-
-                let squaredDifference = uniqueArray.map((el) => {
-                let value = squaredDiff(el, newValueMap.get(el.PeriodsBeforeDelivery));
-                return {
-                    ActualPeriod: el.ActualPeriod,
-                    ForecastPeriod: el.ForecastPeriod,
-                    OrderAmount: el.OrderAmount,
-                    Product: el.Product,
-                    PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                    SquaredDiff: value
-                };
+            var dataReady = allGroup.map( function(grpName) { 
+            return {
+                name: grpName,
+                values: bubu.map(function(d) {
+                    return {time: d.PeriodsBeforeDelivery, value: +d[grpName]};
+                    })
+            };
             });
-                console.log("squared Diff: ", squaredDifference);
 
-                let newCalcMap = new Map();
-                let divisionCalc = finalForecastBias.forEach((el) =>{
-                    uniqueArray.forEach((val) => {
-                    let keyString = val.PeriodsBeforeDelivery;
-                    let valueString = val.OrderAmount / el.ForecastBiasPBD;
-                    newCalcMap.set(keyString, valueString);
+        xScale
+            .domain([
+                d3.min([0, d3.min(bubu, function (d) { return d.PeriodsBeforeDelivery })]),
+                d3.max([0, d3.max(bubu, function (d) { return d.PeriodsBeforeDelivery })])
+                ])
+            .range([0, innerWidth])
+          .nice();
+        
+          yScale
+            .domain([
+                d3.min([0, d3.min(bubu, function (d) { return (d.MeanOfThisPeriod) })]),
+                d3.max([0, d3.max(bubu, function (d) { return (d.MeanOfThisPeriod) })])
+            ])
+          .range([innerHeight, 0])
+          .nice();
 
-                })
-                });
+    
+        g.selectAll('circle').data(bubu)
+          .enter().append('circle')
+            .attr('cx', d => xScale(xValue(d)))
+            .attr('cy', d => yScale(yValue(d)))
+            .attr('fill', d => colorScale(colorValue(d)))
+            .attr('fill-opacity', 1)
+            .attr('r', 8)
+            .attr('stroke','black')
+             .attr('stroke-width',1)
+        .on('mouseover', function (d) {  // Tooltip
+               d3.select(this)
+                  .transition()
+                  .duration(500)
+                  .style("opacity", 1)
+                  .attr('r', 10)
+                  .attr('stroke-width', 3)
+            })
+            .on('mouseout', function () {
+               d3.select(this)
+                  .transition()
+                  .duration(500)
+                  .attr('r', 7)
+                  .attr('stroke-width', 1)
+            })
+            .append('title') // Tooltip
 
-                let seperatedByPeriodsTwo = d3.nest()
-                    .key(function (d) { return d.PeriodsBeforeDelivery })
-                    .entries(squaredDifference);
+            .text(function (d) {
+               return ' Periods Before Delivery: '+d.PeriodsBeforeDelivery + 
+                  '\nCRMSE of the period: ' + d.MeanOfThisPeriod
+            });
 
-                let bubu = seperatedByPeriodsTwo.map((el) => {
-                    let meanValue = Math.sqrt (d3.mean(el.values, function (d) { return d.SquaredDiff; }),2);
-                    return {
-                        Product: el.Product,
-                        ActualPeriod: el.ActualPeriod,
-                        ForecastPeriod: el.ForecastPeriod,
-                        OrderAmount: el.OrderAmount,
-                        PeriodsBeforeDelivery: el.key,
-                        MeanOfThisPeriod: meanValue
-                    };
-                });
-                console.log("final Array: ", bubu);
-
-                // let absValuesArray = newArr.map((el) => {
-                // let difference = squaredDiff(el, finalOrder.get(el.PeriodsBeforeDelivery));
-                // console.log(el);
-                // return {
-                //     ActualPeriod: el.ActualPeriod,
-                //     ForecastPeriod: el.ForecastPeriod,
-                //     OrderAmount: el.OrderAmount,
-                //     Product: el.Product,
-                //     PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                //     DifferenceCalc: difference
-                // };
-                // });
-
-
-                // console.log("valueMap: ", bubu2);
-
-                
-                //var newArr = bubu.map(({ value }) => value);
-
-            //     let dataGrouped = d3.nest()
-            //     .key(function(d) { return d.PeriodsBeforeDelivery; })
-            //     .entries(newCalcMap);
-            //     console.log("difference: ", dataGrouped);
-
-            //     let absValuesArray = dataGrouped.map((el) => {
-            //              finalOrder.forEach((val) => {
-            //         let difference =  val.OrderAmount / el.key.value;
-            //         console.log("difference: ", difference);
-            //     return {
-            //         ActualPeriod: val.ActualPeriod,
-            //         ForecastPeriod: val.ForecastPeriod,
-            //         OrderAmount: val.OrderAmount,
-            //         Product: val.Product,
-            //         PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-            //         DifferenceCalc: difference
-            //     };
-            //     })
-            // });
-            //     console.log("absValuesArray: ", absValuesArray);
+            xAxisG.call(xAxis);
+        yAxisG.call(yAxis);
+        colorLegendG.call(colorLegend)
+          .selectAll('.cell text')
+            .attr('dy', '0.1em');
 
 
-                
-                // let divisionCalc = function (orignalEl, finalForecastBias) {
-                // return orignalEl.OrderAmount / ForecastBiasPBD;
-                // }
- 
-            //     let finalMFBgroup = new Map();
-            //     finalForecastBias.forEach((val) => {
-            //      let keyString = val.PeriodsBeforeDelivery;
-            //      let valueString = val.ForecastBiasPBD;
-            //      finalMFBgroup.set(keyString, valueString);
-            //     });
-            //     //console.log('Final MFB: ', finalMFBgroup);
-
-            //     let dataGroupedByPBD = d3.nest()
-            //     .key(function(d) { return d.PeriodsBeforeDelivery; })
-            //     .entries(uniqueArray);
-            //    // console.log('Grouped data: ', dataGroupedByPBD);
-
-
-            //    let divCalc = uniqueArray.map((el) => {
-            //     let division = divis(el, finalMFBgroup.get(el.PeriodsBeforeDelivery));
-            //     return {
-            //         ActualPeriod: el.ActualPeriod,
-            //         ForecastPeriod: el.ForecastPeriod,
-            //         OrderAmount: el.OrderAmount,
-            //         Product: el.Product,
-            //         PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-            //         Division: division
-
-            //     };
-            //  });
-            //  console.log('Division calculation: ', divCalc);
-
-        //              let divisionGroup = new Map();
-        //              divCalc.forEach((value) => {
-        //              let keyString = value.ForecastPeriod;
-        //              let valueString = value.Division;
-        //              divisionGroup.set(keyString, valueString);
-        //               });
-        //               console.log('Division group: ', divisionGroup);
-
-                    //   let powerDiff = function (orignalEl, finalOrder) {
-                    //     return Math.pow((finalOrder - orignalEl.Division ), 2);
-                    //   }
-
-                    // let powerDiff = function (orignalEl, newCalcMap) {
-                    // return Math.pow((orignalEl.OrderAmount - newCalcMap), 2);
-                    // }
-
-        //              let valueMap = new Map();
-        //             finalOrder.forEach((val) => {
-        //             let keyString = val.ActualPeriod;
-        //             let valueString = val.OrderAmount;
-        //             valueMap.set(keyString, valueString);
-        //             });
-
-                //     let squaredDiffArray = divCalc.map((el) => {
-                //     let difference = powerDiff(el, finalOrder.get(el.PeriodsBeforeDelivery));
-                //     return {
-                //         ActualPeriod: el.ActualPeriod,
-                //         ForecastPeriod: el.ForecastPeriod,
-                //         OrderAmount: el.OrderAmount,
-                //         Product: el.Product,
-                //         PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                //         Difference: difference
-                //     };
-                // });
-
-
-            //     let finalCrmse = seperatedByPeriods.map((el) => {
-            //         let crmseCalc = Math.sqrt (d3.mean(el.values, function (d) { return d.Difference; }),2);
-            //         return {
-            //             PeriodsBeforeDelivery: el.key,
-            //             CRMSEOfThisPeriod: crmseCalc
-            //         };
-            //     });
-            //    console.log("Final CRMSE: ", finalCrmse);
-
-                        
-
-            //     });
-                    
-
-
-                /*            let squaredValuesArray = absValuesArray.map((el) =>  {
-                               let squared = Math.sqrt (el.AbsoluteDiff, 2);
-                               return {
-                                   ActualWeek: el.ActualWeek,
-                                   ForecastWeek: el.ForecastWeek,
-                                   OrderAmount: el.OrderAmount,
-                                   Product: el.Product,
-                                   WeeksBeforeDelivery: el.WeeksBeforeDelivery,
-                                   SquaredValue: squared
-                               };
-                           });
-                           console.log("squared values array: ", squaredValuesArray);
-               
-                */
-
-
-                var legendOffset = 140;
-
-                var margin = { top: 20, right: 25, bottom: 30, left: 55 },
-                    width = 960 - margin.left - margin.right,
-                    height = 590 - margin.top - margin.bottom - legendOffset;
-
-                var x = d3.scale.linear()
-                    .domain([
-                        d3.min([0, d3.min(bubu, function (d) { return d.PeriodsBeforeDelivery })]),
-                        d3.max([0, d3.max(bubu, function (d) { return d.PeriodsBeforeDelivery })])
-                    ])
-                    .range([0, width])
-
-                var y = d3.scale.linear()
-                    .domain([
-                        d3.min([0, d3.min(bubu, function (d) { return (d.MeanOfThisPeriod) })]),
-                        d3.max([0, d3.max(bubu, function (d) { return (d.MeanOfThisPeriod) })])
-                    ])
-                    .range([height, 0])
-
-                var PeriodsBeforeDelivery = function (d) { return d.PeriodsBeforeDelivery; },
-                    color = d3.scale.category10();
-
-                var xAxis = d3.svg.axis()
-                    .scale(x)
-                    .ticks(10)
-                    .orient("bottom");
-
-                var yAxis = d3.svg.axis()
-                    .scale(y)
-                    // .ticks(11)
-                    .orient("left");
-
-                var svg = d3.select("body").append("svg")
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.top + margin.bottom + legendOffset)
-                    .append("g")
-                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-                // Circles
-                var circles = svg.selectAll('circle')
-                    .data(bubu)
-                    .enter()
-                    .append('circle')
-                    .attr('cx', function (d) { return x(d.PeriodsBeforeDelivery) })
-                    .attr('cy', function (d) { return y(d.MeanOfThisPeriod) })
-                    .attr('r', '7')
-                    .attr('stroke', 'black')
-                    .attr('stroke-width', 1)
-                    .attr('fill', function (d, i) { return color(PeriodsBeforeDelivery(d)); })
-
-                    .on('mouseover', function (d) {  // Tooltip
-                        d3.select(this)
-                            .transition()
-                            .duration(500)
-                            .style("opacity", .9)
-                            .attr('r', 10)
-                            .attr('stroke-width', 3)
-                    })
-                    .on('mouseout', function () {
-                        d3.select(this)
-                            .transition()
-                            .duration(500)
-                            .attr('r', 7)
-                            .attr('stroke-width', 1)
-                    })
-                    .append('title') // Tooltip
-
-                    .text(function (d) {
-                        return 'Periods Before Delivery: ' + d.PeriodsBeforeDelivery +
-                            '\nCRMSE of this period: ' + d.MeanOfThisPeriod
-                        //'\nPeriods Before Delivery: ' + d.PeriodsBeforeDelivery 
-                        //'\nOrder Amount: ' + d.OrderAmount
-                    })
-
-                svg.append("g")
-                    .attr("class", "x axis")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(xAxis)
-                    .append("text")
-                    .attr("class", "label")
-                    .attr("x", width)
-                    .attr("y", 2)
-                    .attr('dy', '.60em')
-                    .style("text-anchor", "end")
-                    .text("Periods Before Delivery");
-
-
-                svg.append("g")
-                    .attr("class", "y axis")
-                    .call(yAxis)
-                    .append("text")
-                    .attr("class", "label")
-                    .attr("transform", "rotate(-90)")
-                    .attr("x", 0)
-                    .attr("y", 5)
-                    .attr("dy", ".45em")
-                    .style("text-anchor", "end")
-                    .text("Corrected Root Mean Square Error (CRMSE)")
-
-
-                var legend = svg.selectAll(".legend")
-                    .data(color.domain())
-                    .enter().append("g")
-                    .attr("class", "legend")
-                    //.scale(xAxis)
-                    //.shape('circle')
-                    .attr("transform", function (d, i) {
-                        return "translate(" + (- width + margin.left + margin.right + i * 90)           // x Position
-                            + "," + (height + 42) + ")";
-                    });                                           // y Position
-
-                legend.append("rect")
-                    .attr("x", width - 10)
-                    .attr("width", 10)
-                    .attr("height", 10)
-                    .style("opacity", 0.5)
-                    .style("fill", color);
-
-                legend.append("text")
-                    .attr("x", width - 24)
-                    .attr("y", 10)
-                    .attr("yAxis", ".35em")
-                    .style("text-anchor", "end")
-                    .text(function (d) { return 'PBD ' + d; });
 
             });
 

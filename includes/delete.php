@@ -23,7 +23,7 @@ if($conn === false){
 }
  
 // Attempt delete query execution
-$sql = "DELETE FROM orders WHERE username='{$_SESSION['session_username']}' ";
+$sql = "DELETE FROM newOrders WHERE username='{$_SESSION['session_username']}' ";
 if(mysqli_query($conn, $sql)){
     echo "Records were deleted successfully.";
 } else{

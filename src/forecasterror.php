@@ -56,7 +56,7 @@ else {
 
     </style>
 		
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+        <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script> -->
 </head>
 
 <body>
@@ -174,11 +174,11 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 
    
    <script>
-    //    fetch("/includes/getdata.php")
-    //      .then(response => response.json())
-    //      .then(json => {
-    //         console.log("LOADED: ", json.length);
-    //      }); 
+       fetch("/includes/getdata.php")
+         .then(response => response.json())
+         .then(json => {
+            //console.log("LOADED: ", json.length);
+         }); 
     // var finalOrder = localforage['finalOrder'];
     // console.log(finalOrder);
     // var data = localforage['data'];
@@ -272,7 +272,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
          let finalArray = data.map((el) => {
             let deviation = calcDeviation(el, valueMap.get(el.ForecastPeriod))
             return {
-               ActualPeriod: el.ActualPeriod,
+               ActualPeriod:  el.ActualPeriod,
                ForecastPeriod: el.ForecastPeriod,
                OrderAmount: el.OrderAmount,
                Product: el.Product,

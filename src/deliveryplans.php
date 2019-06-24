@@ -33,12 +33,12 @@ else {
         }
         .tick text, .legendCells text {
         fill: #635F5D;
-        font-size: 8pt;
+        font-size: 6.5pt;
         font-family: sans-serif;
       }
       .axis-label, .legend-label {
         fill: #635F5D;
-        font-size: 10pt;
+        font-size: 10t;
         font-family: sans-serif;
       }
        /*  .axis path, */
@@ -175,14 +175,14 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
     var data = JSON.parse(localStorage['data']);
   
     const xValue = d => d.ForecastPeriod;
-      const xLabel = 'Periods Before Delivery';
+      const xLabel = 'Forecast Period';
       const yValue = d => d.OrderAmount;
       const yLabel = 'Deviation (%)';
     //   const colorValue = d => function (d) { if (d.ActualPeriod===d.ForecastPeriod) return "Final Order"; else return "Forecast Order"; };
       const colorValue = d => d.Product;
       const colorLabel = 'Orders';
       const margin = { left: 55, right: 25, top: 20, bottom: 30 };
-      const legendOffset = 75;
+      const legendOffset = 57;
 
     const svg = d3.select('svg');
       const width = svg.attr('width');
@@ -218,7 +218,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 
       colorLegendG.append('text')
           .attr('class', 'legend-label')
-          .attr('x', 10)
+          .attr('x', -5)
           .attr('y', -35)
           .text(colorLabel);
 
@@ -413,14 +413,22 @@ g.selectAll('circle').data(data)
 
             colorLegendG.call(colorLegend)
             .selectAll('.cell text')
-            .attr('dy', '0.1em');
+            .attr('dy', '0.1em')
+            .attr("x", 3);
+
+            colorLegendG.call(colorLegend)
+            .attr('class', 'legendCells')
+            .selectAll('.cell text')
+            .attr("x", -6)
+            .attr("y", -5);
 
             // colorLegendG.call(colorLegend)
             // .attr('class', 'legendCells')
-            // .selectAll('.cell circle')
-            // .attr("cx", 15)
-            // .attr("cy", 5);
+            // .selectAll('.cell text')
+            // .attr("x", 3);
 
+
+            //.attr("y", -10)
             // colorLegendG.call(colorLegend)
             // .attr('class', 'legendCells')
             // .selectAll('.cell circle')

@@ -18,8 +18,8 @@ else {
     
     //$username = $_SESSION[`session_username`];
 
-    $myquery = "SELECT  Product, ActualPeriod, ForecastPeriod, OrderAmount, PeriodsBeforeDelivery 
-    FROM orders WHERE username = '" . $_SESSION['session_username'] . "'";
+    $myquery = "SELECT  Product, ActualDate, ForecastDate, OrderAmount, ActualDay, ActualPeriod, ForecastDay, ForecastPeriod, PeriodsBeforeDelivery 
+    FROM newOrders WHERE username = '" . $_SESSION['session_username'] . "'";
     $query = mysql_query($myquery);
     
     if ( ! $query ) {

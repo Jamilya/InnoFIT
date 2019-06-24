@@ -2,8 +2,8 @@
 <?php
 
 $DB_SERVER = "mysql5";
-$DB_USERNAME = "flock-1276";
-$DB_PASSWORD = "MSGMvnVLsiyo";
+$DB_USERNAME = "jnurgazina";
+$DB_PASSWORD = "fuSdebNbZDX+";
 $DB_NAME = "db_jnurgazina_1";
 
 // Create connection
