@@ -171,7 +171,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
    <svg width="960" height="500"></svg>
 
     <script>
-    var data = JSON.parse(localStorage['data']);
+    var data2 = JSON.parse(localStorage['data']);
     const xValue = d => d.PeriodsBeforeDelivery;
       const xLabel = 'Periods Before Delivery';
       const yValue = d => d.MeanOfThisPeriod;
@@ -224,11 +224,16 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
       const colorScale = d3.scaleOrdinal()
         .range(d3.schemeCategory10);
 
-        const xAxis = d3.axisBottom(xScale)
+
+    const xAxis = d3.axisBottom(xScale)
         .ticks(10);
 
-      const yAxis = d3.axisLeft(yScale)
+    const yAxis = d3.axisLeft(yScale)
         .ticks(10);
+    
+    d3.json("/includes/getdata.php", function (error, data) {
+        console.log("data: ", data);
+
 
 
     //   const colorLegend = d3.legendColor()
@@ -289,23 +294,23 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 
    
 
-
-        d3.json("/includes/getdata.php", function (error, data2) {
-            xScale
-            .domain([
-                d3.min([0, d3.min(bubu, function (d) { return d.PeriodsBeforeDelivery })]),
-                d3.max([0, d3.max(bubu, function (d) { return d.PeriodsBeforeDelivery })])
-                ])
-            .range([0, innerWidth])
-          .nice();
+        xScale
+        .domain([
+            d3.min([0, d3.min(bubu, function (d) { return d.PeriodsBeforeDelivery })]),
+            d3.max([0, d3.max(bubu, function (d) { return d.PeriodsBeforeDelivery })])
+        ])
+        .range([0, innerWidth])
+        .nice();
         
-          yScale
-            .domain([
-                d3.min([0, d3.min(bubu, function (d) { return (d.MeanOfThisPeriod) })]),
-                d3.max([0, d3.max(bubu, function (d) { return (d.MeanOfThisPeriod) })])
-            ])
-          .range([innerHeight, 0])
-          .nice();
+        yScale
+        .domain([
+            d3.min([0, d3.min(bubu, function (d) { return (d.MeanOfThisPeriod) })]),
+            d3.max([0, d3.max(bubu, function (d) { return (d.MeanOfThisPeriod) })])
+        ])
+        .range([innerHeight, 0])
+        .nice();
+
+
 
 
          //Specify Deviation

@@ -212,8 +212,8 @@ var data = JSON.parse(localStorage['data']);
 
     //   colorLegendG.append('text')
     //       .attr('class', 'legend-label')
-    //       .attr('x', -30)
-    //       .attr('y', -12)
+    //       .attr('x', -25)
+    //       .attr('y', -16)
     //       .text(colorLabel);
 
       const xScale = d3.scaleLinear();

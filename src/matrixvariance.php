@@ -170,7 +170,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
     
     let array = [];
     var deviation = JSON.parse(localStorage['deviation']);
-    console.log(deviation);
+    console.log("deviation array:", deviation);
     var data = JSON.parse(localStorage['data']);
     
     
@@ -181,12 +181,42 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
          
          var k,j, i ;
          
-         var item;
-         k=-1;    
-        for ( i=0; i<10; i++){
+         var item, max;
+        //  var max = Object.keys(deviation).length;
+        // for (i=0; i<=deviation.length; i ++){
+        //     max = deviation[i].ActualPeriod.reduce((a, b)=> Math.max(a, b));
+        // };
+        function getMaxActual() {
+            return deviation.reduce((max, p) => p.ActualPeriod > max ? p.ActualPeriod : max, deviation[0].ActualPeriod);
+        };
+        function getMinActual() {
+            return deviation.reduce((min, p) => p.ActualPeriod < min ? p.ActualPeriod : min, deviation[0].ActualPeriod);
+        };
+        function getMaxForecast() {
+            return deviation.reduce((max, p) => p.ForecastPeriod > max ? p.ForecastPeriod : max, deviation[0].ForecastPeriod);
+        };
+        function getMinForecast() {
+            return deviation.reduce((min, p) => p.ForecastPeriod < min ? p.ForecastPeriod : min, deviation[0].ForecastPeriod);
+        };
+            console.log("Max number of Aperiods: ", getMaxActual());
+            console.log("min number of Aperiods: ", getMinActual());
+            console.log("Max number of Fperiods: ", getMaxForecast());
+            console.log("min number of Fperiods: ", getMinForecast());
+         
+        //  var max = deviation.keys.ActualPeriod.reduce (function (a, b){
+        //      return Math.max(a, b);
+        //  });
+
+        var APmax=getMaxActual();
+        var APmin=getMinActual();
+        var FPmax=getMaxForecast();
+        var FPmin=getMinForecast();
+
+         k=1;    
+        for ( i=FPmin; i<=FPmax; i++){
                 var tempArray = [];
    
-            for (j=0; j<10; j++ ){
+            for (j=FPmin-1; j<=FPmax; j++ ){
                
                 if(i<=j) {
                     k++; 
@@ -196,7 +226,6 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
                  }
             }
                  matrix.push(tempArray);
-                 
         }
                   
             function transposeArray(array, arrayLength){
@@ -239,25 +268,10 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
         console.log ("data[10].OrderAmount:", deviation[10].OrderAmount);
         console.log ("data:", data);
         
-    //     for (let i = 0; i < data.length; i++) {
-    //     if (i === 3) {
-    //     break;
-    //     }
-    //     const tempArray = [];
-    //     tempArray.push(data[i]);
-    
-    //     const finalArray = fillZeros(tempArray, maxLen);
-    //     array.push(finalArray);
-    //     }
-    // function fillZeros(array, maxLen) {
-    //    let realLength = maxLen - array.length;
-    
-    //     for (let k = 0; k < realLength; k++) {
-    //     array.push(0);
-    //     }
-    // return array;
-    // }
-    // console.log('Array: ', array);
+        // function labelGen(){
+        //     labels = FPmax;
+        // }
+
     var labels = ['CW1', 'CW2', 'CW3', 'CW4', 'CW5', 'CW6', 'CW7', 'CW8', 'CW9', 'CW10'];
     
 // var startColor2 = d3.interpolateRdBu(0), // red
@@ -290,8 +304,8 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 	}
     var maxValue = d3.max(data, function(layer) { return d3.max(layer, function(d) { return d; }); });
     var minValue = d3.min(data, function(layer) { return d3.min(layer, function(d) { return d; }); });
-	var numrows = data.length;
-	var numcols = data[0].length;
+	var numrows = FPmax-FPmin +1 ;
+	var numcols = FPmax-FPmin +1 ;
 	var svg = d3.select(container).append("svg")
 	    .attr("width", width + margin.left + margin.right)
 	    .attr("height", height + margin.top + margin.bottom)
@@ -379,13 +393,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
     .append("svg")
     .attr("width", widthLegend)
     .attr("height", height + margin.top + margin.bottom);
-//   var stops = [{offset: 0, color: "tomato", value: extent[0]}, {offset: .5, color: "white", value: 0}, {offset: 1, color: "steelblue", value: extent[1]}];
-  
-//   gradient.selectAll("stop")
-//       .data(stops)
-//     .enter().append("stop")
-//       .attr("offset", function(d){ return (100 * d.offset) + "%"; })
-//       .attr("stop-color", function(d){ return d.color; });
+
     var legend = key
     .append("defs")
     .append("svg:linearGradient")

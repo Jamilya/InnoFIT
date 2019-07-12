@@ -18,9 +18,16 @@ else {
 		<meta name="author" content="">
 		<link rel="icon" href="/data/ico/innofit.ico">
 		<title>Forecast Error</title>
-		
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+        
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+    <script src ="../lib/js/crossfilter.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
+    <script src ="../lib/js/dc.js"></script>
+    <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
         crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css"/>
+
 	<style>
 
 
@@ -53,6 +60,28 @@ else {
       .tick line {
         stroke: #C0C0BB;
       }
+
+    .d3-tip {
+        line-height: 1;
+        font-weight: bold;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        border-radius: 2px;
+    }
+
+    /* Creates a small triangle extender for the tooltip */
+        .d3-tip:after {
+        box-sizing: border-box;
+        display: inline;
+        font-size: 10px;
+        width: 100%;
+        line-height: 1;
+        color: rgba(0, 0, 0, 0.8);
+        content: "\25BC";
+        position: absolute;
+        text-align: center;
+        }
 
     </style>
 		
@@ -146,8 +175,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
     </div> <!--/.container-fluid -->
     </nav>
 
-   <script src="http://d3js.org/d3.v4.min.js"></script>
-   <!-- <script src="http://d3js.org/d3.v3.min.js"></script> -->
+   
    
 
    <div style="padding-left:39px">
@@ -168,22 +196,45 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
    </div>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script>
    <!-- <script src="https://cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js"></script> -->
-   <svg width="960" height="500"></svg>
+   <svg width="960" height="500"></svg><br/>
 
-   <!-- <svg width=960 height=500 xmlns='http://www.w3.org/2000/svg' xmlnsxlink='http://www.w3.org/1999/xlink'> -->
+   <div id ="actualPeriod">
+   <strong>Actual Period</strong>
+   <span class ="reset" style="display: none;">Range:<span class="filter"></span></span>
+   <a class="reset" href="javascript:actualPeriodChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
+   <div class="clearfix"></div>
+   </div>
+   <div id ="product">
+   <strong>Product </strong>
+   <span class ="reset" style="display: none;">Range:<span class="filter"></span></span>
+   <a class="reset" href="javascript:productChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
+   <div class="clearfix"></div>
+   </div>
+   <div id ="pbd">
+   <strong>Periods Before Delivery</strong>
+   <span class ="reset" style="display: none;">Range:<span class="filter"></span></span>
+   <a class="reset" href="javascript:periodsBeforeDeliveryChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
+   <div class="clearfix"></div>
+   </div>
+   <div id ="scatter">
+   <strong>Forecast Error graph</strong>
+   <span class ="reset" style="display: none;">Range:<span class="filter"></span></span>
+   <a class="reset" href="javascript:forecastErrorChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
+   <div class="clearfix"></div>
+   </div>
 
-   
+
+   <div>
+    <div class="dc-data-count">
+    <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
+        href ="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
+    </div>
+    <table class="table table-hover dc-data-table">
+    </table>
+    </div>
+          
    <script>
-       fetch("/includes/getdata.php")
-         .then(response => response.json())
-         .then(json => {
-            //console.log("LOADED: ", json.length);
-         }); 
-    // var finalOrder = localforage['finalOrder'];
-    // console.log(finalOrder);
-    // var data = localforage['data'];
-
-      const xValue = d => d.PeriodsBeforeDelivery;
+       const xValue = d => d.PeriodsBeforeDelivery;
       const xLabel = 'Periods Before Delivery';
       const yValue = d => d.Deviation * 100;
       const yLabel = 'Deviation (%)';
@@ -192,11 +243,213 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
       const margin = { left: 55, right: 25, top: 20, bottom: 30 };
       const legendOffset = 52;
 
-    const svg = d3.select('svg');
+    const xScale = d3.scaleLinear();
+
+      const yScale = d3.scaleLinear();
+      const svg = d3.select('svg');
       const width = svg.attr('width');
       const height = svg.attr('height');
       const innerWidth = width - margin.left - margin.right - legendOffset;
       const innerHeight = height - margin.top - margin.bottom-35;
+
+      var finalOrder = JSON.parse(localStorage['finalOrder']);
+    var data = JSON.parse(localStorage['data']);
+
+    let calcDeviation = function (orignalEl, finalOrder) {
+            return (orignalEl.OrderAmount - finalOrder) / finalOrder;
+         } 
+
+         let filterValues = data.filter((el) => {
+            return el.PeriodsBeforeDelivery == 0;
+         });
+
+         console.log("Final Orders: ", filterValues);
+
+         let valueMap = new Map();
+
+         filterValues.forEach((val) => {
+            let keyString = val.ActualPeriod;
+            let valueString = val.OrderAmount;
+            valueMap.set(keyString, valueString);
+         });
+
+         console.log("Mapped final order array: ", valueMap);
+
+         let finalArray = data.map((el) => {
+            let deviation = calcDeviation(el, valueMap.get(el.ForecastPeriod))
+            return {
+                ActualDate: el.ActualDate,
+                ForecastDate: el.ForecastDate,
+                ActualPeriod: el.ActualPeriod,
+               ForecastPeriod: el.ForecastPeriod,
+               OrderAmount: el.OrderAmount,
+               Product: el.Product,
+              FinalOrder: valueMap.get(el.ForecastPeriod),
+               PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+               Deviation: deviation.toFixed(2)
+            };
+         })
+         console.log("FINAL Array with deviation: ", finalArray);
+
+      d3.json("/includes/getdata.php", function (error, data2) {
+        
+        xScale
+            .domain([
+                d3.min([0, d3.min(finalArray, function (d) { return d.PeriodsBeforeDelivery })]),
+                d3.max([0, d3.max(finalArray, function (d) { return d.PeriodsBeforeDelivery })])
+                ])
+            .range([0, innerWidth])
+          .nice();
+        
+          yScale
+            .domain([
+               d3.min([0, d3.min(finalArray, function (d) { return (d.Deviation * 100) })]),
+               d3.max([0, 100])
+               ])
+              //  .range([innerHeight, 0])
+          .range([innerHeight, 0])
+          .nice();
+
+   var actualPeriodChart = dc.pieChart("#actualPeriod"),
+    productChart = dc.pieChart("#product"),
+    periodsBeforeDeliveryChart = dc.pieChart("#pbd"),
+    visCount = dc.dataCount(".dc-data-count"),
+    forecastErrorChart = dc.scatterPlot("#scatter"),
+    visTable= dc.dataTable(".dc-data-table");
+
+
+       fetch("/includes/getdata.php")
+         .then(response => response.json())
+         .then(json => {
+        console.log("LOADED: ", json.length);
+
+        finalArray.forEach(function(d){
+            d.ActualDate= new Date(d.ActualDate);
+        });
+
+            var ndx = crossfilter (finalArray);
+            var all = ndx.groupAll();
+            var actualPeriodDim = ndx.dimension(function (d) { return d.ActualPeriod;});
+            var ndxDim = ndx.dimension(function (d) { return  [+d.PeriodsBeforeDelivery, +d.Deviation];});
+            var productDim = ndx.dimension(function(d) { return d.Product;}) ;
+            var periodsBeforeDeliveryDim = ndx.dimension(function(d) { return d.PeriodsBeforeDelivery;}) ;
+            var forecastErrorDim = ndx.dimension(function(d) { return d.Deviation * 100;}) ;
+            var dateDim = ndx.dimension(function(d) { return d.ActualDate;}) ;
+            console.log("final array: ", finalArray);
+            
+
+            var actualPeriodGroup = actualPeriodDim.group();
+            var productGroup = productDim.group();
+            var ndxGroup = ndxDim.group().reduceSum(function(d) { return +d.Deviation;});
+            var forecastErrorGroup = forecastErrorDim.group(function(d) { return d.Deviation;});
+            var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
+            var dateGroup = dateDim.group();
+            
+
+            actualPeriodChart
+                .dimension(actualPeriodDim)
+                .group(actualPeriodGroup);
+                // .elasticX(true);
+
+            productChart
+                //.height(800)
+                .dimension(productDim)
+                .group(productGroup)
+                // .elasticX(true)
+                .data(function(group){ return group.top(15)});
+
+            periodsBeforeDeliveryChart
+                .dimension(periodsBeforeDeliveryDim)
+                .group(periodsBeforeDeliveryGroup);
+                // .elasticX(true);
+
+            forecastErrorChart
+                .width(768)
+                .height(480)
+                .x(d3.scaleLinear().domain([0,100]))
+                // .x(d3.scaleLinear().domain([d3.min([0, d3.min(finalArray, function (d) { return d.PeriodsBeforeDelivery })]),
+                //         d3.max([0, d3.max(finalArray, function (d) { return d.PeriodsBeforeDelivery })]) ]))
+                // .y(d3.scaleLinear().domain([d3.min([0, d3.min(finalArray, function (d) { return (d.Deviation * 100) })]),
+                //         d3.max([0, 100]) ]))
+                .brushOn(true)
+                .clipPadding(10)
+                .xAxisLabel("PeriodsBeforeDelivery")
+                .yAxisLabel("Deviation")
+                .dimension(ndxDim)
+                // .mouseZoomable(true)
+                .group(ndxGroup)
+                .elasticX(true)
+                
+                .elasticY(true)
+                .renderTitle(true)
+                .title(function (d) {
+                    return [
+                        d.ForecastPeriod,
+                'Product: ' + d.Product,
+                'Actual Period: ' + d.ActualPeriod,
+                'Deviation: ' + (d.Deviation * 100),
+                'Periods Before Delivery: ' + d.PeriodsBeforeDelivery 
+                ].join('\n');
+                });
+
+                forecastErrorChart.symbol(d3.symbolCircle);
+            // forecastErrorChart.yAxis().tickFormat(function(d) {return d3.format(',d')(d+299500);});
+
+            // var rowtip = d3.tip() //Tooltip
+            // .attr('class', 'd3-tip')
+            // .offset([-10, 0])
+            // .html(function(d) {
+            //     return "<strong>Deviation:</strong> <span style='color:red'>" + d.Deviation + "</span>";
+            // })
+
+
+            // $('body').on('mouseover', function(){
+            //     d3.selectAll('g.row')
+            //     .call(rowtip)
+            //     .on('mouseover', rowtip.show)
+            //     .on('mouseout', rowtip.hide);     
+            // });
+            
+            // forecastErrorChart.on('pretransition.add-tip', function(chart) {
+            //     chart.selectAll('#scatter')
+            //     .call(rowtip)
+            //     .on('mouseover', rowtip.show)
+            //     .on('mouseout', rowtip.hide);
+            // });
+
+        
+            visCount
+                .dimension(ndx)
+                .group(all);
+            
+            visTable
+                .dimension(dateDim)
+                .group(function(d){
+                    var format = d3.format('02d');
+                    return d.ActualDate.getFullYear() + '/'+ format((d.ActualDate.getMonth() + 1));
+                })
+                .columns([
+                    "ActualDate",
+                    "Product",
+                    "ForecastPeriod",
+                    "ActualPeriod",
+                    "ForecastPeriod",
+                    "PeriodsBeforeDelivery",
+                    "FinalOrder",
+                    "Deviation" ]);
+
+
+            dc.renderAll();
+
+         }); 
+    // var finalOrder = localforage['finalOrder'];
+    // console.log(finalOrder);
+    // var data = localforage['data'];
+
+    
+
+  
+    
 
 
       
@@ -230,8 +483,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
           .attr('y', -12)
           .text(colorLabel);
 
-      const xScale = d3.scaleLinear();
-      const yScale = d3.scaleLinear();
+  
       const colorScale = d3.scaleOrdinal()
         .range(d3.schemeCategory10);
 
@@ -246,66 +498,11 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
         .shape('circle');
    
 
-        var finalOrder = JSON.parse(localStorage['finalOrder']);
-        var data = JSON.parse(localStorage['data']);
-
-    let calcDeviation = function (orignalEl, finalOrder) {
-            return (orignalEl.OrderAmount - finalOrder) / finalOrder;
-         } 
-
-         let filterValues = data.filter((el) => {
-            return el.PeriodsBeforeDelivery == 0;
-         });
-
-         console.log("Final Orders: ", filterValues);
-
-         let valueMap = new Map();
-
-         filterValues.forEach((val) => {
-            let keyString = val.ActualPeriod;
-            let valueString = val.OrderAmount;
-            valueMap.set(keyString, valueString);
-         });
-
-         console.log("Mapped final order array: ", valueMap);
-
-         let finalArray = data.map((el) => {
-            let deviation = calcDeviation(el, valueMap.get(el.ForecastPeriod))
-            return {
-               ActualPeriod:  el.ActualPeriod,
-               ForecastPeriod: el.ForecastPeriod,
-               OrderAmount: el.OrderAmount,
-               Product: el.Product,
-               FinalOrder: valueMap.get(el.ForecastPeriod),
-               PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-               Deviation: deviation.toFixed(2)
-            };
-         })
-         //console.log("Calculated Deviation Array: ", calcDeviation(data[0], 630));
-         console.log("FINAL Array with deviation: ", finalArray);
-
-                  var Deviation = function (d) {
+        var Deviation = function (d) {
             return d.Deviation === ((d.OrderAmount - d.FinalOrder) / d.FinalOrder);
-         };
+        };
 
 
-      d3.json("/includes/getdata.php", function (error, data2) {
-        xScale
-            .domain([
-                d3.min([0, d3.min(finalArray, function (d) { return d.PeriodsBeforeDelivery })]),
-                d3.max([0, d3.max(finalArray, function (d) { return d.PeriodsBeforeDelivery })])
-                ])
-            .range([0, innerWidth])
-          .nice();
-        
-          yScale
-            .domain([
-               d3.min([0, d3.min(finalArray, function (d) { return (d.Deviation * 100) })]),
-               d3.max([0, 100])
-               ])
-              //  .range([innerHeight, 0])
-          .range([innerHeight, 0])
-          .nice();
 
 
          //Specify Deviation

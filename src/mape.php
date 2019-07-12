@@ -176,7 +176,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 var data = JSON.parse(localStorage['data']);
     const xValue = d => d.PeriodsBeforeDelivery;
       const xLabel = 'Periods Before Delivery';
-      const yValue = d => d.MapeFinal;
+      const yValue = d => d.MapeForPBD;
       const yLabel = 'MAPE';
       const colorValue = d => d.Product;
       const colorLabel = '';
@@ -233,108 +233,141 @@ var data = JSON.parse(localStorage['data']);
         .ticks(10);
 
 
-    //   const colorLegend = d3.legendColor()
-    //     .scale(colorScale)
-    //     .shape('circle');
-
-
-  let absDiff = function (orignalEl, finalOrder) {
-                return Math.abs(orignalEl.OrderAmount - finalOrder);
-                }
-
-                let finalOrder = data.filter((el) => {
-                    return el.ActualPeriod == el.ForecastPeriod;
+        let finalOrder = data.filter((el) => {
+                    return el.PeriodsBeforeDelivery == 0;
                 });
                 console.log('Final order array: ', finalOrder);
 
-                 let uniqueArray = data.filter(function (obj) { return finalOrder.indexOf(obj) == -1; });
-                 console.log("Unique array: ", uniqueArray);
-
-                 let valueMap = new Map();
-                 finalOrder.forEach((val) => {
-                 let keyString = val.ActualPeriod;
-                 let valueString = val.OrderAmount;
-                 valueMap.set(keyString, valueString);
-                });
-
-            let absValuesArray = uniqueArray.map((el) => {
-                let value = absDiff(el, valueMap.get(el.ForecastPeriod));
-                return {
-                    ActualPeriod: el.ActualPeriod,
-                    ForecastPeriod: el.ForecastPeriod,
-                    OrderAmount: el.OrderAmount,
-                    Product: el.Product,
-                    PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                    AbsoluteDiff: value
-                };
-            });
-
-
-            let seperatedByPeriods = d3.nest()
-                .key(function (d) { return d.PeriodsBeforeDelivery })
-                .entries(absValuesArray);
-
-            let madCalc = seperatedByPeriods.map((el) => {
-                let meanValue = d3.sum(el.values, function (d) { return d.AbsoluteDiff; });
-                return {
-                    Product: el.Product,
-                    ActualPeriod: el.ActualPeriod,
-                    ForecastPeriod: el.ForecastPeriod,
-                    OrderAmount: el.OrderAmount,
-                    PeriodsBeforeDelivery: el.key,
-                    SumOfMAD: meanValue
-                };
-            });
+                let uniqueArray = data.filter(function (obj) { return finalOrder.indexOf(obj) == -1; });
+                console.log("Unique array: ", uniqueArray);
 
                 let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
                 console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
-                console.log('MadCalc: ', madCalc);
+
+                let dataGroupedByPBD = d3.nest()
+                    .key(function(d) { return d.PeriodsBeforeDelivery; })
+                    .entries(uniqueArray);
+
+                console.log('Grouped data: ', dataGroupedByPBD);
+
+                let finalMape = dataGroupedByPBD.map((val) => {
+                    let sum = val.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
+                    console.log('sum for pbd: ', val.key, ' sum: ', sum);
+                    let mapeCurrentPBD = Math.abs(sum - sumOfAllFinalOrders) / sumOfAllFinalOrders;
+                    console.log('current mape: ', mapeCurrentPBD);
+
+                    return {
+                        PeriodsBeforeDelivery: val.key,
+                        MapeForPBD: mapeCurrentPBD
+                    };
+                });
+
+                console.log('Final Mape: ', finalMape);
 
 
 
-                let madSeperatedByPeriods = d3.nest()
-                .key(function (d) { return d.PeriodsBeforeDelivery })
-                .entries(madCalc);
-
-            let madSumCalc = madSeperatedByPeriods.map((el) => {
-                let sumMad = el.values.map(item=>item.SumOfMAD).reduce((a, b) => +a + +b);
-                return {
-                    ActualPeriod: el.ActualPeriod,
-                    ForecastPeriod: el.ForecastPeriod,
-                    OrderAmount: el.OrderAmount,
-                    Product: el.Product,
-                    PeriodsBeforeDelivery: el.key,
-                    MadSum: sumMad
-                };
-            });
 
 
 
-            let mapeCalc = madSumCalc.map((val) => {
-                let mapeValue = val.MadSum/ sumOfAllFinalOrders;
-                return {
-                    Product: val. Product,
-                    ActualPeriod: val.ActualPeriod,
-                    ForecastPeriod: val.ForecastPeriod,
-                    PeriodsBeforeDelivery: val.PeriodsBeforeDelivery,
-                    MapeFinal: mapeValue
-                };
-            });
-            console.log('MAPE Array: ', mapeCalc);
+
+/* Old Calculation of MAPE */
+//   let absDiff = function (orignalEl, finalOrder) {
+//                 return Math.abs(orignalEl.OrderAmount - finalOrder);
+//                 }
+
+//                 let finalOrder = data.filter((el) => {
+//                     return el.ActualPeriod == el.ForecastPeriod;
+//                 });
+//                 console.log('Final order array: ', finalOrder);
+
+//                  let uniqueArray = data.filter(function (obj) { return finalOrder.indexOf(obj) == -1; });
+//                  console.log("Unique array: ", uniqueArray);
+
+//                  let valueMap = new Map();
+//                  finalOrder.forEach((val) => {
+//                  let keyString = val.ActualPeriod;
+//                  let valueString = val.OrderAmount;
+//                  valueMap.set(keyString, valueString);
+//                 });
+
+//             let absValuesArray = uniqueArray.map((el) => {
+//                 let value = absDiff(el, valueMap.get(el.ForecastPeriod));
+//                 return {
+//                     ActualPeriod: el.ActualPeriod,
+//                     ForecastPeriod: el.ForecastPeriod,
+//                     OrderAmount: el.OrderAmount,
+//                     Product: el.Product,
+//                     PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+//                     AbsoluteDiff: value
+//                 };
+//             });
+
+
+//             let seperatedByPeriods = d3.nest()
+//                 .key(function (d) { return d.PeriodsBeforeDelivery })
+//                 .entries(absValuesArray);
+
+//             let madCalc = seperatedByPeriods.map((el) => {
+//                 let meanValue = d3.sum(el.values, function (d) { return d.AbsoluteDiff; });
+//                 return {
+//                     Product: el.Product,
+//                     ActualPeriod: el.ActualPeriod,
+//                     ForecastPeriod: el.ForecastPeriod,
+//                     OrderAmount: el.OrderAmount,
+//                     PeriodsBeforeDelivery: el.key,
+//                     SumOfMAD: meanValue
+//                 };
+//             });
+
+//                 let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
+//                 console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
+//                 console.log('MadCalc: ', madCalc);
+
+
+
+//                 let madSeperatedByPeriods = d3.nest()
+//                 .key(function (d) { return d.PeriodsBeforeDelivery })
+//                 .entries(madCalc);
+
+//             let madSumCalc = madSeperatedByPeriods.map((el) => {
+//                 let sumMad = el.values.map(item=>item.SumOfMAD).reduce((a, b) => +a + +b);
+//                 return {
+//                     ActualPeriod: el.ActualPeriod,
+//                     ForecastPeriod: el.ForecastPeriod,
+//                     OrderAmount: el.OrderAmount,
+//                     Product: el.Product,
+//                     PeriodsBeforeDelivery: el.key,
+//                     MadSum: sumMad
+//                 };
+//             });
+
+
+
+//             let mapeCalc = madSumCalc.map((val) => {
+//                 let mapeValue = val.MadSum/ sumOfAllFinalOrders;
+//                 return {
+//                     Product: val. Product,
+//                     ActualPeriod: val.ActualPeriod,
+//                     ForecastPeriod: val.ForecastPeriod,
+//                     PeriodsBeforeDelivery: val.PeriodsBeforeDelivery,
+//                     MapeFinal: mapeValue
+//                 };
+//             });
+//             console.log('MAPE Array: ', mapeCalc);
 
              d3.json("/includes/getdata.php", function (error, data2) {
                 xScale
                 .domain([
-                        d3.min([1, d3.min(mapeCalc, function (d) { return d.PeriodsBeforeDelivery; })]),
-                        d3.max([1, d3.max(mapeCalc, function (d) { return d.PeriodsBeforeDelivery; })])
+                        d3.min([1, d3.min(finalMape, function (d) { return d.PeriodsBeforeDelivery; })]),
+                        d3.max([1, d3.max(finalMape, function (d) { return d.PeriodsBeforeDelivery; })])
                     ])
           .range([0, innerWidth])
           .nice();
         
           yScale
                 .domain([
-                    d3.min([0, d3.min(mapeCalc, function (d) { return d.MapeFinal; })]),
-                    d3.max([0, d3.max(mapeCalc, function (d) { return d.MapeFinal; })])
+                    d3.min([0, d3.min(finalMape, function (d) { return d.MapeForPBD; })]),
+                    d3.max([0, d3.max(finalMape, function (d) { return d.MapeForPBD; })])
                 ])
           .range([innerHeight, 0])
           .nice();
@@ -342,7 +375,7 @@ var data = JSON.parse(localStorage['data']);
 
          //Specify Deviation
     
-        g.selectAll('circle').data(mapeCalc)
+        g.selectAll('circle').data(finalMape)
           .enter().append('circle')
             .attr('cx', d => xScale(xValue(d)))
             .attr('cy', d => yScale(yValue(d)))
@@ -370,7 +403,7 @@ var data = JSON.parse(localStorage['data']);
 
             .text(function (d) {
                return ' Periods Before Delivery: '+d.PeriodsBeforeDelivery + 
-                  '\nMAPE of the period: ' + d.MapeFinal
+                  '\nMAPE of the period: ' + d.MapeForPBD
             });
 
         xAxisG.call(xAxis);
