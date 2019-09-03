@@ -18,23 +18,31 @@ else {
 		<meta name="author" content="">
 		<link rel="icon" href="/data/ico/innofit.ico">
 		<title>Delivery Plans</title>
-		<!-- <script src="https://cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js"></script> -->
-
-    <!-- <script src ="../lib/js/d3.js"></script> -->
     
     <script src="http://d3js.org/d3.v4.min.js"></script>
     <script src ="../lib/js/crossfilter.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
     <script src ="../lib/js/dc.js"></script>
     <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
         crossorigin="anonymous">
-        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css"/>
 
 <style>
       body {
         margin: 0px;
       }
+
+    .dc-chart .axis text {
+    font: 12px sans-serif; }
+
+    .dc-chart .brush rect.selection {
+    fill: #4682b4;
+    fill-opacity: .125; }
+
+    .dc-chart .symbol {
+    stroke: #000; 
+    stroke-width: 0.5px;}
 
       .domain {
        /* display: none; */
@@ -43,36 +51,25 @@ else {
       }
       .tick text, .legendCells text {
         fill: #635F5D;
-        font-size: 10pt;
+        font-size: 12px;
         font-family: sans-serif;
       }
-      .axis-label {
+      .axis-label, .legend-label {
         fill: #635F5D;
-        font-size: 10pt;
+        font-size: 12px;
         font-family: sans-serif;
       }
 
-      .legend rect {
-        fill:white;
-        stroke:black;
-        opacity:0.8;}
-
-        table {
-        border-collapse: collapse;
-        }
-
-        table, th, td {
-        border: 1px solid black;
-        }
-        th {
-        height: 30px;
-        }
-        table, th, td {
-        text-align: center;
-        }
-        tr, thead {
-        text-align: center;
-        }
+       /*  .axis path, */
+        .axis line {
+            fill: none;
+            stroke: grey;
+            stroke-width: 1;
+            shape-rendering: crispEdges;
+        } 
+      .tick line {
+        stroke: #C0C0BB;
+      }
 </style>
  
  
@@ -94,8 +91,9 @@ else {
                     <!--  <li class="nav-item">
                         <a class="nav-link" href="index.php">Home</a>
                     </li > -->
-            <li><a href="./about.php">About this tool</a></li>
-            <li class="dropdown" class = "active">
+            <li><a href="./about.php">About InnoFIT Web-tool</a></li>
+            <li class><a href="./howto.php">How to Interpret Error Measures </a></li>
+            <li class="dropdown active">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li><a  href="./finalorder.php">Final Order Amount</a></li>
@@ -165,7 +163,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
     </div> <!--/.container-fluid -->
     </nav>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script> -->
 	
 <div style="padding-left:39px">
 	<h3>Delivery plans</h3>
@@ -176,75 +174,76 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 		echo ".";
 		?></small>
 		<br><br>
-<p> <b>Graph Description: </b>The graph shows the amount of Order Amounts for each forecast period. <br>
+<p> <b>Graph Description: </b>The graph shows the amount of Order Amounts for each forecast period.
 <!-- <font color="orange">Orange-coloured circles </font> designate forecasted order amounts, and <font color="blue"> blue-coloured circles </font> designate final order amounts.</p> -->
 </div>
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.3/localforage.js"></script> -->
 	
+<div style="padding-left:39px">
+<div id ="scatter">
+   <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
+   <a class="reset" href="javascript:DeliveryPlansChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
+   <div class="clearfix"></div>
+   </div>
 
+ <div id ="forecastlist">
+ <p style="text-align:center;">  <strong>Due date </strong></p>
+   <div>
+    </div>
+    <div class="clearfix"></div>
+  </div>
 
+  <div id="productlist">
+  <p style="text-align:center;"><strong>Product</strong></p>
+    <div>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+  
+  <div id="daySelectionDiv"></div>
+   <div id ="pbd">
+   <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
+    </div>
+    <div style="clear: both"></div>
+    
+   <div>
+    <div class="dc-data-count">
+    <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
+        href ="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
+    </div><br/><br/>
+    <button onclick="myFunction()">Data table display</button>
+    <table class="table table-hover dc-data-table" id="myTable" style="display:none">
+    </table>
+    </div>
 
+<div id="test"></div>
+<br/>
 
 <svg width="960" height="480"></svg>
 <div>
   <svg id="new_legend" height=200 width=450></svg>
 </div>
-
- <div id ="forecastPeriod">
-   <strong>Due date (Forecast Period)</strong>
-   <span class ="reset" style="display: none;">Range:<span class="filter"></span></span>
-   <a class="reset" href="javascript:forecastPeriodChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
-   <div class="clearfix"></div>
-   </div>
-   <div id ="product">
-   <strong>Product </strong>
-   <span class ="reset" style="display: none;">Range:<span class="filter"></span></span>
-   <a class="reset" href="javascript:productChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
-   <div class="clearfix"></div>
-   </div>
-
-   <div id ="pbd">
-   <strong>Periods Before Delivery</strong>
-   <span class ="reset" style="display: none;">Range:<span class="filter"></span></span>
-   <a class="reset" href="javascript:periodsBeforeDeliveryChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
-   <div class="clearfix"></div>
-   </div>
-
-
-   <div id ="scatter">
-   <strong>Delivery Plans graph</strong>
-   <span class ="reset" style="display: none;">Range:<span class="filter"></span></span>
-   <a class="reset" href="javascript:DeliveryPlansChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
-   <div class="clearfix"></div>
-   </div>
-
-   
-
-
-   <div>
-    <div class="dc-data-count">
-    <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
-        href ="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
-    </div>
-    <table class="table table-hover dc-data-table">
-    </table>
-    </div>
-
-    <div id="test"></div>
-
+</div>
+<script>
+function myFunction() {
+  var x = document.getElementById("myTable");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+</script>
 
 <script>
     var finalOrder = JSON.parse(localStorage['finalOrder']);
     var data = JSON.parse(localStorage['data']);
-    const colorScaleSe = d3.scaleSequential(d3.interpolateBlues)
-        .domain([5, 9]);
   
     const xValue = d => d.ForecastPeriod;
       const xLabel = 'Due Date';
       const yValue = d => d.OrderAmount;
-      const yLabel = 'Order Quantity (pcs)';
-    //   const colorValue = d => function (d) { if (d.ActualPeriod===d.ForecastPeriod) return "Final Order"; else return "Forecast Order"; };
-      const colorValue = d => d.Product;
+      const yLabel = 'Order Amount (pcs)';
+      const colorValue = d => function (d) { if (d.PeriodsBeforeDelivery==0) return 0; else return 1; };
+    //   const colorValue = d => d.PeriodsBeforeDelivery;
       const colorLabel = 'Orders';
       const margin = { left: 55, right: 25, top: 20, bottom: 30 };
       const legendOffset = 57;
@@ -254,8 +253,6 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
       const height = svg.attr('height');
       const innerWidth = width - margin.left - margin.right - legendOffset;
       const innerHeight = height - margin.top - margin.bottom-20;
-
-
       
       const g = svg.append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
@@ -287,29 +284,21 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
     //       .attr('y', -35)
     //       .text(colorLabel);
 
-
-
       const xScale = d3.scaleLinear();
       const yScale = d3.scaleLinear();
-      const colorScale = function (d) { if (d.ActualPeriod==d.ForecastPeriod) return "Final"; 
-      else return "Forecast"; }, color = d3.scaleOrdinal() .range(["#fa87ba", "#8d2c4a"]);
-
-      const myColorScale = function (p) { if (p.ActualPeriod==p.ForecastPeriod) return "Final"; 
-      else return "Forecast"; }, myColor = d3.scaleOrdinal(d3.schemeCategory10);
 
 
-        const xAxis = d3.axisBottom(xScale)
-        .ticks(10);
+        const xAxis = d3.axisBottom(xScale);
 
-      const yAxis = d3.axisLeft(yScale)
-        .ticks(10);
+      const yAxis = d3.axisLeft(yScale);
+    
 
     //   const colorLegend = d3.legendColor()
     //     .scale(color)
     //     .shape('circle');
 
-        var finalOrder = JSON.parse(localStorage['finalOrder']);
-        var data = JSON.parse(localStorage['data']);
+        var max = d3.max(data, function(d){ return d.OrderAmount});
+        console.log("maxValue:", max);
     // localforage.getItem['finalOrder'].then(function(finalOrder) {
     // }).catch(function(err) {
     // console.log(err);
@@ -320,30 +309,27 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
     // console.log(err);
     // });
 d3.json("/includes/getdata.php", function(error, data2) {
-
- xScale
-            .domain([
-                d3.min([0, d3.min(data, function (d) { return d.ForecastPeriod })]),
-                d3.max([0, d3.max(data, function (d) { return d.ForecastPeriod })])
-            ])
-            .range([0, innerWidth])
-          .nice();
+    xScale
+        .domain( d3.extent(data, function(d){return d.ForecastPeriod}))
+        .range([0, innerWidth])
+        .nice();
         
-          yScale
-            .domain([
-                d3.min([0, d3.min(data, function (d) { return d.OrderAmount })]),
-                d3.max([d3.max(data, function (d) { return d.OrderAmount })])
-                ])
-                .range([innerHeight, 0])
-          //.range([innerHeight, 0])
-          .nice();
+    yScale
+    .domain([
+            d3.min(data, function (d) { return (d.OrderAmount ) }),
+            d3.max(data, function (d) { return (d.OrderAmount ) })
+        ])
+        .range([innerHeight, 0])
+        //.range([innerHeight, 0])
+        .nice();
             
-    var forecastPeriodChart = dc.pieChart("#forecastPeriod"),
-    productChart = dc.pieChart("#product"),
-    periodsBeforeDeliveryChart = dc.pieChart("#pbd"),
+    var forecastlist = dc.selectMenu("#forecastlist"),
+    // productChart = dc.pieChart("#product"),
+    periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
     visCount = dc.dataCount(".dc-data-count"),
-    DeliveryPlansChart = dc.scatterPlot("#scatter")
-    visTable= dc.dataTable(".dc-data-table");
+    DeliveryPlansChart = dc.scatterPlot("#scatter"),
+    visTable= dc.dataTable(".dc-data-table"),
+    productlist = dc.selectMenu("#productlist");
 
 
        fetch("/includes/getdata.php")
@@ -357,11 +343,11 @@ d3.json("/includes/getdata.php", function(error, data2) {
             var ndx = crossfilter (data);
             var all = ndx.groupAll();
             var forecastPeriodDim = ndx.dimension(function (d) { return +d.ForecastPeriod;});
-            var ndxDim = ndx.dimension(function (d) { return  [+d.ForecastPeriod, +d.OrderAmount];});
+            var ndxDim = ndx.dimension(function (d) { return  [+d.ForecastPeriod, +d.OrderAmount, +d.PeriodsBeforeDelivery];});
             var productDim = ndx.dimension(function(d) { return d.Product;}) ;
-            var periodsBeforeDeliveryDim = ndx.dimension(function(d) { return d.PeriodsBeforeDelivery;}) ;
+            var periodsBeforeDeliveryDim = ndx.dimension(function(d) { return +d.PeriodsBeforeDelivery;}) ;
             var orderDim = ndx.dimension(function(d) { return d.OrderAmount;}) ;
-            var dateDim = ndx.dimension(function(d) { return d.ActualDate;}) ;
+            var dateDim = ndx.dimension(function(d) { return +d.ActualDate;}) ;
 
             var forecastPeriodGroup = forecastPeriodDim.group();
             var productGroup = productDim.group();
@@ -369,80 +355,73 @@ d3.json("/includes/getdata.php", function(error, data2) {
             var orderGroup = orderDim.group(function(d) { return +d.OrderAmount;});
             var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
             var dateGroup = dateDim.group();
+            const plotColorMap = {1: '#cc8800', 0: '#000099'};
+            var plotColorMap2 = function (d) { if (d.PeriodsBeforeDelivery==0) return 0; else return 1; };
+            var color = {1:"#8d2c4a", 0: "#fa87ba" };
 
             // const myColorScale = function (d) { if (d.ActualPeriod==d.ForecastPeriod) return "Final"; 
             // else return "Forecast"; }, color = d3.scaleOrdinal(d3.schemeCategory10);
             
-            forecastPeriodChart
+            forecastlist
                 .dimension(forecastPeriodDim)
-                .group(forecastPeriodGroup);
+                .group(forecastPeriodGroup)
+                .multiple(true)
+                .numberVisible(15);
                 // .elasticX(true);
-
-
-            productChart
-                //.height(800)
+            
+                productlist
                 .dimension(productDim)
                 .group(productGroup)
-                // .elasticX(true)
-                .data(function(group){ return group.top(15)});
+                //.controlsUseVisibility(true)
+                .multiple(true)
+                .numberVisible(15);
 
             periodsBeforeDeliveryChart
                 .dimension(periodsBeforeDeliveryDim)
-                .group(periodsBeforeDeliveryGroup);
-                // .elasticX(true);
+                .group(periodsBeforeDeliveryGroup)
+                .multiple(true)
+                .numberVisible(15);
+
+        console.log("ndxDim: ", ndxGroup.top(Infinity));
 
             DeliveryPlansChart
                 .width(768)
                 .height(480)
                 .dimension(ndxDim)
-                // .colorAccessor(d=> myColor(myColorScale(d)))
+                .symbolSize(9)
+                .group(ndxGroup)
+                .keyAccessor(function (d) { return d.key[0]; })
+                .valueAccessor(function (d) { return d.key[1]; })
                 .colorAccessor(function(d) {
-                    if (d.value.PeriodsBeforeDelivery == 0) {
-                        return "Final";
-                    }
-                    return "Forecast";
-                })
-                .colors(d3.scaleOrdinal().domain(["Final", "Forecast"])
-                    .range(["#0000FF", "#FF8C00"]))
-
-
-                // .colors(d3.schemeRdYlGn[9])
-                // .colorDomain([-500, 500])
-                // .colorAccessor(function (d) {
-                //     return d.OrderAmount;
-                // })
-                // .keyAccessor(function (p) {
-                //     return p.ForecastPeriod;
-                // })
-                // .valueAccessor(function (p) {
-                //     return p.OrderAmount;
-                // })
-
-                .x(d3.scaleLinear().domain([0,100]))
-                // .r(d3.scaleLinear().domain([0, 4000]))
+                    console.log('Color Accessor: ', d); 
+                    if (d.key[2]==0) {
+                        return 0;
+                    } else return 1;
+                    // return d.key[2];
+                 })
+                .colors(function(colorKey) { 
+                    return plotColorMap[colorKey]; })
+                    .x(d3.scaleLinear().domain(d3.extent(data, function(d){return d.ForecastPeriod}))) 
                 .brushOn(true)
                 .clipPadding(10)
-                .xAxisLabel("Due Date (due forecast period)")
-                .yAxisLabel("Order Quantity (pcs)")
+                .xAxisLabel("Due Date (forecast period)")
+                .yAxisLabel("Order Amount (pcs)")
                 // .mouseZoomable(true)
                 .renderTitle(true)
                 .title(function (d) {
                     return [
-                        d.ForecastPeriod,
-                'Product: ' + d.Product,
-                'Actual Period: ' + d.ActualPeriod,
-                'Periods Before Delivery: ' + d.PeriodsBeforeDelivery 
+                        'Periods Before Delivery: ' + d.key[2],
+                        'Order Amount: ' + d.key[1],
+                        'Forecast Period: ' + d.key[0]
                 ].join('\n');
                 })
-                 
-                .group(ndxGroup)
+                .transitionDuration(500)
                 .elasticX(true)
                 .elasticY(true);
-                console.log('ndxgroup data:', ndxDim);
 
-                DeliveryPlansChart.symbol(d3.symbolCircle);
+            DeliveryPlansChart.symbol(d3.symbolCircle);
+            DeliveryPlansChart.margins().left = 50;
 
-        
             visCount
                 .dimension(ndx)
                 .group(all);
@@ -454,12 +433,11 @@ d3.json("/includes/getdata.php", function(error, data2) {
                     return d.ActualDate.getFullYear() + '/'+ format((d.ActualDate.getMonth() + 1));
                 })
                 .columns([
-                    "ActualDate",
                     "Product",
-                    "OrderAmount",
                     "ActualPeriod",
                     "ForecastPeriod",
-                    "PeriodsBeforeDelivery"
+                    "PeriodsBeforeDelivery",
+                    "OrderAmount"
                 ]);
 
             dc.renderAll();
@@ -570,42 +548,44 @@ d3.json("/includes/getdata.php", function(error, data2) {
 //         .attr("transform", "rotate(-90)")
 //         .style("text-anchor", "middle")
 //         .text("Order Quantity(pcs)");
-g.selectAll('circle').data(data)
-          .enter().append('circle')
-            .attr('cx', d => xScale(xValue(d)))
-            .attr('cy', d => yScale(yValue(d)))
-            .attr('fill', d => color(colorScale(d)))
-            .attr('fill-opacity', 1)
-            .attr('r', 8)
-            .attr('stroke','black')
-             .attr('stroke-width',1)
-        .on('mouseover', function (d) {  // Tooltip
-               d3.select(this)
-                  .transition()
-                  .duration(500)
-                  .style("opacity", 1)
-                  .attr('r', 10)
-                  .attr('stroke-width', 3)
-            })
-            .on('mouseout', function () {
-               d3.select(this)
-                  .transition()
-                  .duration(500)
-                  .attr('r', 7)
-                  .attr('stroke-width', 1)
-            })
-            .append('title') // Tooltip
 
-      .text(function (d) { return d.Product +
-                           '\nActual Period: ' + d.ActualPeriod +
-                           '\nDue date (Forecast Period): ' + d.ForecastPeriod +
-                           '\nPeriods Before Delivery: ' + d.PeriodsBeforeDelivery +
-                           '\nOrder Quantity: ' + d.OrderAmount });
-                  
-        
-            
-            xAxisG.call(xAxis);
-            yAxisG.call(yAxis);
+g.selectAll('circle').data(data)
+    .enter().append('circle')
+    .attr('cx', d => xScale(xValue(d)))
+    .attr('cy', d => yScale(yValue(d)))
+    .style("fill", function(d) {          
+        if (d.PeriodsBeforeDelivery == 0) {return "#8d2c4a"}  
+        else { return "#fa87ba" }             
+    ;})  
+
+    .attr('fill-opacity', 1)
+    .attr('r', 8)
+    .attr('stroke','black')
+    .attr('stroke-width',1)
+    .on('mouseover', function (d) {  // Tooltip
+        d3.select(this)
+        .transition()
+        .duration(500)
+        .style("opacity", 1)
+        .attr('r', 10)
+        .attr('stroke-width', 3)
+    })
+    .on('mouseout', function () {
+        d3.select(this)
+        .transition()
+        .duration(500)
+        .attr('r', 7)
+        .attr('stroke-width', 1)
+    })
+    .append('title') // Tooltip
+    .text(function (d) { return d.Product +
+        '\nActual Period: ' + d.ActualPeriod +
+        '\nDue date (Forecast Period): ' + d.ForecastPeriod +
+        '\nPeriods Before Delivery: ' + d.PeriodsBeforeDelivery +
+        '\nOrder Amount: ' + d.OrderAmount });
+                      
+xAxisG.call(xAxis);
+yAxisG.call(yAxis);
 
 
             // colorLegendG.call(colorLegend)
@@ -620,8 +600,8 @@ g.selectAll('circle').data(data)
 
         
         var svg = d3.select("#new_legend")
-        svg.append("circle").attr("cx",70).attr("cy",15).attr("r", 6).style("fill","#fa87ba")
-        svg.append("circle").attr("cx",180).attr("cy",15).attr("r", 6).style("fill", "#8d2c4a")
+        svg.append("circle").attr("cx",70).attr("cy",15).attr("r", 6).style("fill","#8d2c4a")
+        svg.append("circle").attr("cx",180).attr("cy",15).attr("r", 6).style("fill", "#fa87ba")
             
         //svg.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#404080")
         svg.append("text").attr("x", 90).attr("y", 15).text("Final Order").style("font-size", "15px").attr("alignment-baseline","middle")
@@ -637,6 +617,7 @@ g.selectAll('circle').data(data)
     <script src="/lib/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
+
 		
 
 </body>

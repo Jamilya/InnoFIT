@@ -9,22 +9,42 @@ else {
 
 <!DOCTYPE html>
 <html lang="en">
+<meta charset="utf-8">
 
 <head>
-    <meta charset="utf-8">
+<meta charset="utf-8">
     <meta http-equiv="X-UA-compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/data/ico/innofit.ico">
     <title>Mean Squared Error</title>
+    
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+    <script src ="../lib/js/crossfilter.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
+    <script src ="../lib/js/dc.js"></script>
+    <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
         crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css"/>
 
     <style>
-      body {
+     body {
         margin: 0px;
       }
+
+    .dc-chart .axis text {
+    font: 12px sans-serif; }
+
+    .dc-chart .brush rect.selection {
+    fill: #4682b4;
+    fill-opacity: .125; }
+
+    .dc-chart .symbol {
+    stroke: #000; 
+    stroke-width: 0.5px;}
+
       .domain {
        /* display: none; */
         stroke: #635F5D;
@@ -32,12 +52,12 @@ else {
       }
       .tick text, .legendCells text {
         fill: #635F5D;
-        font-size: 10pt;
+        font-size: 12px;
         font-family: sans-serif;
       }
       .axis-label, .legend-label {
         fill: #635F5D;
-        font-size: 8pt;
+        font-size: 12px;
         font-family: sans-serif;
       }
 
@@ -52,7 +72,7 @@ else {
         stroke: #C0C0BB;
       }
     </style>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+<!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script> -->
 
 
 </head>
@@ -73,8 +93,9 @@ else {
                     <!--  <li class="nav-item">
                         <a class="nav-link" href="index.php">Home</a>
                     </li > -->
-            <li><a href="./about.php">About this tool</a></li>
-            <li class="dropdown" class = "active">
+            <li><a href="./about.php">About InnoFIT Web-tool</a></li>
+            <li class><a href="./howto.php">How to Interpret Error Measures </a></li>
+            <li class="dropdown active">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li><a  href="./finalorder.php">Final Order Amount</a></li>
@@ -144,11 +165,9 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
     </div> <!--/.container-fluid -->
     </nav>
 
-    <script src="http://d3js.org/d3.v4.min.js"></script>
-    <!-- <script src="http://d3js.org/d3.v3.min.js"></script> -->
+    <!-- <script src="http://d3js.org/d3.v4.min.js"></script> -->
 
-
-    <div style="padding-left:3px">
+    <div style="padding-left:39px">
 
         <h3>Mean Squared Error (MSE) Graph</h3>
         <small>
@@ -164,13 +183,69 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
         <img src="https://latex.codecogs.com/gif.latex?MSE_{j} = \frac{1}{n}\sum_{i=1}^{n}(x_{i,j}-x_{i,0})^{2}" title="MSE formula" />. </p> 
         <!-- \frac{1}{n}\sum_{i=1}^{n} ( x_{i,j} - x_{i,0})^{2} -->
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script>
-   <svg width="960" height="500"></svg>
 
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script> -->
+    <div style="padding-left:39px">
+    <div id ="scatter">
+   <!-- <p style="text-align:center;"><strong>MSE graph</strong></p> -->
+   <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
+   <!-- <a class="reset" href="javascript:MSEchart.filterAll(); dc.redrawAll();" style="display: none;">reset</a> -->
+   <div class="clearfix"></div>
+   </div>
+
+    <div id ="forecastlist">
+    <p style="text-align:center;"><strong>Due date </strong></p>
+   <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
+      <!-- <a class="reset" href="javascript:forecastlist.filterAll();dc.redrawAll();" style="display: none;">reset</a> -->
+    <div class="clearfix"></div>
+  </div>
+
+  <!-- <div style="clear: both"></div> -->
+  <!-- <div id="daySelectionDiv"></div> -->
+<!-- <script type="text/javascript" src="../lib/js/header.js"></script> -->
+  <div id="productlist">
+  <p style="text-align:center;"><strong>Product</strong></p>
+  <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
+  <!-- <a class="reset" href="javascript:productlist.filterAll();dc.redrawAll();" style="display: none;">reset</a> -->
+  <div  class="clearfix"></div>
+  </div>
+
+   <div id ="pbd">
+   <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
+   <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
+   <!-- <a class="reset" href="javascript:periodsBeforeDeliveryChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a> -->
+   </div>
+   <div style="clear: both"></div>
+   
+
+   <div>
+    <div class="dc-data-count">
+    <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
+        href ="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
+    </div><br/><br/>
+    <button onclick="myFunction()">Data table display</button>
+    <table class="table table-hover dc-data-table" id="myTable" style="display:none">
+    </table>
+    </div>
+
+    <div id="test"></div>
+    <br/>
+
+<svg width="960" height="500"></svg> <br/>
+</div>
+<script>
+function myFunction() {
+  var x = document.getElementById("myTable");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+</script>
 
     <script>
-      var data = JSON.parse(localStorage['data']);
-    const xValue = d => d.PeriodsBeforeDelivery;
+       const xValue = d => d.PeriodsBeforeDelivery;
       const xLabel = 'Periods Before Delivery';
       const yValue = d => d.MeanOfThisPeriod;
       const yLabel = 'MSE';
@@ -185,15 +260,14 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
       const innerWidth = width - margin.left - margin.right - legendOffset;
       const innerHeight = height - margin.top - margin.bottom-35;
 
-
-      
+    
       const g = svg.append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
       const xAxisG = g.append('g')
         .attr('transform', `translate(0, ${innerHeight})`);
       const yAxisG = g.append('g');
       const colorLegendG = g.append('g')
-        .attr('transform', `translate(${innerWidth + 32}, 28)`)
+        .attr('transform', `translate(${(innerWidth + 32)}, 28)`)
         .attr('stroke','black')
         .attr('stroke-width',0.5);
 
@@ -228,12 +302,19 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
       const yAxis = d3.axisLeft(yScale)
         .ticks(10);
 
+      var data = JSON.parse(localStorage['data']);
 
-    //   const colorLegend = d3.legendColor()
-    //     .scale(colorScale)
-    //     .shape('circle');
+        var forecastlist = dc.selectMenu("#forecastlist"),
+        // productChart = dc.pieChart("#product"),
+        periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
+        visCount = dc.dataCount(".dc-data-count"),
+        MSEchart = dc.scatterPlot("#scatter")
+        visTable= dc.dataTable(".dc-data-table")
+        productlist = dc.selectMenu("#productlist");
 
-            let absDiff = function (orignalEl, finalOrder) {
+
+    
+    let absDiff = function (orignalEl, finalOrder) {
                 return Math.pow((orignalEl.OrderAmount - finalOrder), 2);
             }
 
@@ -258,6 +339,8 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
             let absValuesArray = uniqueArray.map((el) => {
                 let value = absDiff(el, valueMap.get(el.ForecastPeriod));
                 return {
+                    ActualDate: el.ActualDate,
+                    ForecastDate: el.ForecastDate,
                     ActualPeriod: el.ActualPeriod,
                     ForecastPeriod: el.ForecastPeriod,
                     OrderAmount: el.OrderAmount,
@@ -272,21 +355,172 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
             let seperatedByPeriods = d3.nest()
                 .key(function (d) { return d.PeriodsBeforeDelivery })
                 .entries(absValuesArray);
-
+                console.log("seperatedByPeriods: ", seperatedByPeriods);
+            
             let bubu = seperatedByPeriods.map((el) => {
+                for (i=0; i<seperatedByPeriods.length; i++){ 
                 let meanValue = d3.mean(el.values, function (d) { return d.AbsoluteDiff; });
-                return {
-                    Product: el.Product,
-                    ActualPeriod: el.ActualPeriod,
-                    ForecastPeriod: el.ForecastPeriod,
-                    OrderAmount: el.OrderAmount,
+                    return {
+                    ActualDate: el.values[i].ActualDate,
+                    ForecastDate: el.values[i].ForecastDate,
+                    Product: el.values[i].Product,
+                    ActualPeriod: el.values[i].ActualPeriod,
+                    ForecastPeriod: el.values[i].ForecastPeriod,
+                    OrderAmount: el.values[i].OrderAmount,
                     PeriodsBeforeDelivery: el.key,
                     MeanOfThisPeriod: meanValue
-                };
+                    };
+                }
             });
-            console.log("separated final array: ", bubu);
 
-        d3.json("/includes/getdata.php", function (error, data) {
+            // let bubuMap = new Map();
+            // absValuesArray.forEach((val) => {
+            //     let keyString = val.ActualPeriod;
+            //     let valueString = val.AbsoluteDiff;
+            //     bubuMap.set(keyString, valueString);
+            // });
+            // let meanCalc = function (orignalEl) {  return d3.mean(orignalEl.AbsoluteDiff);}
+        
+            // let bubu = seperatedByPeriods.map((el) => {
+            //     let meanValue = meanCalc(el.values, bubuMap.get(el.values.ForecastPeriod));
+            //         return {
+            //         ActualDate: el.values.ActualDate,
+            //         ForecastDate: el.values.ForecastDate,
+            //         Product: el.values.Product,
+            //         ActualPeriod: el.values.ActualPeriod,
+            //         ForecastPeriod: el.values.ForecastPeriod,
+            //         OrderAmount: el.values.OrderAmount,
+            //         PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+            //         MeanOfThisPeriod: meanValue
+            //         };
+            // });
+            console.log("bubu: ", bubu);
+            
+            bubu.forEach(function(d){
+                d.ActualDate= new Date(d.ActualDate);
+            });
+
+        var ndx = crossfilter (bubu);
+            var all = ndx.groupAll();
+            var forecastPeriodDim = ndx.dimension(function (d) { return +d.ForecastPeriod;});
+            var ndxDim = ndx.dimension(function (d) { return  [+d.PeriodsBeforeDelivery, +d.MeanOfThisPeriod, +d.Product];});
+            var productDim = ndx.dimension(function(d) { return d.Product;}) ;
+            var periodsBeforeDeliveryDim = ndx.dimension(function(d) { return +d.PeriodsBeforeDelivery;}) ;
+            // var orderDim = ndx.dimension(function(d) { return d.OrderAmount;}) ;
+            var dateDim = ndx.dimension(function(d) { return +d.ActualDate;}) ;
+
+            var forecastPeriodGroup = forecastPeriodDim.group();
+            var productGroup = productDim.group();
+            var ndxGroup = ndxDim.group().reduceSum(function(d) { return +d.MeanOfThisPeriod;});
+            // var orderGroup = orderDim.group(function(d) { return +d.OrderAmount;});
+            var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
+            var dateGroup = dateDim.group();
+            const plotColorMap = {0: '#000099', 1: '#cc8800'};
+            var plotColorMap2 = function (d) { if (d.PeriodsBeforeDelivery==0) return 0; else return 1; };
+             var color = {0: "#fa87ba", 1:"#8d2c4a"};
+
+            forecastlist
+                .dimension(forecastPeriodDim)
+                .group(forecastPeriodGroup)
+                .multiple(true)
+                .numberVisible(15);
+            
+            productlist
+                .dimension(productDim)
+                .group(productGroup)
+                //.controlsUseVisibility(true)
+                .multiple(true)
+                .numberVisible(15);
+
+            periodsBeforeDeliveryChart
+                .dimension(periodsBeforeDeliveryDim)
+                .group(periodsBeforeDeliveryGroup)
+                .multiple(true)
+                .numberVisible(15);
+
+        console.log("ndxDim: ", ndxGroup.top(Infinity));
+
+            MSEchart
+                .width(768)
+                .height(480)
+                .dimension(ndxDim)
+                .symbolSize(9)
+                .group(ndxGroup)
+                .data(function(group) {
+                    return group.all()
+                    .filter(function(d) { return d.key !== NaN; }); 
+                })
+                .excludedSize(2)
+                .excludedOpacity(0.5)
+                // .keyAccessor(function (d) { return d.key[0]; })
+                // .valueAccessor(function (d) { return d.key[1]; })
+                // .colorAccessor(function(d) { 
+                //     if (d.key[2]==0) {
+                //         return 0;
+                //     } else return 1;
+                //     // return d.key[2];
+                //  })
+                // .colors(function(colorKey) { 
+                //     return plotColorMap[colorKey]; })
+
+                .x(d3.scaleLinear().domain([0,100]))
+                .brushOn(true)
+                .clipPadding(10)
+                .xAxisLabel("Periods Before Delivery")
+                .yAxisLabel("MSE")
+                // .mouseZoomable(true)
+                .renderTitle(true)
+                .title(function (d) {
+                    return [
+                        'Periods Before Delivery: ' + d.key[0],
+                        'MSE: ' + d.key[1],
+                        'Product: ' + d.key[2]
+                    ].join('\n');
+                })
+                .elasticX(true)
+                .elasticY(true);
+                // console.log('ndxgroup data:', ndxDim);
+
+
+                MSEchart.selectAll('path.symbol')
+                    .attr('opacity', 0.3);
+                MSEchart.margins().left = 50;
+
+        
+            visCount
+                .dimension(ndx)
+                .group(all);
+
+            visTable
+                .dimension(dateDim)
+                .group(function(d){
+                    var format = d3.format('02d');
+                    return d.ActualDate.getFullYear() + '/'+ format((d.ActualDate.getMonth() + 1));
+                })
+                .columns([
+                    "Product",
+                    "ActualPeriod",
+                    "ForecastPeriod",
+                    "PeriodsBeforeDelivery",
+                    "OrderAmount",
+                    "MeanOfThisPeriod"
+                ]);
+
+            dc.renderAll();
+
+            
+    var maxLabel = d3.max(bubu, function(d) { return d.MeanOfThisPeriod; }),
+        maxWidth;
+        
+ 
+
+
+    //   const colorLegend = d3.legendColor()
+    //     .scale(colorScale)
+    //     .shape('circle');
+
+
+        d3.json("/includes/getdata.php", function (error, data2) {
 
         xScale
         .domain([
@@ -316,6 +550,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
             .attr('r', 8)
             .attr('stroke','black')
              .attr('stroke-width',1)
+             .style("display", function(d) { return d.MeanOfThisPeriod == undefined ? "none" : undefined; })
         .on('mouseover', function (d) {  // Tooltip
                d3.select(this)
                   .transition()
@@ -340,13 +575,11 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 
         xAxisG.call(xAxis);
         yAxisG.call(yAxis);
-        colorLegendG.call(colorLegend)
-          .selectAll('.cell text')
-            .attr('dy', '0.1em');
+        // colorLegendG.call(colorLegend)
+        //   .selectAll('.cell text')
+        //     .attr('dy', '0.1em');
 
 
-
-            var legendOffset = 140;
 
 
             // var margin = { top: 20, right: 15, bottom: 30, left: 80 },

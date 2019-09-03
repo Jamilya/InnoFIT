@@ -17,7 +17,7 @@ else {
 		<meta name="description" content="">
 		<meta name="author" content="">
 		<link rel="icon" href="/data/ico/innofit.ico">
-		<title>About This Tool</title>
+		<title>How to Use Error Measures</title>
 		
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
         crossorigin="anonymous">
@@ -40,6 +40,48 @@ else {
             stroke-width: 1;
             shape-rendering: crispEdges;
         } 
+        div.minimalistBlack {
+  border: 0px solid #000000;
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+}
+.divTable.minimalistBlack .divTableCell, .divTable.minimalistBlack .divTableHead {
+  border: 1px solid #000000;
+  padding: 5px 1px;
+}
+.divTable.minimalistBlack .divTableBody .divTableCell {
+  font-size: 15px;
+}
+.divTable.minimalistBlack .divTableHeading {
+  background: #CFCFCF;
+  background: -moz-linear-gradient(top, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
+  background: -webkit-linear-gradient(top, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
+  background: linear-gradient(to bottom, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
+}
+.divTable.minimalistBlack .divTableHeading .divTableHead {
+  font-size: 15px;
+  font-weight: bold;
+  color: #000000;
+  text-align: left;
+}
+.minimalistBlack .tableFootStyle {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000000;
+  border-top: 3px solid #000000;
+}
+.minimalistBlack .tableFootStyle {
+  font-size: 14px;
+}
+/* DivTable.com */
+.divTable{ display: table; }
+.divTableRow { display: table-row; }
+.divTableHeading { display: table-header-group;}
+.divTableCell, .divTableHead { display: table-cell;}
+.divTableHeading { display: table-header-group;}
+.divTableFoot { display: table-footer-group;}
+.divTableBody { display: table-row-group;}
 		</style>
 
  </head>
@@ -60,8 +102,8 @@ else {
                     <!--  <li class="nav-item">
                         <a class="nav-link" href="index.php">Home</a>
                     </li > -->
-            <li class = "active"><a href="./about.php">About InnoFIT Web-tool  <span class="sr-only">(current)</span></a></li>
-            <li class><a href="./howto.php">How to Interpret Error Measures </a></li>
+            <li class><a href="./about.php">About InnoFIT Web-tool</a></li>
+            <li class = "active"><a href="./howto.php">How to Interpret Error Measures   <span class="sr-only">(current)</span></a></li>
             <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations<span class="caret"></span></a>
                 <ul class="dropdown-menu">
@@ -141,63 +183,75 @@ print_r($_SESSION["session_username"]);
 echo ".";
 ?></small>
 <br><br>
-		<h5 class = "card-title"><strong>Background Description of This Web-Tool</strong></h5><br>
-		<div class = "row1"> 
+		<h5 class = "card-title"><strong>Description and guidelines on how to use the error measures</strong></h5>
+	<div class = "row1"> 
 		<div class="col-sm-6">
-		<p class = "class-text"> 
-		<br>
-		This tool was created as a part of the <strong>InnoFIT research project</strong>, which aims at developing innovative forecasting tools for improved production
-		planning. The project is funded by the Austrian Research Promotion Agency 
-		<a href="https://www.ffg.at/en/content/about-ffg" title="Austrian Research Promotion Agency">(FFG)</a> and runs from 1 June 2018 until 31 May 2021.
-		<br></p>
-	</div>
-	<div class="col-sm-6">
-			<picture><img src="/data/img/Logo_transparent.png" sizes="50vw"
-				srcset="/data/img/Logo_transparent.png 100w, /data/img/Logo_transparent.png 900w,
-				/data/img/Logo_transparent.png 7000w">
-			</picture>
-			</div>
+		    <p class = "class-text"> 
+	    	
+	    	<!-- This page will help you to understand how to use and analyze the error measures shown in this web tool.</p> -->
+	    </div>
+
+<div class="divTable minimalistBlack">
+<div class="divTableHeading">
+<div class="divTableRow">
+<div class="divTableHead">Error Measures&nbsp;</div>
+<div class="divTableHead">Description and How to use error measures&nbsp;</div>
+<div class="divTableHead">Formula&nbsp;</div>
 </div>
 </div>
+<div class="divTableBody">
+<div class="divTableRow">
+<div class="divTableCell">Mean Absolute Deviation (MAD)</div>
+<div class="divTableCell">The mean absolute deviation describes the absolute average error between the forecasted and the final order amounts. MAD represents the average error of forecast deviation from the final order. Since the estimation is in absolute values, <b> it does not show whether there was over- or under-booking in the forecast. </b></div>
+<div class="divTableCell"><img src="https://latex.codecogs.com/gif.latex?MAD_{j} = \frac{1}{n}\sum_{i=1}^{n}{\left | x_{i,j}-x_{i,0} \right |}" title="MAD_formula"></div>
 </div>
-	<div style="padding-left:39px">
-			<br><br><h5><strong> Project Partners</strong> </h5><br>
-				<small><ul>
-				<li>University of Applied Sciences Upper Austria, Campus Steyr
-					<ul><li>UAS Steyr Project leader: <a href="http://research.fh-ooe.at/en/staff/3584">Priv. Doz. FH-Prof. DI (FH) Klaus Altendorfer PhD</a></li></ul></li>
-				<li>St. Pölten University of Applied Sciences 
-						<ul><li> UAS St. Pölten Project leader: <a href="https://www.fhstp.ac.at/en/about-us/staff-a-z/felberbauer-thomas">Dr. Thomas Felberbauer, MSc</a></li></ul></li>
-                <li><b>Project Partners:</b> RISC Software GmbH, NKE Austria GmbH, ZF Steyr, MWS Hightec GmbH, Lecapell GmbH</li></ul></small>
-	</div><br><br>
-	<div style="padding-left:39px">
-			<br><br><h5><i>Download the InnoFIT project poster:</i> </h5>
-Office 365 access:	<a href="https://fhstp.sharepoint.com/sites/InnoFIT/Freigegebene%20Dokumente/General/Posters/InnoFIT_one%20version.pdf" target="_blank">Download link 1</a><br>
-External access: <a href="https://www.dropbox.com/s/c2a2ew6o48wdubs/InnoFIT_one%20version.pdf?dl=0" target="blank"> Download link 2 </a>
-			</div>
-			<br><br>
-<div style="padding-left:39px">
-	<h5><strong>Project Team Photo</strong></h5><br>
-	<img src="/data/img/Projektteam.jpg" style="max-width:100%;height:auto;">
-	<br>
-	<small>Image source: UAS Upper Austria / Andreas Schober</small> <br><br>
-	</div>
-<!-- 	<div style="padding-left:39px">
-		<br>
-		<br>
-		<h5><strong>Contact us:</strong></h5>
-		<br>
-		<p>For questions regarding the project and general information (St. Pölten UAS):
-			<br> <b>Dr. Thomas Felberbauer, MSc</b>
-			<br> Lecturer Industry 4.0
-			<br>Deputy Academic Director Smart Engineering (BA)
-			<br>Department of Media and Digital Technologies
-			<br>St.Pölten University of Applied Sciences
-			<br>M: <a href="tel:43676847228693">+43/676/847 228 693</a>
-			<br>E: <a href="mailto:thomas.felberbauer@fhstp.ac.at">thomas.felberbauer@fhstp.ac.at</a>
-			<br>I: <a href="https://www.fhstp.ac.at" title="St.Pölten University of Applied Sciences Home Page"> https://www.fhstp.ac.at</a></p>
-	
-	</div> -->
-	
+<div class="divTableRow">
+<div class="divTableCell">Mean Squared Error (MSE) </div>
+<div class="divTableCell">Mean Squared Error (the mean/average of the squared errors) measures the quality of forecast estimation (zero meaning perfect accuracy) with respect to periods before delivery, and the values closer to zero are better.
+MSE measures the variance and the bias of forecasts to the final customer orders, and <b> it is very sensitive to outliers in data. </b><br>
+<b>The linear regression measure of MSE provides information on performance of the forecasting behaviour and the extent to which the data gets close to the final order estimation.</b></div>
+<div class="divTableCell"><img src="https://latex.codecogs.com/gif.latex?MSE_{j} = \frac{1}{n}\sum_{i=1}^{n}(x_{i,j}-x_{i,0})^{2}" title="MSE formula"></div>
+</div>
+<div class="divTableRow">
+<div class="divTableCell">Root Mean Square Error (RMSE)</div>
+<div class="divTableCell">Root Mean Square Error (square root of the squared errors), like the Mean Squared error,  measures forecast accuracy representing difference between forecasted and final (observed) customer orders (zero meaning perfect score) with respect to periods before delivery. 
+RMSE should always be non-negative, and lower RMSE is better than a higher one. Different forecast horizons would result in different RMSE, since the measure is dependent on the scale of data used. <b>It is also very sensitive to outliers in data.</b> </div>
+<div class="divTableCell"><img src="https://latex.codecogs.com/gif.latex?RMSE_{j} = \sqrt{\frac{1}{n}\sum_{i=1}^{n} ( x_{i,j} - x_{i,0})^{2}}" title="RMSE formula"></div>
+</div>
+<div class="divTableRow">
+<div class="divTableCell">Mean Percentage Error (MPE)</div>
+<div class="divTableCell">MPE represents the evaluation of forecasting accuracy, calculated by the difference between forecasted customer orders and the final customer orders, divided by the final customer orders. It represents the bias in the forecast behaviour with respect to periods before delivery. In our visualization, we provide a weighted mean estimation of MPE.
+<br> <b>Positive or negative estimation represents whether there was over- or under-booking in forecasts.</b></div> 
+<div class="divTableCell"><img src="https://latex.codecogs.com/gif.latex?MPE_{j} = \frac {\sum_{i=1}^{n}x_{i,j}-x_{i,0}}{\sum_{i=1}^{n}x_{i,0}}" title="MAPE formula"></div>
+</div>
+<div class="divTableRow">
+<div class="divTableCell">Mean Absolute Percentage Error (MAPE) </div>
+<div class="divTableCell">MAPE represents the error measure to evaluate forecasting accuracy with respect to periods before delivery, which is calculated by the difference between 
+forecasted customer orders and the final customer orders and divided by the final customer orders. The forecast accuracy is represented in percentage estimation. In our visualization, we provide a weighted mean estimation of MAPE.<br>
+However, <b> it does not provide good measure of "good" and "bad" forecasts.</b> For example, it can be interpreted differently for stable vs. unstable demand, having the same estimation, 
+it can have different meangings, therefore, there is a risk of overlooking some contexts when the optimal forecast can deviate significantly from a least-mean-percentage-error prediction. 
+Since it only represents the "demand range", the possible solution is to apply this error measure to evaluate to what extent the forecast satisfies the company's objectives (Danese and Kalchschmidt, 2011). </div>
+<div class="divTableCell"><img src="https://latex.codecogs.com/gif.latex?MAPE_{j} = \frac {\sum_{i=1}^{n}|x_{i,j}-x_{i,0}|}{\sum_{i=1}^{n}x_{i,0}}" title="MAPE formula"></div>
+</div>
+<div class="divTableRow">
+<div class="divTableCell">Mean Forecast Bias (MFB)</div>
+<div class="divTableCell">MFB is the measure describing the <b>mean forecast error</b>, or the expected value of forecast errors over a defined time horizon, which is defined by <b>consistent differences between forecasted and final customer order estimations</b>. <br>In our visualization, MFB is calculated as a weighted mean forecast error estimation with respect to periods before delivery.</div>
+<div class="divTableCell"><img src="https://latex.codecogs.com/gif.latex?MFB_{j} = \frac {\sum_{i=1}^{n}x_{i,j}}{\sum_{i=1}^{n}x_{i,0}}" title="Mean Forecast Bias formula"></div>
+<br>
+</div>
+<!-- <div class="divTableRow">
+<div class="divTableCell">cell1_7</div>
+<div class="divTableCell">cell2_7</div>
+<div class="divTableCell">cell3_7</div>
+</div> -->
+</div>
+</div>
+<br>
+
+    </div>
+</div>
+</div>
+
 
     <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
     <script src="/lib/js/bootstrap.bundle.min.js"></script>
@@ -207,7 +261,7 @@ External access: <a href="https://www.dropbox.com/s/c2a2ew6o48wdubs/InnoFIT_one%
 	
 	 <footer style="padding-left:39px">
 			<!-- <a href="#">Imprint</a><br><br> -->
-			<small>&copy; Copyright 2019  St.Pölten University of Applied Sciences</small>
+			<!-- <small>&copy; Copyright 2019  St.Pölten University of Applied Sciences</small> -->
 		   </footer>
 	</body>
 	

@@ -17,8 +17,15 @@ else {
     <meta name="author" content="">
     <link rel="icon" href="/data//ico/innofit.ico">
     <title>Corrected Root Mean Square Error (RMSE) </title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+    <script src ="../lib/js/crossfilter.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
+    <script src ="../lib/js/dc.js"></script>
+    <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
         crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css"/>
+
 
     <style>
       body {
@@ -57,7 +64,7 @@ else {
             shape-rendering: crispEdges;
         } 
     </style>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+<!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script> -->
 </head>
 
 <body>
@@ -77,8 +84,9 @@ else {
                     <!--  <li class="nav-item">
                         <a class="nav-link" href="index.php">Home</a>
                     </li > -->
-            <li><a href="./about.php">About this tool</a></li>
-            <li class="dropdown" class = "active">
+            <li><a href="./about.php">About InnoFIT Web-tool</a></li>
+            <li class><a href="./howto.php">How to Interpret Error Measures </a></li>
+            <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li><a  href="./finalorder.php">Final Order Amount</a></li>
@@ -104,7 +112,7 @@ else {
                 </ul>
             </li>
           <!-- </ul> -->
-                <li class="dropdown">
+                <li class="dropdown active">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
                         <ul class="dropdown-menu">
                             <li class = "active"><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) <span class="sr-only">(current)</span></a></li>
@@ -147,11 +155,9 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
         </div> <!--/.nav-collapse -->
     </div> <!--/.container-fluid -->
     </nav>
-
-    <script src="http://d3js.org/d3.v4.min.js"></script>
     
 
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script>
        <div style="padding-left:3px"> 
 
             <h3>Corrected Root Mean Square Error (CRMSE) and Root Mean Square Error (RMSE) comparison </h3>
@@ -167,9 +173,11 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
                  where MFB (Mean Forecast Bias) = <img src="https://latex.codecogs.com/gif.latex?MFB_{j} = \frac {\sum_{i=1}^{n}x_{i,j}}{\sum_{i=1}^{n}x_{i,0}}" title="Mean Forecast Bias formula"/>
                 </p> 
         </div>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script>
         
         <svg width="960" height="500"></svg>
+        <div>
+        <svg id="new_legend" height=200 width=450></svg>
+        </div>
 
         <script>
         var data = JSON.parse(localStorage['data']);
@@ -179,15 +187,15 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
       const yValue2 = d => d.MeanOfThisPeriod2;
       const yLabel = 'RMSE & CRMSE';
       const colorValue = d => d.Product;
-      const colorLabel = 'CRMSE & RMSE';
+    //   const colorLabel = 'CRMSE & RMSE';
       const margin = { left: 55, right: 25, top: 20, bottom: 30 };
-      const legendOffset = 52;
+      const legendOffset = 57;
 
     const svg = d3.select('svg');
       const width = svg.attr('width');
       const height = svg.attr('height');
       const innerWidth = width - margin.left - margin.right - legendOffset;
-      const innerHeight = height - margin.top - margin.bottom-35;
+      const innerHeight = height - margin.top - margin.bottom-20;
 
 
       
@@ -215,11 +223,11 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
           .style('text-anchor', 'middle')
           .text(yLabel);
 
-             colorLegendG.append('text')
-          .attr('class', 'legend-label')
-          .attr('x', -30)
-          .attr('y', -12)
-          .text(colorLabel);
+        //      colorLegendG.append('text')
+        //   .attr('class', 'legend-label')
+        //   .attr('x', -30)
+        //   .attr('y', -12)
+        //   .text(colorLabel);
 
       const xScale = d3.scaleLinear();
       const yScale = d3.scaleLinear();
@@ -291,47 +299,42 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
                     let mfbCurrentPBD = sum  / sumOfAllFinalOrders;
                     return {
                         PeriodsBeforeDelivery: val.key,
-                        MFBForPBD: JSON.stringify(mfbCurrentPBD)
+                        OrderAmount: JSON.stringify(mfbCurrentPBD)
                     };
                 });
                 // console.log('MFB: ', finalMFB('MFBForPBD'));
                 console.log('MFB: ', finalMFB.keys());
-let firstValueMap = new Map();
-uniqueArray.forEach((val) => {
-    let keyString = val.PeriodsBeforeDelivery;
-    let valueString = val.OrderAmount;
-    firstValueMap.set(keyString, valueString);
-});             
-console.log("firstValueMap: ", firstValueMap.values());
 
-let newValueMap = new Map();
+            // let firstValueMap = new Map();  // Map of forecasted orders
+            // uniqueArray.forEach((val) => {
+            //     let keyString = val.PeriodsBeforeDelivery;
+            //     let valueString = val.OrderAmount;
+            //     firstValueMap.set(keyString, valueString);
+            // });             
+            // console.log("firstValueMap: ", firstValueMap.values());
+
+let newValueMap = new Map();  // Map of Mean forecast bias
 finalMFB.forEach((val) => {
     let keyString = val.PeriodsBeforeDelivery;
-    let valueString = val.MFBForPBD;
+    let valueString = val.OrderAmount;
     newValueMap.set(keyString, valueString);
 });
 console.log("newValueMap: ", newValueMap.values());
 
 
-    let divisionOne = function (orignalEl, finalMFB) {
-    return orignalEl.OrderAmount / finalMFB;
+    let divisionOne = function (uniqueArray, finalMFB) {    //Calculate division of forecasted orders
+    return uniqueArray.OrderAmount / finalMFB;
     }
-// let C = [];
-// for (var i=0; i<=newValueMap.size-1; i++) { 
-// C.push(firstValueMap.get(i) / newValueMap.get(i));
-// };  
-// console.log("C: ", C);
-// console.log(firstValueMap.get.values(2));
 
 let divisionArray = uniqueArray.map((el) => {
-    let divArray = divisionOne(el, newValueMap.get(el.ForecastPeriod))
+    let divArray = divisionOne (el, newValueMap.get(el.PeriodsBeforeDelivery)) 
     return {
                ActualPeriod:  el.ActualPeriod,
                ForecastPeriod: el.ForecastPeriod,
-               OrderAmount: el.OrderAmount,
+             //  OrderAmount: el.OrderAmount,
                Product: el.Product,
                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-               DivCalc: divArray
+               OrderAmount: divArray
             };
          }); 
          console.log("divisionArray: ", divisionArray);
@@ -382,17 +385,17 @@ console.log("secondValueMap: ", secondValueMap);
         let CRMSE = Math.sqrt (d3.mean(el.values, function (d) { return d.SquaredDiff; }), 2);
         return {
             Product: el.Product,
-            ActualPeriod: el.ActualPeriod,
-            ForecastPeriod: el.ForecastPeriod,
-            OrderAmount: el.OrderAmount,
+            // ActualPeriod: el.ActualPeriod,
+            // ForecastPeriod: el.ForecastPeriod,
+            // OrderAmount: el.OrderAmount,
             PeriodsBeforeDelivery: el.key,
-            MeanOfThisPeriod2: CRMSE
+            MeanOfThisPeriod: CRMSE
         };
     });
     console.log("final CRMSE Array: ", bubu);
 
 
-    /**    RMSE Calc */
+    /**    RMSE Calc */ ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     let powerDiff = function (orignalEl, finalOrder) {
         return Math.pow((orignalEl.OrderAmount - finalOrder), 2);
@@ -400,8 +403,10 @@ console.log("secondValueMap: ", secondValueMap);
 
                 
         let squaredAbsValuesArray = uniqueArray.map((el) => {
-            let value = powerDiff(el, valueMap.get(el.ForecastPeriod));
+            let value = powerDiff(el, valueMap.get(el.ActualPeriod));
             return {
+                ActualDate: el.ActualDate,
+                ForecastDate: el.ForecastDate,
                 ActualPeriod: el.ActualPeriod,
                 ForecastPeriod: el.ForecastPeriod,
                 OrderAmount: el.OrderAmount,
@@ -410,22 +415,27 @@ console.log("secondValueMap: ", secondValueMap);
                 SquaredAbsoluteDiff: value
             };
         });
+        console.log("squaredAbsValuesArray:", squaredAbsValuesArray);
                 
                 let seperatedByPeriods2 = d3.nest()
                     .key(function (d) { return d.PeriodsBeforeDelivery })
                     .entries(squaredAbsValuesArray);
 
                 let bebe = seperatedByPeriods2.map((el) => {
+                    for (i=0; i<seperatedByPeriods2.length; i++){ 
                     let RMSE = Math.sqrt (d3.mean(el.values, function (d) { return d.SquaredAbsoluteDiff; }),2);
                     return {
-                        Product: el.Product,
-                        ActualPeriod: el.ActualPeriod,
-                        ForecastPeriod: el.ForecastPeriod,
-                        OrderAmount: el.OrderAmount,
+                        ActualDate: el.values[i].ActualDate,
+                        ForecastDate: el.values[i].ForecastDate,
+                        Product: el.values[i].Product,
+                        ActualPeriod: el.values[i].ActualPeriod,
+                        ForecastPeriod: el.values[i].ForecastPeriod,
                         PeriodsBeforeDelivery: el.key,
-                        MeanOfThisPeriod: RMSE
+                        MeanOfThisPeriod2: RMSE
                     };
+                    }
                 });
+        console.log("bebe:", bebe);
     
 
 
@@ -435,12 +445,23 @@ const mergeById = (bubu, bebe) =>
         ...itm
     }));
 
-console.log(mergeById(bubu, bebe));
+console.log("merged array:", mergeById(bubu, bebe));
 
 
         d3.json("/includes/getdata.php", function (error, data) {
 
-        const yMax = mergeById(bubu, bebe).reduce(function(a, b) { return Math.max(a, b); }); 
+        // const yMax = Math.max.apply(Math,mergeById(bubu, bebe).map(function(o){return o.MeanOfThisPeriod;}))
+        var yMax = function (arr){ return arr.reduce (
+            function (acc, cur){
+                var max = Math.max(acc, cur)
+                if (isNaN(max)){ return  (isNaN(max)? acc : max);}
+                return max;
+            });}
+        console.log(yMax(mergeById(bubu, bebe)));
+
+        var dataMax = mergeById(bubu, bebe).reduce(function(prev, current){
+            return (prev.MeanOfThisPeriod > current.MeanOfThisPeriod) ? prev.MeanOfThisPeriod2 : current.MeanOfThisPeriod2 });
+        console.log("dataMax", dataMax);
       
 
         xScale
@@ -453,8 +474,8 @@ console.log(mergeById(bubu, bebe));
         
           yScale
             .domain([
-                d3.min([0, d3.min(mergeById(bubu, bebe), function (d) { return d.MeanOfThisPeriod2 })]),
-                d3.max([0, d3.max(mergeById(bubu, bebe), function (d) { return d.MeanOfThisPeriod2 })])
+                d3.min([0, d3.min(mergeById(bubu, bebe), function (d) { return d.MeanOfThisPeriod })]),
+                d3.max([0, dataMax])
             ])
 
             // yScale2
@@ -484,6 +505,8 @@ console.log(mergeById(bubu, bebe));
                 .attr('stroke','black')
                 .style("fill", "green")
                 .attr('stroke-width',1)   
+                .style("display", function(d) { return d.MeanOfThisPeriod2 == NaN ? "none" : NaN; })
+
             .on('mouseover', function (d) {  // Tooltip
                d3.select(this)
                   .transition()
@@ -525,6 +548,7 @@ console.log(mergeById(bubu, bebe));
                 .attr('stroke','black')
                 .style("fill", "red")
                 .attr('stroke-width',1)  
+                .style("display", function(d) { return d.MeanOfThisPeriod == NaN ? "none" : NaN; })
         
             .on('mouseover', function (d) {  // Tooltip
                d3.select(this)
@@ -586,19 +610,26 @@ console.log(mergeById(bubu, bebe));
 
 
             xAxisG.call(xAxis);
-        yAxisG.call(yAxis);
-        colorLegendG.call(colorLegend)
-            .selectAll('.cell text')
-            .attr('dy', '0.1em')
-            .attr("x", 3);
+            yAxisG.call(yAxis);
+        // colorLegendG.call(colorLegend)
+        //     .selectAll('.cell text')
+        //     .attr('dy', '0.1em')
+        //     .attr("x", 3);
 
-            colorLegendG.call(colorLegend)
-            .attr('class', 'legendCells')
-            .selectAll('.cell text')
-            .attr("x", -6)
-            .attr("y", -5);
+        //     colorLegendG.call(colorLegend)
+        //     .attr('class', 'legendCells')
+        //     .selectAll('.cell text')
+        //     .attr("x", -6)
+        //     .attr("y", -5);
 
-
+        var svg = d3.select("#new_legend")
+        svg.append("circle").attr("cx",70).attr("cy",15).attr("r", 6).style("fill","red")
+        svg.append("circle").attr("cx",180).attr("cy",15).attr("r", 6).style("fill", "green")
+            
+        //svg.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#404080")
+        svg.append("text").attr("x", 90).attr("y", 15).text("CRMSE").style("font-size", "15px").attr("alignment-baseline","middle")
+        svg.append("text").attr("x", 200).attr("y", 15).text("RMSE").style("font-size", "15px").attr("alignment-baseline","middle")
+  
 
             });
 
@@ -608,7 +639,7 @@ console.log(mergeById(bubu, bebe));
     <script src="/lib/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
-
+		
 </body>
 
 </html>

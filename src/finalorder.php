@@ -29,6 +29,7 @@ else {
     <script src ="../lib/js/crossfilter.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
     <script src ="../lib/js/dc.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
     <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
         crossorigin="anonymous">
@@ -38,6 +39,16 @@ else {
       body {
         margin: 0px;
       }
+    .dc-chart .axis text {
+    font: 12px sans-serif; }
+
+    .dc-chart .brush rect.selection {
+    fill: #4682b4;
+    fill-opacity: .125; }
+
+    .dc-chart .symbol {
+    stroke: #000; 
+    stroke-width: 0.5px;}
 
       .domain {
        /* display: none; */
@@ -46,12 +57,12 @@ else {
       }
       .tick text, .legendCells text {
         fill: #635F5D;
-        font-size: 10pt;
+        font-size: 12px;
         font-family: sans-serif;
       }
       .axis-label {
         fill: #635F5D;
-        font-size: 10pt;
+        font-size: 12px;
         font-family: sans-serif;
       }
 
@@ -125,8 +136,9 @@ else {
                     <!--  <li class="nav-item">
                         <a class="nav-link" href="index.php">Home</a>
                     </li > -->
-            <li><a href="./about.php">About this tool</a></li>
-            <li class="dropdown" class = "active">
+            <li><a href="./about.php">About InnoFIT Web-tool</a></li>
+            <li class><a href="./howto.php">How to Interpret Error Measures </a></li>
+            <li class="dropdown active">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li class = "active"><a href="./finalorder.php">Final Order Amount   <span class="sr-only">(current)</span></a></li>
@@ -166,7 +178,7 @@ else {
 
 <style type="text/css">
 
-a.gflag {vertical-align:middle;font-size:16px;padding:1px 0;background-repeat:no-repeat;background-image:url(//gtranslate.net/flags/16.png);}
+a.gflag {vertical-align:middle;font-size:12px;padding:1px 0;background-repeat:no-repeat;background-image:url(//gtranslate.net/flags/16.png);}
 a.gflag img {border:0;}
 a.gflag:hover {background-image:url(//gtranslate.net/flags/16a.png);}
 #goog-gt-tt {display:none !important;}
@@ -213,80 +225,84 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
             is the average (mean) value of all final orders. <br> Additionally, the calculations of several statistical measures are shown in the table below <i>(Hint: please hover over <font color= "#1f77b4 "> circles </font> or over <font color="green"> the line </font>in the graph to see additional details!)</i>
         </p>
     </div>
-    <div class="row">
-         <!-- <div class="col-md-9">
-            <div id="svg"></div>
-        </div>  -->
-        <div class="col-md-3">
-            <div id="table"></div>
-        </div>
 
-    </div>
 
 <!-- <script src="https://cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js"></script> -->
-<svg width="960" height="480"></svg>
-
-<div>
-  <svg id="new_legend" height=200 width=450></svg>
-</div>
-
- <div id ="actualPeriod">
-   <strong>Due date (forecast period)</strong>
-   <span class ="reset" style="display: none;">Range:<span class="filter"></span></span>
-   <a class="reset" href="javascript:actualPeriodChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
-   <div class="clearfix"></div>
-   </div>
-   <!-- <div id ="product">
-   <strong>Product </strong>
-   <span class ="reset" style="display: none;">Range:<span class="filter"></span></span>
-   <a class="reset" href="javascript:productChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
-   <div class="clearfix"></div>
-   </div> -->
-   <div id="daySelectionDiv"></div>
-
-<script type="text/javascript" src="../lib/js/header.js"></script>
-  <div id="select1">
-    <div>
-      <a class='reset' href='javascript:select1.filterAll();dc.redrawAll();' style='visibility: hidden;'>reset</a>
-    </div>
-  </div>
-  <div style="clear: both"></div>
-
-   <!-- <div id ="forecastPeriod">
-   <strong>Forecast Period</strong>
-   <span class ="reset" style="display: none;">Range:<span class="filter"></span></span>
-   <a class="reset" href="javascript:forecastPeriodChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
-   <div class="clearfix"></div>
-   </div> -->
-
-
-   <div id ="scatter">
-   <strong>Final Order Amount graph</strong>
-   <span class ="reset" style="display: none;">Range:<span class="filter"></span></span>
+<div style="padding-left:39px">
+<div id ="scatter">
+   <!-- <strong>Final Order Amount graph</strong> -->
+   <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
    <a class="reset" href="javascript:FinalOrderChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
    <div class="clearfix"></div>
    </div>
 
-   
+<div id ="forecastlist">
+<br/>
+<p style="text-align:center;"><strong>Due date </strong></p>
+   <!-- <div>
+      <a class='reset' href='javascript:forecastlist.filterAll();dc.redrawAll();' style='visibility: hidden;'>reset</a>
+    </div> -->
+    <div class="clearfix"></div>
+  </div>
+
+ <!-- <div id ="actualPeriod">
+   <strong>Due date (forecast period)</strong>
+   <span class ="reset" style="display: none;">Range:<span class="filter"></span></span>
+   <a class="reset" href="javascript:actualPeriodChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
+   <div class="clearfix"></div>
+   </div> -->
+
+   <div id="daySelectionDiv"></div>
+
+<!-- <script type="text/javascript" src="../lib/js/header.js"></script> -->
+  <div id="select1"><br/>
+  <p style="text-align:center;"><strong>Product</strong></p>
+    <!-- <div>
+      <a class='reset' href='javascript:select1.filterAll();dc.redrawAll();' style='visibility: hidden;'>reset</a>
+    </div> -->
+  </div>
+  <div style="clear: both"></div>
 
 
    <div>
     <div class="dc-data-count">
     <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
-        href ="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
-    </div>
-    <table class="table table-hover dc-data-table">
+        href ="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a><br/>
+    </div><br/><br/>
+    <button onclick="myFunction()">Data table display</button>
+    <table class="table table-hover dc-data-table"  id="myTable" style="display:none">
     </table>
     </div>
 
-    <div id="test"></div>
+    <div id="test"></div><br/>
+    <div class="row">
+        <div class="col-md-3">
+            <div id="table"></div>
+        </div>
+<br>
+</div>
+    <svg width="860" height="380"></svg><br>
 
+  <svg id="new_legend" height=50 width=450></svg>
+
+
+</div>
+<script>
+function myFunction() {
+  var x = document.getElementById("myTable");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+</script>
 
 <script> 
     var valuesToPrint = [];
 
     var finalOrder = JSON.parse(localStorage['finalOrder']);
-    var data = JSON.parse(localStorage['data']);
+    // var data = JSON.parse(localStorage['data']);
 
         
             // function valuesPrint() {
@@ -294,9 +310,9 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
             //   document.getElementById("dataMean").innerHTML = myMean;
             // }
 </script>
-<div>
+<!-- <div>
   <svg id="new_legend" height=200 width=450></svg>
-</div>
+</div> -->
 
     <script>
         // var finalOrder = localforage.getItem('finalOrder');
@@ -306,7 +322,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
         const xValue = d => d.ActualPeriod;
       const xLabel = 'Due Date';
       const yValue = d => d.OrderAmount;
-      const yLabel = 'Final Customer Order (pcs)';
+      const yLabel = 'Order Amount (pcs)';
       const colorValue = d => d.Product;
       const colorLabel = 'Product';
       const margin = { left: 55, right: 25, top: 20, bottom: 30 };
@@ -316,7 +332,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
       const width = svg.attr('width');
       const height = svg.attr('height');
       const innerWidth = width - margin.left - margin.right - legendOffset;
-      const innerHeight = height - margin.top - margin.bottom-20;
+      const innerHeight = height - margin.top - margin.bottom-35;
 
 
       
@@ -330,57 +346,19 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
         .attr('stroke','black')
         .attr('stroke-width',0.5);
 
-        /////////////////////////////////
-              // New circles will start at 0,0
     const xScale = d3.scaleLinear();
     const yScale = d3.scaleLinear();
     const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
     const xAxis = d3.axisBottom(xScale);
-            
+
+    // var tempScale = d3.scaleLinear()
+    //     .domain([0, d3.max(finalOrder, function (d) { return d.OrderAmount })])
+    //     .range([innerHeight, 0]);            
+    // tempScale(10);        
 
     const yAxis = d3.axisLeft(yScale);
-    var radius =6;
-    var circleInitialAttrs = {
-        cx: xScale(0),
-        cy: yScale(0),
-        r: 1
-    };
 
-      // Sets circles attributes
-      var circleAttrs = {
-          cx: function(d) { return xScale(d.xAxis); },
-          cy: function(d) { return yScale(d.yAxis); },
-          r: radius
-      };
-
-        svg.on("click", function() {
-          var coords = d3.mouse(this);
-        // Update Axis (e.g. might increase if new higher value added)
-        xAxisGroup.transition().call(xAxis);  // Update X-Axis
-          yAxisGroup.transition().call(yAxis);  // Update Y-Axis
-
-          // When adding new items, goes from 0,0 and transition to place
-          var c = svg.selectAll("circle")  // For new circle, go through the update process
-            .data(finalOrder);
-
-          // Updates existing circles to new positions by just adding attr
-          c.transition()
-            .ease("elastic")
-            .attr(circleAttrs)
-
-          c.enter()
-            .append("circle")
-            .attr(circleInitialAttrs)
-            .on("mouseover", handleMouseOver)
-            .on("mouseout", handleMouseOut);
-
-          c.transition()
-              .duration(1000)  
-              .ease("elastic")  
-              .attr(circleAttrs);
-      })
-      /////////////////////////////////////////////
 
         xAxisG.append('text')
           .attr('class', 'axis-label')
@@ -397,32 +375,23 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
           .text(yLabel);
 
 
-        d3.json("/includes/getdata.php", function (error, data2) {
-            xScale
-            .domain([
-                d3.min([0, d3.min(finalOrder, function (d) { return d.ActualPeriod })]),
-                d3.max([0, d3.max(finalOrder, function (d) { return d.ActualPeriod })])
-            ])
+        d3.json("/includes/getdata.php", function (error, data) {
+        xScale
+            .domain( d3.extent(finalOrder, function(d){return d.ForecastPeriod}))
             .range([0, innerWidth])
-          .nice();
+            .nice();
         
-          yScale
-            .domain([
-                d3.min([0, d3.min(finalOrder, function (d) {
-                    if (d.PeriodsBeforeDelivery=="0")
-                            return d.OrderAmount
-                    })]),
-                d3.max([0, d3.max(finalOrder, function (d) {
-                        if (d.PeriodsBeforeDelivery=="0")
-                            return d.OrderAmount
-                    })])
-                ])
-                .range([innerHeight, 0])
-          //.range([innerHeight, 0])
-          .nice();
-            
+    yScale
+    // .domain([
+    //         d3.min([0, d3.min(finalOrder, function (d) { return (d.OrderAmount ) })]),
+    //         d3.max([0, d3.max(finalOrder, function (d) { return (d.OrderAmount +1) })])
+    //     ])
+        .domain( d3.extent(finalOrder, function(d){return d.OrderAmount}))
+        .range([innerHeight, 0])
+        //.range([innerHeight, 0])
+        .nice();
 
-    var actualPeriodChart = dc.pieChart("#actualPeriod"),
+    var forecastlist = dc.selectMenu("#forecastlist"),
     // productChart = dc.rowChart("#product"),
     // forecastPeriodChart = dc.pieChart("#forecastPeriod"),
     visCount = dc.dataCount(".dc-data-count"),
@@ -448,110 +417,79 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
             var ndx = crossfilter (finalOrder);
             var all = ndx.groupAll();
             var actualPeriodDim = ndx.dimension(function (d) { return +d.ActualPeriod;});
-            // var forecastPeriodDim = ndx.dimension(function (d) { return +d.ForecastPeriod;});
-            var ndxDim = ndx.dimension(function (d) { return  [+d.ActualPeriod, +d.OrderAmount];});
+            var forecastPeriodDim = ndx.dimension(function (d) { return +d.ForecastPeriod;});
+            var ndxDim = ndx.dimension(function (d) { return  [+d.ForecastPeriod, +d.OrderAmount, d.Product];});
             var productDim = ndx.dimension(function(d) { return d.Product;});
             var orderDim = ndx.dimension(function(d) { return +d.OrderAmount;});
             var dateDim = ndx.dimension(function(d) { return +d.ActualDate;});
+            var plotColorMap = d3.scaleOrdinal(d3.schemeCategory10);
 
             var actualPeriodGroup = actualPeriodDim.group();
             var productGroup = productDim.group();
             var ndxGroup = ndxDim.group().reduceSum(function(d) { return +d.OrderAmount;});
-            // var forecastPeriodGroup = forecastPeriodDim.group();
+            var forecastPeriodGroup = forecastPeriodDim.group();
             var dateGroup = dateDim.group();
 
-            var checkboxData = Object.keys(finalOrder).map(function(d) { finalOrder[d].value = d; return finalOrder[d]; })
-
-            // var fieldset = d3.select("#daySelectionDiv").append("fieldset")
-            // fieldset.append("legend").text("Product");
-            // var checkboxSpan = fieldset.selectAll(".checkbox")
-            //     .data(function (d){return d.Product})
-            //     .enter().append("span")
-            //     .attr("class", "checkbox")
-
-            // checkboxSpan // BoE: add checkbox to each span
-            //     .append("input")
-            //     .attr({
-            //         type: "checkbox",
-            //         name: function(d) { return d.Product }
-            //     })
-                // .property({
-                //     value: function(d) { return d.value },
-                //     checked: function(d) { return d.state }
-                // }) 
-            // checkboxSpan // BoE: add checkbox label
-            //     .append("label")
-            //     .text(function(d) { return d.Product })
-
-            d3.selectAll("input[type=checkbox][name=days]")
-                .property("checked", function(d, i, a) {
-                var elem = d3.select(this);
-                // var day = elem.property("value");
-                //console.log("elem", elem, "day", day, days[day])
-                return days[day].state;
-                })
-                .on("change", function() {
-                var elem = d3.select(this);
-                var checked = elem.property("checked");
-                var day = elem.property("value");
-                days[day].state = checked;
-
-                updateDaySelection();
-                renderAll();
-                })
-              // BoE: update the state of the day selection radio buttons and checkboxes (called after "change" events from those elements)
-            // function updateDaySelection() {// BoE: update checkboxes
-            //     d3.selectAll("input[type=checkbox][name=days]")
+            // var checkboxData = Object.keys(finalOrder).map(function(d) { finalOrder[d].value = d; return finalOrder[d]; })
+            // d3.selectAll("input[type=checkbox][name=days]")
             //     .property("checked", function(d, i, a) {
-            //         var elem = d3.select(this);
-            //         var day = elem.property("value");
-            //         return days[day].state;
+            //     var elem = d3.select(this);
+            //     // var day = elem.property("value");
+            //     //console.log("elem", elem, "day", day, days[day])
+            //     return days[day].state;
+            //     })
+            //     .on("change", function() {
+            //     var elem = d3.select(this);
+            //     var checked = elem.property("checked");
+            //     var day = elem.property("value");
+            //     days[day].state = checked;
+
+            //     updateDaySelection();
+            //     renderAll();
             //     })
 
-
-
-            // const myColorScale = function (d) { if (d.ActualPeriod==d.ForecastPeriod) return "Final"; 
-            // else return "Forecast"; }, color = d3.scaleOrdinal(d3.schemeCategory10);
-            
-            actualPeriodChart
-                .dimension(actualPeriodDim)
-                .group(actualPeriodGroup);
-                // .elasticX(true);
-
-
-            // productChart
-            //     //.height(800)
-            //     .dimension(productDim)
-            //     .group(productGroup)
-            //     // .elasticX(true)
-            //     .data(function(group){ return group.top(15)});
+            forecastlist
+                .dimension(forecastPeriodDim)
+                .group(forecastPeriodGroup)
+                .multiple(true)
+                .numberVisible(15);
 
             
             select1
                 .dimension(productDim)
                 .group(productGroup)
-                .controlsUseVisibility(true);
+                //.controlsUseVisibility(true)
+                .multiple(true)
+                .numberVisible(15);
+            
+            console.log("ndxDim: ", ndxGroup.top(Infinity));
 
             FinalOrderChart
                 .width(768)
                 .height(480)
+                .symbolSize(9)
                 .dimension(ndxDim)
-                .x(d3.scaleLinear().domain(d3.extent(data, function(d){return d.ActualPeriod}))) 
+                .keyAccessor(function (d) { return d.key[0]; })
+                .valueAccessor(function (d) { return d.key[1]; })
+                .colorAccessor(function(d) { return d.key[2]; })
+                .colors(function(colorKey) { 
+                    return plotColorMap(colorKey); })
+                .x(d3.scaleLinear().domain(d3.extent(finalOrder, function(d){return d.ForecastPeriod}))) 
                 // .r(d3.scaleLinear().domain([0, 4000]))
                 .brushOn(true)
                 .clipPadding(10)
-                .xAxisLabel("Due Date (due forecast period)")
-                .yAxisLabel("Final Customer Order (pcs)")
-                // .mouseZoomable(true)
+                .xAxisLabel("Due Date (forecast period)")
+                // .xAxisPadding(10)
+                .yAxisLabel("Order Amount (pcs)")
                 .renderTitle(true)
-                // .title(function (d) {
-                //     return [
-                //         d.ForecastPeriod,
-                // 'Product: ' + d.Product,
-                // 'Actual Period: ' + d.ActualPeriod,
-                // 'Periods Before Delivery: ' + d.PeriodsBeforeDelivery 
-                // ].join('\n');
-                // })
+                .title(function (d) {
+                    return [
+                        'Product: ' + d.key[2],
+                        'Order Amount: ' + d.key[1],
+                        'Forecast Period: ' + d.key[0]
+                ].join('\n');
+                })
+                .transitionDuration(500)
                 .group(ndxGroup)
                 .elasticX(true)
                 .elasticY(true)
@@ -581,6 +519,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
                 });
 
                 FinalOrderChart.symbol(d3.symbolCircle);
+                FinalOrderChart.margins().left = 50;
 
         
             visCount
@@ -594,11 +533,11 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
                     return d.ActualDate.getFullYear() + '/'+ format((d.ActualDate.getMonth() + 1));
                 })
                 .columns([
-                    "ActualDate",
                     "Product",
-                    "OrderAmount",
                     "ActualPeriod",
-                    "ForecastPeriod"
+                    "ForecastPeriod",
+                    "PeriodsBeforeDelivery",
+                    "OrderAmount"
                 ]);
 
             dc.renderAll();
@@ -679,13 +618,13 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
             });
 
             //valuesToPrint.push(generateDescObject('Product: ', product));
-            valuesToPrint.push(generateDescObject('Mean Value: ', dataMean + " "));
+            valuesToPrint.push(generateDescObject('Mean Value: ', dataMean.toFixed(2) + " "));
             valuesToPrint.push(generateDescObject('Median Value: ', dataMedian + " "));
             valuesToPrint.push(generateDescObject('Min Value: ', dataMin + "      "));
             valuesToPrint.push(generateDescObject('Max Value: ', dataMax + "      "));
-            valuesToPrint.push(generateDescObject('99% Quantile: ', dataQuantile1.toFixed(1) + '  '));
-            valuesToPrint.push(generateDescObject('95% Quantile: ', dataQuantile2.toFixed(1) + '  '));
-            valuesToPrint.push(generateDescObject('75% Quantile: ', dataQuantile3.toFixed(1) + '  '));
+            valuesToPrint.push(generateDescObject('99% Quantile: ', dataQuantile1.toFixed(2) + '  '));
+            valuesToPrint.push(generateDescObject('95% Quantile: ', dataQuantile2.toFixed(2) + '  '));
+            valuesToPrint.push(generateDescObject('75% Quantile: ', dataQuantile3.toFixed(2) + '  '));
 
             var productName = function (d) {
                 return d.Product;
@@ -697,7 +636,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
                 return d.ActualPeriod;
             });
             //console.log("Amount of Periods: ", dataMaxPer);
-            valuesToPrint.push(generateDescObject('Max Number of Periods', dataMaxPer + " "));
+            valuesToPrint.push(generateDescObject('Max Period', dataMaxPer + " "));
 
             var standardDev = d3.deviation(finalOrder, function (d) { //Define a standard deviation variable
                 return d.OrderAmount;
@@ -790,7 +729,9 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
             //             '\nPeriods Before Delivery: ' + d.PeriodsBeforeDelivery
             //     })
             g.selectAll('circle').data(finalOrder)
-          .enter().append('circle')
+          .enter()
+          .append('circle')
+        //   .duration(1000)
             .attr('cx', d => xScale(xValue(d)))
             .attr('cy', d => yScale(yValue(d)))
             .attr('fill', d => colorScale(colorValue(d)))
@@ -822,6 +763,9 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
                   '\nPeriods Before Delivery: ' + d.PeriodsBeforeDelivery +
                   '\nOrder Amount: ' + d.OrderAmount
             });
+            d3.select('.y').transition()
+                .duration(1000)
+                .call(yAxis);
 
             g.append('line')
             .style('stroke', 'green')
@@ -829,7 +773,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
             .data (finalOrder)
             .attr('x1', 0)
             .attr('y1', yScale(dataMean))
-            .attr('x2', width-131)
+            .attr('x2', 735)
             .attr('y2', yScale(dataMean))
             .on('mouseover', function (d) {  // Tooltip
                d3.select(this)
@@ -845,7 +789,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
                   .duration(500)
                   .attr('x1', 0)
                   .attr('y1', yScale(dataMean))
-                  .attr('x2', width-131)
+                  .attr('x2', 736)
                  .attr('y2', yScale(dataMean))
                   //.attr('r', 7)
                   .attr('stroke-width', 3)
@@ -858,8 +802,8 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
                   
             });
             
-            xAxisG.call(xAxis);
-            yAxisG.call(yAxis);
+            xAxisG.transition().call(xAxis);
+            yAxisG.transition().call(yAxis);
             // colorLegendG.call(colorLegend)
             // .attr('class', 'legendCells')
             // .selectAll('.cell text')
@@ -880,17 +824,17 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
        
 
             var svg = d3.select("#new_legend")
-            svg.append("circle").attr("cx",70).attr("cy",15).attr("r", 6).style("fill", "3366CC")
-            svg.append("rect").attr("x",170).attr("y",15).attr("width", 15).attr("height", 3).style("fill", "green")                
+            svg.append("circle").attr("cx",70).attr("cy",7).attr("r", 6).style("fill", "3366CC")
+            // svg.append("circle").attr("cx",82).attr("cy",7).attr("r", 6).style("fill", "#ff7f0e")
+            svg.append("rect").attr("x",170).attr("y", 7).attr("width", 15).attr("height", 3).style("fill", "green")                
                 
             //svg.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#404080")
-            svg.append("text").attr("x", 90).attr("y", 15).text("Product").style("font-size", "15px").attr("alignment-baseline","middle")
-            svg.append("text").attr("x", 190).attr("y", 15).text("Average line").style("font-size", "15px").attr("alignment-baseline","middle")
-
-
-                tabulate(valuesToPrint, ['Description', 'Value']);
-
+            svg.append("text").attr("x", 90).attr("y", 7).text("Product").style("font-size", "14px").attr("alignment-baseline","middle")
+            svg.append("text").attr("x", 190).attr("y", 7).text("Average line").style("font-size", "14px").attr("alignment-baseline","middle")
+            
+            tabulate(valuesToPrint, ['Description', 'Value']);
         });
+        
 
     
         
@@ -935,36 +879,6 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
                 return obj;
             }
 
-/////////////////////////////////////////////////
-function handleMouseOver(d, i) {  // Add interactivity
-
-// Use D3 to select element, change color and size
-d3.select(this).attr({
-  fill: "green",
-  r: radius * 2
-});
-
-// Specify where to put label of text
-svg.append("text").attr({
-   id: "t" + d.xAxis + "-" + d.yAxis + "-" + i,  // Create an id for text so we can select it later for removing on mouseout
-    x: function() { return xScale(d.xAxis) - 30; },
-    y: function() { return yScale(d.yAxis) - 15; }
-})
-.text(function() {
-  return [d.xAxis, d.yAxis];  // Value of the text
-});
-}
-
-function handleMouseOut(d, i) {
-// Use D3 to select element, change color back to normal
-d3.select(this).attr({
-  fill: "blue",
-  r: radius
-});
-
-// Select text by id and then remove
-d3.select("#t" + d.xAxis + "-" + d.yAxis + "-" + i).remove();  // Remove text location
-}
     </script>
 
 
@@ -973,7 +887,6 @@ d3.select("#t" + d.xAxis + "-" + d.yAxis + "-" + i).remove();  // Remove text lo
     <script src="/lib/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
-		
 
 
 </body>

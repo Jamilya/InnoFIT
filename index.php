@@ -1,20 +1,26 @@
 <?php
 ob_start(); ?>
 <?php
-// if(!isset($_SESSION["session_username"])){
-//     header("Location: includes/login.php");
-// }
+session_start();
 
-if(session_id() == '' || !isset($_SESSION["session_username"])) {
+// if(session_id() !== '' || !isset($_SESSION["session_username"])) {
+    if(!isset($_SESSION["session_username"])) {
     // session isn't started
-    session_start();
+    header("Location:includes/login.php");
 }
-else {
-    header("Location: includes/login.php");
- };
+
+
+// else {
+//     // header("Location: includes/login.php");
+//     session_start();
+//  };
+ 
  ?>
 <?php 
-require_once("includes/connection.php"); ?>
+require_once("includes/connection.php"); 
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -131,7 +137,8 @@ $(document).ready(function() {
                     <!--  <li class="nav-item">
                         <a class="nav-link" href="index.php">Home</a>
                     </li > -->
-            <li><a href="src/about.php">About this tool</a></li>
+            <li><a href="src/about.php">About InnoFIT Web-tool</a></li>
+            <li class><a href="src/howto.php">How to Interpret Error Measures </a></li>
             <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations<span class="caret"></span></a>
                 <ul class="dropdown-menu">
@@ -329,21 +336,56 @@ if (isset($_POST["import"])) {
 
         while (($column = fgetcsv($file, 0, ",")) !== FALSE) {
             
-            
-
             if ($i>0){
-                $actualWeek = date("W", strtotime("$column[1]"));
-                $forecastWeek = date("W", strtotime("$column[2]"));
-                //$forecastWeek = "SELECT WEEK ($column[2])";
-                $pbd = $forecastWeek - $actualWeek;
-              //  $pbd = "SELECT WEEKOFYEAR ('$column[2]') - SELECT WEEKOFYEAR ('$column[1]')";
-                $actualDay = date("d", strtotime("$column[1]"));
-                $forecastDay = date("d", strtotime("$column[2]"));
+
+
+                // $actualDate= new DateTime("@$column[1]");
+                $actualDate = DateTime::createFromFormat("Y-m-d H:i:s", "$column[1]");
+                $forecastDate = DateTime::createFromFormat("Y-m-d H:i:s", "$column[2]");
+                // $forecastDate = DateTime::createFromFormat('Y-m-d H:i:s', "$column[2]");
+                $actualDate = date("Y-m-d H:i:s",strtotime('-20 minutes',strtotime("$column[1]")));
+                $forecastDate = date("Y-m-d H:i:s",strtotime('-16 minute',strtotime("$column[2]")));
+                $newactualDate = date("Y-m-d H:i:s",strtotime($actualDate));
+                $newforecastDate = date("Y-m-d H:i:s",strtotime($forecastDate));
                 
+                // $actualDate = date("Y-m-d H:i:s",strtotime("$column[1]"));
+                // $forecastDate = date("Y-m-d H:i:s",strtotime("$column[2]"));
+                // $forecastDate = date('Y-m-d H:i:s',strtotime('-20 minutes',strtotime("$column[2]")));
+                // $forecastDate = date('Y-m-d H:i:s',strtotime("$column[2]"));
+                // $time = strtotime("$column[2]");
+                // $time = $time - (15 * 60);
+
+                
+                // $forecastDate = date('Y-m-d H:i:s',strtotime("$column[2]"));
+                // $diff = abs($forecastDate - $actualDate);
+                $pbdSubtr = 52;
+
+                $forecastYear = date("Y",strtotime($forecastDate));
+                $actualYear = date("Y",strtotime($newactualDate));
+                // echo ' column[1]:', "$column[1]";   
+                // echo ' newactualDate:', $newactualDate;  
+                // echo ' column[2]:', "$column[2]";   
+                // echo ' forecastDate:', $forecastDate; 
+                // echo ' newforecastDate:', $newforecastDate; 
+                // echo ' actualYear:', $actualYear;  
+                // echo ' actualYear:', $forecastYear;  
+
+                $actualWeek = date("W", strtotime($newactualDate));
+                $forecastWeek = date("W", strtotime($forecastDate));
+
+                if ($actualYear == $forecastYear){
+                    $pbd = $forecastWeek - $actualWeek;
+                } elseif  ($actualYear < $forecastYear){
+                    $pbd = $pbdSubtr  + $forecastWeek - $actualWeek;
+                }else {
+                    $pbd = $forecastWeek + $actualWeek; //assume only one year behind
+                }
+                $actualDay = date("d", strtotime("$column[1]"));
+                $forecastDay = date("d", strtotime("$column[2]"));                
 
            //$session_username = mysql_real_escape_string($_SESSION["session_username"]);
-            $sqlInsert = "INSERT into newOrders (Product, ActualDate, ForecastDate, OrderAmount, ActualDay, ActualPeriod, ForecastDay, ForecastPeriod, PeriodsBeforeDelivery, username, Date )
-            values ('$column[0]','$column[1]','$column[2]','$column[3]', $actualDay, $actualWeek, $forecastDay, $forecastWeek, $pbd, '{$_SESSION['session_username']}', NOW())";
+            $sqlInsert = "INSERT into `newOrders` (Product, ActualDate, ForecastDate, OrderAmount, ActualDay, ActualPeriod, ForecastDay, ForecastPeriod, ActualYear, ForecastYear, PeriodsBeforeDelivery, username, Date )
+            values ('$column[0]', '$column[1]', '$column[2]','$column[3]', $actualDay, $actualWeek, $forecastDay, $forecastWeek, $actualYear, $forecastYear, $pbd, '{$_SESSION['session_username']}', NOW())";
 
             // $sqlInsert = "INSERT into `newOrders` (Product, ActualPeriod, ForecastPeriod, OrderAmount, PeriodsBeforeDelivery, username, Date)
             // values ('$column[0]','$column[1]','$column[2]','$column[3]', $pbd, SELECT WEEKOFYEAR ('$column[1]') AS 'ActualWeek', $pbd, SELECT WEEKOFYEAR ('$column[2]') AS 'ForecastWeek', '$pbd', '{$_SESSION['session_username']}',NOW())";

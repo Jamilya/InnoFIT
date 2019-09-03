@@ -18,7 +18,7 @@ else {
     
     //$username = $_SESSION[`session_username`];
 
-    $myquery = "SELECT  Product, ActualDate, ForecastDate, OrderAmount, ActualDay, ActualPeriod, ForecastDay, ForecastPeriod, PeriodsBeforeDelivery 
+    $myquery = "SELECT  Product, ActualDate, ForecastDate, OrderAmount, ActualDay, ActualPeriod, ForecastDay, ForecastPeriod, ActualYear, ForecastYear, PeriodsBeforeDelivery 
     FROM newOrders WHERE username = '" . $_SESSION['session_username'] . "'";
     $query = mysql_query($myquery);
     

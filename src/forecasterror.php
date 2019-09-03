@@ -34,6 +34,18 @@ else {
       body {
         margin: 0px;
       }
+
+    .dc-chart .axis text {
+    font: 12px sans-serif; }
+
+    .dc-chart .brush rect.selection {
+    fill: #4682b4;
+    fill-opacity: .125; }
+
+    .dc-chart .symbol {
+    stroke: #000; 
+    stroke-width: 0.5px;}
+
       .domain {
        /* display: none; */
         stroke: #635F5D;
@@ -41,12 +53,12 @@ else {
       }
       .tick text, .legendCells text {
         fill: #635F5D;
-        font-size: 10pt;
+        font-size: 12px;
         font-family: sans-serif;
       }
       .axis-label, .legend-label {
         fill: #635F5D;
-        font-size: 8pt;
+        font-size: 12px;
         font-family: sans-serif;
       }
 
@@ -104,8 +116,9 @@ else {
                     <!--  <li class="nav-item">
                         <a class="nav-link" href="index.php">Home</a>
                     </li > -->
-            <li><a href="./about.php">About this tool</a></li>
-            <li class="dropdown" class = "active">
+            <li><a href="./about.php">About InnoFIT Web-tool</a></li>
+            <li class><a href="./howto.php">How to Interpret Error Measures </a></li>
+            <li class="dropdown active">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li><a  href="./finalorder.php">Final Order Amount</a></li>
@@ -196,64 +209,120 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
    </div>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script>
    <!-- <script src="https://cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js"></script> -->
-   <svg width="960" height="500"></svg><br/>
-
-   <div id ="actualPeriod">
-   <strong>Actual Period</strong>
-   <span class ="reset" style="display: none;">Range:<span class="filter"></span></span>
-   <a class="reset" href="javascript:actualPeriodChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
-   <div class="clearfix"></div>
-   </div>
-   <div id ="product">
-   <strong>Product </strong>
-   <span class ="reset" style="display: none;">Range:<span class="filter"></span></span>
-   <a class="reset" href="javascript:productChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
-   <div class="clearfix"></div>
-   </div>
-   <div id ="pbd">
-   <strong>Periods Before Delivery</strong>
-   <span class ="reset" style="display: none;">Range:<span class="filter"></span></span>
-   <a class="reset" href="javascript:periodsBeforeDeliveryChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
-   <div class="clearfix"></div>
-   </div>
+   
+   <div style="padding-left:39px">
    <div id ="scatter">
-   <strong>Forecast Error graph</strong>
-   <span class ="reset" style="display: none;">Range:<span class="filter"></span></span>
+   <!-- <p style="text-align:center;"><strong>Forecast Error graph</strong></p> -->
+   <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
    <a class="reset" href="javascript:forecastErrorChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
    <div class="clearfix"></div>
    </div>
 
+<div id ="actuallist">
+<p style="text-align:center;"> <strong>Actual Period</strong></p>
+   <div>
+      <!-- <a class='reset' href='javascript:actuallist.filterAll();dc.redrawAll();' style='visibility: hidden;'>reset</a> -->
+    </div>
+    <div class="clearfix"></div>
+  </div>
+
+  <div id ="product">
+  <p style="text-align:center;"><strong>Product</strong></p>
+   <div>
+      <!-- <a class='reset' href='javascript:product.filterAll();dc.redrawAll();' style='visibility: hidden;'>reset</a> -->
+    </div>
+    <div class="clearfix"></div>
+  </div>
+  <div id ="pbd">
+  <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
+   <div>
+      <!-- <a class='reset' href='javascript:pbd.filterAll();dc.redrawAll();' style='visibility: hidden;'>reset</a> -->
+    </div>
+  </div>
+  <div style="clear: both"></div>
+<br/>
 
    <div>
     <div class="dc-data-count">
-    <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
-        href ="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
-    </div>
-    <table class="table table-hover dc-data-table">
+    <span class="filter-count"></span> selected out of <span class="total-count"></span>records |  
+    <a href ="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
+    </div><br/><br/>
+    <button onclick="myFunction()">Data table display</button>
+    <table class="table table-hover dc-data-table" id="myTable" style="display:none">
     </table>
     </div>
-          
+    <div id="test"></div>
+    <br/>
+    <div><br/>
+    <svg width="960" height="500"></svg><br/>
+    </div>
+    </div>
+<script>
+function myFunction() {
+  var x = document.getElementById("myTable");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+</script>
+
    <script>
+    var finalOrder = JSON.parse(localStorage['finalOrder']);
+    var data = JSON.parse(localStorage['data']);
+
        const xValue = d => d.PeriodsBeforeDelivery;
       const xLabel = 'Periods Before Delivery';
       const yValue = d => d.Deviation * 100;
-      const yLabel = 'Deviation (%)';
+      const yLabel = 'Deviation';
       const colorValue = d => d.ActualPeriod;
       const colorLabel = 'Actual Period';
       const margin = { left: 55, right: 25, top: 20, bottom: 30 };
       const legendOffset = 52;
 
-    const xScale = d3.scaleLinear();
-
-      const yScale = d3.scaleLinear();
-      const svg = d3.select('svg');
+    const svg = d3.select('svg');
       const width = svg.attr('width');
       const height = svg.attr('height');
       const innerWidth = width - margin.left - margin.right - legendOffset;
       const innerHeight = height - margin.top - margin.bottom-35;
 
-      var finalOrder = JSON.parse(localStorage['finalOrder']);
-    var data = JSON.parse(localStorage['data']);
+     const g = svg.append('g')
+        .attr('transform', `translate(${margin.left},${margin.top})`);
+      const xAxisG = g.append('g')
+        .attr('transform', `translate(0, ${innerHeight})`);
+      const yAxisG = g.append('g');
+      const colorLegendG = g.append('g')
+        .attr('transform', `translate(${innerWidth + 32}, 28)`)
+        .attr('stroke','black')
+        .attr('stroke-width',0.5);
+
+        xAxisG.append('text')
+          .attr('class', 'axis-label')
+          .attr('x', innerWidth / 2)
+          .attr('y', 41)
+          .text(xLabel);
+
+      yAxisG.append('text')
+          .attr('class', 'axis-label')
+          .attr('x', -innerHeight / 2)
+          .attr('y', -35)
+          .attr('transform', `rotate(-90)`)
+          .style('text-anchor', 'middle')
+          .text(yLabel);
+
+      colorLegendG.append('text')
+          .attr('class', 'legend-label')
+          .attr('x', -30)
+          .attr('y', -12)
+          .text(colorLabel);
+
+    const xScale = d3.scaleLinear();
+    const yScale = d3.scaleLinear();
+      
+    const xAxis = d3.axisBottom(xScale);
+    const yAxis = d3.axisLeft(yScale);
+
 
     let calcDeviation = function (orignalEl, finalOrder) {
             return (orignalEl.OrderAmount - finalOrder) / finalOrder;
@@ -297,22 +366,21 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
             .domain([
                 d3.min([0, d3.min(finalArray, function (d) { return d.PeriodsBeforeDelivery })]),
                 d3.max([0, d3.max(finalArray, function (d) { return d.PeriodsBeforeDelivery })])
-                ])
+            ])
             .range([0, innerWidth])
-          .nice();
+            .nice();
         
           yScale
-            .domain([
-               d3.min([0, d3.min(finalArray, function (d) { return (d.Deviation * 100) })]),
-               d3.max([0, 100])
+          .domain([
+               d3.min(finalArray, function (d) { return (d.Deviation * 100) }),
+               d3.max(finalArray, function (d) { return (d.Deviation * 100) })
                ])
-              //  .range([innerHeight, 0])
           .range([innerHeight, 0])
           .nice();
 
-   var actualPeriodChart = dc.pieChart("#actualPeriod"),
-    productChart = dc.pieChart("#product"),
-    periodsBeforeDeliveryChart = dc.pieChart("#pbd"),
+   var actuallist = dc.selectMenu("#actuallist"),
+    productChart = dc.selectMenu("#product"),
+    periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
     visCount = dc.dataCount(".dc-data-count"),
     forecastErrorChart = dc.scatterPlot("#scatter"),
     visTable= dc.dataTable(".dc-data-table");
@@ -329,12 +397,12 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 
             var ndx = crossfilter (finalArray);
             var all = ndx.groupAll();
-            var actualPeriodDim = ndx.dimension(function (d) { return d.ActualPeriod;});
-            var ndxDim = ndx.dimension(function (d) { return  [+d.PeriodsBeforeDelivery, +d.Deviation];});
+            var actualPeriodDim = ndx.dimension(function (d) { return +d.ActualPeriod;});
+            var ndxDim = ndx.dimension(function (d) { return  [+d.PeriodsBeforeDelivery, +d.Deviation, +d.ActualPeriod];});
             var productDim = ndx.dimension(function(d) { return d.Product;}) ;
-            var periodsBeforeDeliveryDim = ndx.dimension(function(d) { return d.PeriodsBeforeDelivery;}) ;
-            var forecastErrorDim = ndx.dimension(function(d) { return d.Deviation * 100;}) ;
-            var dateDim = ndx.dimension(function(d) { return d.ActualDate;}) ;
+            var periodsBeforeDeliveryDim = ndx.dimension(function(d) { return +d.PeriodsBeforeDelivery;}) ;
+            var forecastErrorDim = ndx.dimension(function(d) { return +d.Deviation ;}) ;
+            var dateDim = ndx.dimension(function(d) { return +d.ActualDate;}) ;
             console.log("final array: ", finalArray);
             
 
@@ -344,79 +412,71 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
             var forecastErrorGroup = forecastErrorDim.group(function(d) { return d.Deviation;});
             var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
             var dateGroup = dateDim.group();
+            console.log("ndxDim: ", ndxGroup.top(Infinity));
             
 
-            actualPeriodChart
+            actuallist
                 .dimension(actualPeriodDim)
-                .group(actualPeriodGroup);
+                .group(actualPeriodGroup)
+                .multiple(true)
+                .numberVisible(15);
                 // .elasticX(true);
 
             productChart
                 //.height(800)
                 .dimension(productDim)
                 .group(productGroup)
-                // .elasticX(true)
-                .data(function(group){ return group.top(15)});
+                .multiple(true)
+                .numberVisible(15);
 
             periodsBeforeDeliveryChart
                 .dimension(periodsBeforeDeliveryDim)
-                .group(periodsBeforeDeliveryGroup);
+                .group(periodsBeforeDeliveryGroup)
+                .multiple(true)
+                .numberVisible(15);
                 // .elasticX(true);
+            var plotColorMap = d3.scaleOrdinal(d3.schemeCategory10);
 
             forecastErrorChart
                 .width(768)
                 .height(480)
-                .x(d3.scaleLinear().domain([0,100]))
-                // .x(d3.scaleLinear().domain([d3.min([0, d3.min(finalArray, function (d) { return d.PeriodsBeforeDelivery })]),
-                //         d3.max([0, d3.max(finalArray, function (d) { return d.PeriodsBeforeDelivery })]) ]))
-                // .y(d3.scaleLinear().domain([d3.min([0, d3.min(finalArray, function (d) { return (d.Deviation * 100) })]),
-                //         d3.max([0, 100]) ]))
-                .brushOn(true)
-                .clipPadding(10)
-                .xAxisLabel("PeriodsBeforeDelivery")
-                .yAxisLabel("Deviation")
                 .dimension(ndxDim)
-                // .mouseZoomable(true)
+                .symbolSize(9)
                 .group(ndxGroup)
-                .elasticX(true)
-                
-                .elasticY(true)
+                .data(function(group) {
+                    return group.all()
+                    .filter(function(d) { return d.key !== NaN || d.key !== Infinity || d.key !== undefined ; }); 
+                })
+                // .excludedSize(2)
+                .excludedOpacity(0.5)
+                .keyAccessor(function (d) { return d.key[0]; })
+                .valueAccessor(function (d) { return d.key[1]; })
+                .colorAccessor(function(d) { 
+                    return d.key[2];
+                 })
+                .colors(function(colorKey) { 
+                    return plotColorMap(colorKey); })
+                .x(d3.scaleLinear().domain([0,100]))
+                // .x(d3.scaleLinear().domain(d3.extent(finalArray, function(d){return d.PeriodsBeforeDelivery}))) 
+                // .brushOn(true)
+                .clipPadding(8)
+                .xAxisLabel("Periods Before Delivery")
+                .yAxisLabel("Deviation")
                 .renderTitle(true)
                 .title(function (d) {
                     return [
-                        d.ForecastPeriod,
-                'Product: ' + d.Product,
-                'Actual Period: ' + d.ActualPeriod,
-                'Deviation: ' + (d.Deviation * 100),
-                'Periods Before Delivery: ' + d.PeriodsBeforeDelivery 
+                        'Periods Before Delivery: ' + d.key[0],
+                        'Deviation: ' + d.key[1],
+                        'Actual Period: ' + d.key[2]
                 ].join('\n');
-                });
+                })
+                .transitionDuration(500)
+                // .mouseZoomable(true)
+                .elasticX(true)
+                .elasticY(true);
 
                 forecastErrorChart.symbol(d3.symbolCircle);
-            // forecastErrorChart.yAxis().tickFormat(function(d) {return d3.format(',d')(d+299500);});
-
-            // var rowtip = d3.tip() //Tooltip
-            // .attr('class', 'd3-tip')
-            // .offset([-10, 0])
-            // .html(function(d) {
-            //     return "<strong>Deviation:</strong> <span style='color:red'>" + d.Deviation + "</span>";
-            // })
-
-
-            // $('body').on('mouseover', function(){
-            //     d3.selectAll('g.row')
-            //     .call(rowtip)
-            //     .on('mouseover', rowtip.show)
-            //     .on('mouseout', rowtip.hide);     
-            // });
-            
-            // forecastErrorChart.on('pretransition.add-tip', function(chart) {
-            //     chart.selectAll('#scatter')
-            //     .call(rowtip)
-            //     .on('mouseover', rowtip.show)
-            //     .on('mouseout', rowtip.hide);
-            // });
-
+                forecastErrorChart.margins().left = 50;
         
             visCount
                 .dimension(ndx)
@@ -429,14 +489,13 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
                     return d.ActualDate.getFullYear() + '/'+ format((d.ActualDate.getMonth() + 1));
                 })
                 .columns([
-                    "ActualDate",
                     "Product",
-                    "ForecastPeriod",
                     "ActualPeriod",
                     "ForecastPeriod",
                     "PeriodsBeforeDelivery",
-                    "FinalOrder",
-                    "Deviation" ]);
+                    "OrderAmount",
+                    "Deviation" 
+                    ]);
 
 
             dc.renderAll();
@@ -453,45 +512,12 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 
 
       
-      const g = svg.append('g')
-        .attr('transform', `translate(${margin.left},${margin.top})`);
-      const xAxisG = g.append('g')
-        .attr('transform', `translate(0, ${innerHeight})`);
-      const yAxisG = g.append('g');
-      const colorLegendG = g.append('g')
-        .attr('transform', `translate(${innerWidth + 32}, 28)`)
-        .attr('stroke','black')
-        .attr('stroke-width',0.5);
-
-        xAxisG.append('text')
-          .attr('class', 'axis-label')
-          .attr('x', innerWidth / 2)
-          .attr('y', 41)
-          .text(xLabel);
-
-      yAxisG.append('text')
-          .attr('class', 'axis-label')
-          .attr('x', -innerHeight / 2)
-          .attr('y', -35)
-          .attr('transform', `rotate(-90)`)
-          .style('text-anchor', 'middle')
-          .text(yLabel);
-
-      colorLegendG.append('text')
-          .attr('class', 'legend-label')
-          .attr('x', -30)
-          .attr('y', -12)
-          .text(colorLabel);
+     
 
   
       const colorScale = d3.scaleOrdinal()
         .range(d3.schemeCategory10);
 
-        const xAxis = d3.axisBottom(xScale)
-        .ticks(10);
-
-      const yAxis = d3.axisLeft(yScale)
-        .ticks(10);
 
       const colorLegend = d3.legendColor()
         .scale(colorScale)
@@ -499,7 +525,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
    
 
         var Deviation = function (d) {
-            return d.Deviation === ((d.OrderAmount - d.FinalOrder) / d.FinalOrder);
+            return d.Deviation === (d.OrderAmount - d.FinalOrder) / d.FinalOrder;
         };
 
 
@@ -507,8 +533,9 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 
          //Specify Deviation
     
-        g.selectAll('circle').data(finalArray)
+        var circle = g.selectAll('circle').data(finalArray)
           .enter().append('circle')
+
             .attr('cx', d => xScale(xValue(d)))
             .attr('cy', d => yScale(yValue(d)))
             .attr('fill', d => colorScale(colorValue(d)))
@@ -516,6 +543,9 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
             .attr('r', 8)
             .attr('stroke','black')
              .attr('stroke-width',1)
+             .style("display", function(d) { return d.Deviation == NaN ? "none" : "NaN"; })
+             
+
         .on('mouseover', function (d) {  // Tooltip
                d3.select(this)
                   .transition()
@@ -540,6 +570,8 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
                   '\nForecast Period: ' + d.ForecastPeriod +
                   '\nPeriods Before Delivery: ' + d.PeriodsBeforeDelivery +
                   '\nOrder Amount: ' + d.OrderAmount
+
+
             });
 
         xAxisG.call(xAxis);
@@ -703,7 +735,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 
         //      localforage.setItem ('deviation', 'finalArray');
         //     // console.log( JSON.parse( localforage.getItem( 'deviation' ) ) );
-
+        
       });
 
       
