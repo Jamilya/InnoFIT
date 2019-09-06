@@ -393,8 +393,8 @@ d3.json("/includes/getdata.php", function(error, data2) {
                 .keyAccessor(function (d) { return d.key[0]; })
                 .valueAccessor(function (d) { return d.key[1]; })
                 .colorAccessor(function(d) {
-                    console.log('Color Accessor: ', d); 
                     if (d.key[2]==0) {
+                        console.log('d', d);
                         return 0;
                     } else return 1;
                     // return d.key[2];
@@ -419,7 +419,7 @@ d3.json("/includes/getdata.php", function(error, data2) {
                 .elasticX(true)
                 .elasticY(true);
 
-            DeliveryPlansChart.symbol(d3.symbolCircle);
+            // DeliveryPlansChart.symbol(d3.symbolDiamond);
             DeliveryPlansChart.margins().left = 50;
 
             visCount
