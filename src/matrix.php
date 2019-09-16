@@ -57,14 +57,15 @@ else {
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/index.php">Web tool home</a>
+            <a class="navbar-brand" href="/index.php">Home</a>
         </div>
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="nav navbar-nav">
+            <li><a href="./configuration.php">Configuration</a></li>
                     <!--  <li class="nav-item">
                         <a class="nav-link" href="index.php">Home</a>
                     </li > -->
-            <li><a href="./about.php">About InnoFIT Web-tool</a></li>
+            <li><a href="./about.php">About</a></li>
             <li class><a href="./howto.php">How to Interpret Error Measures </a></li>
             <li class="dropdown active">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations<span class="caret"></span></a>
@@ -304,8 +305,8 @@ svg.append("text")
         .text("Actual Period");
 
 svg.append("text")
-        .attr("x", -230)
-        .attr("y", -17)
+        .attr("x", -245)
+        .attr("y", -19)
         .attr("text-anchor", "left")
         .style("font-size", "12px sans-serif")
         .style("fill", "#000")

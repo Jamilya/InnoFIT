@@ -77,14 +77,15 @@ else {
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/index.php">Web tool home</a>
+            <a class="navbar-brand" href="/index.php">Home</a>
         </div>
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="nav navbar-nav">
+            <li><a href="./configuration.php">Configuration</a></li>
                     <!--  <li class="nav-item">
                         <a class="nav-link" href="index.php">Home</a>
                     </li > -->
-            <li><a href="./about.php">About InnoFIT Web-tool</a></li>
+            <li><a href="./about.php">About</a></li>
             <li class><a href="./howto.php">How to Interpret Error Measures </a></li>
             <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations<span class="caret"></span></a>
@@ -158,7 +159,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
     
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script>
-       <div style="padding-left:3px"> 
+       <div style="padding-left:39px"> 
 
             <h3>Corrected Root Mean Square Error (CRMSE) and Root Mean Square Error (RMSE) comparison </h3>
             <small>
@@ -174,10 +175,10 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
                 </p> 
         </div>
         
-        <svg width="960" height="500"></svg>
+        <!-- <svg width="960" height="500"></svg>
         <div>
         <svg id="new_legend" height=200 width=450></svg>
-        </div>
+        </div> -->
 
         <script>
         var data = JSON.parse(localStorage['data']);
