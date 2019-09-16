@@ -29,6 +29,7 @@ else {
     </script>
     <script src="http://d3js.org/d3.v4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+    <script src="../lib/js/ion.rangeSlider.js"></script>
 
     <script>
     localforage.config({
@@ -39,6 +40,7 @@ else {
     });
     </script>
 
+    <link rel="stylesheet" href="../lib/css/ion.rangeSlider.css">
     <link rel="icon" href="/data/ico/innofit.ico">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
         integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -190,6 +192,7 @@ else {
     </nav>
 
     <h1>Configuration</h1>
+
     <div class="container">
         <div class="row">
             <div class="col-md-12 text-center"><br>
@@ -200,7 +203,7 @@ else {
             </div>
         </div><br><br><br>
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 Please select your products
                 <input type="text" runat="server" id="txt1" visible="true" value="" />
 
@@ -215,35 +218,116 @@ else {
                     </select>
                 </div>
             </div>
-            <div class="col-md-6">
-                Please select your periods before delivery....
+        </div>
+        <div class="row" style="margin-top: 5%;">
+            <div class="col-md-12">
+                <h3>Actual Date Slider</h3>
+                <p>EXPLANATION HERE</p>
+                <br />
+                <input id="actualDateSlider" type="text" class="js-range-slider" name="my_range" value="" />
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-6">
-                MULTISELECT HERE
-            </div>
-            <div class="col-md-6">
-                MULTISELECT HERE
+        <div class="row" style="margin-top: 5%;">
+            <div class="col-md-12">
+                <h3>Forecast Date Slider</h3>
+                <p>EXPLANATION HERE</p>
+                <br />
+                <input id="forecastDateSlider" type="text" class="js-range-slider" name="my_range" value="" />
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-6 pull-right">
+        <div class="row" style="margin-top: 5%;">
+            <div class="col-md-12 pull-right">
                 <button id="btnApplyFilters" class="btn btn-primary">Apply Filters</button>
             </div>
         </div>
     </div>
 
     <script>
+    let lang = "en-US";
+    let actualDateMinValue = 0;
+    let actualDateMaxValue = 0;
+    let forecastDateMinValue = 0;
+    let forecastDateMaxValue = 0;
+
+    function dateToTS(date) {
+        return date.valueOf();
+    }
+
+    function tsToDate(ts) {
+        var d = new Date(ts);
+
+        return d.toLocaleDateString(lang, {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
     localforage.getItem('viz_data').then(function(data) {
         data = JSON.parse(data);
+        console.log('ORIGINAL DATA', data);
 
-        console.log(data);
-        $('h1').css("border", "3px solid red");
-        d3.select('h1').style('background', 'tomato');
+        // Get the unique names of our products
+        const uniqueNames = [...new Set(data.map(i => i.Product))];
+        console.log('Names array: ', uniqueNames);
+
+        // Get min and max ActualDate
+        const minADate = data.reduce((m, v, i) => (v.ActualDate < m.ActualDate) && i ? v : m).ActualDate;
+        console.log('Min ADate: ', minADate);
+        const maxADate = data.reduce((m, v, i) => (v.ActualDate > m.ActualDate) && i ? v : m).ActualDate;
+        console.log('Max ADate: ', maxADate);
+
+        // Get min and max ForecastDate
+        const minFDate = data.reduce((m, v, i) => (v.ForecastDate < m.ForecastDate) && i ? v : m).ForecastDate;
+        console.log('Min FDate: ', minFDate);
+        const maxFDate = data.reduce((m, v, i) => (v.ForecastDate > m.ForecastDate) && i ? v : m).ForecastDate;
+        console.log('Max FDate: ', maxFDate);
+
+        $("#actualDateSlider").ionRangeSlider({
+            type: "double",
+            min: dateToTS(new Date(minADate)),
+            max: dateToTS(new Date(maxADate)),
+            from: dateToTS(new Date(minADate)),
+            to: dateToTS(new Date(maxADate)),
+            grid: true,
+            prettify: tsToDate,
+            onStart: function(data) {
+                actualDateMinValue = new Date(data.from);
+                actualDateMaxValue = new Date(data.to);
+            },
+            onFinish: function(data) {
+                actualDateMinValue = new Date(data.from);
+                actualDateMaxValue = new Date(data.to);
+            },
+        });
+
+        $("#forecastDateSlider").ionRangeSlider({
+            type: "double",
+            min: dateToTS(new Date(minFDate)),
+            max: dateToTS(new Date(maxFDate)),
+            from: dateToTS(new Date(minFDate)),
+            to: dateToTS(new Date(maxFDate)),
+            grid: true,
+            prettify: tsToDate,
+            onStart: function(data) {
+                forecastDateMinValue = new Date(data.from);
+                forecastDateMaxValue = new Date(data.to);
+            },
+            onFinish: function(data) {
+                forecastDateMinValue = new Date(data.from);
+                forecastDateMaxValue = new Date(data.to);
+            },
+        });
     });
 
     d3.select('#btnApplyFilters').on('click', function(e) {
+        console.log('FILTERING STARTS HERE');
+        console.log('Filter Parameters: ');
+        console.log('actual Min Date: ', actualDateMinValue);
+        console.log('actual Max Date: ', actualDateMaxValue);
+        console.log('forecast Min Date: ', forecastDateMinValue);
+        console.log('forecast Max Date: ', forecastDateMaxValue);
+
         Swal.fire('Your filters have been applied! You can now visit all other pages.');
     });
     </script>

@@ -270,17 +270,14 @@ session_start();
 
         var stringData = JSON.stringify(data);
         var newData = Number(data);
-        console.log("data:", newData, stringData, data);
 
         let calcDeviation = function(orignalEl, finalOrder) {
             return (orignalEl.OrderAmount - finalOrder) / finalOrder;
         }
         let finalOrder = data.filter((el) => {
-            console.log('element: ', el);
             //  return el.PeriodsBeforeDelivery==0;
             return el.PeriodsBeforeDelivery == "0";
         });
-        console.log("final Orders:", finalOrder);
 
         let valueMap = new Map();
 
