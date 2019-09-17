@@ -84,7 +84,41 @@ else {
     #google_translate_element2 {
         display: none !important;
     }
+
+    .irs-handle,
+    .irs-bar, .irs-single, .irs-from:before, .irs-to:before,
+    .irs--flat {
+        cursor: pointer;
+        border-top-color: #336699 !important;
+    }
+
+    .irs-bar {
+        background-color: #336699 !important;
+    }
+
+    .irs-single,
+    .irs-from,
+    .irs-to {
+        background-color: #336699 !important;
+        font-size: 12px;
+    }
+
+    .irs-handle, .irs--flat .irs-handle {
+        background-color: #336699 !important;
+        width: 15px;
+        height: 30px;
+        left: -.6em;
+    }
+
+    .irs-grid-text {
+        font-size: 12px;
+        position: absolute;
+        color: #585858 !important;
+    }
     </style>
+    <script type="text/javascript">
+
+    </script>
 </head>
 
 <body>
@@ -199,38 +233,35 @@ else {
                 <h4><?php   echo "Dear ";
                     print_r($_SESSION["session_username"]);
                     echo ",";?></h4>
-                <p>On this page you can find the instructions on the data format and the filter settings.</p>
+                <p>On this page you can find the instructions on the data format requirements and the filter settings.
+                </p>
             </div>
         </div><br><br><br>
         <div class="row">
             <div class="col-md-12">
-                Please select your products
-                <input type="text" runat="server" id="txt1" visible="true" value="" />
+            <h3>Product Selection</h3>
+               <p>Please select the product or products you want to visualize   </p>    <br />
+                <select name=productsList[] id="products" class="form-control" multiple="multiple" size="5">
 
-                <div class="container">
-                    <select id="basic" multiple="multiple">
-                        <option value="cheese">Cheese</option>
-                        <option value="tomatoes">Tomatoes</option>
-                        <option value="mozarella">Mozzarella</option>
-                        <option value="mushrooms">Mushrooms</option>
-                        <option value="pepperoni">Pepperoni</option>
-                        <option value="onions">Onions</option>
-                    </select>
-                </div>
+                    <option value="">- Select -</option>
+                    <!-- <option value='1'>Software Development</option> -->
+                </select>
+
             </div>
         </div>
+
         <div class="row" style="margin-top: 5%;">
             <div class="col-md-12">
                 <h3>Actual Date Slider</h3>
-                <p>EXPLANATION HERE</p>
+                <p>Please select the Actual Date range here: the data will be filtered from the selected range onwards.</p>
                 <br />
                 <input id="actualDateSlider" type="text" class="js-range-slider" name="my_range" value="" />
             </div>
         </div>
         <div class="row" style="margin-top: 5%;">
             <div class="col-md-12">
-                <h3>Forecast Date Slider</h3>
-                <p>EXPLANATION HERE</p>
+                <h3>Due Date Slider</h3>
+                <p>Please select the Due Date range here: the data will be filtered until the selected time range.</p>
                 <br />
                 <input id="forecastDateSlider" type="text" class="js-range-slider" name="my_range" value="" />
             </div>
@@ -248,6 +279,18 @@ else {
     let actualDateMaxValue = 0;
     let forecastDateMinValue = 0;
     let forecastDateMaxValue = 0;
+    let newProductList = [];
+
+
+    $(document).ready(function() {
+        $("button").click(function() {
+
+            $.each($(".form-control option:selected"), function() {
+                newProductList.push($(this).val());
+            }).get();
+            // alert("You have selected the country - " + countries.join(", "));
+        });
+    });
 
     function dateToTS(date) {
         return date.valueOf();
@@ -270,6 +313,7 @@ else {
         // Get the unique names of our products
         const uniqueNames = [...new Set(data.map(i => i.Product))];
         console.log('Names array: ', uniqueNames);
+
 
         // Get min and max ActualDate
         const minADate = data.reduce((m, v, i) => (v.ActualDate < m.ActualDate) && i ? v : m).ActualDate;
@@ -318,7 +362,26 @@ else {
                 forecastDateMaxValue = new Date(data.to);
             },
         });
+
+        var options = '';
+        for (var i = 0; i < uniqueNames.length; i++) {
+            options += '<option value="' + uniqueNames[i] + '">' + uniqueNames[i] + '</option>';
+        }
+        $("#products").append(options);
+
+        // newProductList = $('select[name="productsList[]"]').map(function() {
+        //     if ($(this).val())
+        //         return $(this).val();
+        // }).get();
+
+
+        // $("select option:selected").each(function() {
+        //     newProductList.push($(this).val());
+        // });
+
+
     });
+
 
     d3.select('#btnApplyFilters').on('click', function(e) {
         console.log('FILTERING STARTS HERE');
@@ -327,10 +390,13 @@ else {
         console.log('actual Max Date: ', actualDateMaxValue);
         console.log('forecast Min Date: ', forecastDateMinValue);
         console.log('forecast Max Date: ', forecastDateMaxValue);
+        console.log('selected products: ', newProductList);
 
-        Swal.fire('Your filters have been applied! You can now visit all other pages.');
+        Swal.fire('Your filters have been applied! Please Visit Visualizations');
     });
     </script>
+
+
 </body>
 
 </html>

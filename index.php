@@ -27,7 +27,7 @@ session_start();
         integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <!-- <script src="lib/jquery/jquery-3.2.1.min.js"></script> -->
     <link rel="stylesheet" href="./src/css/index.css">
-    
+
     <script src="http://d3js.org/d3.v4.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
         integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
@@ -65,7 +65,7 @@ session_start();
         });
     });
     </script>
-        <style>
+    <style>
     body {
         margin: 0 auto;
     }
@@ -221,14 +221,13 @@ session_start();
     </nav>
 
 
-    <div class="container">
+    <!-- <div class="container">
         <div class="row">
-            <!-- <div class="col-8">
-                <h3></h3>
-            </div> -->
             <div class="col-md-12 text-center">
-                <img src="/data/img/logo2.png" alt="ForeQuVis Logo" height="110" width="370">
+           <h1> Forecast Quality Visualization </h1>            
             </div>
+            <div class="col-md-12 text-center"> 
+            <img src="/data/img/Logo_transparent.png" alt="InnoFIT Logo" height="100" width="200"> </div>
         </div>
         <div class="row">
         <div class="col-md-12 text-center"><br><br><br>
@@ -242,7 +241,39 @@ session_start();
                 <hr>
             </div>
         </div>
-    </div>
+    </div> -->
+    <header class="masthead">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center">
+                <div class="row align-items-center">
+                    <div class="span4 align-center">
+                        <div class="col-xs-8 col-sm-8">
+                            <h1 class="text-right">Forecast Quality Visualization </h1>
+                        </div>
+                        <div class="col-xs-4 col-sm-4 ">
+                            <img style="float:center" src="/data/img/Logo_transparent.png" alt="InnoFIT Logo" height="55"
+                                width="105">
+                        </div>
+                    </div>
+                    </div><br/>
+                    <!-- <p class="lead" align ="center">InnoFIT Web Tool</p> -->
+
+            </div>
+    </header>
+
+    <!-- Page Content -->
+    <section class="py-5">
+        <div class="container">
+            <h4 class="font-weight-light"><?php   echo "Dear ";
+                    print_r($_SESSION["session_username"]);
+                    echo ",";?></h2>
+                <p>Welcome to the Forecast Quality Visualization (ForeQuVis / InnoFitVis) Web-tool.
+                    <b>Please upload the data in .csv format in the correct data structure</b></p>
+                <p>For instructions please follow the<mark> Configuration page.</mark> Happy exploring!</p>
+
+        </div>
+        <hr>
+    </section>
 
     <br />
 
@@ -307,9 +338,9 @@ session_start();
         console.log('SAVING: ', data, finalOrder, finalArray);
 
         // TODO: REMOVE LATER - will be replaced with localforage
-        localStorage.setItem('finalOrder', JSON.stringify(finalOrder));
-        localStorage.setItem('deviation', JSON.stringify(finalArray));
-        localStorage.setItem('data', JSON.stringify(data));
+        // localStorage.setItem('finalOrder', JSON.stringify(finalOrder));
+        // localStorage.setItem('deviation', JSON.stringify(finalArray));
+        // localStorage.setItem('data', JSON.stringify(data));
     });
     </script>
 
@@ -371,36 +402,37 @@ if (isset($_POST["import"])) {
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-            <form class="form-horizontal" action="" method="post" name="frmCSVImport" id="frmCSVImport"
-                enctype="multipart/form-data"><br><br>
-                <div class="input-row">
-                    <label class="col-md-6 control-label">Choose CSV File</label> <input type="file" name="file"
-                        id="file" accept=".csv">
-                    <button type="submit" id="submit" name="import" class="btn btn-primary">Import</button><br>
-                    <!-- <button type="submit" id="submit" name="import" class="btn-submit btn-blue">Import</button> -->
-                    <br />
-                </div>
-            </form>
-        </div>
-        
+                <form class="form-horizontal" action="" method="post" name="frmCSVImport" id="frmCSVImport"
+                    enctype="multipart/form-data"><br><br>
+                    <div class="input-row">
+                        <label class="col-md-6 control-label">Choose CSV File</label> <input type="file" name="file"
+                            id="file" accept=".csv">
+                        <button type="submit" id="submit" name="import" class="btn btn-primary">Import</button><br>
+                        <!-- <button type="submit" id="submit" name="import" class="btn-submit btn-blue">Import</button> -->
+                        <br />
+                    </div>
+                </form>
+            </div>
 
-    <?php
+
+            <?php
       if (!empty($_GET['act'])) {
         //echo "to remove the data in my table"; 
     } else {
     ?>
-    <br /><br>
-    <br /><br> <br><br>
-    <hr>
-    <div class="col-md-12 text-center">
-        <p>If you'd like to remove all your data from the database - please click on the button "Delete All Data" below. <br></p>
-        <p> <mark> Please note that the action is irreversible.</mark></p>
-            <form action="includes/delete.php" method="get"
-                onsubmit="return confirm('Are you sure you want to remove all data?');">
-                <input type="hidden" name="act" value="run">
-                <input type="submit" value="Delete All Data">
-            </form>
-        </div>
+            <br /><br>
+            <br /><br> <br><br>
+            <hr>
+            <div class="col-md-12 text-center">
+                <p>If you'd like to remove all your data from the database - please click on the button "Delete All
+                    Data" below. <br></p>
+                <p> <mark> Please note that the action is irreversible.</mark></p>
+                <form action="includes/delete.php" method="get"
+                    onsubmit="return confirm('Are you sure you want to remove all data?');">
+                    <input type="hidden" name="act" value="run">
+                    <input type="submit" value="Delete All Data">
+                </form>
+            </div>
         </div>
     </div>
     <?php } ?>
