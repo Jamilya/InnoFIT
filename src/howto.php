@@ -110,7 +110,7 @@ else {
                 <ul class="dropdown-menu">
                     <li ><a href="./finalorder.php">Final Order Amount </a></li>
                     <li ><a href="./deliveryplans.php">Delivery Plans </a></li>
-                     <li><a href="./forecasterror.php">Forecast Error</a></li>
+                     <li><a href="./forecasterror.php">Percentage Error</a></li>
                     <li role="separator" class="divider"></li>
                     <li class="dropdown-header">Error Measures</li>                            
                     <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
@@ -184,7 +184,7 @@ print_r($_SESSION["session_username"]);
 echo ".";
 ?></small>
 <br><br>
-		<h5 class = "card-title"><strong>Description and guidelines on how to use the error measures</strong></h5>
+		<h5 class = "card-title"><strong>Description and guidelines on how to interpret and use the error measures</strong></h5>
 	<div class = "row1"> 
 		<div class="col-sm-6">
 		    <p class = "class-text"> 

@@ -31,33 +31,59 @@ else {
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
         integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <style>
-    body {
+     body {
         margin: 0px;
     }
 
-    td,
-    th {
-        padding: 2px 4px;
-    }
-
-    th {
-        font-weight: bold;
-    }
-
-    .axis text {
+    .dc-chart .axis text {
         font: 12px sans-serif;
     }
 
-    .axis line,
-    .axis path {
-        fill: none;
+    .dc-chart .brush rect.selection {
+        fill: #4682b4;
+        fill-opacity: .125;
+    }
+
+    .dc-chart .symbol {
         stroke: #000;
+        stroke-width: 0.5px;
+    }
+
+    .domain {
+        /* display: none; */
+        stroke: #635F5D;
+        stroke-width: 1;
+    }
+
+    .tick text,
+    .legendCells text {
+        fill: #635F5D;
+        font-size: 12px;
+        font-family: sans-serif;
+    }
+
+    .axis-label,
+    .legend-label {
+        fill: #635F5D;
+        font-size: 12px;
+        font-family: sans-serif;
+    }
+
+    /*  .axis path, */
+    .axis line {
+        fill: none;
+        stroke: grey;
+        stroke-width: 1;
         shape-rendering: crispEdges;
+    }
+
+    .tick line {
+        stroke: #C0C0BB;
     }
 
     a.gflag {
         vertical-align: middle;
-        font-size: 16px;
+        font-size: 12px;
         padding: 1px 0;
         background-repeat: no-repeat;
         background-image: url(//gtranslate.net/flags/16.png);
@@ -117,7 +143,7 @@ else {
                         <ul class="dropdown-menu">
                             <li><a href="./finalorder.php">Final Order Amount</a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans</a></li>
-                            <li><a href="./forecasterror.php">Forecast Error</a></li>
+                            <li><a href="./forecasterror.php">Percentage Error</a></li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD)</a></li>
@@ -235,12 +261,12 @@ else {
 
         var margin = {
                 top: 30,
-                right: 30,
+                right: 90,
                 bottom: 30,
                 left: 30
             },
-            width = 450 - margin.left - margin.right,
-            height = 450 - margin.top - margin.bottom;
+            width = 600 - margin.left - margin.right,
+            height = 550 - margin.top - margin.bottom;
 
         // append the svg object to the body of the page
         var svg = d3.select("#my_dataviz")
@@ -271,12 +297,20 @@ else {
             });
         console.log("orderMin: ", orderMin);
 
+        var extent = d3.extent(data.map(function(d) {
+            return d.OrderAmount;
+        }).filter(function(d) {
+            return d;
+        }));
+        console.log("extent: ", extent);
+
+
         var x = d3.scaleBand()
             .range([0, width])
             .domain(data.map(d => d.ActualPeriod))
             .padding(0.05);
         svg.append("g")
-            .style("font-size", 12)
+            .style("font-size", "12px sans-serif")
             .attr("transform", "translate(0," + height + ")")
             .call(d3.axisBottom(x).tickSize(0))
             .select(".domain").remove()
@@ -287,18 +321,23 @@ else {
             .domain(myRows)
             .padding(0.05);
         svg.append("g")
-            .style("font-size", 12)
             .call(d3.axisLeft(y).tickSize(0))
             .select(".domain").remove()
 
         // Build color scale
-        var myColor = d3.scaleSequential()
-            .interpolator(d3.interpolatePurples)
-            .domain([d3.min(data, function(d) {
-                return d.OrderAmount
-            }), d3.max(data, function(d) {
-                return d.OrderAmount
-            })]);
+        var myColor = d3.scaleSequential();
+        myColor.interpolator(d3.interpolatePurples);
+            // .domain([d3.min(data, function(d) {
+            //     return d.OrderAmount
+            // }), d3.max(data, function(d) {
+            //     return d.OrderAmount
+            // })]);
+        myColor.domain([0, d3.max(data, function(d) { return d.OrderAmount; })]);
+        var myOrders = data.map(function(d) {
+            return (d.OrderAmount);
+        });
+        var mean = (d3.min(myOrders) + d3.max(myOrders)) / 2;
+        console.log(mean);
 
         var tooltip = d3.select("#my_dataviz")
             .append("div")
@@ -368,54 +407,56 @@ else {
         legend.append("rect")
             .attr("width", 20)
             .attr("height", 20)
+            .attr("x", 5)
+            .attr("y", 10)
             .style("fill", myColor);
 
         legend.append("text")
-            .attr("x", 26)
+            .attr("x", 28)
             .attr("y", 10)
-            .attr("dy", ".41em")
+            .attr("dy", ".35em")
             .text(String);
 
-        svg.append("text")
-            .attr("class", "label")
-            .attr("x", width + 20)
-            .attr("y", 10)
-            .attr("dy", ".41em")
-            .text("");
+    svg.append("text")
+        .attr("class", "label")
+        .attr("x", width - 10)
+        .attr("y", 10)
+        .attr("dy", ".35em")
+        .text("");
 
-        svg.append("text")
-            .attr("x", 150)
-            .attr("y", 420)
-            .attr("text-anchor", "left")
-            .style("font-size", "12px sans-serif")
-            .style("fill", "#000")
-            .text("Actual Period");
+    svg.append("text")
+        .attr("x", 200)
+        .attr("y", 520)
+        .attr("text-anchor", "left")
+        .style("font-size", "12px sans-serif")
+        .style("fill", "#000")
+        .text("Actual Period");
 
-        svg.append("text")
-            .attr("x", -245)
-            .attr("y", -19)
-            .attr("text-anchor", "left")
-            .style("font-size", "12px sans-serif")
-            .style("fill", "#000")
-            .attr("transform", "rotate(-90)")
-            .text("Forecast Period");
+    svg.append("text")
+        .attr("x", -280)
+        .attr("y", -19)
+        .attr("text-anchor", "left")
+        .style("font-size", "12px sans-serif")
+        .style("fill", "#000")
+        .attr("transform", "rotate(-90)")
+        .text("Forecast Period");
 
-        svg.append("text")
-            .attr("x", 0)
-            .attr("y", -20)
-            .attr("text-anchor", "left")
-            .style("font-size", "12px sans-serif")
-            .style("fill", "#000")
-            .style("max-width", 400);
-        // .text("This is a chart of orders distribution per each period.");
+    svg.append("text")
+        .attr("x", 0)
+        .attr("y", -20)
+        .attr("text-anchor", "left")
+        .style("font-size", "12px sans-serif")
+        .style("fill", "#000")
+        .style("max-width", 400);
+    // .text("This is a chart of orders distribution per each period.");
 
-        svg.selectAll(".tile")
-            .style("fill", function(d) {
-                return myColor(d.OrderAmount);
-            });
+    svg.selectAll(".tile")
+        .style("fill", function(d) {
+            return myColor(d.OrderAmount);
+        });
 
-        svg.selectAll(".legend rect")
-            .style("fill", myColor);
+    svg.selectAll(".legend rect")
+        .style("fill", myColor);
 
     });
 

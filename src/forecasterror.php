@@ -18,7 +18,7 @@ else {
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/data/ico/innofit.ico">
-    <title>Forecast Error</title>
+    <title>Percentage Error</title>
     <script src="../lib/js/localforage.js"></script>
     <script src="http://d3js.org/d3.v4.min.js"></script>
     <script src="../lib/js/crossfilter.js"></script>
@@ -109,6 +109,52 @@ else {
         position: absolute;
         text-align: center;
     }
+
+    .info-container {
+        display: inline-block;
+        width: calc(100% + -50px);
+        vertical-align: middle;
+    }
+
+    .customContainer {
+        padding: 0 2% 0 2%;
+    }
+
+    a.gflag {
+        vertical-align: middle;
+        font-size: 16px;
+        padding: 1px 0;
+        background-repeat: no-repeat;
+        background-image: url(//gtranslate.net/flags/16.png);
+    }
+
+    a.gflag img {
+        border: 0;
+    }
+
+    a.gflag:hover {
+        background-image: url(//gtranslate.net/flags/16a.png);
+    }
+
+    #goog-gt-tt {
+        display: none !important;
+    }
+
+    .goog-te-banner-frame {
+        display: none !important;
+    }
+
+    .goog-te-menu-value:hover {
+        text-decoration: none !important;
+    }
+
+    body {
+        top: 0 !important;
+    }
+
+    #google_translate_element2 {
+        display: none !important;
+    }
     </style>
 
     <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script> -->
@@ -140,7 +186,7 @@ else {
                         <ul class="dropdown-menu">
                             <li><a href="./finalorder.php">Final Order Amount</a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans</a></li>
-                            <li class="active"><a href="./forecasterror.php">Forecast Error <span
+                            <li class="active"><a href="./forecasterror.php">Percentage Error <span
                                         class="sr-only">(current)</span></a></li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Error Measures</li>
@@ -179,44 +225,6 @@ else {
                             onclick="doGTranslate('en|de');return false;" title="German" class="gflag nturl"
                             style="background-position:-300px -100px;"><img src="//gtranslate.net/flags/blank.png"
                                 height="12" width="12" alt="German" /></a>
-
-                        <style type="text/css">
-                        a.gflag {
-                            vertical-align: middle;
-                            font-size: 16px;
-                            padding: 1px 0;
-                            background-repeat: no-repeat;
-                            background-image: url(//gtranslate.net/flags/16.png);
-                        }
-
-                        a.gflag img {
-                            border: 0;
-                        }
-
-                        a.gflag:hover {
-                            background-image: url(//gtranslate.net/flags/16a.png);
-                        }
-
-                        #goog-gt-tt {
-                            display: none !important;
-                        }
-
-                        .goog-te-banner-frame {
-                            display: none !important;
-                        }
-
-                        .goog-te-menu-value:hover {
-                            text-decoration: none !important;
-                        }
-
-                        body {
-                            top: 0 !important;
-                        }
-
-                        #google_translate_element2 {
-                            display: none !important;
-                        }
-                        </style>
 
                         <div id="google_translate_element2"></div>
                         <script type="text/javascript">
@@ -271,571 +279,592 @@ else {
 
 
 
-    <div style="padding-left:39px">
-
-        <h3>Forecast Error</h3>
-        <small>
-            <?php
+    <div class="customContainer">
+        <div class="row" style="margin-bottom: -2%;">
+            <div class="col-md-10">
+                <h3>Percentage Error</h3>
+                <small>
+                    <?php
         echo "You are logged in as: ";
         print_r($_SESSION["session_username"]);
         echo ".";
         ?></small>
-        <br><br>
-        <p><b> Graph Description:</b> This graph shows the Information Quality (IQ) for each final order with respect to
-            the
-            period before delivery (PBD). The relative deviation is calculated
-            comparing the forecasted order amount to the final order amount with respect to periods before delivery.<br>
-            The formula of the Forecast Error:
-            <img src="https://latex.codecogs.com/gif.latex?e_{i,j} = (\frac{ x_{i,j} - x_{i,0} }{x_{i,0}})*100"
-                title="Forecast Error formula" /> (Note: different from the formula in the list of notations).
-        </p>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script>
-
-    <div style="padding-left:39px">
-        <div id="scatter">
-            <a class="reset" href="javascript:forecastErrorChart.filterAll(); dc.redrawAll();"
-                style="display: none;">reset</a>
-            <div class="clearfix"></div>
-        </div>
-
-        <div id="actuallist">
-            <p style="text-align:center;"> <strong>Actual Period</strong></p>
-            <div>
+                <br>
             </div>
+            <div class="col-md-2">
+                <div class="alert alert-info" style="text-align: center" role="info">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-info" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-info"
+                                role="info">Filters are applied!</span>
+                        </div>
+                        <div class="row">
+                            <span style="font-size: 12px; vertical-align: middle;" class="alert-info" role="info"> To
+                                change settings please visit <a href="./configuration.php">Configuration</a>.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <br />
+                <p><b> Graph Description:</b> This graph shows the Information Quality (IQ) representation for each final order with
+                    respect to
+                    the
+                    periods before delivery (PBD). The relative deviation is calculated
+                    comparing the forecasted order amounts to the final order amounts with respect to periods before
+                    delivery.<br>
+                    The formula of the Percentage Error:
+                    <img src="https://latex.codecogs.com/gif.latex?e_{i,j} = (\frac{ x_{i,j} - x_{i,0} }{x_{i,0}})*100"
+                        title="Percentage (forecast) Error formula" />.
+                </p>
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script>
+
+        <div class="row">
+            <div id="scatter">
+                <!-- <a class="reset" href="javascript:forecastErrorChart.filterAll(); dc.redrawAll();"
+                    style="display: none;">reset</a> -->
+                <div class="clearfix"></div>
+            </div>
+
+            <div id="forecastlist">
+            <br/>
+            <p style="text-align:center;"> <strong>Due date</strong></p>
             <div class="clearfix"></div>
         </div>
 
-        <div id="product">
+            <!-- <div id="product">
             <p style="text-align:center;"><strong>Product</strong></p>
             <div>
             </div>
             <div class="clearfix"></div>
-        </div>
-        <div id="pbd">
-            <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
+        </div> -->
+            <div id="pbd"><br/>
+                <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
+            </div>
+            <div style="clear: both"></div>
+            <br />
+
             <div>
-                <!-- <a class='reset' href='javascript:pbd.filterAll();dc.redrawAll();' style='visibility: hidden;'>reset</a> -->
+                <div class="dc-data-count">
+                    <span class="filter-count"></span> selected out of <span class="total-count"></span>records |
+                    <a href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
+                </div><br /><br />
+                <button onclick="myFunction()">Data table display</button>
+                <table class="table table-hover dc-data-table" id="myTable" style="display:none">
+                </table>
+            </div>
+            <div id="test"></div>
+            <br />
+            <div><br />
+                <svg width="960" height="500"></svg><br />
             </div>
         </div>
-        <div style="clear: both"></div>
-        <br />
-
-        <div>
-            <div class="dc-data-count">
-                <span class="filter-count"></span> selected out of <span class="total-count"></span>records |
-                <a href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
-            </div><br /><br />
-            <button onclick="myFunction()">Data table display</button>
-            <table class="table table-hover dc-data-table" id="myTable" style="display:none">
-            </table>
-        </div>
-        <div id="test"></div>
-        <br />
-        <div><br />
-            <svg width="960" height="500"></svg><br />
-        </div>
-    </div>
-    <script>
-    function myFunction() {
-        var x = document.getElementById("myTable");
-        if (x.style.display === "none") {
-            x.style.display = "block";
-        } else {
-            x.style.display = "none";
-        }
-    }
-    </script>
-
-    <script>
-    localforage.getItem("viz_data", function(error, data) {
-        data = JSON.parse(data);
-        localforage.getItem("finalOrder", function(error, finalOrder) {
-            finalOrder = JSON.parse(finalOrder);
-
-            const xValue = d => d.PeriodsBeforeDelivery;
-            const xLabel = 'Periods Before Delivery';
-            const yValue = d => d.Deviation * 100;
-            const yLabel = 'Deviation';
-            const colorValue = d => d.ActualPeriod;
-            const colorLabel = 'Actual Period';
-            const margin = {
-                left: 55,
-                right: 25,
-                top: 20,
-                bottom: 30
-            };
-            const legendOffset = 52;
-
-            const svg = d3.select('svg');
-            const width = svg.attr('width');
-            const height = svg.attr('height');
-            const innerWidth = width - margin.left - margin.right - legendOffset;
-            const innerHeight = height - margin.top - margin.bottom - 35;
-
-            const g = svg.append('g')
-                .attr('transform', `translate(${margin.left},${margin.top})`);
-            const xAxisG = g.append('g')
-                .attr('transform', `translate(0, ${innerHeight})`);
-            const yAxisG = g.append('g');
-            const colorLegendG = g.append('g')
-                .attr('transform', `translate(${innerWidth + 32}, 28)`)
-                .attr('stroke', 'black')
-                .attr('stroke-width', 0.5);
-
-            xAxisG.append('text')
-                .attr('class', 'axis-label')
-                .attr('x', innerWidth / 2)
-                .attr('y', 41)
-                .text(xLabel);
-
-            yAxisG.append('text')
-                .attr('class', 'axis-label')
-                .attr('x', -innerHeight / 2)
-                .attr('y', -35)
-                .attr('transform', `rotate(-90)`)
-                .style('text-anchor', 'middle')
-                .text(yLabel);
-
-            colorLegendG.append('text')
-                .attr('class', 'legend-label')
-                .attr('x', -30)
-                .attr('y', -12)
-                .text(colorLabel);
-
-            const xScale = d3.scaleLinear();
-            const yScale = d3.scaleLinear();
-
-            const xAxis = d3.axisBottom(xScale);
-            const yAxis = d3.axisLeft(yScale);
-
-
-            let calcDeviation = function(orignalEl, finalOrder) {
-                return (orignalEl.OrderAmount - finalOrder) / finalOrder;
+        <script>
+        function myFunction() {
+            var x = document.getElementById("myTable");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
             }
+        }
+        </script>
 
-            let filterValues = data.filter((el) => {
-                return el.PeriodsBeforeDelivery == 0;
-            });
+        <script>
+        localforage.getItem("viz_data", function(error, data) {
+            data = JSON.parse(data);
 
-            console.log("Final Orders: ", filterValues);
-
-            let valueMap = new Map();
-
-            filterValues.forEach((val) => {
-                let keyString = val.ActualPeriod;
-                let valueString = val.OrderAmount;
-                valueMap.set(keyString, valueString);
-            });
-
-            console.log("Mapped final order array: ", valueMap);
-
-            let finalArray = data.map((el) => {
-                let deviation = calcDeviation(el, valueMap.get(el.ForecastPeriod))
-                return {
-                    ActualDate: el.ActualDate,
-                    ForecastDate: el.ForecastDate,
-                    ActualPeriod: el.ActualPeriod,
-                    ForecastPeriod: el.ForecastPeriod,
-                    OrderAmount: el.OrderAmount,
-                    Product: el.Product,
-                    FinalOrder: valueMap.get(el.ForecastPeriod),
-                    PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                    Deviation: deviation.toFixed(2)
+                const xValue = d => d.PeriodsBeforeDelivery;
+                const xLabel = 'Periods Before Delivery';
+                const yValue = d => d.Deviation * 100;
+                const yLabel = 'Deviation';
+                const colorValue = d => d.ActualPeriod;
+                const colorLabel = 'Actual Period';
+                const margin = {
+                    left: 55,
+                    right: 25,
+                    top: 20,
+                    bottom: 30
                 };
-            })
-            console.log("FINAL Array with deviation: ", finalArray);
+                const legendOffset = 52;
 
-            var actuallist = dc.selectMenu("#actuallist"),
-                productChart = dc.selectMenu("#product"),
-                periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
-                visCount = dc.dataCount(".dc-data-count"),
-                forecastErrorChart = dc.scatterPlot("#scatter"),
-                visTable = dc.dataTable(".dc-data-table");
+                const svg = d3.select('svg');
+                const width = svg.attr('width');
+                const height = svg.attr('height');
+                const innerWidth = width - margin.left - margin.right - legendOffset;
+                const innerHeight = height - margin.top - margin.bottom - 35;
 
+                const g = svg.append('g')
+                    .attr('transform', `translate(${margin.left},${margin.top})`);
+                const xAxisG = g.append('g')
+                    .attr('transform', `translate(0, ${innerHeight})`);
+                const yAxisG = g.append('g');
+                const colorLegendG = g.append('g')
+                    .attr('transform', `translate(${innerWidth + 32}, 28)`)
+                    .attr('stroke', 'black')
+                    .attr('stroke-width', 0.5);
 
-            finalArray.forEach(function(d) {
-                d.ActualDate = new Date(d.ActualDate);
-            });
+                xAxisG.append('text')
+                    .attr('class', 'axis-label')
+                    .attr('x', innerWidth / 2)
+                    .attr('y', 41)
+                    .text(xLabel);
 
-            var ndx = crossfilter(finalArray);
-            var all = ndx.groupAll();
-            var actualPeriodDim = ndx.dimension(function(d) {
-                return +d.ActualPeriod;
-            });
-            var ndxDim = ndx.dimension(function(d) {
-                return [+d.PeriodsBeforeDelivery, +d.Deviation, +d.ActualPeriod];
-            });
-            var productDim = ndx.dimension(function(d) {
-                return d.Product;
-            });
-            var periodsBeforeDeliveryDim = ndx.dimension(function(d) {
-                return +d.PeriodsBeforeDelivery;
-            });
-            var forecastErrorDim = ndx.dimension(function(d) {
-                return +d.Deviation;
-            });
-            var dateDim = ndx.dimension(function(d) {
-                return +d.ActualDate;
-            });
-            console.log("final array: ", finalArray);
+                yAxisG.append('text')
+                    .attr('class', 'axis-label')
+                    .attr('x', -innerHeight / 2)
+                    .attr('y', -35)
+                    .attr('transform', `rotate(-90)`)
+                    .style('text-anchor', 'middle')
+                    .text(yLabel);
 
+                colorLegendG.append('text')
+                    .attr('class', 'legend-label')
+                    .attr('x', -30)
+                    .attr('y', -12)
+                    .text(colorLabel);
 
-            var actualPeriodGroup = actualPeriodDim.group();
-            var productGroup = productDim.group();
-            var ndxGroup = ndxDim.group().reduceSum(function(d) {
-                return +d.Deviation;
-            });
-            var forecastErrorGroup = forecastErrorDim.group(function(d) {
-                return d.Deviation;
-            });
-            var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
-            var dateGroup = dateDim.group();
-            console.log("ndxDim: ", ndxGroup.top(Infinity));
+                const xScale = d3.scaleLinear();
+                const yScale = d3.scaleLinear();
+
+                const xAxis = d3.axisBottom(xScale);
+                const yAxis = d3.axisLeft(yScale);
 
 
-            actuallist
-                .dimension(actualPeriodDim)
-                .group(actualPeriodGroup)
-                .multiple(true)
-                .numberVisible(15);
-            // .elasticX(true);
+                let calcDeviation = function(orignalEl, finalOrder) {
+                    return (orignalEl.OrderAmount - finalOrder) / finalOrder;
+                }
 
-            productChart
-                //.height(800)
-                .dimension(productDim)
-                .group(productGroup)
-                .multiple(true)
-                .numberVisible(15);
-
-            periodsBeforeDeliveryChart
-                .dimension(periodsBeforeDeliveryDim)
-                .group(periodsBeforeDeliveryGroup)
-                .multiple(true)
-                .numberVisible(15);
-            // .elasticX(true);
-            var plotColorMap = d3.scaleOrdinal(d3.schemeCategory10);
-
-            forecastErrorChart
-                .width(768)
-                .height(480)
-                .dimension(ndxDim)
-                .symbolSize(9)
-                .group(ndxGroup)
-                .data(function(group) {
-                    return group.all()
-                        .filter(function(d) {
-                            return d.key !== NaN || d.key !== Infinity || d.key !== undefined;
-                        });
-                })
-                // .excludedSize(2)
-                .excludedOpacity(0.5)
-                .keyAccessor(function(d) {
-                    return d.key[0];
-                })
-                .valueAccessor(function(d) {
-                    return d.key[1];
-                })
-                .colorAccessor(function(d) {
-                    return d.key[2];
-                })
-                .colors(function(colorKey) {
-                    return plotColorMap(colorKey);
-                })
-                .x(d3.scaleLinear().domain([0, 100]))
-                // .x(d3.scaleLinear().domain(d3.extent(finalArray, function(d){return d.PeriodsBeforeDelivery}))) 
-                // .brushOn(true)
-                .clipPadding(8)
-                .xAxisLabel("Periods Before Delivery")
-                .yAxisLabel("Deviation")
-                .renderTitle(true)
-                .title(function(d) {
-                    return [
-                        'Periods Before Delivery: ' + d.key[0],
-                        'Deviation: ' + d.key[1],
-                        'Actual Period: ' + d.key[2]
-                    ].join('\n');
-                })
-                .transitionDuration(500)
-                // .mouseZoomable(true)
-                .elasticX(true)
-                .elasticY(true);
-
-            forecastErrorChart.symbol(d3.symbolCircle);
-            forecastErrorChart.margins().left = 50;
-
-            visCount
-                .dimension(ndx)
-                .group(all);
-
-            visTable
-                .dimension(dateDim)
-                .group(function(d) {
-                    var format = d3.format('02d');
-                    return d.ActualDate.getFullYear() + '/' + format((d.ActualDate.getMonth() + 1));
-                })
-                .columns([
-                    "Product",
-                    "ActualPeriod",
-                    "ForecastPeriod",
-                    "PeriodsBeforeDelivery",
-                    "OrderAmount",
-                    "Deviation"
-                ]);
-
-
-            dc.renderAll();
-
-            const colorScale = d3.scaleOrdinal()
-                .range(d3.schemeCategory10);
-
-
-            const colorLegend = d3.legendColor()
-                .scale(colorScale)
-                .shape('circle');
-
-
-            var Deviation = function(d) {
-                return d.Deviation === (d.OrderAmount - d.FinalOrder) / d.FinalOrder;
-            };
-
-
-            xScale
-                .domain([
-                    d3.min([0, d3.min(finalArray, function(d) {
-                        return d.PeriodsBeforeDelivery
-                    })]),
-                    d3.max([0, d3.max(finalArray, function(d) {
-                        return d.PeriodsBeforeDelivery
-                    })])
-                ])
-                .range([0, innerWidth])
-                .nice();
-
-            yScale
-                .domain([
-                    d3.min(finalArray, function(d) {
-                        return (d.Deviation * 100)
-                    }),
-                    d3.max(finalArray, function(d) {
-                        return (d.Deviation * 100)
-                    })
-                ])
-                .range([innerHeight, 0])
-                .nice();
-
-            var circle = g.selectAll('circle').data(finalArray)
-                .enter().append('circle')
-
-                .attr('cx', d => xScale(xValue(d)))
-                .attr('cy', d => yScale(yValue(d)))
-                .attr('fill', d => colorScale(colorValue(d)))
-                .attr('fill-opacity', 1)
-                .attr('r', 8)
-                .attr('stroke', 'black')
-                .attr('stroke-width', 1)
-                .style("display", function(d) {
-                    return d.Deviation == NaN ? "none" : "NaN";
-                })
-
-                .on('mouseover', function(d) { // Tooltip
-                    d3.select(this)
-                        .transition()
-                        .duration(500)
-                        .style("opacity", 1)
-                        .attr('r', 10)
-                        .attr('stroke-width', 3)
-                })
-                .on('mouseout', function() {
-                    d3.select(this)
-                        .transition()
-                        .duration(500)
-                        .attr('r', 7)
-                        .attr('stroke-width', 1)
-                })
-                .append('title') // Tooltip
-                .text(function(d) {
-                    return d.Product +
-                        '\nDeviation: ' + d.Deviation +
-                        '\nActual Period: ' + d.ActualPeriod +
-                        '\nForecast Period: ' + d.ForecastPeriod +
-                        '\nPeriods Before Delivery: ' + d.PeriodsBeforeDelivery +
-                        '\nOrder Amount: ' + d.OrderAmount
-
+                let filterValues = data.filter((el) => {
+                    return el.PeriodsBeforeDelivery == 0;
                 });
 
-            xAxisG.call(xAxis);
-            yAxisG.call(yAxis);
-            colorLegendG.call(colorLegend)
-                .selectAll('.cell text')
-                .attr('dy', '0.1em');
+                console.log("Final Orders: ", filterValues);
+
+                let valueMap = new Map();
+
+                filterValues.forEach((val) => {
+                    let keyString = val.ActualPeriod;
+                    let valueString = val.OrderAmount;
+                    valueMap.set(keyString, valueString);
+                });
+
+                console.log("Mapped final order array: ", valueMap);
+
+                let finalArray = data.map((el) => {
+                    let deviation = calcDeviation(el, valueMap.get(el.ForecastPeriod))
+                    return {
+                        ActualDate: el.ActualDate,
+                        ForecastDate: el.ForecastDate,
+                        ActualPeriod: el.ActualPeriod,
+                        ForecastPeriod: el.ForecastPeriod,
+                        OrderAmount: el.OrderAmount,
+                        Product: el.Product,
+                        FinalOrder: valueMap.get(el.ForecastPeriod),
+                        PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                        Deviation: deviation.toFixed(2)
+                    };
+                })
+                console.log("FINAL Array with deviation: ", finalArray);
+
+                var forecastlist = dc.selectMenu("#forecastlist"),
+                    productChart = dc.selectMenu("#product"),
+                    periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
+                    visCount = dc.dataCount(".dc-data-count"),
+                    forecastErrorChart = dc.scatterPlot("#scatter"),
+                    visTable = dc.dataTable(".dc-data-table");
 
 
-            //  var margin = { top: 20, right: 25, bottom: 30, left: 55 },
-            //     width = 960 - margin.left - margin.right,
-            //     height = 590 - margin.top - margin.bottom - legendOffset;
+                finalArray.forEach(function(d) {
+                    d.ActualDate = new Date(d.ActualDate);
+                });
 
-            //  var x = d3.scaleLinear()
-            //     .domain([
-            //        d3.min([0, d3.min(finalArray, function (d) { return d.PeriodsBeforeDelivery })]),
-            //        d3.max([0, d3.max(finalArray, function (d) { return d.PeriodsBeforeDelivery })])
-            //     ])
-            //     .range([0, width])
-
-            //  var y = d3.scaleLinear()
-            //     .domain([
-            //        d3.min([0, d3.min(finalArray, function (d) { return (d.Deviation * 100) })]),
-            //        d3.max([0, 100])
-            //     ])
-            //     .range([height, 0])
-
-            //  var ActualPeriod = function (d) { return d.ActualPeriod; },
-            //     color = d3.scaleOrdinal(d3.schemeCategory10);
-
-            //     var xAxis = d3.axisBottom(x)
-            //         .ticks(10);
-
-            //     var yAxis = d3.axisLeft(y);
-
-            //  var svg = d3.select("body").append("svg")
-            //     .attr("width", width + margin.left + margin.right)
-            //     .attr("height", height + margin.top + margin.bottom + legendOffset)
-            //     .append("g")
-            //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                var ndx = crossfilter(finalArray);
+                var all = ndx.groupAll();
+                var forecastPeriodDim = ndx.dimension(function(d) {
+                    return +d.ForecastPeriod;
+                });
+                var ndxDim = ndx.dimension(function(d) {
+                    return [+d.PeriodsBeforeDelivery, +d.Deviation, +d.ActualPeriod];
+                });
+                var productDim = ndx.dimension(function(d) {
+                    return d.Product;
+                });
+                var periodsBeforeDeliveryDim = ndx.dimension(function(d) {
+                    return +d.PeriodsBeforeDelivery;
+                });
+                var forecastErrorDim = ndx.dimension(function(d) {
+                    return +d.Deviation;
+                });
+                var dateDim = ndx.dimension(function(d) {
+                    return +d.ActualDate;
+                });
+                console.log("final array: ", finalArray);
 
 
-            //  // Circles
-            //  var circles = svg.selectAll('circle')
-            //     .data(finalArray)
-            //     .enter()
-            //     .append('circle')
-            //     .attr('cx', function (d) { return x(d.PeriodsBeforeDelivery) })
-            //     .attr('cy', function (d) { return y(d.Deviation * 100) })
-            //     .attr('r', '7')
-            //     .attr('stroke', 'black')
-            //     .attr('stroke-width', 1)
-            //     .attr('fill', function (d, i) { return color(ActualPeriod(d)); })
-
-            //     .on('mouseover', function (d) {  // Tooltip
-            //        d3.select(this)
-            //           .transition()
-            //           .duration(500)
-            //           .style("opacity", 1)
-            //           .attr('r', 10)
-            //           .attr('stroke-width', 3)
-            //     })
-            //     .on('mouseout', function () {
-            //        d3.select(this)
-            //           .transition()
-            //           .duration(500)
-            //           .attr('r', 7)
-            //           .attr('stroke-width', 1)
-            //     })
-            //     .append('title') // Tooltip
-
-            //     .text(function (d) {
-            //        return d.Product +
-            //           '\nDeviation: ' + d.Deviation +
-            //           '\nActual Period: ' + d.ActualPeriod +
-            //           '\nForecast Period: ' + d.ForecastPeriod +
-            //           '\nPeriods Before Delivery: ' + d.PeriodsBeforeDelivery +
-            //           '\nOrder Amount: ' + d.OrderAmount
-            //     })
+                var forecastPeriodGroup = forecastPeriodDim.group();
+                var productGroup = productDim.group();
+                var ndxGroup = ndxDim.group().reduceSum(function(d) {
+                    return +d.Deviation;
+                });
+                var forecastErrorGroup = forecastErrorDim.group(function(d) {
+                    return d.Deviation;
+                });
+                var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
+                var dateGroup = dateDim.group();
+                console.log("ndxDim: ", ndxGroup.top(Infinity));
 
 
-            //  svg.append("g")
-            //     .attr("class", "x axis")
-            //     .attr("transform", "translate(0," + height + ")")
-            //     .call(xAxis)
-            //     .append("text")
-            //     .attr("x", width-385)
-            //     .attr("y", 20)
-            //     .attr('dy', '1em')
-            //     .style("text-anchor", "middle")
-            //     .style("font-size","11px")
-            //     .style("stroke-width", "1px")
-            //     .text("Periods Before Delivery")
+                forecastlist
+                    .dimension(forecastPeriodDim)
+                    .group(forecastPeriodGroup)
+                    .multiple(true)
+                    .numberVisible(15);
+                // .elasticX(true);
 
-            // svg.append("text")
-            // .attr("x", width-385)
-            //     .attr("y", 415)
-            //     .attr("dy", "1em")
-            //     .style("text-anchor", "middle")
-            //     .text("Periods Before Delivery");
+                productChart
+                    //.height(800)
+                    .dimension(productDim)
+                    .group(productGroup)
+                    .multiple(true)
+                    .numberVisible(15);
+
+                periodsBeforeDeliveryChart
+                    .dimension(periodsBeforeDeliveryDim)
+                    .group(periodsBeforeDeliveryGroup)
+                    .multiple(true)
+                    .numberVisible(15);
+                // .elasticX(true);
+                var plotColorMap = d3.scaleOrdinal(d3.schemeCategory10);
+
+                forecastErrorChart
+                    .width(768)
+                    .height(480)
+                    .dimension(ndxDim)
+                    .symbolSize(10)
+                    .group(ndxGroup)
+                    .data(function(group) {
+                        return group.all()
+                            .filter(function(d) {
+                                return d.key !== NaN || d.key !== Infinity || d.key !==
+                                    undefined;
+                            });
+                    })
+                    // .excludedSize(2)
+                    .excludedOpacity(0.5)
+                    .keyAccessor(function(d) {
+                        return d.key[0];
+                    })
+                    .valueAccessor(function(d) {
+                        return d.key[1];
+                    })
+                    .colorAccessor(function(d) {
+                        return d.key[2];
+                    })
+                    .colors(function(colorKey) {
+                        return plotColorMap(colorKey);
+                    })
+                    .x(d3.scaleLinear().domain([0, 100]))
+                    // .x(d3.scaleLinear().domain(d3.extent(finalArray, function(d){return d.PeriodsBeforeDelivery}))) 
+                    // .brushOn(true)
+                    .clipPadding(8)
+                    .xAxisLabel("Periods Before Delivery")
+                    .yAxisLabel("Deviation")
+                    .renderTitle(true)
+                    .title(function(d) {
+                        return [
+                            'Periods Before Delivery: ' + d.key[0],
+                            'Deviation: ' + d.key[1],
+                            'Actual Period: ' + d.key[2]
+                        ].join('\n');
+                    })
+                    .transitionDuration(500)
+                    // .mouseZoomable(true)
+                    .elasticX(true)
+                    .elasticY(true)
+                    .xAxis().tickFormat(d3.format('d'));
+
+                forecastErrorChart.symbol(d3.symbolCircle);
+                forecastErrorChart.margins().left = 50;
+
+                visCount
+                    .dimension(ndx)
+                    .group(all);
+
+                visTable
+                    .dimension(dateDim)
+                    .group(function(d) {
+                        var format = d3.format('02d');
+                        return d.ActualDate.getFullYear() + '/' + format((d.ActualDate.getMonth() +
+                            1));
+                    })
+                    .columns([
+                        "Product",
+                        "ActualPeriod",
+                        "ForecastPeriod",
+                        "PeriodsBeforeDelivery",
+                        "OrderAmount",
+                        "Deviation"
+                    ]);
 
 
-            //  svg.append("g")
-            //     .attr("class", "y axis")
-            //     .call(yAxis)
-            //     .append("text")
-            //     .attr("class", "label")
-            //     .attr("transform", "rotate(-90)")
-            //     .attr("x", -160)
-            //     .attr("y", -79)
-            //     .attr("dy", "3.9em")
-            //     .style("text-anchor", "middle")
-            //     .style("font-size","11px")
-            //     .style("stroke-width", "1px")
-            //     .text("Deviation (%)")
+                dc.renderAll();
 
-            //     svg.append("text")
-            //     .attr("x", -160)
-            //     .attr("y", -79)
-            //     .attr("dy", "3.9em")
-            //     .attr("transform", "rotate(-90)")
-            //     .style("text-anchor", "middle")
-            //     .text("Deviation (%)");
-
-            //     var svg = d3.select("#new_legend")
-
-            //     svg.append("circle").attr("cx",70).attr("cy",15).attr("r", 6).data(color.domain())
-            //     svg.append("circle").attr("cx",180).attr("cy",15).attr("r", 6).data(color.domain())
-
-            //     //svg.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#404080")
-            //     svg.append("text").attr("x", 90).attr("y", 15).text("Final Order").style("font-size", "15px").attr("alignment-baseline","middle")
-            //     svg.append("text").attr("x", 200).attr("y", 15).text("Forecast Order").style("font-size", "15px").attr("alignment-baseline","middle")
+                const colorScale = d3.scaleOrdinal()
+                    .range(d3.schemeCategory10);
 
 
+                const colorLegend = d3.legendColor()
+                    .scale(colorScale)
+                    .shape('circle');
 
 
-            //  var legend = svg.selectAll(".legend")
-            //     .data(color.domain())
-            //     .enter().append("g")
-            //     .attr("class", "legend")
-            //     .attr("transform", function (d, i) {
-            //        return "translate(" + (- width + margin.left + margin.right + i * 80)           // x Position
-            //           + "," + (height + 47) + ")";
-            //     });                                           // y Position
+                var Deviation = function(d) {
+                    return d.Deviation === (d.OrderAmount - d.FinalOrder) / d.FinalOrder;
+                };
 
-            //  legend.append("rect")
-            //     .attr("x", width - 70)
-            //     .attr("y", 7)
-            //     .attr("width", 10)
-            //     .attr("height", 10)
-            //     .style("opacity", 1)
-            //     .style("fill", color);
 
-            //  legend.append("text")
-            //     .attr("x", width -45)
-            //     .attr("y", 0)
-            //     .attr("yAxis", ".15em")
-            //     .style("text-anchor", "end")
-            //     .text(function (d) { return 'AP' + d; });
+                xScale
+                    .domain([
+                        d3.min([0, d3.min(finalArray, function(d) {
+                            return d.PeriodsBeforeDelivery
+                        })]),
+                        d3.max([0, d3.max(finalArray, function(d) {
+                            return d.PeriodsBeforeDelivery
+                        })])
+                    ])
+                    .range([0, innerWidth])
+                    .nice();
 
-            //      localforage.setItem ('deviation', 'finalArray');
-            //     // console.log( JSON.parse( localforage.getItem( 'deviation' ) ) );
+                yScale
+                    .domain([
+                        d3.min(finalArray, function(d) {
+                            return (d.Deviation * 100)
+                        }),
+                        d3.max(finalArray, function(d) {
+                            return (d.Deviation * 100)
+                        })
+                    ])
+                    .range([innerHeight, 0])
+                    .nice();
 
-        });
-    });
-    </script>
+                var circle = g.selectAll('circle').data(finalArray)
+                    .enter().append('circle')
 
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
-        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
-    </script>
-    <script src="/lib/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
-    </script>
+                    .attr('cx', d => xScale(xValue(d)))
+                    .attr('cy', d => yScale(yValue(d)))
+                    .attr('fill', d => colorScale(colorValue(d)))
+                    .attr('fill-opacity', 1)
+                    .attr('r', 8)
+                    .attr('stroke', 'black')
+                    .attr('stroke-width', 1)
+                    .style("display", function(d) {
+                        return d.Deviation == NaN ? "none" : "NaN";
+                    })
+
+                    .on('mouseover', function(d) { // Tooltip
+                        d3.select(this)
+                            .transition()
+                            .duration(500)
+                            .style("opacity", 1)
+                            .attr('r', 10)
+                            .attr('stroke-width', 3)
+                    })
+                    .on('mouseout', function() {
+                        d3.select(this)
+                            .transition()
+                            .duration(500)
+                            .attr('r', 7)
+                            .attr('stroke-width', 1)
+                    })
+                    .append('title') // Tooltip
+                    .text(function(d) {
+                        return d.Product +
+                            '\nDeviation: ' + d.Deviation +
+                            '\nActual Period: ' + d.ActualPeriod +
+                            '\nForecast Period: ' + d.ForecastPeriod +
+                            '\nPeriods Before Delivery: ' + d.PeriodsBeforeDelivery +
+                            '\nOrder Amount: ' + d.OrderAmount
+
+                    });
+
+                xAxisG.call(xAxis);
+                yAxisG.call(yAxis);
+                colorLegendG.call(colorLegend)
+                    .selectAll('.cell text')
+                    .attr('dy', '0.1em');
+
+
+                //  var margin = { top: 20, right: 25, bottom: 30, left: 55 },
+                //     width = 960 - margin.left - margin.right,
+                //     height = 590 - margin.top - margin.bottom - legendOffset;
+
+                //  var x = d3.scaleLinear()
+                //     .domain([
+                //        d3.min([0, d3.min(finalArray, function (d) { return d.PeriodsBeforeDelivery })]),
+                //        d3.max([0, d3.max(finalArray, function (d) { return d.PeriodsBeforeDelivery })])
+                //     ])
+                //     .range([0, width])
+
+                //  var y = d3.scaleLinear()
+                //     .domain([
+                //        d3.min([0, d3.min(finalArray, function (d) { return (d.Deviation * 100) })]),
+                //        d3.max([0, 100])
+                //     ])
+                //     .range([height, 0])
+
+                //  var ActualPeriod = function (d) { return d.ActualPeriod; },
+                //     color = d3.scaleOrdinal(d3.schemeCategory10);
+
+                //     var xAxis = d3.axisBottom(x)
+                //         .ticks(10);
+
+                //     var yAxis = d3.axisLeft(y);
+
+                //  var svg = d3.select("body").append("svg")
+                //     .attr("width", width + margin.left + margin.right)
+                //     .attr("height", height + margin.top + margin.bottom + legendOffset)
+                //     .append("g")
+                //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+                //  // Circles
+                //  var circles = svg.selectAll('circle')
+                //     .data(finalArray)
+                //     .enter()
+                //     .append('circle')
+                //     .attr('cx', function (d) { return x(d.PeriodsBeforeDelivery) })
+                //     .attr('cy', function (d) { return y(d.Deviation * 100) })
+                //     .attr('r', '7')
+                //     .attr('stroke', 'black')
+                //     .attr('stroke-width', 1)
+                //     .attr('fill', function (d, i) { return color(ActualPeriod(d)); })
+
+                //     .on('mouseover', function (d) {  // Tooltip
+                //        d3.select(this)
+                //           .transition()
+                //           .duration(500)
+                //           .style("opacity", 1)
+                //           .attr('r', 10)
+                //           .attr('stroke-width', 3)
+                //     })
+                //     .on('mouseout', function () {
+                //        d3.select(this)
+                //           .transition()
+                //           .duration(500)
+                //           .attr('r', 7)
+                //           .attr('stroke-width', 1)
+                //     })
+                //     .append('title') // Tooltip
+
+                //     .text(function (d) {
+                //        return d.Product +
+                //           '\nDeviation: ' + d.Deviation +
+                //           '\nActual Period: ' + d.ActualPeriod +
+                //           '\nForecast Period: ' + d.ForecastPeriod +
+                //           '\nPeriods Before Delivery: ' + d.PeriodsBeforeDelivery +
+                //           '\nOrder Amount: ' + d.OrderAmount
+                //     })
+
+
+                //  svg.append("g")
+                //     .attr("class", "x axis")
+                //     .attr("transform", "translate(0," + height + ")")
+                //     .call(xAxis)
+                //     .append("text")
+                //     .attr("x", width-385)
+                //     .attr("y", 20)
+                //     .attr('dy', '1em')
+                //     .style("text-anchor", "middle")
+                //     .style("font-size","11px")
+                //     .style("stroke-width", "1px")
+                //     .text("Periods Before Delivery")
+
+                // svg.append("text")
+                // .attr("x", width-385)
+                //     .attr("y", 415)
+                //     .attr("dy", "1em")
+                //     .style("text-anchor", "middle")
+                //     .text("Periods Before Delivery");
+
+
+                //  svg.append("g")
+                //     .attr("class", "y axis")
+                //     .call(yAxis)
+                //     .append("text")
+                //     .attr("class", "label")
+                //     .attr("transform", "rotate(-90)")
+                //     .attr("x", -160)
+                //     .attr("y", -79)
+                //     .attr("dy", "3.9em")
+                //     .style("text-anchor", "middle")
+                //     .style("font-size","11px")
+                //     .style("stroke-width", "1px")
+                //     .text("Deviation (%)")
+
+                //     svg.append("text")
+                //     .attr("x", -160)
+                //     .attr("y", -79)
+                //     .attr("dy", "3.9em")
+                //     .attr("transform", "rotate(-90)")
+                //     .style("text-anchor", "middle")
+                //     .text("Deviation (%)");
+
+                //     var svg = d3.select("#new_legend")
+
+                //     svg.append("circle").attr("cx",70).attr("cy",15).attr("r", 6).data(color.domain())
+                //     svg.append("circle").attr("cx",180).attr("cy",15).attr("r", 6).data(color.domain())
+
+                //     //svg.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#404080")
+                //     svg.append("text").attr("x", 90).attr("y", 15).text("Final Order").style("font-size", "15px").attr("alignment-baseline","middle")
+                //     svg.append("text").attr("x", 200).attr("y", 15).text("Forecast Order").style("font-size", "15px").attr("alignment-baseline","middle")
+
+
+
+
+                //  var legend = svg.selectAll(".legend")
+                //     .data(color.domain())
+                //     .enter().append("g")
+                //     .attr("class", "legend")
+                //     .attr("transform", function (d, i) {
+                //        return "translate(" + (- width + margin.left + margin.right + i * 80)           // x Position
+                //           + "," + (height + 47) + ")";
+                //     });                                           // y Position
+
+                //  legend.append("rect")
+                //     .attr("x", width - 70)
+                //     .attr("y", 7)
+                //     .attr("width", 10)
+                //     .attr("height", 10)
+                //     .style("opacity", 1)
+                //     .style("fill", color);
+
+                //  legend.append("text")
+                //     .attr("x", width -45)
+                //     .attr("y", 0)
+                //     .attr("yAxis", ".15em")
+                //     .style("text-anchor", "end")
+                //     .text(function (d) { return 'AP' + d; });
+
+
+            });
+    
+        </script>
+
+        <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+            integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
+        </script>
+        <script src="/lib/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
+        </script>
 
 </body>
 

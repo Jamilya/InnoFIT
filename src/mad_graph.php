@@ -88,6 +88,16 @@ else {
     .tick line {
         stroke: #C0C0BB;
     }
+
+    .info-container {
+        display: inline-block;
+        width: calc(100% + -50px);
+        vertical-align: middle;
+    }
+
+    .customContainer {
+        padding: 0 2% 0 2%;
+    }
     </style>
     <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script> -->
 
@@ -108,7 +118,7 @@ else {
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
-                <li><a href="./configuration.php">Configuration</a></li>
+                    <li><a href="./configuration.php">Configuration</a></li>
                     <!--  <li class="nav-item">
                         <a class="nav-link" href="index.php">Home</a>
                     </li > -->
@@ -120,7 +130,7 @@ else {
                         <ul class="dropdown-menu">
                             <li><a href="./finalorder.php">Final Order Amount</a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans</a></li>
-                            <li><a href="./forecasterror.php">Forecast Error</a></li>
+                            <li><a href="./forecasterror.php">Percentage Error</a></li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Error Measures</li>
                             <li class="active"><a href="./mad_graph.php">Mean Absolute Deviation (MAD) <span
@@ -248,69 +258,88 @@ else {
         <!--/.container-fluid -->
     </nav>
 
-    <div style="padding-left:39px">
-        <h3>Mean Absolute Deviation (MAD) Graph</h3>
-        <small>
-            <?php
+    <div class="customContainer">
+        <div class="row" style="margin-bottom: -2%;">
+            <div class="col-md-10">
+                <h3>Mean Absolute Deviation (MAD) Graph</h3>
+                <small>
+                    <?php
             echo "You are logged in as: ";
             print_r($_SESSION["session_username"]);
             echo ".";
             ?></small>
-        <br>
-
-        <br>
-        <p><b> Graph Description: </b>This graph shows calculation of the Mean Absolute Deviation (MAD) of customer
-            orders with respect to periods before delivery (PBD). The mean absolute deviation describes the absolute
-            average error between the forecasted and the final order amounts.
-            <br>The formula of the MAD: <img
-                src="https://latex.codecogs.com/gif.latex?MAD_{j} = \frac{1}{n}\sum_{i=1}^{n}{\left | x_{i,j}-x_{i,0} \right |}"
-                title="MAD_formula" />. </p>
-    </div>
-
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script> -->
-
-    <div style="padding-left:39px">
-        <div id="scatter">
-            <!-- <p style="text-align:center;"><strong>MAD graph</strong></p> -->
-            <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
-            <a class="reset" href="javascript:MADchart.filterAll(); dc.redrawAll();" style="display: none;">reset</a>
-            <div class="clearfix"></div>
+                <br>
+            </div>
+            <div class="col-md-2">
+                <div class="alert alert-info" style="text-align: center" role="info">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-info" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-info"
+                                role="info">Filters are applied!</span>
+                        </div>
+                        <div class="row">
+                            <span style="font-size: 12px; vertical-align: middle;" class="alert-info" role="info"> To
+                                change settings please visit <a href="./configuration.php">Configuration</a>.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="forecastlist">
+
+        <div class="row">
+            <div class="col-md-12">
+                <br />
+                <p><b> Graph Description: </b>This graph shows calculation of the Mean Absolute Deviation (MAD) of
+                    customer
+                    orders with respect to periods before delivery (PBD). The mean absolute deviation describes the
+                    absolute
+                    average error between the forecasted and the final order amounts.
+                    <br>The formula of the MAD: <img
+                        src="https://latex.codecogs.com/gif.latex?MAD_{j} = \frac{1}{n}\sum_{i=1}^{n}{\left | x_{i,j}-x_{i,0} \right |}"
+                        title="MAD_formula" />. </p>
+            </div>
+        </div>
+
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script> -->
+
+        <div class="row">
+            <div id="scatter">
+                <a class="reset" href="javascript:MADchart.filterAll(); dc.redrawAll();"
+                    style="display: none;">reset</a>
+                <div class="clearfix"></div>
+            </div>
+            <!-- <div id="forecastlist">
             <p style="text-align:center;"> <strong>Due date </strong></p>
-            <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
-            <!-- <a class="reset" href="javascript:forecastlist.filterAll();dc.redrawAll();" style="display: none;">reset</a> -->
             <div class="clearfix"></div>
-        </div>
-        <div id="daySelectionDiv"></div>
+        </div> -->
+            <div id="daySelectionDiv"></div>
 
-        <div id="productlist">
+            <!-- <div id="productlist">
             <p style="text-align:center;"><strong>Product</strong></p>
-            <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
-            <!-- <a class="reset" href="javascript:productlist.filterAll();dc.redrawAll();" style="display: none;">reset</a> -->
             <div class="clearfix"></div>
-        </div>
+        </div> -->
 
-        <div id="pbd">
-            <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
-            <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
-            <!-- <a class="reset" href="javascript:periodsBeforeDeliveryChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a> -->
-        </div>
-        <div style="clear: both"></div>
+            <div id="pbd">
+                <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
+            </div>
+            <div style="clear: both"></div>
 
-        <div>
-            <div class="dc-data-count">
-                <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
-                    href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
-            </div><br /><br />
-            <button onclick="myFunction()">Data table display</button>
-            <table class="table table-hover dc-data-table" id="myTable" style="display:none">
-            </table>
-        </div>
+            <div>
+                <div class="dc-data-count">
+                    <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
+                        href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
+                </div><br /><br />
+                <button onclick="myFunction()">Data table display</button>
+                <table class="table table-hover dc-data-table" id="myTable" style="display:none">
+                </table>
+            </div>
 
-        <div id="test"></div> <br />
-        <svg width="960" height="500"></svg></br>
+            <svg width="960" height="500"></svg></br>
+        </div>
     </div>
+
     <script>
     function myFunction() {
         var x = document.getElementById("myTable");
@@ -324,7 +353,7 @@ else {
     <script>
     const xValue = d => d.PeriodsBeforeDelivery;
     const xLabel = 'Periods Before Delivery';
-    const yValue = d => d.MeanOfThisPeriod;
+    const yValue = d => d.MAD;
     const yLabel = 'MAD';
     const colorValue = d => d.Product;
     const colorLabel = '';
@@ -384,7 +413,7 @@ else {
         .ticks(11);
 
     localforage.getItem("viz_data", function(error, data) {
-       data = JSON.parse(data);
+        data = JSON.parse(data);
 
         var forecastlist = dc.selectMenu("#forecastlist"),
             // productChart = dc.pieChart("#product"),
@@ -401,12 +430,12 @@ else {
         let finalOrder = data.filter((el) => {
             return el.PeriodsBeforeDelivery == 0;
         });
-        console.log("FINAL Orders array: ", finalOrder);
+        // console.log("FINAL Orders array: ", finalOrder);
 
         let uniqueArray = data.filter(function(obj) {
             return finalOrder.indexOf(obj) == -1;
         });
-        console.log("Unique array: ", uniqueArray);
+        // console.log("Unique array: ", uniqueArray);
 
         let valueMap = new Map();
         finalOrder.forEach((val) => {
@@ -414,7 +443,7 @@ else {
             let valueString = val.OrderAmount;
             valueMap.set(keyString, valueString);
         });
-        console.log("valueMap: ", valueMap);
+        // console.log("valueMap: ", valueMap);
 
         let absValuesArray = uniqueArray.map((el) => {
             let value = absDiff(el, valueMap.get(el.ForecastPeriod));
@@ -437,7 +466,7 @@ else {
                 return d.PeriodsBeforeDelivery
             })
             .entries(absValuesArray);
-        console.log("Abs values array: ", seperatedByPeriods);
+        // console.log("Abs values array: ", seperatedByPeriods);
 
         let bubu = seperatedByPeriods.map((el) => {
             for (i = 0; i < seperatedByPeriods.length; i++) {
@@ -452,7 +481,7 @@ else {
                     ForecastPeriod: el.values[i].ForecastPeriod,
                     OrderAmount: el.values[i].OrderAmount,
                     PeriodsBeforeDelivery: el.key,
-                    MeanOfThisPeriod: meanValue
+                    MAD: meanValue
                 };
             }
 
@@ -468,7 +497,7 @@ else {
             return +d.ForecastPeriod;
         });
         var ndxDim = ndx.dimension(function(d) {
-            return [+d.PeriodsBeforeDelivery, +d.MeanOfThisPeriod, +d.Product];
+            return [+d.PeriodsBeforeDelivery, +d.MAD, +d.Product];
         });
         var productDim = ndx.dimension(function(d) {
             return d.Product;
@@ -484,7 +513,7 @@ else {
         var forecastPeriodGroup = forecastPeriodDim.group();
         var productGroup = productDim.group();
         var ndxGroup = ndxDim.group().reduceSum(function(d) {
-            return +d.MeanOfThisPeriod;
+            return +d.MAD;
         });
         // var orderGroup = orderDim.group(function(d) { return +d.OrderAmount;});
         var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
@@ -527,7 +556,7 @@ else {
             .width(768)
             .height(480)
             .dimension(ndxDim)
-            .symbolSize(9)
+            .symbolSize(10)
             .group(ndxGroup)
             .data(function(group) {
                 return group.all()
@@ -535,8 +564,6 @@ else {
                         return d.key !== NaN;
                     });
             })
-            // .renderHorizontalGridLines(true)
-            // .renderVerticalGridLines(true)
             .excludedSize(2)
             .excludedOpacity(0.5)
             // .keyAccessor(function (d) { return d.key[0]; })
@@ -564,7 +591,8 @@ else {
                 ].join('\n');
             })
             .elasticX(true)
-            .elasticY(true);
+            .elasticY(true)
+            .xAxis().tickFormat(d3.format('d'));
         // console.log('ndxgroup data:', ndxDim);
 
 
@@ -585,11 +613,8 @@ else {
             })
             .columns([
                 "Product",
-                "ActualPeriod",
-                "ForecastPeriod",
                 "PeriodsBeforeDelivery",
-                "OrderAmount",
-                "MeanOfThisPeriod"
+                "MAD"
             ]);
 
         dc.renderAll();
@@ -611,10 +636,10 @@ else {
         yScale
             .domain([
                 d3.min([0, d3.min(bubu, function(d) {
-                    return (d.MeanOfThisPeriod)
+                    return (d.MAD)
                 })]),
                 d3.max([0, d3.max(bubu, function(d) {
-                    return (d.MeanOfThisPeriod + 1)
+                    return (d.MAD + 1)
                 })])
             ])
             .range([innerHeight, 0])
@@ -635,7 +660,7 @@ else {
             .attr('stroke', 'black')
             .attr('stroke-width', 1)
             .style("display", function(d) {
-                return d.MeanOfThisPeriod == undefined ? "none" : undefined;
+                return d.MAD == undefined ? "none" : undefined;
             })
             .on('mouseover', function(d) { // Tooltip
                 d3.select(this)
@@ -656,14 +681,14 @@ else {
 
             .text(function(d) {
                 return ' Periods Before Delivery: ' + d.PeriodsBeforeDelivery +
-                    '\nMAD of the period: ' + d.MeanOfThisPeriod
+                    '\nMAD of the period: ' + d.MAD
             });
 
         xAxisG.call(xAxis);
         yAxisG.call(yAxis);
-        colorLegendG.call(colorLegend)
-            .selectAll('.cell text')
-            .attr('dy', '0.1em');
+        // colorLegendG.call(colorLegend)
+        //     .selectAll('.cell text')
+        //     .attr('dy', '0.1em');
 
 
         //console.log(data);

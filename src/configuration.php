@@ -86,7 +86,10 @@ else {
     }
 
     .irs-handle,
-    .irs-bar, .irs-single, .irs-from:before, .irs-to:before,
+    .irs-bar,
+    .irs-single,
+    .irs-from:before,
+    .irs-to:before,
     .irs--flat {
         cursor: pointer;
         border-top-color: #336699 !important;
@@ -103,8 +106,8 @@ else {
         font-size: 12px;
     }
 
-    .irs-handle, .irs--flat .irs-handle {
-        background-color: #336699 !important;
+    .irs-handle,
+    .irs--flat .irs-handle {
         width: 15px;
         height: 30px;
         left: -.6em;
@@ -146,7 +149,7 @@ else {
                         <ul class="dropdown-menu">
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
-                            <li><a href="./forecasterror.php">Forecast Error</a></li>
+                            <li><a href="./forecasterror.php">Percentage Error</a></li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
@@ -239,11 +242,11 @@ else {
         </div><br><br><br>
         <div class="row">
             <div class="col-md-12">
-            <h3>Product Selection</h3>
-               <p>Please select the product or products you want to visualize   </p>    <br />
+                <h3>Product Selection</h3>
+                <p>Please select the product or products you want to visualize </p> <br />
                 <select name=productsList[] id="products" class="form-control" multiple="multiple" size="5">
 
-                    <option value="">- Select -</option>
+                    <option value="">- Select None -</option>
                     <!-- <option value='1'>Software Development</option> -->
                 </select>
 
@@ -253,7 +256,8 @@ else {
         <div class="row" style="margin-top: 5%;">
             <div class="col-md-12">
                 <h3>Actual Date Slider</h3>
-                <p>Please select the Actual Date range here: the data will be filtered from the selected range onwards.</p>
+                <p>Please select the Actual Date range here: the data will be filtered from the selected range onwards.
+                </p>
                 <br />
                 <input id="actualDateSlider" type="text" class="js-range-slider" name="my_range" value="" />
             </div>
@@ -274,7 +278,7 @@ else {
     </div>
 
     <script>
-    let lang = "en-US";
+    let lang = "en-GB";
     let actualDateMinValue = 0;
     let actualDateMaxValue = 0;
     let forecastDateMinValue = 0;
@@ -282,15 +286,9 @@ else {
     let newProductList = [];
 
 
-    $(document).ready(function() {
-        $("button").click(function() {
+    // $(document).ready(function() {
 
-            $.each($(".form-control option:selected"), function() {
-                newProductList.push($(this).val());
-            }).get();
-            // alert("You have selected the country - " + countries.join(", "));
-        });
-    });
+    // });
 
     function dateToTS(date) {
         return date.valueOf();
@@ -306,7 +304,7 @@ else {
         });
     }
 
-    localforage.getItem('viz_data').then(function(data) {
+    localforage.getItem('all_data').then(function(data) {
         data = JSON.parse(data);
         console.log('ORIGINAL DATA', data);
 
@@ -316,19 +314,25 @@ else {
 
 
         // Get min and max ActualDate
-        const minADate = data.reduce((m, v, i) => (v.ActualDate < m.ActualDate) && i ? v : m).ActualDate;
-        console.log('Min ADate: ', minADate);
-        const maxADate = data.reduce((m, v, i) => (v.ActualDate > m.ActualDate) && i ? v : m).ActualDate;
-        console.log('Max ADate: ', maxADate);
+        const minADate = (data.reduce((m, v, i) => (v.ActualDate < m.ActualDate) && i ? v : m)
+            .ActualDate).slice(0, -9);
+        // console.log('Min ADate: ', minADate);
+        const maxADate = (data.reduce((m, v, i) => (v.ActualDate > m.ActualDate) && i ? v : m)
+            .ActualDate).slice(0, -9);
+        // console.log('Max ADate: ', maxADate);
 
         // Get min and max ForecastDate
-        const minFDate = data.reduce((m, v, i) => (v.ForecastDate < m.ForecastDate) && i ? v : m).ForecastDate;
-        console.log('Min FDate: ', minFDate);
-        const maxFDate = data.reduce((m, v, i) => (v.ForecastDate > m.ForecastDate) && i ? v : m).ForecastDate;
-        console.log('Max FDate: ', maxFDate);
+        const minFDate = (data.reduce((m, v, i) => (v.ForecastDate < m.ForecastDate) && i ? v : m)
+            .ForecastDate).slice(0, -9);
+        // console.log('Min FDate: ', minFDate);
+        const maxFDate = (data.reduce((m, v, i) => (v.ForecastDate > m.ForecastDate) && i ? v : m)
+            .ForecastDate).slice(0, -9);
+        // console.log('Max FDate: ', maxFDate);
 
         $("#actualDateSlider").ionRangeSlider({
             type: "double",
+            skin: 'round',
+            step: 86400000,
             min: dateToTS(new Date(minADate)),
             max: dateToTS(new Date(maxADate)),
             from: dateToTS(new Date(minADate)),
@@ -336,17 +340,19 @@ else {
             grid: true,
             prettify: tsToDate,
             onStart: function(data) {
-                actualDateMinValue = new Date(data.from);
-                actualDateMaxValue = new Date(data.to);
+                actualDateMinValue = data.from;
+                actualDateMaxValue = data.to;
             },
             onFinish: function(data) {
-                actualDateMinValue = new Date(data.from);
-                actualDateMaxValue = new Date(data.to);
+                actualDateMinValue = data.from;
+                actualDateMaxValue = data.to;
             },
         });
 
         $("#forecastDateSlider").ionRangeSlider({
             type: "double",
+            skin: 'round',
+            step: 86400000,
             min: dateToTS(new Date(minFDate)),
             max: dateToTS(new Date(maxFDate)),
             from: dateToTS(new Date(minFDate)),
@@ -354,12 +360,12 @@ else {
             grid: true,
             prettify: tsToDate,
             onStart: function(data) {
-                forecastDateMinValue = new Date(data.from);
-                forecastDateMaxValue = new Date(data.to);
+                forecastDateMinValue = data.from;
+                forecastDateMaxValue = data.to;
             },
             onFinish: function(data) {
-                forecastDateMinValue = new Date(data.from);
-                forecastDateMaxValue = new Date(data.to);
+                forecastDateMinValue = data.from;
+                forecastDateMaxValue = data.to;
             },
         });
 
@@ -369,30 +375,51 @@ else {
         }
         $("#products").append(options);
 
-        // newProductList = $('select[name="productsList[]"]').map(function() {
-        //     if ($(this).val())
-        //         return $(this).val();
-        // }).get();
+        d3.select('#btnApplyFilters').on('click', function(e) {
+            let productNames = $.map($(".form-control option:selected"), function(option) {
+                return option.value;
+            });
 
+            console.log('FILTERING STARTS HERE');
+            console.log('Filter Parameters: ');
+            console.log('Product Names', productNames);
+            console.log('actual Min Date: ', actualDateMinValue);
+            console.log('actual Max Date: ', actualDateMaxValue);
+            console.log('forecast Min Date: ', forecastDateMinValue);
+            console.log('forecast Max Date: ', forecastDateMaxValue);
 
-        // $("select option:selected").each(function() {
-        //     newProductList.push($(this).val());
-        // });
+            // 1. Filter by Product Name
+            let filteredByProduct = data;
+            if (productNames.length > 0 && productNames[0] !== "") {
+                filteredByProduct = data.filter(item => productNames.includes(item
+                    .Product));
+                console.log('Product: ', filteredByProduct);
+            }
+            // 2. Filter by Actual Date based on filtered product
+            let filteredByActualDate = filteredByProduct.filter((item) => {
+                const actualDateInt = new Date(item.ActualDate.slice(0, -9)).getTime();
 
+                return actualDateInt >= actualDateMinValue && actualDateInt <=
+                    actualDateMaxValue;
+            });
+            console.log('Product and Actual Date filter applied: ', filteredByActualDate);
 
-    });
+            // 3. Filter by Forecast Date based on filtered product and actual date
+            let filteredByForecastDate = filteredByActualDate.filter((item) => {
+                const forecastDateInt = new Date(item.ForecastDate.slice(0, -9)).getTime();
 
+                return forecastDateInt >= forecastDateMinValue && forecastDateInt <=
+                    forecastDateMaxValue;
+            });
 
-    d3.select('#btnApplyFilters').on('click', function(e) {
-        console.log('FILTERING STARTS HERE');
-        console.log('Filter Parameters: ');
-        console.log('actual Min Date: ', actualDateMinValue);
-        console.log('actual Max Date: ', actualDateMaxValue);
-        console.log('forecast Min Date: ', forecastDateMinValue);
-        console.log('forecast Max Date: ', forecastDateMaxValue);
-        console.log('selected products: ', newProductList);
+            console.log('Product, Actual Date and Forecast Date filters applied: ',
+                filteredByForecastDate);
 
-        Swal.fire('Your filters have been applied! Please Visit Visualizations');
+            productNames = [];
+            Swal.fire('Your filters have been applied! Please visit the Visualizations');
+            localforage.setItem('viz_data', JSON.stringify(filteredByForecastDate));
+        });
+
     });
     </script>
 

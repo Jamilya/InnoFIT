@@ -131,7 +131,7 @@ session_start();
                         <ul class="dropdown-menu">
                             <li><a href="src/finalorder.php">Final Order Amount </a></li>
                             <li><a href="src/deliveryplans.php">Delivery Plans </a></li>
-                            <li><a href="src/forecasterror.php">Forecast Error</a></li>
+                            <li><a href="src/forecasterror.php">Percentage Error</a></li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Error Measures</li>
                             <li><a href="src/mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
@@ -267,7 +267,7 @@ session_start();
             <h4 class="font-weight-light"><?php   echo "Dear ";
                     print_r($_SESSION["session_username"]);
                     echo ",";?></h2>
-                <p>Welcome to the Forecast Quality Visualization (ForeQuVis / InnoFitVis) Web-tool.
+                <p>Welcome to the Forecast Quality Visualization (InnoFitVis) Web-tool.
                     <b>Please upload the data in .csv format in the correct data structure</b></p>
                 <p>For instructions please follow the<mark> Configuration page.</mark> Happy exploring!</p>
 
@@ -358,8 +358,8 @@ if (isset($_POST["import"])) {
 
                 $actualDate = DateTime::createFromFormat("Y-m-d H:i:s", "$column[1]");
                 $forecastDate = DateTime::createFromFormat("Y-m-d H:i:s", "$column[2]");
-                $actualDate = date("Y-m-d H:i:s",strtotime('-20 minutes',strtotime("$column[1]")));
-                $forecastDate = date("Y-m-d H:i:s",strtotime('-16 minute',strtotime("$column[2]")));
+                $actualDate = date("Y-m-d H:i:s",strtotime('+20 minutes',strtotime("$column[1]")));
+                $forecastDate = date("Y-m-d H:i:s",strtotime('+20 minutes',strtotime("$column[2]")));
                 $newactualDate = date("Y-m-d H:i:s",strtotime($actualDate));
                 $newforecastDate = date("Y-m-d H:i:s",strtotime($forecastDate));
                 $pbdSubtr = 52;

@@ -43,7 +43,7 @@ else {
     }
 
     .dc-chart .axis text {
-        font: 12px sans-serif;
+        font: 11px sans-serif;
     }
 
     .dc-chart .brush rect.selection {
@@ -65,7 +65,7 @@ else {
     .tick text,
     .legendCells text {
         fill: #635F5D;
-        font-size: 12px;
+        font-size: 11px;
         font-family: sans-serif;
     }
 
@@ -87,9 +87,53 @@ else {
     .tick line {
         stroke: #C0C0BB;
     }
+    .info-container {
+        display: inline-block;
+        width: calc(100% + -50px);
+        vertical-align: middle;
+    }
+
+    .customContainer {
+        padding: 0 2% 0 2%;
+    }
+
+
+    a.gflag {
+        vertical-align: middle;
+        font-size: 16px;
+        padding: 1px 0;
+        background-repeat: no-repeat;
+        background-image: url(//gtranslate.net/flags/16.png);
+    }
+
+    a.gflag img {
+        border: 0;
+    }
+
+    a.gflag:hover {
+        background-image: url(//gtranslate.net/flags/16a.png);
+    }
+
+    #goog-gt-tt {
+        display: none !important;
+    }
+
+    .goog-te-banner-frame {
+        display: none !important;
+    }
+
+    .goog-te-menu-value:hover {
+        text-decoration: none !important;
+    }
+
+    body {
+        top: 0 !important;
+    }
+
+    #google_translate_element2 {
+        display: none !important;
+    }
     </style>
-
-
 
 </head>
 
@@ -120,7 +164,7 @@ else {
                             <li><a href="./finalorder.php">Final Order Amount</a></li>
                             <li class="active"><a href="./deliveryplans.php">Delivery Plans <span
                                         class="sr-only">(current)</span></a></li>
-                            <li><a href="./forecasterror.php">Forecast Error</a></li>
+                            <li><a href="./forecasterror.php">Percentage Error</a></li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
@@ -158,44 +202,6 @@ else {
                             onclick="doGTranslate('en|de');return false;" title="German" class="gflag nturl"
                             style="background-position:-300px -100px;"><img src="//gtranslate.net/flags/blank.png"
                                 height="12" width="12" alt="German" /></a>
-
-                        <style type="text/css">
-                        a.gflag {
-                            vertical-align: middle;
-                            font-size: 16px;
-                            padding: 1px 0;
-                            background-repeat: no-repeat;
-                            background-image: url(//gtranslate.net/flags/16.png);
-                        }
-
-                        a.gflag img {
-                            border: 0;
-                        }
-
-                        a.gflag:hover {
-                            background-image: url(//gtranslate.net/flags/16a.png);
-                        }
-
-                        #goog-gt-tt {
-                            display: none !important;
-                        }
-
-                        .goog-te-banner-frame {
-                            display: none !important;
-                        }
-
-                        .goog-te-menu-value:hover {
-                            text-decoration: none !important;
-                        }
-
-                        body {
-                            top: 0 !important;
-                        }
-
-                        #google_translate_element2 {
-                            display: none !important;
-                        }
-                        </style>
 
                         <div id="google_translate_element2"></div>
                         <script type="text/javascript">
@@ -249,128 +255,153 @@ else {
 
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script> -->
 
-    <div style="padding-left:39px">
-        <h3>Delivery plans</h3>
-        <small>
-            <?php
+    <div class="customContainer">
+        <div class="row" style="margin-bottom: -2%;">
+            <div class="col-md-10">
+                <h3>Delivery plans</h3>
+                <small>
+                    <?php
 		echo "You are logged in as: ";
 		print_r($_SESSION["session_username"]);
 		echo ".";
 		?></small>
-        <br><br>
-        <p> <b>Graph Description: </b>The graph shows the amount of Order Amounts for each forecast period.
-            <!-- <font color="orange">Orange-coloured circles </font> designate forecasted order amounts, and <font color="blue"> blue-coloured circles </font> designate final order amounts.</p> -->
-    </div>
-
-    <div style="padding-left:39px">
-        <div id="scatter">
-            <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
-            <a class="reset" href="javascript:DeliveryPlansChart.filterAll(); dc.redrawAll();"
-                style="display: none;">reset</a>
-            <div class="clearfix"></div>
-        </div>
-
-        <div id="forecastlist">
-            <p style="text-align:center;"> <strong>Due date </strong></p>
-            <div>
+                <br>
             </div>
-            <div class="clearfix"></div>
-        </div>
-
-        <div id="productlist">
-            <p style="text-align:center;"><strong>Product</strong></p>
-            <div>
+            <div class="col-md-2">
+                <div class="alert alert-info" style="text-align: center" role="info">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-info" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-info"
+                                role="info">Filters are applied!</span>
+                        </div>
+                        <div class="row">
+                            <span style="font-size: 12px; vertical-align: middle;" class="alert-info" role="info"> To
+                                change settings please visit <a href="./configuration.php">Configuration</a>.</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="clearfix"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <br />
+                <p> <b>Graph Description: </b>The graph presents the distribution of forecasted and final customer
+                    orders with respect to the due date.
+            </div>
         </div>
 
-        <div id="daySelectionDiv"></div>
-        <div id="pbd">
-            <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
-        </div>
-        <div style="clear: both"></div>
+        <div class="row">
+            <div id="scatter">
+                <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
+                <a class="reset" href="javascript:DeliveryPlansChart.filterAll(); dc.redrawAll();"
+                    style="display: none;">reset</a>
+                <div class="clearfix"></div>
+            </div>
 
-        <div>
-            <div class="dc-data-count">
-                <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
-                    href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
-            </div><br /><br />
-            <button onclick="myFunction()">Data table display</button>
-            <table class="table table-hover dc-data-table" id="myTable" style="display:none">
-            </table>
-        </div>
+            <div id="forecastlist">
+                <p style="text-align:center;"> <strong>Due date </strong></p>
+                <div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
 
-        <div id="test"></div>
-        <br />
+            <div id="productlist">
+                <p style="text-align:center;"><strong>Product</strong></p>
+                <div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
 
-        <svg width="960" height="480"></svg>
-        <div>
-            <svg id="new_legend" height=200 width=450></svg>
+            <div id="daySelectionDiv"></div>
+            <div id="pbd">
+                <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
+            </div>
+            <div style="clear: both"></div>
+
+            <div>
+                <div class="dc-data-count">
+                    <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
+                        href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
+                </div><br /><br />
+                <button onclick="myFunction()">Data table display</button>
+                <table class="table table-hover dc-data-table" id="myTable" style="display:none">
+                </table>
+            </div>
+
+            <!-- <div id="test">
+                <br />
+                <svg width="960" height="480"></svg>
+                <div><svg id="new_legend" height=200 width=450></svg></div>
+            </div> -->
         </div>
-    </div>
-    <script>
-    function myFunction() {
-        var x = document.getElementById("myTable");
-        if (x.style.display === "none") {
-            x.style.display = "block";
-        } else {
-            x.style.display = "none";
+        <script>
+        function myFunction() {
+            var x = document.getElementById("myTable");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
         }
-    }
-    </script>
+        </script>
 
-    <script>
-    localforage.getItem("viz_data", function(error, data) {
-        data = JSON.parse(data);
-        localforage.getItem("finalOrder", function(error, finalOrder) {
-            finalOrder = JSON.parse(finalOrder);
-            const xValue = d => d.ForecastPeriod;
-            const xLabel = 'Due Date';
-            const yValue = d => d.OrderAmount;
-            const yLabel = 'Order Amount (pcs)';
-            const colorValue = d => function(d) {
-                if (d.PeriodsBeforeDelivery == 0) return 0;
-                else return 1;
-            };
+        <script>
+        localforage.getItem("viz_data", function(error, data) {
+            data = JSON.parse(data);
+
+            let finalOrder = data.filter((el) => {
+                return el.PeriodsBeforeDelivery == 0;
+            });
+
+            // const xValue = d => d.ForecastPeriod;
+            // const xLabel = 'Due Date';
+            // const yValue = d => d.OrderAmount;
+            // const yLabel = 'Order Amount (pcs)';
+            // const colorValue = d => function(d) {
+            //     if (d.PeriodsBeforeDelivery == 0) return 0;
+            //     else return 1;
+            // };
             //   const colorValue = d => d.PeriodsBeforeDelivery;
-            const colorLabel = 'Orders';
+            // const colorLabel = 'Orders';
             const margin = {
                 left: 55,
                 right: 25,
                 top: 20,
                 bottom: 30
             };
-            const legendOffset = 57;
+            // const legendOffset = 57;
 
-            const svg = d3.select('svg');
-            const width = svg.attr('width');
-            const height = svg.attr('height');
-            const innerWidth = width - margin.left - margin.right - legendOffset;
-            const innerHeight = height - margin.top - margin.bottom - 20;
+            // const svg = d3.select('svg');
+            // const width = svg.attr('width');
+            // const height = svg.attr('height');
+            // const innerWidth = width - margin.left - margin.right - legendOffset;
+            // const innerHeight = height - margin.top - margin.bottom - 20;
 
-            const g = svg.append('g')
-                .attr('transform', `translate(${margin.left},${margin.top})`);
-            const xAxisG = g.append('g')
-                .attr('transform', `translate(0, ${innerHeight})`);
-            const yAxisG = g.append('g');
-            const colorLegendG = g.append('g')
-                .attr('transform', `translate(${innerWidth + 32}, 28)`)
-                .attr('stroke', 'black')
-                .attr('stroke-width', 0.5);
+            // const g = svg.append('g')
+            //     .attr('transform', `translate(${margin.left},${margin.top})`);
+            // const xAxisG = g.append('g')
+            //     .attr('transform', `translate(0, ${innerHeight})`);
+            // const yAxisG = g.append('g');
+            // const colorLegendG = g.append('g')
+            //     .attr('transform', `translate(${innerWidth + 32}, 28)`)
+            //     .attr('stroke', 'black')
+            //     .attr('stroke-width', 0.5);
 
-            xAxisG.append('text')
-                .attr('class', 'axis-label')
-                .attr('x', innerWidth / 2)
-                .attr('y', 41)
-                .text(xLabel);
+            // xAxisG.append('text')
+            //     .attr('class', 'axis-label')
+            //     .attr('x', innerWidth / 2)
+            //     .attr('y', 41)
+            //     .text(xLabel);
 
-            yAxisG.append('text')
-                .attr('class', 'axis-label')
-                .attr('x', -innerHeight / 2)
-                .attr('y', -35)
-                .attr('transform', `rotate(-90)`)
-                .style('text-anchor', 'middle')
-                .text(yLabel);
+            // yAxisG.append('text')
+            //     .attr('class', 'axis-label')
+            //     .attr('x', -innerHeight / 2)
+            //     .attr('y', -35)
+            //     .attr('transform', `rotate(-90)`)
+            //     .style('text-anchor', 'middle')
+            //     .text(yLabel);
 
             //   colorLegendG.append('text')
             //       .attr('class', 'legend-label')
@@ -378,13 +409,13 @@ else {
             //       .attr('y', -35)
             //       .text(colorLabel);
 
-            const xScale = d3.scaleLinear();
-            const yScale = d3.scaleLinear();
+            // const xScale = d3.scaleLinear();
+            // const yScale = d3.scaleLinear();
 
 
-            const xAxis = d3.axisBottom(xScale);
+            // const xAxis = d3.axisBottom(xScale);
 
-            const yAxis = d3.axisLeft(yScale);
+            // const yAxis = d3.axisLeft(yScale);
 
 
             //   const colorLegend = d3.legendColor()
@@ -406,6 +437,9 @@ else {
             data.forEach(function(d) {
                 d.ActualDate = new Date(d.ActualDate);
             });
+
+            // data = data.sort((a, b) => (a.PeriodsBeforeDelivery > b.PeriodsBeforeDelivery) ? -1 : 1);
+            // console.log('Data: ', data);
 
             var ndx = crossfilter(data);
             var all = ndx.groupAll();
@@ -477,7 +511,7 @@ else {
                 .width(768)
                 .height(480)
                 .dimension(ndxDim)
-                .symbolSize(9)
+                .symbolSize(10)
                 .group(ndxGroup)
                 .keyAccessor(function(d) {
                     return d.key[0];
@@ -487,10 +521,16 @@ else {
                 })
                 .colorAccessor(function(d) {
                     if (d.key[2] == 0) {
-                        // console.log('d', d);
+                        console.log('%c blue', 'background: blue');
                         return 0;
-                    } else return 1;
+                    } else {
+                        console.log('%c orange', 'background: orange');
+                        return 1;
+                    }
                     // return d.key[2];
+                })
+                .ordering(function(d) {
+                    return d.key[2]
                 })
                 .colors(function(colorKey) {
                     return plotColorMap[colorKey];
@@ -513,11 +553,19 @@ else {
                 })
                 .transitionDuration(500)
                 .elasticX(true)
-                .elasticY(true);
+                .elasticY(true)
+                .xAxis().tickFormat(d3.format('d'));
 
             // DeliveryPlansChart.symbol(d3.symbolDiamond);
-            DeliveryPlansChart.margins().left = 50;
-
+            // DeliveryPlansChart.margins().left = 50;
+            DeliveryPlansChart.symbol(function(d) {
+                if (d.key[2] == 0) {
+                    return d3.symbolStar;
+                } else {
+                    return d3.symbolCircle;
+                }
+            });
+            
             visCount
                 .dimension(ndx)
                 .group(all);
@@ -526,7 +574,8 @@ else {
                 .dimension(dateDim)
                 .group(function(d) {
                     var format = d3.format('02d');
-                    return d.ActualDate.getFullYear() + '/' + format((d.ActualDate.getMonth() + 1));
+                    return d.ActualDate.getFullYear() + '/' + format((d.ActualDate.getMonth() +
+                        1));
                 })
                 .columns([
                     "Product",
@@ -645,101 +694,100 @@ else {
             //         .style("text-anchor", "middle")
             //         .text("Order Quantity(pcs)");
 
-            xScale
-                .domain(d3.extent(data, function(d) {
-                    return d.ForecastPeriod
-                }))
-                .range([0, innerWidth])
-                .nice();
+            //     xScale
+            //         .domain(d3.extent(data, function(d) {
+            //             return d.ForecastPeriod
+            //         }))
+            //         .range([0, innerWidth])
+            //         .nice();
 
-            yScale
-                .domain([
-                    d3.min(data, function(d) {
-                        return (d.OrderAmount)
-                    }),
-                    d3.max(data, function(d) {
-                        return (d.OrderAmount)
-                    })
-                ])
-                .range([innerHeight, 0])
-                //.range([innerHeight, 0])
-                .nice();
+            //     yScale
+            //         .domain([
+            //             d3.min(data, function(d) {
+            //                 return (d.OrderAmount)
+            //             }),
+            //             d3.max(data, function(d) {
+            //                 return (d.OrderAmount)
+            //             })
+            //         ])
+            //         .range([innerHeight, 0])
+            //         //.range([innerHeight, 0])
+            //         .nice();
 
-            g.selectAll('circle').data(data)
-                .enter().append('circle')
-                .attr('cx', d => xScale(xValue(d)))
-                .attr('cy', d => yScale(yValue(d)))
-                .style("fill", function(d) {
-                    if (d.PeriodsBeforeDelivery == 0) {
-                        return "#8d2c4a"
-                    } else {
-                        return "#fa87ba"
-                    };
-                })
+            //     g.selectAll('circle').data(data)
+            //         .enter().append('circle')
+            //         .attr('cx', d => xScale(xValue(d)))
+            //         .attr('cy', d => yScale(yValue(d)))
+            //         .style("fill", function(d) {
+            //             if (d.PeriodsBeforeDelivery == 0) {
+            //                 return "#8d2c4a"
+            //             } else {
+            //                 return "#fa87ba"
+            //             };
+            //         })
 
-                .attr('fill-opacity', 1)
-                .attr('r', 8)
-                .attr('stroke', 'black')
-                .attr('stroke-width', 1)
-                .on('mouseover', function(d) { // Tooltip
-                    d3.select(this)
-                        .transition()
-                        .duration(500)
-                        .style("opacity", 1)
-                        .attr('r', 10)
-                        .attr('stroke-width', 3)
-                })
-                .on('mouseout', function() {
-                    d3.select(this)
-                        .transition()
-                        .duration(500)
-                        .attr('r', 7)
-                        .attr('stroke-width', 1)
-                })
-                .append('title') // Tooltip
-                .text(function(d) {
-                    return d.Product +
-                        '\nActual Period: ' + d.ActualPeriod +
-                        '\nDue date (Forecast Period): ' + d.ForecastPeriod +
-                        '\nPeriods Before Delivery: ' + d.PeriodsBeforeDelivery +
-                        '\nOrder Amount: ' + d.OrderAmount
-                });
+            //         .attr('fill-opacity', 1)
+            //         .attr('r', 8)
+            //         .attr('stroke', 'black')
+            //         .attr('stroke-width', 1)
+            //         .on('mouseover', function(d) { // Tooltip
+            //             d3.select(this)
+            //                 .transition()
+            //                 .duration(500)
+            //                 .style("opacity", 1)
+            //                 .attr('r', 10)
+            //                 .attr('stroke-width', 3)
+            //         })
+            //         .on('mouseout', function() {
+            //             d3.select(this)
+            //                 .transition()
+            //                 .duration(500)
+            //                 .attr('r', 7)
+            //                 .attr('stroke-width', 1)
+            //         })
+            //         .append('title') // Tooltip
+            //         .text(function(d) {
+            //             return d.Product +
+            //                 '\nActual Period: ' + d.ActualPeriod +
+            //                 '\nDue date (Forecast Period): ' + d.ForecastPeriod +
+            //                 '\nPeriods Before Delivery: ' + d.PeriodsBeforeDelivery +
+            //                 '\nOrder Amount: ' + d.OrderAmount
+            //         });
 
-            xAxisG.call(xAxis);
-            yAxisG.call(yAxis);
+            //     xAxisG.call(xAxis);
+            //     yAxisG.call(yAxis);
+            // });
+            // colorLegendG.call(colorLegend)
+            // .selectAll('.cell text')
+            // .attr('dy', '0.1em')
+            // .attr("x", 3);
+
+            // colorLegendG.call(colorLegend)
+            // .attr('class', 'legendCells')
+            // .selectAll('.cell text')
+            // .attr("x", -6)
+
+
+            // var svg = d3.select("#new_legend")
+            // svg.append("circle").attr("cx", 70).attr("cy", 15).attr("r", 6).style("fill", "#8d2c4a")
+            // svg.append("circle").attr("cx", 180).attr("cy", 15).attr("r", 6).style("fill", "#fa87ba")
+
+            // //svg.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#404080")
+            // svg.append("text").attr("x", 90).attr("y", 15).text("Final Order").style("font-size", "15px").attr(
+            //     "alignment-baseline", "middle")
+            // svg.append("text").attr("x", 200).attr("y", 15).text("Forecast Order").style("font-size", "15px")
+            //     .attr(
+            //         "alignment-baseline", "middle")
         });
+        </script>
 
-        // colorLegendG.call(colorLegend)
-        // .selectAll('.cell text')
-        // .attr('dy', '0.1em')
-        // .attr("x", 3);
-
-        // colorLegendG.call(colorLegend)
-        // .attr('class', 'legendCells')
-        // .selectAll('.cell text')
-        // .attr("x", -6)
-
-
-        var svg = d3.select("#new_legend")
-        svg.append("circle").attr("cx", 70).attr("cy", 15).attr("r", 6).style("fill", "#8d2c4a")
-        svg.append("circle").attr("cx", 180).attr("cy", 15).attr("r", 6).style("fill", "#fa87ba")
-
-        //svg.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#404080")
-        svg.append("text").attr("x", 90).attr("y", 15).text("Final Order").style("font-size", "15px").attr(
-            "alignment-baseline", "middle")
-        svg.append("text").attr("x", 200).attr("y", 15).text("Forecast Order").style("font-size", "15px").attr(
-            "alignment-baseline", "middle")
-
-    });
-    </script>
-
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
-        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
-    </script>
-    <script src="/lib/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
-    </script>
+        <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+            integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
+        </script>
+        <script src="/lib/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
+        </script>
 
 </body>
 

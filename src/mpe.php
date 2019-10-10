@@ -39,10 +39,11 @@ else {
     <style>
     body {
         margin: 0px;
+        /* font: 12px sans-serif; */
     }
 
     .dc-chart .axis text {
-        font: 12px sans-serif;
+        font: 11px sans-serif;
     }
 
     .dc-chart .brush rect.selection {
@@ -65,14 +66,14 @@ else {
     .tick text,
     .legendCells text {
         fill: #635F5D;
-        font-size: 12px;
+        font-size: 11px;
         font-family: sans-serif;
     }
 
     .axis-label,
     .legend-label {
         fill: #635F5D;
-        font-size: 12px;
+        font-size: 11px;
         font-family: sans-serif;
     }
 
@@ -154,7 +155,7 @@ else {
                         <ul class="dropdown-menu">
                             <li><a href="./finalorder.php">Final Order Amount</a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans</a></li>
-                            <li><a href="./forecasterror.php">Forecast Error</a></li>
+                            <li><a href="./forecasterror.php">Percentage Error</a></li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD)</a></li>
@@ -258,7 +259,7 @@ else {
             <br>The formula of the MPE is the following:
             <img src="https://latex.codecogs.com/gif.latex?MPE_{j} = \frac {\sum_{i=1}^{n}x_{i,j}-x_{i,0}}{\sum_{i=1}^{n}x_{i,0}}"
                 title="MPE formula" />
-        </p> 
+        </p>
     </div>
 
     <div style="padding-left:39px">
@@ -268,21 +269,16 @@ else {
             <!-- <a class="reset" href="javascript:MPEchart.filterAll(); dc.redrawAll();" style="display: none;">reset</a> -->
             <div class="clearfix"></div>
         </div>
-        <div id="forecastlist">
+        <!-- <div id="forecastlist">
             <p style="text-align:center;"> <strong>Due date </strong></p>
-            <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
-            <!-- <a class="reset" href="javascript:forecastlist.filterAll();dc.redrawAll();" style="display: none;">reset</a> -->
+            <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> 
+            <a class="reset" href="javascript:forecastlist.filterAll();dc.redrawAll();" style="display: none;">reset</a> 
             <div class="clearfix"></div>
-        </div>
-        <!-- <div style="clear: both"></div> -->
-        <!-- <div id="daySelectionDiv"></div> -->
-        <!-- <script type="text/javascript" src="../lib/js/header.js"></script> -->
-        <div id="productlist">
+        </div> -->
+        <!-- <div id="productlist">
             <p style="text-align:center;"><strong>Product</strong></p>
-            <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
-            <!-- <a class="reset" href="javascript:productlist.filterAll();dc.redrawAll();" style="display: none;">reset</a> -->
             <div class="clearfix"></div>
-        </div>
+        </div> -->
 
         <div id="daySelectionDiv"></div>
         <div id="pbd">
@@ -394,25 +390,113 @@ else {
     //   const colorLegend = d3.legendColor()
     //     .scale(colorScale)
     //     .shape('circle');
-    
+
     localforage.getItem("viz_data", function(error, data) {
         data = JSON.parse(data);
-        localforage.getItem("finalOrder", function(error, finalOrder) {
-            finalOrder = JSON.parse(finalOrder);
+
+        let finalOrder = data.filter((el) => {
+            return el.PeriodsBeforeDelivery == 0;
+        });
+
+        let calcDiff = function(orignalEl, finalOrder) {
+            return (orignalEl.OrderAmount - finalOrder);
+        }
+
+        let valueMap = new Map();
+        finalOrder.forEach((val) => {
+            let keyString = val.ActualPeriod;
+            let valueString = val.OrderAmount;
+            valueMap.set(keyString, valueString);
+        });
 
         let uniqueArray = data.filter(function(obj) {
             return finalOrder.indexOf(obj) == -1;
         });
-        
+        // console.log("Unique array: ", uniqueArray);
 
-        let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-        console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
+        // let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
+        // console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
+
+        // let diffArray = uniqueArray.map((el) => {
+        //     let value = calcDiff(el, valueMap.get(el.ForecastPeriod));
+        //     return {
+        //         ActualDate: el.ActualDate,
+        //         ForecastDate: el.ForecastDate,
+        //         ActualPeriod: el.ActualPeriod,
+        //         ForecastPeriod: el.ForecastPeriod,
+        //         Product: el.Product,
+        //         PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+        //         OrderAmount: value
+        //     };
+        // });
+
+        // let dataGroupedByPBD = d3.nest()
+        //     .key(function(d) {
+        //         return d.PeriodsBeforeDelivery;
+        //     })
+        //     .entries(diffArray);
+
+        // let finalOrderByPBD = d3.nest()
+        //     .key(function(d) {
+        //         return d.PeriodsBeforeDelivery;
+        //     })
+        //     .entries(valueMap);
+
+        // let bubu = dataGroupedByPBD.map((el) => {
+        //     for (i = 0; i < dataGroupedByPBD.length; i++) {
+        //         let sum = el.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
+        //         return {
+        //             ActualDate: el.values[i].ActualDate,
+        //             ForecastDate: el.values[i].ForecastDate,
+        //             Product: el.values[i].Product,
+        //             ActualPeriod: el.values[i].ActualPeriod,
+        //             ForecastPeriod: el.values[i].ForecastPeriod,
+        //             OrderAmount: el.values[i].OrderAmount,
+        //             PeriodsBeforeDelivery: el.key,
+        //             SumOfForecast: sum
+        //         };
+        //     }
+        // });
+        // let sumCalc = function (el){
+        //     return el.OrderAmount.reduce((a, b) => +a + +b);
+        // }
+        // let sumOfFinalOrders = finalOrder.map((el) => {
+        //         let value = sumCalc(el, valueMap.get(el.ForecastPeriod));
+        //         return {
+        //             SumOfFinalOrders: value
+        //         };
+        //     });
+        // console.log('sum of final orders: ', sumOfFinalOrders);
+
+        // let mapeCurrentPBD = bubu.map((el) => {
+        //     for (i = 0; i < dataGroupedByPBD.length; i++) {
+        //         let mape = el.SumOfForecast / sumOfAllFinalOrders;
+        //         return {
+        //             ActualDate: el.ActualDate,
+        //             ForecastDate: el.ForecastDate,
+        //             Product: el.Product,
+        //             ActualPeriod: el.ActualPeriod,
+        //             ForecastPeriod: el.ForecastPeriod,
+        //             OrderAmount: el.OrderAmount,
+        //             PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+        //             MeanOfThisPeriod: mape
+        //         };
+        //     }
+        // });
+        // console.log('Final mpe: ', mapeCurrentPBD);
+
+
+        let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +
+            b);
+        // console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
 
         let dataGroupedByPBD = d3.nest()
             .key(function(d) {
                 return d.PeriodsBeforeDelivery;
             })
             .entries(uniqueArray);
+
+        // console.log('Grouped data: ', dataGroupedByPBD);
 
         let bubu = dataGroupedByPBD.map((el) => {
             for (i = 0; i < dataGroupedByPBD.length; i++) {
@@ -429,11 +513,11 @@ else {
                 };
             }
         });
-        console.log('current mpe: ', bubu);
 
         let mapeCurrentPBD = bubu.map((el) => {
             for (i = 0; i < dataGroupedByPBD.length; i++) {
-                let mape = el.SumOfForecast - sumOfAllFinalOrders / sumOfAllFinalOrders;
+                let mpe = (el.SumOfForecast - sumOfAllFinalOrders) /
+                    sumOfAllFinalOrders;
                 return {
                     ActualDate: el.ActualDate,
                     ForecastDate: el.ForecastDate,
@@ -442,45 +526,15 @@ else {
                     ForecastPeriod: el.ForecastPeriod,
                     OrderAmount: el.OrderAmount,
                     PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                    MeanOfThisPeriod: mape
+                    MeanOfThisPeriod: mpe
                 };
             }
         });
-        // console.log('Final mpe: ', mapeCurrentPBD);
+        console.log('Final mpe: ', mapeCurrentPBD);
 
         mapeCurrentPBD.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
         });
-
-
-
-
-        // let finalMape = dataGroupedByPBD.map((val) => {
-        //     let sum = val.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b)
-        //     return {
-        //         ActualDate: val.values.ActualDate,
-        //         ForecastDate: val.values.ForecastDate,
-        //         ActualPeriod: val.values.ActualPeriod,
-        //         ForecastPeriod: val.values.ForecastPeriod,
-        //         Product: val.values.Product,
-        //         SumOfForecast: sum
-        //     };
-        //     console.log('sum for pbd: ', val.key, ' sum: ', sum);
-        //     let mapeCurrentPBD = (sum - sumOfAllFinalOrders) / sumOfAllFinalOrders;
-        //     console.log('current mape: ', mapeCurrentPBD);
-
-        //     return {
-        //         // ActualDate: item.ActualDate,
-        //         // ForecastDate: item.ForecastDate,
-        //         // ActualPeriod: item.ActualPeriod,
-        //         // ForecastPeriod: item.ForecastPeriod,
-        //         // Product: item.Product,
-        //         PeriodsBeforeDelivery: val.key,
-        //         MapeForPBD: mapeCurrentPBD
-        //     };
-        // });
-
-        // console.log('Final Mape: ', finalMape);
 
 
         var ndx = crossfilter(mapeCurrentPBD);
@@ -548,7 +602,7 @@ else {
             .width(768)
             .height(480)
             .dimension(ndxDim)
-            .symbolSize(9)
+            .symbolSize(10)
             .group(ndxGroup)
             .data(function(group) {
                 return group.all()
@@ -584,7 +638,8 @@ else {
                 ].join('\n');
             })
             .elasticX(true)
-            .elasticY(true);
+            .elasticY(true)
+            .xAxis().tickFormat(d3.format('d'));
         // console.log('ndxgroup data:', ndxDim);
 
 
@@ -605,10 +660,7 @@ else {
             })
             .columns([
                 "Product",
-                "ActualPeriod",
-                "ForecastPeriod",
                 "PeriodsBeforeDelivery",
-                "OrderAmount",
                 "MeanOfThisPeriod"
             ]);
 
@@ -879,7 +931,6 @@ else {
         //         .text(function (d) { return 'PBD ' + d; });
 
     });
-});
     </script>
 
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
