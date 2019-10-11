@@ -19,6 +19,9 @@ else {
     <meta name="author" content="">
     <link rel="icon" href="/data/ico/innofit.ico">
     <title>Percentage Error</title>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
+    </script>
     <script src="../lib/js/localforage.js"></script>
     <script src="http://d3js.org/d3.v4.min.js"></script>
     <script src="../lib/js/crossfilter.js"></script>
@@ -97,7 +100,6 @@ else {
         border-radius: 2px;
     }
 
-    /* Creates a small triangle extender for the tooltip */
     .d3-tip:after {
         box-sizing: border-box;
         display: inline;
@@ -117,7 +119,7 @@ else {
     }
 
     .customContainer {
-        padding: 0 2% 0 2%;
+        padding: 0 3% 0 3%;
     }
 
     a.gflag {
@@ -275,7 +277,7 @@ else {
                 <br>
             </div>
             <div class="col-md-2">
-                <div class="alert alert-info" style="text-align: center" role="info">
+                <div id="filterInfo" class="alert alert-info" style="text-align: center" role="info">
                     <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
                         class="glyphicon glyphicon-info-sign alert-info" aria-hidden="true"></span>
                     <div class="info-container">
@@ -294,7 +296,8 @@ else {
         <div class="row">
             <div class="col-md-12">
                 <br />
-                <p><b> Graph Description:</b> This graph shows the Information Quality (IQ) representation for each final order with
+                <p><b> Graph Description:</b> This graph shows the Information Quality (IQ) representation for each
+                    final order with
                     respect to
                     the
                     periods before delivery (PBD). The relative deviation is calculated
@@ -311,29 +314,20 @@ else {
 
         <div class="row">
             <div id="scatter">
-                <!-- <a class="reset" href="javascript:forecastErrorChart.filterAll(); dc.redrawAll();"
-                    style="display: none;">reset</a> -->
                 <div class="clearfix"></div>
             </div>
 
             <div id="forecastlist">
-            <br/>
-            <p style="text-align:center;"> <strong>Due date</strong></p>
-            <div class="clearfix"></div>
-        </div>
-
-            <!-- <div id="product">
-            <p style="text-align:center;"><strong>Product</strong></p>
-            <div>
+                <br />
+                <p style="text-align:center;"> <strong>Due date</strong></p>
+                <div class="clearfix"></div>
             </div>
-            <div class="clearfix"></div>
-        </div> -->
-            <div id="pbd"><br/>
+            <div id="pbd"><br />
                 <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
             </div>
             <div style="clear: both"></div>
             <br />
-
+            <div id="d3Legend"></div>
             <div>
                 <div class="dc-data-count">
                     <span class="filter-count"></span> selected out of <span class="total-count"></span>records |
@@ -344,7 +338,6 @@ else {
                 </table>
             </div>
             <div><br />
-                <!-- <svg width="960" height="500"></svg><br /> -->
             </div>
         </div>
         <script>
@@ -359,200 +352,194 @@ else {
         </script>
 
         <script>
+        $(document).ready(function() {
+            if (localStorage.getItem('checkFiltersActive') === 'true') {
+                $('#filterInfo').show();
+            } else {
+                $('#filterInfo').hide();
+            }
+        });
         localforage.getItem("viz_data", function(error, data) {
             data = JSON.parse(data);
 
-                const margin = {
-                    left: 55,
-                    right: 25,
-                    top: 20,
-                    bottom: 30
-                };
-                let calcDeviation = function(orignalEl, finalOrder) {
-                    return (orignalEl.OrderAmount - finalOrder) / finalOrder;
-                }
-                let filterValues = data.filter((el) => {
-                    return el.PeriodsBeforeDelivery == 0;
-                });
-                console.log("Final Orders: ", filterValues);
-                let valueMap = new Map();
-                filterValues.forEach((val) => {
-                    let keyString = val.ActualPeriod;
-                    let valueString = val.OrderAmount;
-                    valueMap.set(keyString, valueString);
-                });
-                console.log("Mapped final order array: ", valueMap);
-
-                let finalArray = data.map((el) => {
-                    let deviation = calcDeviation(el, valueMap.get(el.ForecastPeriod))
-                    return {
-                        ActualDate: el.ActualDate,
-                        ForecastDate: el.ForecastDate,
-                        ActualPeriod: el.ActualPeriod,
-                        ForecastPeriod: el.ForecastPeriod,
-                        OrderAmount: el.OrderAmount,
-                        Product: el.Product,
-                        FinalOrder: valueMap.get(el.ForecastPeriod),
-                        PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                        Deviation: deviation.toFixed(2)
-                    };
-                })
-                console.log("FINAL Array with deviation: ", finalArray);
-
-                var forecastlist = dc.selectMenu("#forecastlist"),
-                    productChart = dc.selectMenu("#product"),
-                    periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
-                    visCount = dc.dataCount(".dc-data-count"),
-                    forecastErrorChart = dc.scatterPlot("#scatter"),
-                    visTable = dc.dataTable(".dc-data-table");
-
-
-                finalArray.forEach(function(d) {
-                    d.ActualDate = new Date(d.ActualDate);
-                });
-
-                var ndx = crossfilter(finalArray);
-                var all = ndx.groupAll();
-                var forecastPeriodDim = ndx.dimension(function(d) {
-                    return +d.ForecastPeriod;
-                });
-                var ndxDim = ndx.dimension(function(d) {
-                    return [+d.PeriodsBeforeDelivery, +d.Deviation, +d.ActualPeriod];
-                });
-                var productDim = ndx.dimension(function(d) {
-                    return d.Product;
-                });
-                var periodsBeforeDeliveryDim = ndx.dimension(function(d) {
-                    return +d.PeriodsBeforeDelivery;
-                });
-                var forecastErrorDim = ndx.dimension(function(d) {
-                    return +d.Deviation;
-                });
-                var dateDim = ndx.dimension(function(d) {
-                    return +d.ActualDate;
-                });
-                console.log("final array: ", finalArray);
-
-                var forecastPeriodGroup = forecastPeriodDim.group();
-                var productGroup = productDim.group();
-                var ndxGroup = ndxDim.group().reduceSum(function(d) {
-                    return +d.Deviation;
-                });
-                var forecastErrorGroup = forecastErrorDim.group(function(d) {
-                    return d.Deviation;
-                });
-                var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
-                var dateGroup = dateDim.group();
-                console.log("ndxDim: ", ndxGroup.top(Infinity));
-
-                forecastlist
-                    .dimension(forecastPeriodDim)
-                    .group(forecastPeriodGroup)
-                    .multiple(true)
-                    .numberVisible(15);
-                // .elasticX(true);
-
-                productChart
-                    //.height(800)
-                    .dimension(productDim)
-                    .group(productGroup)
-                    .multiple(true)
-                    .numberVisible(15);
-
-                periodsBeforeDeliveryChart
-                    .dimension(periodsBeforeDeliveryDim)
-                    .group(periodsBeforeDeliveryGroup)
-                    .multiple(true)
-                    .numberVisible(15);
-                // .elasticX(true);
-                var plotColorMap = d3.scaleOrdinal(d3.schemeCategory10);
-
-                forecastErrorChart
-                    .width(768)
-                    .height(480)
-                    .dimension(ndxDim)
-                    .symbolSize(10)
-                    .group(ndxGroup)
-                    .data(function(group) {
-                        return group.all()
-                            .filter(function(d) {
-                                return d.key !== NaN || d.key !== Infinity || d.key !==
-                                    undefined;
-                            });
-                    })
-                    // .excludedSize(2)
-                    .excludedOpacity(0.5)
-                    .keyAccessor(function(d) {
-                        return d.key[0];
-                    })
-                    .valueAccessor(function(d) {
-                        return d.key[1];
-                    })
-                    .colorAccessor(function(d) {
-                        return d.key[2];
-                    })
-                    .colors(function(colorKey) {
-                        return plotColorMap(colorKey);
-                    })
-                    .x(d3.scaleLinear().domain(d3.extent(finalArray, function(d) {
-                        return d.PeriodsBeforeDelivery
-                    })))
-                    .y(d3.scaleLinear().domain(d3.extent(finalArray, function(d) {
-                        return d.Deviation
-                    })))
-                    .clipPadding(8)
-                    .xAxisLabel("Periods Before Delivery")
-                    .yAxisLabel("Deviation")
-                    .renderTitle(true)
-                    .title(function(d) {
-                        return [
-                            'Periods Before Delivery: ' + d.key[0],
-                            'Deviation: ' + d.key[1],
-                            'Actual Period: ' + d.key[2]
-                        ].join('\n');
-                    })
-                    .transitionDuration(500)
-                    // .mouseZoomable(true)
-                    .elasticX(true)
-                    .elasticY(true)
-                    .xAxis().tickFormat(d3.format('d'));
-
-                forecastErrorChart.symbol(d3.symbolCircle);
-                forecastErrorChart.margins().left = 50;
-
-                visCount
-                    .dimension(ndx)
-                    .group(all);
-
-                visTable
-                    .dimension(dateDim)
-                    .group(function(d) {
-                        var format = d3.format('02d');
-                        return d.ActualDate.getFullYear() + '/' + format((d.ActualDate.getMonth() +
-                            1));
-                    })
-                    .columns([
-                        "Product",
-                        "ActualPeriod",
-                        "ForecastPeriod",
-                        "PeriodsBeforeDelivery",
-                        "OrderAmount",
-                        "Deviation"
-                    ]);
-                dc.renderAll();
-                const colorScale = d3.scaleOrdinal()
-                    .range(d3.schemeCategory10);
-                const colorLegend = d3.legendColor()
-                    .scale(colorScale)
-                    .shape('circle');
-                var Deviation = function(d) {
-                    return d.Deviation === (d.OrderAmount - d.FinalOrder) / d.FinalOrder;
-                };
+            const margin = {
+                left: 55,
+                right: 25,
+                top: 20,
+                bottom: 30
+            };
+            let calcDeviation = function(orignalEl, finalOrder) {
+                return (orignalEl.OrderAmount - finalOrder) / finalOrder;
+            }
+            let filterValues = data.filter((el) => {
+                return el.PeriodsBeforeDelivery == 0;
             });
-        </script>
+            console.log("Final Orders: ", filterValues);
+            let valueMap = new Map();
+            filterValues.forEach((val) => {
+                let keyString = val.ActualPeriod;
+                let valueString = val.OrderAmount;
+                valueMap.set(keyString, valueString);
+            });
+            console.log("Mapped final order array: ", valueMap);
 
-        <script src="https://code.jquery.com/jquery-1.12.4.min.js"
-            integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
+            let finalArray = data.map((el) => {
+                let deviation = calcDeviation(el, valueMap.get(el.ForecastPeriod))
+                return {
+                    ActualDate: el.ActualDate,
+                    ForecastDate: el.ForecastDate,
+                    ActualPeriod: el.ActualPeriod,
+                    ForecastPeriod: el.ForecastPeriod,
+                    OrderAmount: el.OrderAmount,
+                    Product: el.Product,
+                    FinalOrder: valueMap.get(el.ForecastPeriod),
+                    PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                    Deviation: deviation.toFixed(2)
+                };
+            })
+            console.log("FINAL Array with deviation: ", finalArray);
+
+            var forecastlist = dc.selectMenu("#forecastlist"),
+                productChart = dc.selectMenu("#product"),
+                periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
+                visCount = dc.dataCount(".dc-data-count"),
+                forecastErrorChart = dc.scatterPlot("#scatter"),
+                visTable = dc.dataTable(".dc-data-table");
+
+
+            finalArray.forEach(function(d) {
+                d.ActualDate = new Date(d.ActualDate);
+            });
+
+            var ndx = crossfilter(finalArray);
+            var all = ndx.groupAll();
+            var forecastPeriodDim = ndx.dimension(function(d) {
+                return +d.ForecastPeriod;
+            });
+            var ndxDim = ndx.dimension(function(d) {
+                return [+d.PeriodsBeforeDelivery, +d.Deviation, +d.ActualPeriod];
+            });
+            var productDim = ndx.dimension(function(d) {
+                return d.Product;
+            });
+            var periodsBeforeDeliveryDim = ndx.dimension(function(d) {
+                return +d.PeriodsBeforeDelivery;
+            });
+            var forecastErrorDim = ndx.dimension(function(d) {
+                return +d.Deviation;
+            });
+            var dateDim = ndx.dimension(function(d) {
+                return +d.ActualDate;
+            });
+            console.log("final array: ", finalArray);
+
+            var forecastPeriodGroup = forecastPeriodDim.group();
+            var productGroup = productDim.group();
+            var ndxGroup = ndxDim.group();
+            var forecastErrorGroup = forecastErrorDim.group(function(d) {
+                return d.Deviation;
+            });
+            var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
+            var dateGroup = dateDim.group();
+            console.log("ndxDim: ", ndxGroup.top(Infinity));
+
+            forecastlist
+                .dimension(forecastPeriodDim)
+                .group(forecastPeriodGroup)
+                .multiple(true)
+                .numberVisible(15);
+            // .elasticX(true);
+
+            productChart
+                //.height(800)
+                .dimension(productDim)
+                .group(productGroup)
+                .multiple(true)
+                .numberVisible(15);
+
+            periodsBeforeDeliveryChart
+                .dimension(periodsBeforeDeliveryDim)
+                .group(periodsBeforeDeliveryGroup)
+                .multiple(true)
+                .numberVisible(15);
+            // .elasticX(true);
+            var plotColorMap = d3.scaleOrdinal(d3.schemeCategory10);
+
+            forecastErrorChart
+                .width(768)
+                .height(480)
+                .dimension(ndxDim)
+                .symbolSize(10)
+                .group(ndxGroup)
+                .data(function(group) {
+                    return group.all()
+                        .filter(function(d) {
+                            return d.key !== NaN || d.key !== Infinity || d.key !==
+                                undefined;
+                        });
+                })
+                .keyAccessor(function(d) {
+                    return d.key[0];
+                })
+                .valueAccessor(function(d) {
+                    return d.key[1];
+                })
+                .colorAccessor(function(d) {
+                    return d.key[2];
+                })
+                .colors(function(colorKey) {
+                    return plotColorMap(colorKey);
+                })
+                .x(d3.scaleLinear().domain(d3.extent(finalArray, function(d) {
+                    return d.PeriodsBeforeDelivery
+                })))
+                .clipPadding(10)
+                .xAxisLabel("Periods Before Delivery")
+                .yAxisLabel("Deviation")
+                .renderTitle(true)
+                .title(function(d) {
+                    return [
+                        'Periods Before Delivery: ' + d.key[0],
+                        'Deviation: ' + d.key[1],
+                        'Actual Period: ' + d.key[2]
+                    ].join('\n');
+                })
+                .elasticX(true)
+                .elasticY(true)
+                .xAxis().tickFormat(d3.format('d'));
+
+            forecastErrorChart.symbol(d3.symbolCircle);
+            forecastErrorChart.margins().left = 50;
+
+            visCount
+                .dimension(ndx)
+                .group(all);
+
+            visTable
+                .dimension(dateDim)
+                .group(function(d) {
+                    var format = d3.format('02d');
+                    return d.ActualDate.getFullYear() + '/' + format((d.ActualDate.getMonth() +
+                        1));
+                })
+                .columns([
+                    "Product",
+                    "ActualPeriod",
+                    "ForecastPeriod",
+                    "PeriodsBeforeDelivery",
+                    "OrderAmount",
+                    "Deviation"
+                ]);
+            dc.renderAll();
+            const colorScale = d3.scaleOrdinal()
+                .range(d3.schemeCategory10);
+            const colorLegend = d3.legendColor()
+                .scale(colorScale)
+                .shape('circle');
+            var Deviation = function(d) {
+                return d.Deviation === (d.OrderAmount - d.FinalOrder) / d.FinalOrder;
+            };
+        });
         </script>
         <script src="/lib/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"

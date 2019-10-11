@@ -63,12 +63,27 @@ session_start();
             }
             return true;
         });
+
+        localStorage.setItem('checkFiltersActive', false);
     });
     </script>
     <style>
     body {
         margin: 0 auto;
     }
+
+    @media (min-width: 768px) {
+        .abs-center-x {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    }
+
+    .customContainer {
+        padding: 0 3% 0 3%;
+    }
+
 
     a.gflag {
         vertical-align: middle;
@@ -118,15 +133,15 @@ session_start();
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand active" href="/index.php">Home<span class="sr-only">(current)</span></a>
+                <a class="navbar-brand" href="src/about.php">About<span class="sr-only"></span></a>
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li><a href="src/configuration.php">Configuration</a></li>
-                    <li><a href="src/about.php">About</a></li>
-                    <li class><a href="src/howto.php">How to Interpret Error Measures </a></li>
+
+                    <!-- <li class><a href="src/howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        <a  href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="src/finalorder.php">Final Order Amount </a></li>
@@ -144,14 +159,8 @@ session_start();
                             <li class="dropdown-header">Matrices</li>
                             <li><a href="src/matrix.php">Delivery Plans Matrix</a></li>
                             <li><a href="src/matrixvariance.php">Delivery Plans Matrix - With Variance </a></li>
-                            <!-- <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">New Graphs</li>
-                            <li>
-                                <a class="dropdown-item" href="./boxplot.php">Box Plot</a>
-                            </li> -->
                         </ul>
                     </li>
-                    <!-- </ul> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Corrections <span class="caret"></span> </a>
@@ -219,83 +228,44 @@ session_start();
         </div>
         <!--/.container-fluid -->
     </nav>
-
-
-    <!-- <div class="container">
-        <div class="row">
-            <div class="col-md-12 text-center">
-           <h1> Forecast Quality Visualization </h1>            
-            </div>
-            <div class="col-md-12 text-center"> 
-            <img src="/data/img/Logo_transparent.png" alt="InnoFIT Logo" height="100" width="200"> </div>
-        </div>
-        <div class="row">
-        <div class="col-md-12 text-center"><br><br><br>
-                <h4><?php   echo "Dear ";
-                    print_r($_SESSION["session_username"]);
-                    echo ",";?></h4>
-
-                <p> Welcome to the Forecast Quality Visualization (ForeQuVis / InnoFitVis) Web-tool.
-                <b>Please upload the data in .csv format in the correct data structure</b></p>
-                <p>For instructions please follow the<mark> Configuration page.</mark> Happy exploring!</p>
-                <hr>
-            </div>
-        </div>
-    </div> -->
-    <header class="masthead">
-        <div class="container h-100">
-            <div class="row h-100 align-items-center">
-                <div class="row align-items-center">
-                    <div class="span4 align-center">
-                        <div class="col-xs-8 col-sm-8">
-                            <h1 class="text-right">Forecast Quality Visualization </h1>
+    <div class="customContainer">
+        <header class="masthead">
+            <div class="container h-100">
+                <div class="row h-100 align-items-center">
+                    <div class="row align-items-center">
+                        <div class="span4 align-center">
+                            <div class="col-xs-8 col-sm-8">
+                                <h1 class="text-right">Forecast Quality Visualization </h1>
+                            </div>
+                            <div class="col-xs-4 col-sm-4 ">
+                                <img style="float:center" src="/data/img/Logo_transparent.png" alt="InnoFIT Logo"
+                                    height="55" width="105">
+                            </div>
                         </div>
-                        <div class="col-xs-4 col-sm-4 ">
-                            <img style="float:center" src="/data/img/Logo_transparent.png" alt="InnoFIT Logo" height="55"
-                                width="105">
-                        </div>
-                    </div>
-                    </div><br/>
-                    <!-- <p class="lead" align ="center">InnoFIT Web Tool</p> -->
-
-            </div>
-    </header>
-
-    <!-- Page Content -->
-    <section class="py-5">
-        <div class="container">
-            <h4 class="font-weight-light"><?php   echo "Dear ";
+                    </div><br />
+                </div>
+        </header>
+        <!-- Page Content -->
+        <section class="py-5">
+            <div class="container text-center">
+                <h4 class="font-weight-light"><?php   echo "Dear ";
                     print_r($_SESSION["session_username"]);
                     echo ",";?></h2>
-                <p>Welcome to the Forecast Quality Visualization (InnoFitVis) Web-tool.
-                    <b>Please upload the data in .csv format in the correct data structure</b></p>
-                <p>For instructions please follow the<mark> Configuration page.</mark> Happy exploring!</p>
+                    <p>Welcome to the Forecast Quality Visualization tool - InnoFitVis.
+                    </p>
+                    <p> Happy exploring!</p>
 
-        </div>
-        <hr>
+            </div>
+    </div>
+    <hr>
     </section>
 
     <br />
 
-    <!-- |||||||||||||||||||||||||||||||||||||||||||||| SEPERATOR |||||||||||||||||||||||||||||||||||||||||||||||||| -->
-    <!-- <span style="font-size:15px;cursor:pointer" onclick="openNav()">&#9776; Open scenarios</span>
-    <div id="mySidenav" class="sidenav">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a href="#">Scenario 1: Weekly visualization</a>
-        <a href="#">Scenario 2: Monthly visualization</a>
-    </div>
-
     <script>
-    function openNav() {
-        document.getElementById("mySidenav").style.width = "200px";
-    }
-
-    function closeNav() {
-        document.getElementById("mySidenav").style.width = "0";
-    }
-    </script> -->
-
-    <script>
+    // $(document).ready(function() {
+    //     $("#flash-msg").delay(3000).fadeOut("slow");
+    // });
     d3.json("/includes/getdata.php", function(error, data) {
         if (error) throw error;
 
@@ -306,7 +276,7 @@ session_start();
             return (orignalEl.OrderAmount - finalOrder) / finalOrder;
         }
         let finalOrder = data.filter((el) => {
-            //  return el.PeriodsBeforeDelivery==0;
+            // return el.PeriodsBeforeDelivery==0;
             return el.PeriodsBeforeDelivery == "0";
         });
 
@@ -336,11 +306,6 @@ session_start();
         localforage.setItem('finalOrder', JSON.stringify(finalOrder));
         localforage.setItem('deviation', JSON.stringify(finalArray));
         console.log('SAVING: ', data, finalOrder, finalArray);
-
-        // TODO: REMOVE LATER - will be replaced with localforage
-        // localStorage.setItem('finalOrder', JSON.stringify(finalOrder));
-        // localStorage.setItem('deviation', JSON.stringify(finalArray));
-        // localStorage.setItem('data', JSON.stringify(data));
     });
     </script>
 
@@ -382,33 +347,39 @@ if (isset($_POST["import"])) {
             $sqlInsert = "INSERT into `newOrders` (Product, ActualDate, ForecastDate, OrderAmount, ActualDay, ActualPeriod, ForecastDay, ForecastPeriod, ActualYear, ForecastYear, PeriodsBeforeDelivery, username, Date )
             values ('$column[0]', '$column[1]', '$column[2]','$column[3]', $actualDay, $actualWeek, $forecastDay, $forecastWeek, $actualYear, $forecastYear, $pbd, '{$_SESSION['session_username']}', NOW())";
             $result = mysqli_query($conn, $sqlInsert);
-            
+    
             if (! empty($result)) {
                 $type = "success";
-                $message = "CSV Data was imported into the database";
-                //echo "Import was successful";
-            } else {
-                printf( "Error: %s\n", mysqli_error( $conn ) );
-                $type = "error";
-                $message = "Problem in Importing CSV Data";
-                echo "Import was unsuccessful";
-            }
-        }
-        $i++;
-        }
+                $message = "Your data was successfully uploaded!";
+            // <h4><i class="icon fa fa-check"></i>Data uploaded successfully!</h4>
+            echo "<script type='text/javascript'>
+            alert('$message');
+            window.location.href = '/index.php';
+            </script>";
+
+    } else {
+    printf( "Error: %s\n", mysqli_error( $conn ) );
+    $type = "error";
+    $message = "Problem in Importing CSV Data";
+    $result='<div class="alert alert-danger">There was a problem while importing your data </div>';
     }
-}
-?>
+    }
+    $i++;
+    }
+    }
+    }
+    ?>
+
     <div class="container">
         <div class="row">
             <div class="col-md-12">
+                <h3>Upload your data here:</h3>
                 <form class="form-horizontal" action="" method="post" name="frmCSVImport" id="frmCSVImport"
-                    enctype="multipart/form-data"><br><br>
+                    enctype="multipart/form-data">
                     <div class="input-row">
                         <label class="col-md-6 control-label">Choose CSV File</label> <input type="file" name="file"
                             id="file" accept=".csv">
-                        <button type="submit" id="submit" name="import" class="btn btn-primary">Import</button><br>
-                        <!-- <button type="submit" id="submit" name="import" class="btn-submit btn-blue">Import</button> -->
+                        <button type="submit" id="submit" name="import" class="btn btn-primary">Import</button>
                         <br />
                     </div>
                 </form>
@@ -434,24 +405,40 @@ if (isset($_POST["import"])) {
                 </form>
             </div>
         </div>
-    </div>
-    <?php } ?>
 
-    <br><br>
-    <!-- <div style="background-color:lavender;padding-left:39px">
-        <i><img src="/data/ico/icon.png" alt="Information Icon" height="15" width="15"><b> Instructions to upload data
-                in CSV format:</i></b> <br>
-        <u>Step 1:</u> Create a new Excel file and add the data, so that values of each column (Product, ActualDate,
+        <hr>
+        <?php } ?>
+
+        <br><br>
+        <div class="col-md-13">
+            <h3>Data format:</h3>
+            <p> Please upload your data in .csv format in the correct data structure.
+                The correct data structure shown in the table below. Set the dates format as: <b>YYYY-MM-DD
+                    (year-month-day)</b>. Please keep Order Amounts as <b>integers </b>.
+                For MS Office in German language please add a new line in the beginning of the file: <b>sep=;</b>and
+                save
+                the file as .csv.</p>
+            <!-- <u>Step 1:</u> Create a new Excel file and add the data, so that values of each column (Product, ActualDate,
         ForecastDate, OrderAmount) are in a separate column.
         <br> Please keep the date in the following format: <b>YYYY-MM-DD</b>.<br>
         <u>Step 2:</u> For MS Office in German, please add a new line in the beginning of the file: <b><br>sep=;<br></b>
         This will create a delimiter so that the file format can be used for both English and German-based MS Office
         documents.<br>
-        <u>Step 3:</u> Save the file as "CSV (Comma delimited) (*.csv)"
-        <br>
-        An example of data in the suitable format:<br><br> <img src="/data/img/newExampleData.jpg"
-            alt="Data Format Example" height="210" width="420"><br>
-        <br></div> -->
+        <u>Step 3:</u> Save the file as "CSV (Comma delimited) (*.csv)" -->
+            <br>
+            <p>The format of the table headings and structure:<br><br> <img src="/data/img/newExampleData.jpg"
+                    alt="Data Format Example" align="middle" height="185" width="420"><br></p>
+            <br>
+        </div>
+        <div class="col-md-13">
+            <h3>How to interpret error measures</h3>
+            <p>The guidelines on how to interpret forecast error measures visualized in this tool can be found here (you
+                will be redirected to another page):
+                <a href="src/howto.php">How to Interpret Error Measures </a>
+                <br /><br />
+            </p>
+        </div>
+    </div>
 </body>
 
 </html>

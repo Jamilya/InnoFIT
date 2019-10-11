@@ -7,8 +7,6 @@ else {
     header("Location: includes/login.php");
 };?>
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,6 +18,9 @@ else {
     <meta name="author" content="">
     <link rel="icon" href="/data/ico/innofit.ico">
     <title>Delivery Plans Matrix With Variance </title>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
+    </script>
     <script src="../lib/js/localforage.js"></script>
     <script>
     localforage.config({
@@ -32,7 +33,7 @@ else {
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
         integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <style>
-     body {
+    body {
         margin: 0px;
     }
 
@@ -80,6 +81,16 @@ else {
 
     .tick line {
         stroke: #C0C0BB;
+    }
+
+    .info-container {
+        display: inline-block;
+        width: calc(100% + -50px);
+        vertical-align: middle;
+    }
+
+    .customContainer {
+        padding: 0 3% 0 3%;
     }
 
     a.gflag {
@@ -229,26 +240,56 @@ else {
         <!--/.container-fluid -->
     </nav>
     <script src="http://d3js.org/d3.v4.min.js"></script>
-    <div style="padding-left:39px">
-        <br>
-        <h3>Percentage Error Matrix</h3>
-
-        <small>
-            <?php
+    <div class="customContainer">
+        <div class="row" style="margin-bottom: -2%;">
+            <div class="col-md-10">
+                <h3>Percentage Error Matrix</h3>
+                <small>
+                    <?php
         echo "You are logged in as: ";
         print_r($_SESSION["session_username"]);
         echo ".";
         ?></small>
-        <br><br>
-        <p> <b>Graph Description:</b> Forecast (percentage) error matrix. </p>
+                <br>
+            </div>
+            <div class="col-md-2">
+                <div id="filterInfo" class="alert alert-info" style="text-align: center" role="info">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-info" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-info"
+                                role="info">Filters are applied!</span>
+                        </div>
+                        <div class="row">
+                            <span style="font-size: 12px; vertical-align: middle;" class="alert-info" role="info"> To
+                                change settings please visit <a href="./configuration.php">Configuration</a>.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    </div>
+        <div class="row">
+            <div class="col-md-12">
+                <br />
+                <p> <b>Graph Description:</b> Forecast (percentage) error matrix. </p>
+            </div>
+        </div>
 
-    <div style="padding-left:39px">
-        <div id="my_dataviz"></div>
+        <div class="row">
+            <div id="my_dataviz"></div>
+        </div>
     </div>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script>
+    $(document).ready(function() {
+        if (localStorage.getItem('checkFiltersActive') === 'true') {
+            $('#filterInfo').show();
+        } else {
+            $('#filterInfo').hide();
+        }
+    });
     let array = [];
 
     localforage.getItem("viz_data", function(error, data) {
@@ -783,10 +824,6 @@ else {
     });
     </script>
 
-
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
-        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
-    </script>
     <script src="/lib/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">

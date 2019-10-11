@@ -18,6 +18,9 @@ else {
     <meta name="author" content="">
     <link rel="icon" href="/data/ico/innofit.ico">
     <title>Mean Percentage Error (MPE) Graph</title>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
+    </script>
     <script src="../lib/js/localforage.js"></script>
     <script src="http://d3js.org/d3.v4.min.js"></script>
     <script src="../lib/js/crossfilter.js"></script>
@@ -87,6 +90,16 @@ else {
 
     .tick line {
         stroke: #C0C0BB;
+    }
+
+    .info-container {
+        display: inline-block;
+        width: calc(100% + -50px);
+        vertical-align: middle;
+    }
+
+    .customContainer {
+        padding: 0 3% 0 3%;
     }
 
     a.gflag {
@@ -241,67 +254,73 @@ else {
         <!--/.container-fluid -->
     </nav>
 
-    <div style="padding-left:39px">
-
-        <h3>Mean Percentage Error (MPE) Graph</h3>
-        <small>
-            <?php
+    <div class="customContainer">
+        <div class="row" style="margin-bottom: -2%;">
+            <div class="col-md-10">
+                <h3>Mean Percentage Error (MPE) Graph</h3>
+                <small>
+                    <?php
                 echo "You are logged in as: ";
                 print_r($_SESSION["session_username"]);
                 echo ".";
                 ?></small>
-        <br><br>
-        <p> <b>Graph Description: </b> This graph shows the calculation of the Mean Percentage Error (MPE), which is the
-            evaluation of forecasting accuracy, calculated by
-            the difference between forecasted customer orders and the final customer orders and divided by the final
-            customer orders. The result is divided by a number of
-            periods with respect to periods before delivery (PBD).
-            <br>The formula of the MPE is the following:
-            <img src="https://latex.codecogs.com/gif.latex?MPE_{j} = \frac {\sum_{i=1}^{n}x_{i,j}-x_{i,0}}{\sum_{i=1}^{n}x_{i,0}}"
-                title="MPE formula" />
-        </p>
-    </div>
-
-    <div style="padding-left:39px">
-        <div id="scatter">
-            <!-- <p style="text-align:center;"><strong>MPE graph</strong></p> -->
-            <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
-            <!-- <a class="reset" href="javascript:MPEchart.filterAll(); dc.redrawAll();" style="display: none;">reset</a> -->
-            <div class="clearfix"></div>
+                <br>
+            </div>
+            <div class="col-md-2">
+                <div id="filterInfo" class="alert alert-info" style="text-align: center" role="info">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-info" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-info"
+                                role="info">Filters are applied!</span>
+                        </div>
+                        <div class="row">
+                            <span style="font-size: 12px; vertical-align: middle;" class="alert-info" role="info"> To
+                                change settings please visit <a href="./configuration.php">Configuration</a>.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- <div id="forecastlist">
-            <p style="text-align:center;"> <strong>Due date </strong></p>
-            <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> 
-            <a class="reset" href="javascript:forecastlist.filterAll();dc.redrawAll();" style="display: none;">reset</a> 
-            <div class="clearfix"></div>
-        </div> -->
-        <!-- <div id="productlist">
-            <p style="text-align:center;"><strong>Product</strong></p>
-            <div class="clearfix"></div>
-        </div> -->
-
-        <div id="daySelectionDiv"></div>
-        <div id="pbd">
-            <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
-            <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
-            <!-- <a class="reset" href="javascript:periodsBeforeDeliveryChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a> -->
-        </div>
-        <div style="clear: both"></div>
-
-
-
-        <div>
-            <div class="dc-data-count">
-                <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
-                    href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
-            </div><br /><br />
-            <button onclick="myFunction()">Data table display</button>
-            <table class="table table-hover dc-data-table" id="myTable" style="display:none">
-            </table>
+        <div class="row">
+            <div class="col-md-12">
+                <br />
+                <p> <b>Graph Description: </b> This graph shows the calculation of the Mean Percentage Error (MPE),
+                    which is the
+                    evaluation of forecasting accuracy, calculated by
+                    the difference between forecasted customer orders and the final customer orders and divided by the
+                    final
+                    customer orders. The result is divided by a number of
+                    periods with respect to periods before delivery (PBD).
+                    <br>The formula of the MPE is the following:
+                    <img src="https://latex.codecogs.com/gif.latex?MPE_{j} = \frac {\sum_{i=1}^{n}x_{i,j}-x_{i,0}}{\sum_{i=1}^{n}x_{i,0}}"
+                        title="MPE formula" />
+                </p>
+            </div>
         </div>
 
-        
-        <!-- <svg width="960" height="500"></svg><br /> -->
+
+        <div class="row">
+            <div id="scatter">
+                <div class="clearfix"></div>
+            </div>
+
+            <div id="pbd">
+                <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
+            </div>
+            <div style="clear: both"></div>
+
+            <div>
+                <div class="dc-data-count">
+                    <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
+                        href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
+                </div><br /><br />
+                <button onclick="myFunction()">Data table display</button>
+                <table class="table table-hover dc-data-table" id="myTable" style="display:none">
+                </table>
+            </div>
+        </div>
     </div>
     <script>
     function myFunction() {
@@ -316,8 +335,14 @@ else {
 
 
     <script>
+    $(document).ready(function() {
+        if (localStorage.getItem('checkFiltersActive') === 'true') {
+            $('#filterInfo').show();
+        } else {
+            $('#filterInfo').hide();
+        }
+    });
     var forecastlist = dc.selectMenu("#forecastlist"),
-        // productChart = dc.pieChart("#product"),
         periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
         visCount = dc.dataCount(".dc-data-count"),
         MPEchart = dc.scatterPlot("#scatter"),
@@ -416,27 +441,15 @@ else {
         var periodsBeforeDeliveryDim = ndx.dimension(function(d) {
             return +d.PeriodsBeforeDelivery;
         });
-        // var orderDim = ndx.dimension(function(d) { return d.OrderAmount;}) ;
         var dateDim = ndx.dimension(function(d) {
             return +d.ActualDate;
         });
 
         var forecastPeriodGroup = forecastPeriodDim.group();
         var productGroup = productDim.group();
-        var ndxGroup = ndxDim.group().reduceSum(function(d) {
-            return +d.MPE;
-        });
-        // var orderGroup = orderDim.group(function(d) { return +d.OrderAmount;});
+        var ndxGroup = ndxDim.group();
         var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
         var dateGroup = dateDim.group();
-        const plotColorMap = {
-            0: '#000099',
-            1: '#cc8800'
-        };
-        var plotColorMap2 = function(d) {
-            if (d.PeriodsBeforeDelivery == 0) return 0;
-            else return 1;
-        };
         forecastlist
             .dimension(forecastPeriodDim)
             .group(forecastPeriodGroup)
@@ -456,7 +469,7 @@ else {
             .multiple(true)
             .numberVisible(15);
 
-        console.log("ndxDim: ", ndxGroup.top(Infinity));
+        // console.log("ndxDim: ", ndxGroup.top(Infinity));
 
         MPEchart
             .width(768)
@@ -515,9 +528,6 @@ else {
     });
     </script>
 
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
-        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
-    </script>
     <script src="/lib/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">

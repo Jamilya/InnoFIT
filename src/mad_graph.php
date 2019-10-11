@@ -20,6 +20,9 @@ else {
     <link rel="icon" href="/data/ico/innofit.ico">
     <title>Mean Absolute Deviation (MAD) Graph</title>
 
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
+    </script>
     <script src="../lib/js/localforage.js"></script>
     <script src="http://d3js.org/d3.v4.min.js"></script>
     <script src="../lib/js/crossfilter.js"></script>
@@ -96,10 +99,45 @@ else {
     }
 
     .customContainer {
-        padding: 0 2% 0 2%;
+        padding: 0 3% 0 3%;
+    }
+
+    a.gflag {
+        vertical-align: middle;
+        font-size: 16px;
+        padding: 1px 0;
+        background-repeat: no-repeat;
+        background-image: url(//gtranslate.net/flags/16.png);
+    }
+
+    a.gflag img {
+        border: 0;
+    }
+
+    a.gflag:hover {
+        background-image: url(//gtranslate.net/flags/16a.png);
+    }
+
+    #goog-gt-tt {
+        display: none !important;
+    }
+
+    .goog-te-banner-frame {
+        display: none !important;
+    }
+
+    .goog-te-menu-value:hover {
+        text-decoration: none !important;
+    }
+
+    body {
+        top: 0 !important;
+    }
+
+    #google_translate_element2 {
+        display: none !important;
     }
     </style>
-    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script> -->
 
 
 </head>
@@ -119,9 +157,6 @@ else {
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li><a href="./configuration.php">Configuration</a></li>
-                    <!--  <li class="nav-item">
-                        <a class="nav-link" href="index.php">Home</a>
-                    </li > -->
                     <li><a href="./about.php">About</a></li>
                     <li class><a href="./howto.php">How to Interpret Error Measures </a></li>
                     <li class="dropdown active">
@@ -144,14 +179,8 @@ else {
                             <li class="dropdown-header">Matrices</li>
                             <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
                             <li><a href="./matrixvariance.php">Delivery Plans Matrix - With Variance </a></li>
-                            <!-- <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">New Graphs</li>
-                            <li>
-                                <a class="dropdown-item" href="./boxplot.php">Box Plot</a>
-                            </li> -->
                         </ul>
                     </li>
-                    <!-- </ul> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Corrections <span class="caret"></span> </a>
@@ -169,44 +198,6 @@ else {
                             onclick="doGTranslate('en|de');return false;" title="German" class="gflag nturl"
                             style="background-position:-300px -100px;"><img src="//gtranslate.net/flags/blank.png"
                                 height="12" width="12" alt="German" /></a>
-
-                        <style type="text/css">
-                        a.gflag {
-                            vertical-align: middle;
-                            font-size: 16px;
-                            padding: 1px 0;
-                            background-repeat: no-repeat;
-                            background-image: url(//gtranslate.net/flags/16.png);
-                        }
-
-                        a.gflag img {
-                            border: 0;
-                        }
-
-                        a.gflag:hover {
-                            background-image: url(//gtranslate.net/flags/16a.png);
-                        }
-
-                        #goog-gt-tt {
-                            display: none !important;
-                        }
-
-                        .goog-te-banner-frame {
-                            display: none !important;
-                        }
-
-                        .goog-te-menu-value:hover {
-                            text-decoration: none !important;
-                        }
-
-                        body {
-                            top: 0 !important;
-                        }
-
-                        #google_translate_element2 {
-                            display: none !important;
-                        }
-                        </style>
 
                         <div id="google_translate_element2"></div>
                         <script type="text/javascript">
@@ -271,7 +262,7 @@ else {
                 <br>
             </div>
             <div class="col-md-2">
-                <div class="alert alert-info" style="text-align: center" role="info">
+                <div id="filterInfo" class="alert alert-info" style="text-align: center" role="info">
                     <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
                         class="glyphicon glyphicon-info-sign alert-info" aria-hidden="true"></span>
                     <div class="info-container">
@@ -307,15 +298,6 @@ else {
                     style="display: none;">reset</a>
                 <div class="clearfix"></div>
             </div>
-            <!-- <div id="forecastlist">
-            <p style="text-align:center;"> <strong>Due date </strong></p>
-            <div class="clearfix"></div>
-        </div> -->
-            <div id="daySelectionDiv"></div>
-            <!-- <div id="productlist">
-            <p style="text-align:center;"><strong>Product</strong></p>
-            <div class="clearfix"></div>
-        </div> -->
             <div id="pbd">
                 <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
             </div>
@@ -330,7 +312,6 @@ else {
                 </table>
             </div>
 
-            <!-- <svg width="960" height="500"></svg></br> -->
         </div>
     </div>
 
@@ -345,6 +326,14 @@ else {
     }
     </script>
     <script>
+    $(document).ready(function() {
+        if (localStorage.getItem('checkFiltersActive') === 'true') {
+            $('#filterInfo').show();
+        } else {
+            $('#filterInfo').hide();
+        }
+    });
+
     const margin = {
         left: 55,
         right: 25,
@@ -355,12 +344,11 @@ else {
         data = JSON.parse(data);
 
         var forecastlist = dc.selectMenu("#forecastlist"),
-            // productChart = dc.pieChart("#product"),
             periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
             visCount = dc.dataCount(".dc-data-count"),
-            MADchart = dc.scatterPlot("#scatter")
-        visTable = dc.dataTable(".dc-data-table")
-        productlist = dc.selectMenu("#productlist");
+            MADchart = dc.scatterPlot("#scatter"),
+            visTable = dc.dataTable(".dc-data-table"),
+            productlist = dc.selectMenu("#productlist");
 
         let absDiff = function(orignalEl, finalOrder) {
             return Math.abs(orignalEl.OrderAmount - finalOrder);
@@ -449,23 +437,12 @@ else {
 
         var forecastPeriodGroup = forecastPeriodDim.group();
         var productGroup = productDim.group();
-        var ndxGroup = ndxDim.group().reduceSum(function(d) {
-            return +d.MAD;
-        });
+        // var ndxGroup = ndxDim.group().reduceSum(function(d) {
+        //     return +d.MAD;
+        // });
+        var ndxGroup = ndxDim.group();
         var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
         var dateGroup = dateDim.group();
-        const plotColorMap = {
-            0: '#000099',
-            1: '#cc8800'
-        };
-        var plotColorMap2 = function(d) {
-            if (d.PeriodsBeforeDelivery == 0) return 0;
-            else return 1;
-        };
-        var color = {
-            0: "#fa87ba",
-            1: "#8d2c4a"
-        };
 
         forecastlist
             .dimension(forecastPeriodDim)
@@ -486,7 +463,7 @@ else {
             .multiple(true)
             .numberVisible(15);
 
-        console.log("ndxDim: ", ndxGroup.top(Infinity));
+        // console.log("ndxDim: ", ndxGroup.top(Infinity));
 
         MADchart
             .width(768)
@@ -502,7 +479,9 @@ else {
             })
             .excludedSize(2)
             .excludedOpacity(0.5)
-            .x(d3.scaleLinear().domain([0, 100]))
+            .x(d3.scaleLinear().domain(0, d3.extent(bubu, function(d) {
+                return d.PeriodsBeforeDelivery
+            })))
             .brushOn(true)
             .clipPadding(10)
             .xAxisLabel("Periods Before Delivery")
@@ -541,9 +520,6 @@ else {
     });
     </script>
 
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
-        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
-    </script>
     <script src="/lib/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">

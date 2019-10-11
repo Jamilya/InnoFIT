@@ -19,6 +19,9 @@ else {
     <meta name="author" content="">
     <link rel="icon" href="/data/ico/innofit.ico">
     <title>Mean Squared Error</title>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
+    </script>
     <script src="../lib/js/localforage.js"></script>
     <script src="http://d3js.org/d3.v4.min.js"></script>
     <script src="../lib/js/crossfilter.js"></script>
@@ -88,6 +91,16 @@ else {
         stroke: #C0C0BB;
     }
 
+    .info-container {
+        display: inline-block;
+        width: calc(100% + -50px);
+        vertical-align: middle;
+    }
+
+    .customContainer {
+        padding: 0 3% 0 3%;
+    }
+
     a.gflag {
         vertical-align: middle;
         font-size: 16px;
@@ -124,8 +137,6 @@ else {
         display: none !important;
     }
     </style>
-    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script> -->
-
 
 </head>
 
@@ -144,9 +155,6 @@ else {
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li><a href="./configuration.php">Configuration</a></li>
-                    <!--  <li class="nav-item">
-                        <a class="nav-link" href="index.php">Home</a>
-                    </li > -->
                     <li><a href="./about.php">About</a></li>
                     <li class><a href="./howto.php">How to Interpret Error Measures </a></li>
                     <li class="dropdown active">
@@ -171,7 +179,6 @@ else {
                             <li><a href="./matrixvariance.php">Delivery Plans Matrix - With Variance </a></li>
                         </ul>
                     </li>
-                    <!-- </ul> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Corrections <span class="caret"></span> </a>
@@ -189,7 +196,6 @@ else {
                             onclick="doGTranslate('en|de');return false;" title="German" class="gflag nturl"
                             style="background-position:-300px -100px;"><img src="//gtranslate.net/flags/blank.png"
                                 height="12" width="12" alt="German" /></a>
-
                         <div id="google_translate_element2"></div>
                         <script type="text/javascript">
                         function googleTranslateElementInit2() {
@@ -202,8 +208,6 @@ else {
                         <script type="text/javascript"
                             src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit2">
                         </script>
-
-
                         <script type="text/javascript">
                         /* <![CDATA[ */
                         eval(function(p, a, c, k, e, r) {
@@ -240,279 +244,286 @@ else {
         <!--/.container-fluid -->
     </nav>
 
-    <div style="padding-left:39px">
-        <h3>Mean Squared Error (MSE) Graph</h3>
-        <small>
-            <?php
+    <div class="customContainer">
+        <div class="row" style="margin-bottom: -2%;">
+            <div class="col-md-10">
+                <h3>Mean Squared Error (MSE) Graph</h3>
+                <small>
+                    <?php
             echo "You are logged in as: ";
             print_r($_SESSION["session_username"]);
             echo ".";
             ?></small>
-        <br><br>
-        <p> <b>Graph Description:</b> This graph shows the average squared difference between forecasted and final
-            customer orders with respect to periods before delivery (PBD). <br>
-            Mean Squared Error (the mean/average of the squared errors) measures the quality of an estimation (zero
-            meaning perfect accuracy). <br>
-            The Formula of the Mean Squared Error (MSE) is:
-            <img src="https://latex.codecogs.com/gif.latex?MSE_{j} = \frac{1}{n}\sum_{i=1}^{n}(x_{i,j}-x_{i,0})^{2}"
-                title="MSE formula" />. </p>
-    </div>
+                <br>
+                </div>
+                <div class="col-md-2">
+                    <div id="filterInfo" class="alert alert-info" style="text-align: center" role="info">
+                        <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                            class="glyphicon glyphicon-info-sign alert-info" aria-hidden="true"></span>
+                        <div class="info-container">
+                            <div class="row">
+                                <span style="font-size: 14px; vertical-align: middle;" class="alert-info"
+                                    role="info">Filters are applied!</span>
+                            </div>
+                            <div class="row">
+                                <span style="font-size: 12px; vertical-align: middle;" class="alert-info" role="info">
+                                    To
+                                    change settings please visit <a href="./configuration.php">Configuration</a>.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <br />
+                    <p> <b>Graph Description:</b> This graph shows the average squared difference between forecasted and
+                        final
+                        customer orders with respect to periods before delivery (PBD). <br>
+                        Mean Squared Error (the mean/average of the squared errors) measures the quality of an
+                        estimation (zero
+                        meaning perfect accuracy). <br>
+                        The Formula of the Mean Squared Error (MSE) is:
+                        <img src="https://latex.codecogs.com/gif.latex?MSE_{j} = \frac{1}{n}\sum_{i=1}^{n}(x_{i,j}-x_{i,0})^{2}"
+                            title="MSE formula" />. </p>
+                </div>
+            </div>
 
-    <div style="padding-left:39px">
-        <div id="scatter">
-            <div class="clearfix"></div>
-        </div>
+            <div class="row">
+                <div id="scatter">
+                    <div class="clearfix"></div>
+                </div>
 
-        <!-- <div id="forecastlist">
-            <p style="text-align:center;"><strong>Due date </strong></p>
-            <div class="clearfix"></div>
-        </div> -->
+                <div id="pbd">
+                    <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
+                </div>
+                <div style="clear: both"></div>
 
-        <!-- <div id="productlist">
-            <p style="text-align:center;"><strong>Product</strong></p>
-            <div class="clearfix"></div>
-        </div> -->
+                <div>
+                    <div class="dc-data-count">
+                        <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
+                            href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
+                    </div><br /><br />
+                    <button onclick="myFunction()">Data table display</button>
+                    <table class="table table-hover dc-data-table" id="myTable" style="display:none">
+                    </table>
+                </div>
 
-        <div id="pbd">
-            <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
-        </div>
-        <div style="clear: both"></div>
-
-
-        <div>
-            <div class="dc-data-count">
-                <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
-                    href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
-            </div><br /><br />
-            <button onclick="myFunction()">Data table display</button>
-            <table class="table table-hover dc-data-table" id="myTable" style="display:none">
-            </table>
-        </div>
-
-    </div>
-    <script>
-    function myFunction() {
-        var x = document.getElementById("myTable");
-        if (x.style.display === "none") {
-            x.style.display = "block";
-        } else {
-            x.style.display = "none";
-        }
-    }
-    </script>
-
-    <script>
-    localforage.getItem("viz_data", function(error, data) {
-        data = JSON.parse(data);
-
-        let finalOrder = data.filter((el) => {
-            return el.PeriodsBeforeDelivery == 0;
-        });
-        const margin = {
-            left: 55,
-            right: 25,
-            top: 20,
-            bottom: 30
-        };
-        var forecastlist = dc.selectMenu("#forecastlist"),
-            periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
-            visCount = dc.dataCount(".dc-data-count"),
-            MSEchart = dc.scatterPlot("#scatter"),
-            visTable = dc.dataTable(".dc-data-table"),
-            productlist = dc.selectMenu("#productlist");
-
-
-        let absDiff = function(orignalEl, finalOrder) {
-            return Math.pow((orignalEl.OrderAmount - finalOrder), 2);
-        }
-
-        console.log("FINAL ORDERS: ", finalOrder);
-
-        let uniqueArray = data.filter(function(obj) {
-            return finalOrder.indexOf(obj) == -1;
-        });
-        console.log("Unique array: ", uniqueArray);
-
-        let valueMap = new Map();
-        finalOrder.forEach((val) => {
-            let keyString = val.ActualPeriod;
-            let valueString = val.OrderAmount;
-            valueMap.set(keyString, valueString);
-        });
-        console.log("valueMap: ", valueMap);
-
-        let absValuesArray = uniqueArray.map((el) => {
-            let value = absDiff(el, valueMap.get(el.ForecastPeriod));
-            return {
-                ActualDate: el.ActualDate,
-                ForecastDate: el.ForecastDate,
-                ActualPeriod: el.ActualPeriod,
-                ForecastPeriod: el.ForecastPeriod,
-                OrderAmount: el.OrderAmount,
-                Product: el.Product,
-                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                AbsoluteDiff: value
-            };
-        });
-        console.log("Absolute values: ", absValuesArray);
-
-        let seperatedByPeriods = d3.nest()
-            .key(function(d) {
-                return d.PeriodsBeforeDelivery
-            })
-            .entries(absValuesArray);
-        console.log("seperatedByPeriods: ", seperatedByPeriods);
-
-        let bubu = seperatedByPeriods.map((el) => {
-            for (i = 0; i < seperatedByPeriods.length; i++) {
-                let meanValue = d3.mean(el.values, function(d) {
-                    return d.AbsoluteDiff;
-                });
-                return {
-                    ActualDate: el.values[i].ActualDate,
-                    ForecastDate: el.values[i].ForecastDate,
-                    Product: el.values[i].Product,
-                    ActualPeriod: el.values[i].ActualPeriod,
-                    ForecastPeriod: el.values[i].ForecastPeriod,
-                    OrderAmount: el.values[i].OrderAmount,
-                    PeriodsBeforeDelivery: el.key,
-                    MSE: meanValue
-                };
+            </div>
+            </div>
+            <script>
+            function myFunction() {
+                var x = document.getElementById("myTable");
+                if (x.style.display === "none") {
+                    x.style.display = "block";
+                } else {
+                    x.style.display = "none";
+                }
             }
-        });
+            </script>
 
-        bubu.forEach(function(d) {
-            d.ActualDate = new Date(d.ActualDate);
-        });
-        var ndx = crossfilter(bubu);
-        var all = ndx.groupAll();
-        var forecastPeriodDim = ndx.dimension(function(d) {
-            return +d.ForecastPeriod;
-        });
-        var ndxDim = ndx.dimension(function(d) {
-            return [+d.PeriodsBeforeDelivery, +d.MSE, +d.Product];
-        });
-        var productDim = ndx.dimension(function(d) {
-            return d.Product;
-        });
-        var periodsBeforeDeliveryDim = ndx.dimension(function(d) {
-            return +d.PeriodsBeforeDelivery;
-        });
-        var dateDim = ndx.dimension(function(d) {
-            return +d.ActualDate;
-        });
+            <script>
+            $(document).ready(function() {
+                if (localStorage.getItem('checkFiltersActive') === 'true') {
+                    $('#filterInfo').show();
+                } else {
+                    $('#filterInfo').hide();
+                }
+            });
+            localforage.getItem("viz_data", function(error, data) {
+                data = JSON.parse(data);
 
-        var forecastPeriodGroup = forecastPeriodDim.group();
-        var productGroup = productDim.group();
-        var ndxGroup = ndxDim.group().reduceSum(function(d) {
-            return +d.MSE;
-        });
-        var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
-        var dateGroup = dateDim.group();
-        const plotColorMap = {
-            0: '#000099',
-            1: '#cc8800'
-        };
-        var plotColorMap2 = function(d) {
-            if (d.PeriodsBeforeDelivery == 0) return 0;
-            else return 1;
-        };
-        var color = {
-            0: "#fa87ba",
-            1: "#8d2c4a"
-        };
-
-        forecastlist
-            .dimension(forecastPeriodDim)
-            .group(forecastPeriodGroup)
-            .multiple(true)
-            .numberVisible(15);
-
-        productlist
-            .dimension(productDim)
-            .group(productGroup)
-            //.controlsUseVisibility(true)
-            .multiple(true)
-            .numberVisible(15);
-
-        periodsBeforeDeliveryChart
-            .dimension(periodsBeforeDeliveryDim)
-            .group(periodsBeforeDeliveryGroup)
-            .multiple(true)
-            .numberVisible(15);
-
-        console.log("ndxDim: ", ndxGroup.top(Infinity));
-
-        MSEchart
-            .width(768)
-            .height(480)
-            .dimension(ndxDim)
-            .symbolSize(10)
-            .group(ndxGroup)
-            .data(function(group) {
-                return group.all()
-                    .filter(function(d) {
-                        return d.key !== NaN;
-                    });
-            })
-            .excludedSize(2)
-            .excludedOpacity(0.5)
-            .x(d3.scaleLinear().domain([0, 100]))
-            .brushOn(true)
-            .clipPadding(10)
-            .xAxisLabel("Periods Before Delivery")
-            .yAxisLabel("MSE")
-            // .mouseZoomable(true)
-            .renderTitle(true)
-            .title(function(d) {
-                return [
-                    'Periods Before Delivery: ' + d.key[0],
-                    'MSE: ' + d.key[1],
-                    'Product: ' + d.key[2]
-                ].join('\n');
-            })
-            .elasticX(true)
-            .elasticY(true)
-            .xAxis().tickFormat(d3.format('d'));
-        // console.log('ndxgroup data:', ndxDim);
+                let finalOrder = data.filter((el) => {
+                    return el.PeriodsBeforeDelivery == 0;
+                });
+                const margin = {
+                    left: 55,
+                    right: 25,
+                    top: 20,
+                    bottom: 30
+                };
+                var forecastlist = dc.selectMenu("#forecastlist"),
+                    periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
+                    visCount = dc.dataCount(".dc-data-count"),
+                    MSEchart = dc.scatterPlot("#scatter"),
+                    visTable = dc.dataTable(".dc-data-table"),
+                    productlist = dc.selectMenu("#productlist");
 
 
-        MSEchart.selectAll('path.symbol')
-            .attr('opacity', 0.3);
-        MSEchart.margins().left = 50;
+                let absDiff = function(orignalEl, finalOrder) {
+                    return Math.pow((orignalEl.OrderAmount - finalOrder), 2);
+                }
 
-        visCount
-            .dimension(ndx)
-            .group(all);
+                console.log("FINAL ORDERS: ", finalOrder);
 
-        visTable
-            .dimension(dateDim)
-            .group(function(d) {
-                var format = d3.format('02d');
-                return d.ActualDate.getFullYear() + '/' + format((d.ActualDate.getMonth() + 1));
-            })
-            .columns([
-                "Product",
-                "PeriodsBeforeDelivery",
-                "MSE"
-            ]);
+                let uniqueArray = data.filter(function(obj) {
+                    return finalOrder.indexOf(obj) == -1;
+                });
+                console.log("Unique array: ", uniqueArray);
 
-        dc.renderAll();
+                let valueMap = new Map();
+                finalOrder.forEach((val) => {
+                    let keyString = val.ActualPeriod;
+                    let valueString = val.OrderAmount;
+                    valueMap.set(keyString, valueString);
+                });
+                console.log("valueMap: ", valueMap);
 
-        var maxLabel = d3.max(bubu, function(d) {
-                return d.MSE;
-            }),
-            maxWidth;
-    });
-    </script>
+                let absValuesArray = uniqueArray.map((el) => {
+                    let value = absDiff(el, valueMap.get(el.ForecastPeriod));
+                    return {
+                        ActualDate: el.ActualDate,
+                        ForecastDate: el.ForecastDate,
+                        ActualPeriod: el.ActualPeriod,
+                        ForecastPeriod: el.ForecastPeriod,
+                        OrderAmount: el.OrderAmount,
+                        Product: el.Product,
+                        PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                        AbsoluteDiff: value
+                    };
+                });
+                console.log("Absolute values: ", absValuesArray);
 
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
-        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
-    </script>
-    <script src="/lib/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
-    </script>
+                let seperatedByPeriods = d3.nest()
+                    .key(function(d) {
+                        return d.PeriodsBeforeDelivery
+                    })
+                    .entries(absValuesArray);
+                console.log("seperatedByPeriods: ", seperatedByPeriods);
+
+                let bubu = seperatedByPeriods.map((el) => {
+                    for (i = 0; i < seperatedByPeriods.length; i++) {
+                        let meanValue = d3.mean(el.values, function(d) {
+                            return d.AbsoluteDiff;
+                        });
+                        return {
+                            ActualDate: el.values[i].ActualDate,
+                            ForecastDate: el.values[i].ForecastDate,
+                            Product: el.values[i].Product,
+                            ActualPeriod: el.values[i].ActualPeriod,
+                            ForecastPeriod: el.values[i].ForecastPeriod,
+                            OrderAmount: el.values[i].OrderAmount,
+                            PeriodsBeforeDelivery: el.key,
+                            MSE: meanValue
+                        };
+                    }
+                });
+
+                bubu.forEach(function(d) {
+                    d.ActualDate = new Date(d.ActualDate);
+                });
+                var ndx = crossfilter(bubu);
+                var all = ndx.groupAll();
+                var forecastPeriodDim = ndx.dimension(function(d) {
+                    return +d.ForecastPeriod;
+                });
+                var ndxDim = ndx.dimension(function(d) {
+                    return [+d.PeriodsBeforeDelivery, +d.MSE, +d.Product];
+                });
+                var productDim = ndx.dimension(function(d) {
+                    return d.Product;
+                });
+                var periodsBeforeDeliveryDim = ndx.dimension(function(d) {
+                    return +d.PeriodsBeforeDelivery;
+                });
+                var dateDim = ndx.dimension(function(d) {
+                    return +d.ActualDate;
+                });
+
+                var forecastPeriodGroup = forecastPeriodDim.group();
+                var productGroup = productDim.group();
+                var ndxGroup = ndxDim.group();
+
+                var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
+                var dateGroup = dateDim.group();
+
+                forecastlist
+                    .dimension(forecastPeriodDim)
+                    .group(forecastPeriodGroup)
+                    .multiple(true)
+                    .numberVisible(15);
+
+                productlist
+                    .dimension(productDim)
+                    .group(productGroup)
+                    .multiple(true)
+                    .numberVisible(15);
+
+                periodsBeforeDeliveryChart
+                    .dimension(periodsBeforeDeliveryDim)
+                    .group(periodsBeforeDeliveryGroup)
+                    .multiple(true)
+                    .numberVisible(15);
+
+                // console.log("ndxDim: ", ndxGroup.top(Infinity));
+
+                MSEchart
+                    .width(768)
+                    .height(480)
+                    .dimension(ndxDim)
+                    .symbolSize(10)
+                    .group(ndxGroup)
+                    .data(function(group) {
+                        return group.all()
+                            .filter(function(d) {
+                                return d.key !== NaN;
+                            });
+                    })
+                    .excludedSize(2)
+                    .excludedOpacity(0.5)
+                    .x(d3.scaleLinear().domain([0, 100]))
+                    .brushOn(true)
+                    .clipPadding(10)
+                    .xAxisLabel("Periods Before Delivery")
+                    .yAxisLabel("MSE")
+                    // .mouseZoomable(true)
+                    .renderTitle(true)
+                    .title(function(d) {
+                        return [
+                            'Periods Before Delivery: ' + d.key[0],
+                            'MSE: ' + d.key[1],
+                            'Product: ' + d.key[2]
+                        ].join('\n');
+                    })
+                    .elasticX(true)
+                    .elasticY(true)
+                    .xAxis().tickFormat(d3.format('d'));
+                // console.log('ndxgroup data:', ndxDim);
+
+
+                MSEchart.selectAll('path.symbol')
+                    .attr('opacity', 0.3);
+                MSEchart.margins().left = 50;
+
+                visCount
+                    .dimension(ndx)
+                    .group(all);
+
+                visTable
+                    .dimension(dateDim)
+                    .group(function(d) {
+                        var format = d3.format('02d');
+                        return d.ActualDate.getFullYear() + '/' + format((d.ActualDate.getMonth() + 1));
+                    })
+                    .columns([
+                        "Product",
+                        "PeriodsBeforeDelivery",
+                        "MSE"
+                    ]);
+
+                dc.renderAll();
+
+                var maxLabel = d3.max(bubu, function(d) {
+                        return d.MSE;
+                    }),
+                    maxWidth;
+            });
+            </script>
+            <script src="/lib/js/bootstrap.bundle.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+                integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+                crossorigin="anonymous">
+            </script>
 
 
 </body>
