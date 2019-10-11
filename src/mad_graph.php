@@ -301,9 +301,6 @@ else {
                         title="MAD_formula" />. </p>
             </div>
         </div>
-
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script> -->
-
         <div class="row">
             <div id="scatter">
                 <a class="reset" href="javascript:MADchart.filterAll(); dc.redrawAll();"
@@ -315,17 +312,14 @@ else {
             <div class="clearfix"></div>
         </div> -->
             <div id="daySelectionDiv"></div>
-
             <!-- <div id="productlist">
             <p style="text-align:center;"><strong>Product</strong></p>
             <div class="clearfix"></div>
         </div> -->
-
             <div id="pbd">
                 <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
             </div>
             <div style="clear: both"></div>
-
             <div>
                 <div class="dc-data-count">
                     <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
@@ -336,7 +330,7 @@ else {
                 </table>
             </div>
 
-            <svg width="960" height="500"></svg></br>
+            <!-- <svg width="960" height="500"></svg></br> -->
         </div>
     </div>
 
@@ -351,67 +345,12 @@ else {
     }
     </script>
     <script>
-    const xValue = d => d.PeriodsBeforeDelivery;
-    const xLabel = 'Periods Before Delivery';
-    const yValue = d => d.MAD;
-    const yLabel = 'MAD';
-    const colorValue = d => d.Product;
-    const colorLabel = '';
     const margin = {
         left: 55,
         right: 25,
         top: 20,
         bottom: 30
     };
-    const legendOffset = 52;
-    const svg = d3.select('svg');
-    const width = svg.attr('width');
-    const height = svg.attr('height');
-    const innerWidth = width - margin.left - margin.right - legendOffset;
-    const innerHeight = height - margin.top - margin.bottom - 35;
-
-    const g = svg.append('g')
-        .attr('transform', `translate(${margin.left},${margin.top})`);
-    const xAxisG = g.append('g')
-        .attr('transform', `translate(0, ${innerHeight})`);
-    const yAxisG = g.append('g');
-    const colorLegendG = g.append('g')
-        .attr('transform', `translate(${innerWidth + 32}, 28)`)
-        .attr('stroke', 'black')
-        .attr('stroke-width', 0.5);
-
-    xAxisG.append('text')
-        .attr('class', 'axis-label')
-        .attr('x', innerWidth / 2)
-        .attr('y', 41)
-        .text(xLabel);
-
-    yAxisG.append('text')
-        .attr('class', 'axis-label')
-        .attr('x', -innerHeight / 2)
-        .attr('y', -42)
-        .attr('transform', `rotate(-90)`)
-        .style('text-anchor', 'middle')
-        .text(yLabel);
-
-    //   colorLegendG.append('text')
-    //       .attr('class', 'legend-label')
-    //       .attr('x', -30)
-    //       .attr('y', -12)
-    //       .text(colorLabel);
-
-    const xScale = d3.scaleLinear();
-    const yScale = d3.scaleLinear();
-    const colorScale = d3.scaleOrdinal()
-        .range(d3.schemeCategory10);
-
-
-    const xAxis = d3.axisBottom(xScale)
-        .ticks(12);
-
-    const yAxis = d3.axisLeft(yScale)
-        .ticks(11);
-
     localforage.getItem("viz_data", function(error, data) {
         data = JSON.parse(data);
 
@@ -466,7 +405,6 @@ else {
                 return d.PeriodsBeforeDelivery
             })
             .entries(absValuesArray);
-        // console.log("Abs values array: ", seperatedByPeriods);
 
         let bubu = seperatedByPeriods.map((el) => {
             for (i = 0; i < seperatedByPeriods.length; i++) {
@@ -505,7 +443,6 @@ else {
         var periodsBeforeDeliveryDim = ndx.dimension(function(d) {
             return +d.PeriodsBeforeDelivery;
         });
-        // var orderDim = ndx.dimension(function(d) { return d.OrderAmount;}) ;
         var dateDim = ndx.dimension(function(d) {
             return +d.ActualDate;
         });
@@ -515,7 +452,6 @@ else {
         var ndxGroup = ndxDim.group().reduceSum(function(d) {
             return +d.MAD;
         });
-        // var orderGroup = orderDim.group(function(d) { return +d.OrderAmount;});
         var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
         var dateGroup = dateDim.group();
         const plotColorMap = {
@@ -566,17 +502,6 @@ else {
             })
             .excludedSize(2)
             .excludedOpacity(0.5)
-            // .keyAccessor(function (d) { return d.key[0]; })
-            // .valueAccessor(function (d) { return d.key[1]; })
-            // .colorAccessor(function(d) { 
-            //     if (d.key[2]==0) {
-            //         return 0;
-            //     } else return 1;
-            //     // return d.key[2];
-            //  })
-            // .colors(function(colorKey) { 
-            //     return plotColorMap[colorKey]; })
-
             .x(d3.scaleLinear().domain([0, 100]))
             .brushOn(true)
             .clipPadding(10)
@@ -594,13 +519,9 @@ else {
             .elasticY(true)
             .xAxis().tickFormat(d3.format('d'));
         // console.log('ndxgroup data:', ndxDim);
-
-
         MADchart.selectAll('path.symbol')
             .attr('opacity', 0.3);
         MADchart.margins().left = 50;
-
-
         visCount
             .dimension(ndx)
             .group(all);
@@ -616,227 +537,7 @@ else {
                 "PeriodsBeforeDelivery",
                 "MAD"
             ]);
-
         dc.renderAll();
-
-
-        xScale
-            // .domain([
-            //     d3.min([0, d3.min(bubu, function (d) { return d.PeriodsBeforeDelivery })]),
-            //     d3.max([0, d3.max(bubu, function (d) { return (d.PeriodsBeforeDelivery) })])
-            // ])
-            .domain([d3.min(bubu, function(d) {
-                return d.PeriodsBeforeDelivery
-            }), d3.max(bubu, function(d) {
-                return d.PeriodsBeforeDelivery
-            })])
-            .range([0, innerWidth])
-            .nice();
-
-        yScale
-            .domain([
-                d3.min([0, d3.min(bubu, function(d) {
-                    return (d.MAD)
-                })]),
-                d3.max([0, d3.max(bubu, function(d) {
-                    return (d.MAD + 1)
-                })])
-            ])
-            .range([innerHeight, 0])
-            .nice();
-
-
-
-
-        //Specify Deviation
-
-        g.selectAll('circle').data(bubu)
-            .enter().append('circle')
-            .attr('cx', d => xScale(xValue(d)))
-            .attr('cy', d => yScale(yValue(d)))
-            .attr('fill', d => colorScale(colorValue(d)))
-            .attr('fill-opacity', 1)
-            .attr('r', 8)
-            .attr('stroke', 'black')
-            .attr('stroke-width', 1)
-            .style("display", function(d) {
-                return d.MAD == undefined ? "none" : undefined;
-            })
-            .on('mouseover', function(d) { // Tooltip
-                d3.select(this)
-                    .transition()
-                    .duration(500)
-                    .style("opacity", 1)
-                    .attr('r', 10)
-                    .attr('stroke-width', 3)
-            })
-            .on('mouseout', function() {
-                d3.select(this)
-                    .transition()
-                    .duration(500)
-                    .attr('r', 7)
-                    .attr('stroke-width', 1)
-            })
-            .append('title') // Tooltip
-
-            .text(function(d) {
-                return ' Periods Before Delivery: ' + d.PeriodsBeforeDelivery +
-                    '\nMAD of the period: ' + d.MAD
-            });
-
-        xAxisG.call(xAxis);
-        yAxisG.call(yAxis);
-        // colorLegendG.call(colorLegend)
-        //     .selectAll('.cell text')
-        //     .attr('dy', '0.1em');
-
-
-        //console.log(data);
-
-
-
-
-        // var legendOffset = 140;
-
-
-        // var margin = { top: 20, right: 25, bottom: 30, left: 55 },
-        //     width = 960 - margin.left - margin.right,
-        //     height = 590 - margin.top - margin.bottom - legendOffset;
-
-        // var x = d3.scaleLinear()
-        //     .domain([
-        //         d3.min([0, d3.min(bubu, function (d) { return d.PeriodsBeforeDelivery })]),
-        //         d3.max([0, d3.max(bubu, function (d) { return d.PeriodsBeforeDelivery })])
-        //     ])
-        //     .range([0, width])
-
-        // var y = d3.scaleLinear()
-        //     .domain([
-        //         d3.min([0, d3.min(bubu, function (d) { return (d.MeanOfThisPeriod) })]),
-        //         d3.max([0, d3.max(bubu, function (d) { return (d.MeanOfThisPeriod) })])
-        //     ])
-        //     .range([height, 0])
-
-        // var PeriodsBeforeDelivery = function (d) { return d.PeriodsBeforeDelivery; },
-        //     color = d3.scaleOrdinal(d3.schemeCategory10);
-
-        // var xAxis = d3.axisBottom(x)
-        //     .ticks(10);
-
-        // var yAxis = d3.axisLeft(y);
-
-        // var svg = d3.select("body").append("svg")
-        //     .attr("width", width + margin.left + margin.right)
-        //     .attr("height", height + margin.top + margin.bottom + legendOffset)
-        //     .append("g")
-        //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-        // // Circles
-        // var circles = svg.selectAll('circle')
-        //     .data(bubu)
-        //     .enter()
-        //     .append('circle')
-        //     .attr('cx', function (d) { return x(d.PeriodsBeforeDelivery) })
-        //     .attr('cy', function (d) { return y(d.MeanOfThisPeriod) })
-        //     .attr('r', '7')
-        //     .attr('stroke', 'black')
-        //     .attr('stroke-width', 1)
-        //     .attr('fill', function (d, i) { return color(PeriodsBeforeDelivery(d)); })
-
-        //     .on('mouseover', function (d) {  // Tooltip
-        //         d3.select(this)
-        //             .transition()
-        //             .duration(500)
-        //             .style("opacity", 1)
-        //             .attr('r', 10)
-        //             .attr('stroke-width', 3)
-        //     })
-        //     .on('mouseout', function () {
-        //         d3.select(this)
-        //             .transition()
-        //             .duration(500)
-        //             .attr('r', 7)
-        //             .attr('stroke-width', 1)
-        //     })
-        //     .append('title') // Tooltip
-
-        //     .text(function (d) {
-        //         return ' Periods Before Delivery: '+d.PeriodsBeforeDelivery + 
-        //             '\nMAD of the Period: ' + d.MeanOfThisPeriod 
-        //             //'\nPeriods Before Delivery: ' + d.PeriodsBeforeDelivery
-        //         //'\nOrder Amount: ' + d.OrderAmount
-        //     })
-
-        //     svg.append("text")             
-        //     .attr("transform", "translate(" + (width-15) + " ," + (height + margin.top - 32) + ")")
-        //      .style("text-anchor", "middle")
-        //     .attr("x", -410)
-        //     .attr("dy", "3.5em")
-        //     .attr("y", 3)
-        //     .style("font-size","14px")
-        //     .style("stroke-width", "1px")
-        //     .text("Periods Before Delivery"); 
-
-        //   svg.append("g")
-        //     .attr("class", "x axis")
-        //      .attr("transform", "translate(0," + height + ")")
-        //      .style("text-anchor", "end")
-        //     .text("Periods Before Delivery")
-        //     //.attr("class", "label")
-        //     // .style("text-anchor", "end")
-        //     // .append("text")
-        //     // .attr('dy', '.60em') 
-        //     .call(xAxis);
-
-        //   svg.append("text")
-        //    .attr("transform", "rotate(-90)")
-        //    .attr("y", 10)
-        //    .attr("x", 0 - (height / 1.5))
-        //    .attr("dy", "-3em")
-        //    .style("font-size","14px")
-        //    .style("stroke-width", "1px")
-        //     .text("Mean Absolute Deviation (MAD)");
-
-        //   svg.append("g")
-        //     .attr("class", "y axis")
-        // //    .append("text")
-        //  //  .attr("class", "label")
-        //     // .attr("transform", "translate(0," + height + ")")
-        //     // .attr("x", 0)
-        //     // .attr("y", 5)
-        //     // .attr("dy", ".45em")
-        //     // .style("text-anchor", "end")
-        //     .style("text-anchor", "end")
-        //     .text("Mean Absolute Deviation (MAD)")
-        //     .call(yAxis);   
-
-
-        // var legend = svg.selectAll(".legend")
-        //     .data(color.domain())
-        //     .enter().append("g")
-        //     .attr("class", "legend")
-        //     //.scale(xAxis)
-        //     //.shape('circle')
-        //     .attr("transform", function (d, i) {
-        //         return "translate(" + (- width + margin.left + margin.right + i * 90)           // x Position
-        //             + "," + (height + 59) + ")";
-        //     });                                           // y Position
-
-        // legend.append("rect")
-        //     .attr("x", width - 10)
-        //     .attr("width", 10)
-        //     .attr("height", 10)
-        //     .style("opacity", 1)
-        //     .style("fill", color);
-
-        // legend.append("text")
-        //     .attr("x", width - 24)
-        //     .attr("y", 10)
-        //     .attr("yAxis", ".35em")
-        //     .style("text-anchor", "end")
-        //     .text(function (d) { return 'PBD ' + d; });
-
     });
     </script>
 

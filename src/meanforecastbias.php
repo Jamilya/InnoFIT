@@ -6,7 +6,6 @@ if(session_id() == '' || !isset($_SESSION)) {
 else {
     header("Location: includes/login.php");
 };?>
-
 <!DOCTYPE html>
 <html lang="en">
 <meta charset="utf-8">
@@ -124,7 +123,6 @@ else {
         display: none !important;
     }
     </style>
-
 </head>
 
 <body>
@@ -291,9 +289,6 @@ else {
             <table class="table table-hover dc-data-table" id="myTable" style="display:none">
             </table>
         </div>
-
-        <div id="test"></div><br />
-        <svg width="860" height="380"></svg> <br />
     </div>
     <script>
     function myFunction() {
@@ -311,543 +306,253 @@ else {
         // productChart = dc.pieChart("#product"),
         periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
         visCount = dc.dataCount(".dc-data-count"),
-        MFBchart = dc.scatterPlot("#scatter")
-    visTable = dc.dataTable(".dc-data-table")
-    productlist = dc.selectMenu("#productlist");
-
-    const xValue = d => d.PeriodsBeforeDelivery;
-    const xLabel = 'Periods Before Delivery';
-    const yValue = d => d.MFB;
-    const yLabel = 'MFB';
-    const colorValue = d => d.Product;
-    const colorLabel = 'Product';
+        MFBchart = dc.scatterPlot("#scatter"),
+        visTable = dc.dataTable(".dc-data-table"),
+        productlist = dc.selectMenu("#productlist");
     const margin = {
         left: 55,
         right: 25,
         top: 20,
         bottom: 30
     };
-    const legendOffset = 52;
 
-    const svg = d3.select('svg');
-    const width = svg.attr('width');
-    const height = svg.attr('height');
-    const innerWidth = width - margin.left - margin.right - legendOffset;
-    const innerHeight = height - margin.top - margin.bottom - 35;
-
-
-
-    const g = svg.append('g')
-        .attr('transform', `translate(${margin.left},${margin.top})`);
-    const xAxisG = g.append('g')
-        .attr('transform', `translate(0, ${innerHeight})`);
-    const yAxisG = g.append('g');
-    const colorLegendG = g.append('g')
-        .attr('transform', `translate(${innerWidth + 32}, 28)`)
-        .attr('stroke', 'black')
-        .attr('stroke-width', 0.5);
-
-    xAxisG.append('text')
-        .attr('class', 'axis-label')
-        .attr('x', innerWidth / 2)
-        .attr('y', 41)
-        .text(xLabel);
-
-    yAxisG.append('text')
-        .attr('class', 'axis-label')
-        .attr('x', (-innerHeight / 2))
-        .attr('y', -35)
-        .attr('transform', `rotate(-90)`)
-        .style('text-anchor', 'middle')
-        .text(yLabel);
-
-    //   colorLegendG.append('text')
-    //       .attr('class', 'legend-label')
-    //       .attr('x', -25)
-    //       .attr('y', -16)
-    //       .text(colorLabel);
-
-    const xScale = d3.scaleLinear();
-    const yScale = d3.scaleLinear();
-    const colorScale = d3.scaleOrdinal()
-        .range(d3.schemeCategory10);
-
-    const xAxis = d3.axisBottom(xScale)
-        .ticks(10);
-
-    const yAxis = d3.axisLeft(yScale)
-        .ticks(10);
-
-    //   const colorLegend = d3.legendColor()
-    //     .scale(colorScale)
-    //     .shape('circle');
     localforage.getItem("viz_data", function(error, data) {
-    data = JSON.parse(data);
+        data = JSON.parse(data);
 
-    let finalOrder = data.filter((el) => {
-        return el.PeriodsBeforeDelivery == 0;
-    });
-
-
-    let uniqueArray = data.filter(function(obj) {
-        return finalOrder.indexOf(obj) == -1;
-    });
-    // console.log("Unique array: ", uniqueArray);
-
-    let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +
-        b);
-    // console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
-
-
-    let dataGroupedByPBD = d3.nest()
-        .key(function(d) {
-            return d.PeriodsBeforeDelivery;
-        })
-        .entries(uniqueArray);
-    // console.log('Grouped data: ', dataGroupedByPBD);
-
-    let bubu = dataGroupedByPBD.map((el) => {
-        for (i = 0; i < dataGroupedByPBD.length; i++) {
-            let sum = el.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-            return {
-                ActualDate: el.values[i].ActualDate,
-                ForecastDate: el.values[i].ForecastDate,
-                Product: el.values[i].Product,
-                ActualPeriod: el.values[i].ActualPeriod,
-                ForecastPeriod: el.values[i].ForecastPeriod,
-                OrderAmount: el.values[i].OrderAmount,
-                PeriodsBeforeDelivery: el.key,
-                SumOfForecast: sum
-            };
-        }
-    });
-    // console.log('current mape: ', bubu);
-
-    let finalForecastBias = bubu.map((el) => {
-        for (i = 0; i < dataGroupedByPBD.length; i++) {
-            let finalForecastBiasPBD = el.SumOfForecast / sumOfAllFinalOrders;
-            return {
-                ActualDate: el.ActualDate,
-                ForecastDate: el.ForecastDate,
-                Product: el.Product,
-                ActualPeriod: el.ActualPeriod,
-                ForecastPeriod: el.ForecastPeriod,
-                OrderAmount: el.OrderAmount,
-                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                MFB: finalForecastBiasPBD
-            };
-        }
-    });
-    console.log('Final mfb: ', finalForecastBias);
-
-    finalForecastBias.forEach(function(d) {
-        d.ActualDate = new Date(d.ActualDate);
-    });
-
-    var dataMean = d3.mean(finalForecastBias, function(
-        d) { //Define mean value of Order Amount, i.e. Avg. Order Amount
-        return d.MFB;
-    });
-    console.log("Mean Value: ", dataMean);
-
-
-    var ndx = crossfilter(finalForecastBias);
-    var all = ndx.groupAll();
-    var forecastPeriodDim = ndx.dimension(function(d) {
-        return +d.ForecastPeriod;
-    });
-    var ndxDim = ndx.dimension(function(d) {
-        return [+d.PeriodsBeforeDelivery, +d.MFB, +d.Product];
-    });
-    var productDim = ndx.dimension(function(d) {
-        return d.Product;
-    });
-    var periodsBeforeDeliveryDim = ndx.dimension(function(d) {
-        return +d.PeriodsBeforeDelivery;
-    });
-    var dateDim = ndx.dimension(function(d) {
-        return +d.ActualDate;
-    });
-    var forecastPeriodGroup = forecastPeriodDim.group();
-    var productGroup = productDim.group();
-    var ndxGroup = ndxDim.group().reduceSum(function(d) {
-        return +d.MFB;
-    });
-    var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
-    var dateGroup = dateDim.group();
-    const plotColorMap = {
-        0: '#000099',
-        1: '#cc8800'
-    };
-    var plotColorMap2 = function(d) {
-        if (d.PeriodsBeforeDelivery == 0) return 0;
-        else return 1;
-    };
-    var color = {
-        0: "#fa87ba",
-        1: "#8d2c4a"
-    };
-
-    forecastlist
-        .dimension(forecastPeriodDim)
-        .group(forecastPeriodGroup)
-        .multiple(true)
-        .numberVisible(15);
-
-    productlist
-        .dimension(productDim)
-        .group(productGroup)
-        //.controlsUseVisibility(true)
-        .multiple(true)
-        .numberVisible(15);
-
-    periodsBeforeDeliveryChart
-        .dimension(periodsBeforeDeliveryDim)
-        .group(periodsBeforeDeliveryGroup)
-        .multiple(true)
-        .numberVisible(15);
-
-    console.log("ndxDim: ", ndxGroup.top(Infinity));
-
-    MFBchart
-        .width(768)
-        .height(480)
-        .dimension(ndxDim)
-        .symbolSize(10)
-        .group(ndxGroup)
-        .data(function(group) {
-            return group.all()
-                .filter(function(d) {
-                    return d.key !== NaN;
-                });
-        })
-        .excludedSize(2)
-        .excludedOpacity(0.5)
-        // .keyAccessor(function (d) { return d.key[0]; })
-        // .valueAccessor(function (d) { return d.key[1]; })
-        // .colorAccessor(function(d) { 
-        //     if (d.key[2]==0) {
-        //         return 0;
-        //     } else return 1;
-        //     // return d.key[2];
-        //  })
-        // .colors(function(colorKey) { 
-        //     return plotColorMap[colorKey]; })
-
-        .x(d3.scaleLinear().domain(d3.extent(finalForecastBias, function(d) {
-            return d.PeriodsBeforeDelivery
-        })))
-        .brushOn(true)
-        .clipPadding(10)
-        .xAxisLabel("Periods Before Delivery")
-        .yAxisLabel("MFB")
-        // .mouseZoomable(true)
-        .renderTitle(true)
-        .title(function(d) {
-            return [
-                'Periods Before Delivery: ' + d.key[0],
-                'MFB: ' + d.key[1],
-                'Product: ' + d.key[2]
-            ].join('\n');
-        })
-        .elasticX(true)
-        .elasticY(true)
-        .on('renderlet', function(MFBchart) {
-            var x_vert = width;
-            var extra_data = [{
-                    x: 47,
-                    y: MFBchart.y()(dataMean)
-                },
-                {
-                    x: MFBchart.x()(x_vert),
-                    y: MFBchart.y()(dataMean)
-                }
-            ];
-
-            var line = d3.line()
-                .x(function(d) {
-                    return d.x;
-                })
-                .y(function(d) {
-                    return d.y;
-                })
-                .curve(d3.curveLinear);
-            var chartBody = MFBchart.select('g');
-            var path = chartBody.selectAll('path.extra').data([extra_data]);
-            path = path.enter()
-                .append('path')
-                .attr('class', 'oeExtra')
-                .attr('stroke', 'orange')
-                .attr('id', 'oeLine')
-                .attr("stroke-width", 1)
-                .style("stroke-dasharray", ("10,3"))
-                .merge(path);
-            path.attr('d', line);
-        })
-        .xAxis().tickFormat(d3.format('d'));
-
-    MFBchart.symbol(d3.symbolCircle);
-    MFBchart.margins().left = 50;
-
-    visCount
-        .dimension(ndx)
-        .group(all);
-
-    visTable
-        .dimension(dateDim)
-        .group(function(d) {
-            var format = d3.format('02d');
-            return d.ActualDate.getFullYear() + '/' + format((d.ActualDate.getMonth() + 1));
-        })
-        .columns([
-            "Product",
-            "PeriodsBeforeDelivery",
-            "MFB"
-        ]);
-
-    dc.renderAll();
-
-    /* Old Calculation of MFB */
-    // let finalForecastBias = dataGroupedByPBD.map((val) => {
-    //     let sum = val.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-    //         console.log('sum for pbd: ', val.key, ' sum: ', sum);
-    //         let finalForecastBiasPBD = sum / sumOfAllFinalOrders;
-    //         console.log('Final Forecast Bias by PBD: ', finalForecastBiasPBD);
-
-    //         return {
-    //             PeriodsBeforeDelivery: val.key,
-    //             ForecastBiasPBD: finalForecastBiasPBD
-    //         };
-    //     });
-
-    // console.log('Final Forecast Bias: ', finalForecastBias);
-
-    xScale
-        .domain([
-            d3.min([0, d3.min(finalForecastBias, function(d) {
-                return d.PeriodsBeforeDelivery
-            })]),
-            d3.max([0, d3.max(finalForecastBias, function(d) {
-                return d.PeriodsBeforeDelivery
-            })])
-        ])
-        .range([0, innerWidth])
-        .nice();
-
-    yScale
-        .domain([
-            d3.min(finalForecastBias, function(d) {
-                return (d.MFB)
-            }),
-            d3.max(finalForecastBias, function(d) {
-                return (d.MFB)
-            })
-        ])
-        .range([innerHeight, 0])
-        .nice();
-
-
-    g.selectAll('circle').data(finalForecastBias)
-        .enter().append('circle')
-        .attr('cx', d => xScale(xValue(d)))
-        .attr('cy', d => yScale(yValue(d)))
-        .attr('fill', d => colorScale(colorValue(d)))
-        .attr('fill-opacity', 1)
-        .attr('r', 8)
-        .attr('stroke', 'black')
-        .attr('stroke-width', 1)
-        .on('mouseover', function(d) { // Tooltip
-            d3.select(this)
-                .transition()
-                .duration(500)
-                .style("opacity", 1)
-                .attr('r', 10)
-                .attr('stroke-width', 3)
-        })
-        .on('mouseout', function() {
-            d3.select(this)
-                .transition()
-                .duration(500)
-                .attr('r', 7)
-                .attr('stroke-width', 1)
-        })
-        .append('title') // Tooltip
-
-        .text(function(d) {
-            return ' Periods Before Delivery: ' + d.PeriodsBeforeDelivery +
-                '\nMean Forecast Bias of the period: ' + d.MFB
+        let finalOrder = data.filter((el) => {
+            return el.PeriodsBeforeDelivery == 0;
         });
 
-    g.append("line")
-        .style("stroke", "orange")
-        .attr("stroke-width", 2)
-        .data(finalForecastBias)
-        .attr("x1", 0)
-        .attr("y1", yScale(dataMean))
-        .attr("x2", width - 128)
-        .attr("y2", yScale(dataMean));
 
-    xAxisG.call(xAxis);
-    yAxisG.call(yAxis);
-    // colorLegendG.call(colorLegend)
-    //   .selectAll('.cell text')
-    //     .attr('dy', '0.1em');
+        let uniqueArray = data.filter(function(obj) {
+            return finalOrder.indexOf(obj) == -1;
+        });
 
+        let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +
+            b);
 
-    // var margin = { top: 20, right: 15, bottom: 30, left: 80 },
-    //     width = 960 - margin.left - margin.right,
-    //     height = 590 - margin.top - margin.bottom - legendOffset;
+        let dataGroupedByPBD = d3.nest()
+            .key(function(d) {
+                return d.PeriodsBeforeDelivery;
+            })
+            .entries(uniqueArray);
 
-    // var x = d3.scaleLinear()
-    //     .domain([
-    //         d3.min([0, d3.min(finalForecastBias, function (d) { return d.PeriodsBeforeDelivery })]),
-    //         d3.max([0, d3.max(finalForecastBias, function (d) { return d.PeriodsBeforeDelivery })])
-    //     ])
-    //     .range([0, width])
+        let finalDataGroupedByPBD = d3.nest()
+            .key(function(d) {
+                return d.PeriodsBeforeDelivery;
+            })
+            .entries(finalOrder);
+        
 
-    // var y = d3.scaleLinear()
-    //     .domain([
-    //         d3.min([0, d3.min(finalForecastBias, function (d) { return (d.ForecastBiasPBD) })]),
-    //         d3.max([0, d3.max(finalForecastBias, function (d) { return (d.ForecastBiasPBD) })])
-    //     ])
-    //     .range([height, 0])
+        let bubu = dataGroupedByPBD.map((el) => {
+            for (i = 0; i < dataGroupedByPBD.length; i++) {
+                let sum = el.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
+                return {
+                    ActualDate: el.values[i].ActualDate,
+                    ForecastDate: el.values[i].ForecastDate,
+                    Product: el.values[i].Product,
+                    ActualPeriod: el.values[i].ActualPeriod,
+                    ForecastPeriod: el.values[i].ForecastPeriod,
+                    OrderAmount: el.values[i].OrderAmount,
+                    PeriodsBeforeDelivery: el.key,
+                    SumOfForecast: sum
+                };
+            }
+        });
+        let finalSumCalc = finalDataGroupedByPBD.map((val) => {
+            let sum = val.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
+            return {
+                PeriodsBeforeDelivery: val.key,
+                FinalOrderSum: sum
+            };
+        });
+        console.log('Final orders sum calc: ', finalSumCalc);
+        console.log('Sum of all final orders: ', sumOfAllFinalOrders);
 
-    // var Product = function (d) { return d.Product; },
-    //     color = d3.scaleOrdinal(d3.schemeCategory10);
+        let finalForecastBias = bubu.map((el) => {
+            for (i = 0; i < dataGroupedByPBD.length; i++) {
+                let finalForecastBiasPBD = el.SumOfForecast / sumOfAllFinalOrders;
+                return {
+                    ActualDate: el.ActualDate,
+                    ForecastDate: el.ForecastDate,
+                    Product: el.Product,
+                    ActualPeriod: el.ActualPeriod,
+                    ForecastPeriod: el.ForecastPeriod,
+                    OrderAmount: el.OrderAmount,
+                    PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                    MFB: finalForecastBiasPBD.toFixed(3)
+                };
+            }
+        });
+        console.log('Final mfb: ', finalForecastBias);
 
-    // var xAxis = d3.axisBottom(x)
-    //     //.scale(x)
-    //     .ticks(11);
+        finalForecastBias.forEach(function(d) {
+            d.ActualDate = new Date(d.ActualDate);
+        });
 
-    // var yAxis = d3.axisLeft(y);
-    //     //.scale(y)
-    //     // .ticks(11)
-    //     //.orient("left");
+        var dataMean = d3.mean(finalForecastBias, function(
+            d) { //Define mean value of Order Amount, i.e. Avg. Order Amount
+            return d.MFB;
+        });
+        console.log("Mean Value: ", dataMean);
 
-    // var svg = d3.select("body").append("svg")
-    //     .attr("width", width + margin.left + margin.right)
-    //     .attr("height", height + margin.top + margin.bottom + legendOffset)
-    //     .append("g")
-    //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        var ndx = crossfilter(finalForecastBias);
+        var all = ndx.groupAll();
+        var forecastPeriodDim = ndx.dimension(function(d) {
+            return +d.ForecastPeriod;
+        });
+        var ndxDim = ndx.dimension(function(d) {
+            return [+d.PeriodsBeforeDelivery, +d.MFB, +d.Product];
+        });
+        var productDim = ndx.dimension(function(d) {
+            return d.Product;
+        });
+        var periodsBeforeDeliveryDim = ndx.dimension(function(d) {
+            return +d.PeriodsBeforeDelivery;
+        });
+        var dateDim = ndx.dimension(function(d) {
+            return +d.ActualDate;
+        });
+        var forecastPeriodGroup = forecastPeriodDim.group();
+        var productGroup = productDim.group();
+        var ndxGroup = ndxDim.group().reduceSum(function(d) {
+            return +d.MFB;
+        });
+        var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
+        var dateGroup = dateDim.group();
+        const plotColorMap = {
+            0: '#000099',
+            1: '#cc8800'
+        };
+        var plotColorMap2 = function(d) {
+            if (d.PeriodsBeforeDelivery == 0) return 0;
+            else return 1;
+        };
 
+        forecastlist
+            .dimension(forecastPeriodDim)
+            .group(forecastPeriodGroup)
+            .multiple(true)
+            .numberVisible(15);
 
-    // // Circles
-    // var circles = svg.selectAll('circle')
-    //     .data(finalForecastBias)
-    //     .enter()
-    //     .append('circle')
-    //     .attr('cx', function (d) { return x(d.PeriodsBeforeDelivery) })
-    //     .attr('cy', function (d) { return y(d.ForecastBiasPBD) })
-    //     .attr('r', '7')
-    //     .attr('stroke', 'black')
-    //     .attr('stroke-width', 1)
-    //     .attr('fill', function (d, i) { return color(Product(d)); })
+        productlist
+            .dimension(productDim)
+            .group(productGroup)
+            //.controlsUseVisibility(true)
+            .multiple(true)
+            .numberVisible(15);
 
-    //     .on('mouseover', function (d) {  // Tooltip
-    //         d3.select(this)
-    //             .transition()
-    //             .duration(500)
-    //             .style("opacity", .9)
-    //             .attr('r', 10)
-    //             .attr('stroke-width', 3)
-    //     })
-    //     .on('mouseout', function () {
-    //         d3.select(this)
-    //             .transition()
-    //             .duration(500)
-    //             .attr('r', 7)
-    //             .attr('stroke-width', 1)
-    //     })
-    //     .append('title') // Tooltip
+        periodsBeforeDeliveryChart
+            .dimension(periodsBeforeDeliveryDim)
+            .group(periodsBeforeDeliveryGroup)
+            .multiple(true)
+            .numberVisible(15);
 
-    //     .text(function (d) {
-    //         return ' Periods Before Delivery: '+d.PeriodsBeforeDelivery + 
-    //             '\nMean Forecast Bias of the Period: ' + d.ForecastBiasPBD 
-    //             // '\nActual Period: ' + d.ActualPeriod +
-    //             // '\nForecast Period: ' + d.ForecastPeriod +
-    //             // '\nProduct: ' + d.Product 
-    //     })
+        console.log("ndxDim: ", ndxGroup.top(Infinity));
 
-    //     svg.append("text")             
-    //     .attr("transform", "translate(" + (width-15) + " ," + (height + margin.top - 32) + ")")
-    //      .style("text-anchor", "middle")
-    //     .attr("x", -410)
-    //     .attr("dy", "3.5em")
-    //     .attr("y", 3)
-    //     .style("font-size","14px")
-    //     .style("stroke-width", "1px")
-    //     .text("Periods Before Delivery"); 
+        MFBchart
+            .width(768)
+            .height(480)
+            .dimension(ndxDim)
+            .symbolSize(10)
+            .group(ndxGroup)
+            .data(function(group) {
+                return group.all()
+                    .filter(function(d) {
+                        return d.key !== NaN;
+                    });
+            })
+            .excludedSize(2)
+            .excludedOpacity(0.5)
+            .x(d3.scaleLinear().domain(d3.extent(finalForecastBias, function(d) {
+                return d.PeriodsBeforeDelivery
+            })))
+            .brushOn(true)
+            .clipPadding(10)
+            .xAxisLabel("Periods Before Delivery")
+            .yAxisLabel("MFB")
+            // .mouseZoomable(true)
+            .renderTitle(true)
+            .title(function(d) {
+                return [
+                    'Periods Before Delivery: ' + d.key[0],
+                    'MFB: ' + d.key[1],
+                    'Product: ' + d.key[2]
+                ].join('\n');
+            })
+            .elasticX(true)
+            .elasticY(true)
+            .on('renderlet', function(MFBchart) {
+                var x_vert = width;
+                var extra_data = [{
+                        x: 47,
+                        y: MFBchart.y()(dataMean)
+                    },
+                    {
+                        x: MFBchart.x()(x_vert),
+                        y: MFBchart.y()(dataMean)
+                    }
+                ];
 
-    //   svg.append("g")
-    //     .attr("class", "x axis")
-    //      .attr("transform", "translate(0," + height + ")")
-    //      .style("text-anchor", "end")
-    //     .text("Periods Before Delivery")
-    //     //.attr("class", "label")
-    //     // .style("text-anchor", "end")
-    //     // .append("text")
-    //     // .attr('dy', '.60em') 
-    //     .call(xAxis);
+                var line = d3.line()
+                    .x(function(d) {
+                        return d.x;
+                    })
+                    .y(function(d) {
+                        return d.y;
+                    })
+                    .curve(d3.curveLinear);
+                var chartBody = MFBchart.select('g');
+                var path = chartBody.selectAll('path.extra').data([extra_data]);
+                path = path.enter()
+                    .append('path')
+                    .attr('class', 'oeExtra')
+                    .attr('stroke', 'orange')
+                    .attr('id', 'oeLine')
+                    .attr("stroke-width", 1)
+                    .style("stroke-dasharray", ("10,3"))
+                    .merge(path);
+                path.attr('d', line);
+            })
+            .xAxis().tickFormat(d3.format('d'));
 
-    //   svg.append("text")
-    //    .attr("transform", "rotate(-90)")
-    //    .attr("y", 0)
-    //    .attr("x",0 - (height / 1.5))
-    //    .attr("dy", "-3em")
-    //    .style("font-size","14px")
-    //    .style("stroke-width", "1px")
-    //     .text("Mean Forecast Bias");
+        MFBchart.symbol(d3.symbolCircle);
+        MFBchart.margins().left = 50;
 
-    //   svg.append("g")
-    //     .attr("class", "y axis")
-    // //    .append("text")
-    //  //  .attr("class", "label")
-    //     // .attr("transform", "translate(0," + height + ")")
-    //     // .attr("x", 0)
-    //     // .attr("y", 5)
-    //     // .attr("dy", ".45em")
-    //     // .style("text-anchor", "end")
-    //     .style("text-anchor", "end")
-    //     .text("Mean Forecast Bias")
-    //     .call(yAxis);   
+        visCount
+            .dimension(ndx)
+            .group(all);
 
-    // svg.append("line")
-    //     .style("stroke", "orange")
-    //     .attr("stroke-width", 2)
-    //     .data (finalForecastBias)
-    //     .attr("x1", 0)
-    //     .attr("y1", y(dataMean))
-    //     .attr("x2", width)
-    //     .attr("y2", y(dataMean));
+        visTable
+            .dimension(dateDim)
+            .group(function(d) {
+                var format = d3.format('02d');
+                return d.ActualDate.getFullYear() + '/' + format((d.ActualDate.getMonth() + 1));
+            })
+            .columns([
+                "Product",
+                "PeriodsBeforeDelivery",
+                "MFB"
+            ]);
+        dc.renderAll();
 
+        /* Old Calculation of MFB */
+        // let finalForecastBias = dataGroupedByPBD.map((val) => {
+        //     let sum = val.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
+        //         console.log('sum for pbd: ', val.key, ' sum: ', sum);
+        //         let finalForecastBiasPBD = sum / sumOfAllFinalOrders;
+        //         console.log('Final Forecast Bias by PBD: ', finalForecastBiasPBD);
 
+        //         return {
+        //             PeriodsBeforeDelivery: val.key,
+        //             ForecastBiasPBD: finalForecastBiasPBD
+        //         };
+        //     });
 
-    // var legend = svg.selectAll(".legend")
-    //     .data(color.domain())
-    //     .enter().append("g")
-    //     .attr("class", "legend")
-    //     //.scale(xAxis)
-    //     //.shape('circle')
-    //     .attr("transform", function (d, i) {
-    //         return "translate(" + (- width + margin.left + margin.right + i * 90)           // x Position
-    //             + "," + (height + 42) + ")";
-    //     });                                           // y Position
-
-    // legend.append("rect")
-    //     .attr("x", width - 10)
-    //     .attr("width", 10)
-    //     .attr("height", 10)
-    //     .style("opacity", 0.5)
-    //     .style("fill", color);
-
-    // legend.append("text")
-    //     .attr("x", width - 24)
-    //     .attr("y", 10)
-    //     .attr("yAxis", ".35em")
-    //     .style("text-anchor", "end")
-    //     .text(function (d) { return 'PBD ' + d; });
+        // console.log('Final Forecast Bias: ', finalForecastBias);
 
     });
+    const width = "960";
     </script>
 
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"

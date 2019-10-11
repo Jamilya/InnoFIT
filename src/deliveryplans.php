@@ -87,6 +87,7 @@ else {
     .tick line {
         stroke: #C0C0BB;
     }
+
     .info-container {
         display: inline-block;
         width: calc(100% + -50px);
@@ -438,6 +439,16 @@ else {
                 d.ActualDate = new Date(d.ActualDate);
             });
 
+            function remove_empty_bins(source_group) {
+                return {
+                    all: function() {
+                        return source_group.all().filter(function(d) {
+                            //return Math.abs(d.value) > 0.00001; // if using floating-point numbers
+                            return d.value !== 0; // if integers only
+                        });
+                    }
+                };
+            }
             // data = data.sort((a, b) => (a.PeriodsBeforeDelivery > b.PeriodsBeforeDelivery) ? -1 : 1);
             // console.log('Data: ', data);
 
@@ -455,23 +466,25 @@ else {
             var periodsBeforeDeliveryDim = ndx.dimension(function(d) {
                 return +d.PeriodsBeforeDelivery;
             });
-            var orderDim = ndx.dimension(function(d) {
-                return d.OrderAmount;
-            });
+            // var orderDim = ndx.dimension(function(d) {
+            //     return +d.OrderAmount;
+            // });
             var dateDim = ndx.dimension(function(d) {
                 return +d.ActualDate;
             });
 
             var forecastPeriodGroup = forecastPeriodDim.group();
             var productGroup = productDim.group();
-            var ndxGroup = ndxDim.group().reduceSum(function(d) {
-                return +d.OrderAmount;
-            });
-            var orderGroup = orderDim.group(function(d) {
-                return +d.OrderAmount;
-            });
+            var ndxGroup = ndxDim.group();
+
+            // var orderGroup = orderDim.group(function(d) {
+            //     return +d.OrderAmount;
+            // });
             var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
             var dateGroup = dateDim.group();
+
+            // ndxGroup = remove_empty_bins(ndxGroup);
+
             const plotColorMap = {
                 1: '#cc8800',
                 0: '#000099'
@@ -521,17 +534,15 @@ else {
                 })
                 .colorAccessor(function(d) {
                     if (d.key[2] == 0) {
-                        console.log('%c blue', 'background: blue');
                         return 0;
                     } else {
-                        console.log('%c orange', 'background: orange');
                         return 1;
                     }
                     // return d.key[2];
                 })
-                .ordering(function(d) {
-                    return d.key[2]
-                })
+                // .ordering(function(d) {
+                //     return d.key[2]
+                // })
                 .colors(function(colorKey) {
                     return plotColorMap[colorKey];
                 })
@@ -551,7 +562,7 @@ else {
                         'Forecast Period: ' + d.key[0]
                     ].join('\n');
                 })
-                .transitionDuration(500)
+                // .transitionDuration(500)
                 .elasticX(true)
                 .elasticY(true)
                 .xAxis().tickFormat(d3.format('d'));
@@ -565,7 +576,7 @@ else {
                     return d3.symbolCircle;
                 }
             });
-            
+
             visCount
                 .dimension(ndx)
                 .group(all);

@@ -276,8 +276,6 @@ else {
         </div>
         <div style="clear: both"></div>
 
-
-
         <div>
             <div class="dc-data-count">
                 <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
@@ -288,8 +286,6 @@ else {
             </table>
         </div>
 
-        <div id="test"></div><br />
-        <svg width="960" height="500"></svg> <br />
     </div>
     <script>
     function myFunction() {
@@ -302,78 +298,22 @@ else {
     }
     </script>
 
-
     <script>
     var forecastlist = dc.selectMenu("#forecastlist"),
         // productChart = dc.pieChart("#product"),
         periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
         visCount = dc.dataCount(".dc-data-count"),
-        MAPEchart = dc.scatterPlot("#scatter")
-    visTable = dc.dataTable(".dc-data-table")
-    productlist = dc.selectMenu("#productlist");
-    // var data = JSON.parse(localStorage['data']);
-    const xValue = d => d.PeriodsBeforeDelivery;
-    const xLabel = 'Periods Before Delivery';
-    const yValue = d => d.MeanOfThisPeriod;
-    const yLabel = 'MAPE';
-    const colorValue = d => d.Product;
-    const colorLabel = '';
+        MAPEchart = dc.scatterPlot("#scatter"),
+        visTable = dc.dataTable(".dc-data-table"),
+        productlist = dc.selectMenu("#productlist");
+
     const margin = {
         left: 55,
         right: 25,
         top: 20,
         bottom: 30
     };
-    const legendOffset = 52;
 
-    const svg = d3.select('svg');
-    const width = svg.attr('width');
-    const height = svg.attr('height');
-    const innerWidth = width - margin.left - margin.right - legendOffset;
-    const innerHeight = height - margin.top - margin.bottom - 35;
-
-
-
-    const g = svg.append('g')
-        .attr('transform', `translate(${margin.left},${margin.top})`);
-    const xAxisG = g.append('g')
-        .attr('transform', `translate(0, ${innerHeight})`);
-    const yAxisG = g.append('g');
-    const colorLegendG = g.append('g')
-        .attr('transform', `translate(${innerWidth + 32}, 28)`)
-        .attr('stroke', 'black')
-        .attr('stroke-width', 0.5);
-
-    xAxisG.append('text')
-        .attr('class', 'axis-label')
-        .attr('x', innerWidth / 2)
-        .attr('y', 41)
-        .text(xLabel);
-
-    yAxisG.append('text')
-        .attr('class', 'axis-label')
-        .attr('x', (-innerHeight / 2))
-        .attr('y', -35)
-        .attr('transform', `rotate(-90)`)
-        .style('text-anchor', 'middle')
-        .text(yLabel);
-
-    //   colorLegendG.append('text')
-    //       .attr('class', 'legend-label')
-    //       .attr('x', -30)
-    //       .attr('y', -12)
-    //       .text(colorLabel);
-
-    const xScale = d3.scaleLinear();
-    const yScale = d3.scaleLinear();
-    const colorScale = d3.scaleOrdinal()
-        .range(d3.schemeCategory10);
-
-    const xAxis = d3.axisBottom(xScale)
-        .ticks(10);
-
-    const yAxis = d3.axisLeft(yScale)
-        .ticks(10);
 
     localforage.getItem("viz_data", function(error, data) {
         data = JSON.parse(data);
@@ -385,11 +325,9 @@ else {
         let uniqueArray = data.filter(function(obj) {
             return finalOrder.indexOf(obj) == -1;
         });
-        // console.log("Unique array: ", uniqueArray);
 
         let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +
             b);
-        // console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
 
         let dataGroupedByPBD = d3.nest()
             .key(function(d) {
@@ -428,19 +366,19 @@ else {
                     ForecastPeriod: el.ForecastPeriod,
                     OrderAmount: el.OrderAmount,
                     PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                    MeanOfThisPeriod: mape
+                    MAPE: mape.toFixed(3)
                 };
             }
         });
         console.log('Final mape: ', mapeCurrentPBD);
 
         let mapeCalc = d3.values(mapeCurrentPBD, function(d) {
-            return d.MeanOfThisPeriod;
+            return d.MAPE;
         })
 
         var dataMean = d3.mean(mapeCalc, function(
-            d) { //Define mean value of Order Amount, i.e. Avg. Order Amount
-            return +d.MeanOfThisPeriod;
+            d) { 
+            return +d.MAPE;
         });
         console.log("Mean Value: ", dataMean);
 
@@ -448,15 +386,13 @@ else {
             d.ActualDate = new Date(d.ActualDate);
         });
 
-
-
         var ndx = crossfilter(mapeCurrentPBD);
         var all = ndx.groupAll();
         var forecastPeriodDim = ndx.dimension(function(d) {
             return +d.ForecastPeriod;
         });
         var ndxDim = ndx.dimension(function(d) {
-            return [+d.PeriodsBeforeDelivery, +d.MeanOfThisPeriod, +d.Product];
+            return [+d.PeriodsBeforeDelivery, +d.MAPE, +d.Product];
         });
         var productDim = ndx.dimension(function(d) {
             return d.Product;
@@ -470,7 +406,7 @@ else {
         var forecastPeriodGroup = forecastPeriodDim.group();
         var productGroup = productDim.group();
         var ndxGroup = ndxDim.group().reduceSum(function(d) {
-            return +d.MeanOfThisPeriod;
+            return +d.MAPE;
         });
         var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
         var dateGroup = dateDim.group();
@@ -481,10 +417,6 @@ else {
         var plotColorMap2 = function(d) {
             if (d.PeriodsBeforeDelivery == 0) return 0;
             else return 1;
-        };
-        var color = {
-            0: "#fa87ba",
-            1: "#8d2c4a"
         };
 
         forecastlist
@@ -540,40 +472,6 @@ else {
             .elasticY(true)
             .xAxis().tickFormat(d3.format('d'));
 
-            // .on('renderlet', function(MAPEchart) {
-            //     var x_vert = width;
-            //     var extra_data = [{
-            //             x: 47,
-            //             y: MAPEchart.y()(dataMean)
-            //         },
-            //         {
-            //             x: MAPEchart.x()(x_vert),
-            //             y: MAPEchart.y()(dataMean)
-            //         }
-            //     ];
-            //     var line = d3.line()
-            //         .x(function(d) {
-            //             return d.x;
-            //         })
-            //         .y(function(d) {
-            //             return d.y;
-            //         })
-            //         .curve(d3.curveLinear);
-            //     var chartBody = MAPEchart.select('g');
-            //     var path = chartBody.selectAll('path.extra').data([extra_data]);
-            //     path = path.enter()
-            //         .append('path')
-            //         .attr('class', 'oeExtra')
-            //         .attr('stroke', 'green')
-            //         .attr('id', 'oeLine')
-            //         .attr("stroke-width", 1)
-            //         .style("stroke-dasharray", ("10,3"))
-            //         .merge(path);
-            //     path.attr('d', line);
-            // });
-        // console.log('ndxgroup data:', ndxDim);
-
-
         MAPEchart.selectAll('path.symbol')
             .attr('opacity', 0.3);
 
@@ -593,300 +491,13 @@ else {
             .columns([
                 "Product",
                 "PeriodsBeforeDelivery",
-                "MeanOfThisPeriod"
+                "MAPE"
             ]);
 
         dc.renderAll();
 
-        /* Old Calculation of MAPE */
-        //   let absDiff = function (orignalEl, finalOrder) {
-        //                 return Math.abs(orignalEl.OrderAmount - finalOrder);
-        //                 }
-
-        //                 let finalOrder = data.filter((el) => {
-        //                     return el.ActualPeriod == el.ForecastPeriod;
-        //                 });
-        //                 console.log('Final order array: ', finalOrder);
-
-        //                  let uniqueArray = data.filter(function (obj) { return finalOrder.indexOf(obj) == -1; });
-        //                  console.log("Unique array: ", uniqueArray);
-
-        //                  let valueMap = new Map();
-        //                  finalOrder.forEach((val) => {
-        //                  let keyString = val.ActualPeriod;
-        //                  let valueString = val.OrderAmount;
-        //                  valueMap.set(keyString, valueString);
-        //                 });
-
-        //             let absValuesArray = uniqueArray.map((el) => {
-        //                 let value = absDiff(el, valueMap.get(el.ForecastPeriod));
-        //                 return {
-        //                     ActualPeriod: el.ActualPeriod,
-        //                     ForecastPeriod: el.ForecastPeriod,
-        //                     OrderAmount: el.OrderAmount,
-        //                     Product: el.Product,
-        //                     PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-        //                     AbsoluteDiff: value
-        //                 };
-        //             });
-
-
-        //             let seperatedByPeriods = d3.nest()
-        //                 .key(function (d) { return d.PeriodsBeforeDelivery })
-        //                 .entries(absValuesArray);
-
-        //             let madCalc = seperatedByPeriods.map((el) => {
-        //                 let meanValue = d3.sum(el.values, function (d) { return d.AbsoluteDiff; });
-        //                 return {
-        //                     Product: el.Product,
-        //                     ActualPeriod: el.ActualPeriod,
-        //                     ForecastPeriod: el.ForecastPeriod,
-        //                     OrderAmount: el.OrderAmount,
-        //                     PeriodsBeforeDelivery: el.key,
-        //                     SumOfMAD: meanValue
-        //                 };
-        //             });
-
-        //                 let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-        //                 console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
-        //                 console.log('MadCalc: ', madCalc);
-
-
-
-        //                 let madSeperatedByPeriods = d3.nest()
-        //                 .key(function (d) { return d.PeriodsBeforeDelivery })
-        //                 .entries(madCalc);
-
-        //             let madSumCalc = madSeperatedByPeriods.map((el) => {
-        //                 let sumMad = el.values.map(item=>item.SumOfMAD).reduce((a, b) => +a + +b);
-        //                 return {
-        //                     ActualPeriod: el.ActualPeriod,
-        //                     ForecastPeriod: el.ForecastPeriod,
-        //                     OrderAmount: el.OrderAmount,
-        //                     Product: el.Product,
-        //                     PeriodsBeforeDelivery: el.key,
-        //                     MadSum: sumMad
-        //                 };
-        //             });
-
-
-
-        //             let mapeCalc = madSumCalc.map((val) => {
-        //                 let mapeValue = val.MadSum/ sumOfAllFinalOrders;
-        //                 return {
-        //                     Product: val. Product,
-        //                     ActualPeriod: val.ActualPeriod,
-        //                     ForecastPeriod: val.ForecastPeriod,
-        //                     PeriodsBeforeDelivery: val.PeriodsBeforeDelivery,
-        //                     MapeFinal: mapeValue
-        //                 };
-        //             });
-        //             console.log('MAPE Array: ', mapeCalc);
-
-
-        xScale
-            .domain([
-                d3.min([1, d3.min(mapeCurrentPBD, function(d) {
-                    return d.PeriodsBeforeDelivery;
-                })]),
-                d3.max([1, d3.max(mapeCurrentPBD, function(d) {
-                    return d.PeriodsBeforeDelivery;
-                })])
-            ])
-            .range([0, innerWidth])
-            .nice();
-
-        yScale
-            .domain([
-                d3.min([0, d3.min(mapeCurrentPBD, function(d) {
-                    return d.MeanOfThisPeriod;
-                })]),
-                d3.max([0, d3.max(mapeCurrentPBD, function(d) {
-                    return d.MeanOfThisPeriod;
-                })])
-            ])
-            .range([innerHeight, 0])
-            .nice();
-
-
-        //Specify Deviation
-
-        g.selectAll('circle').data(mapeCurrentPBD)
-            .enter().append('circle')
-            .attr('cx', d => xScale(xValue(d)))
-            .attr('cy', d => yScale(yValue(d)))
-            .attr('fill', d => colorScale(colorValue(d)))
-            .attr('fill-opacity', 1)
-            .attr('r', 8)
-            .attr('stroke', 'black')
-            .attr('stroke-width', 1)
-            .on('mouseover', function(d) { // Tooltip
-                d3.select(this)
-                    .transition()
-                    .duration(500)
-                    .style("opacity", 1)
-                    .attr('r', 10)
-                    .attr('stroke-width', 3)
-            })
-            .on('mouseout', function() {
-                d3.select(this)
-                    .transition()
-                    .duration(500)
-                    .attr('r', 7)
-                    .attr('stroke-width', 1)
-            })
-            .append('title') // Tooltip
-
-            .text(function(d) {
-                return ' Periods Before Delivery: ' + d.PeriodsBeforeDelivery +
-                    '\nMAPE of the period: ' + d.MeanOfThisPeriod
-            });
-
-        xAxisG.call(xAxis);
-        yAxisG.call(yAxis);
-        // colorLegendG.call(colorLegend)
-        //   .selectAll('.cell text')
-        //     .attr('dy', '0.1em');
-
-
-        //     var margin = { top: 20, right: 15, bottom: 30, left: 80 },
-        //         width = 960 - margin.left - margin.right,
-        //         height = 590 - margin.top - margin.bottom - legendOffset;
-
-        //         // var valueArray = Array.from(mape.values());
-        //         // var keyArray = Array.from(mape.keys());
-        //         var x = d3.scaleLinear()
-        //         .domain([
-        //             d3.min([1, d3.min(mapeCalc, function (d) { return d.PeriodsBeforeDelivery; })]),
-        //             d3.max([1, d3.max(mapeCalc, function (d) { return d.PeriodsBeforeDelivery; })])
-        //         ])
-        //         .range([0, width])
-
-
-        //     var y = d3.scaleLinear()
-        //         .domain([
-        //             d3.min([0, d3.min(mapeCalc, function (d) { return d.MapeFinal; })]),
-        //             d3.max([0, d3.max(mapeCalc, function (d) { return d.MapeFinal; })])
-        //         ])
-        //         .range([height, 0])
-
-        // var PeriodsBeforeDelivery = function (d) { return d.PeriodsBeforeDelivery; },
-        //     color = d3.scaleOrdinal(d3.schemeCategory10);
-
-        //     var xAxis = d3.axisBottom(x)
-        //         .ticks(11);
-
-        //     var yAxis = d3.axisLeft(y);
-
-        //     var svg = d3.select("body").append("svg")
-        //         .attr("width", width + margin.left + margin.right)
-        //         .attr("height", height + margin.top + margin.bottom + legendOffset)
-        //         .append("g")
-        //         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-        //     // Circles
-        //     var circles = svg.selectAll('circle')
-        //         .data(mapeCalc)
-        //         .enter()
-        //         .append('circle')
-        //         .attr('cx', function (d) { return x(d.PeriodsBeforeDelivery) })
-        //         .attr('cy', function (d) { return y(d.MapeFinal) })
-        //         .attr('r', '7')
-        //         .attr('stroke', 'black')
-        //         .attr('stroke-width', 1)
-        //         .attr('fill', function (d) { return color(PeriodsBeforeDelivery(d)); })
-
-        //         .on('mouseover', function (d) {  // Tooltip
-        //             d3.select(this)
-        //                 .transition()
-        //                 .duration(500)
-        //                 .style("opacity", 1)
-        //                 .attr('r', 10)
-        //                 .attr('stroke-width', 3)
-        //         })
-        //         .on('mouseout', function () {
-        //             d3.select(this)
-        //                 .transition()
-        //                 .duration(500)
-        //                 .attr('r', 7)
-        //                 .attr('stroke-width', 1)
-        //         })
-        //         .append('title') // Tooltip
-
-        //         .text(function (d) {
-        //             return 'Periods Before Delivery: ' +d.PeriodsBeforeDelivery +
-        //                 '\nMAPE of the Period: ' + d.MapeFinal 
-        //                 //'\nWeeks Before Delivery: ' + d.WeeksBeforeDelivery
-        //             //'\nOrder Amount: ' + d.OrderAmount
-        //         })
-
-        //     svg.append("text")             
-        //     .attr("transform", "translate(" + (width-15) + " ," + (height + margin.top - 32) + ")")
-        //      .style("text-anchor", "middle")
-        //     .attr("x", -410)
-        //     .attr("dy", "3.5em")
-        //     .attr("y", 3)
-        //     .style("font-size","14px")
-        //     .style("stroke-width", "1px")
-        //     .text("Periods Before Delivery"); 
-
-        //   svg.append("g")
-        //     .attr("class", "x axis")
-        //      .attr("transform", "translate(0," + height + ")")
-        //      .style("text-anchor", "end")
-        //     .text("Periods Before Delivery")
-        //     //.attr("class", "label")
-        //     // .style("text-anchor", "end")
-        //     // .append("text")
-        //     // .attr('dy', '.60em') 
-        //     .call(xAxis);
-
-        //   svg.append("text")
-        //    .attr("transform", "rotate(-90)")
-        //    .attr("y", 10)
-        //    .attr("x",0 - (height / 1.5))
-        //    .attr("dy", "-3em")
-        //    .style("font-size","14px")
-        //    .style("stroke-width", "1px")
-        //     .text("Mean Absolute Percentage Error (MAPE)");
-
-        //   svg.append("g")
-        //     .attr("class", "y axis")
-
-        //     .style("text-anchor", "end")
-        //     .text("Mean Absolute Percentage Error (MAPE)")
-        //     .call(yAxis);   
-
-
-        //     var legend = svg.selectAll(".legend")
-        //         .data(color.domain())
-        //         .enter().append("g")
-        //         .attr("class", "legend")
-
-        //         .attr("transform", function (d, i) {
-        //             return "translate(" + (- width + margin.left + margin.right + i * 90)           // x Position
-        //                 + "," + (height + 59) + ")";
-        //         });                                           // y Position
-
-        //     legend.append("rect")
-        //         .attr("x", width - 10)
-        //         .attr("width", 10)
-        //         .attr("height", 10)
-        //         .style("opacity", 1)
-        //         .style("fill", color);
-
-        //     legend.append("text")
-        //         .attr("x", width - 24)
-        //         .attr("y", 10)
-        //         .attr("yAxis", ".35em")
-        //         .style("text-anchor", "end")
-        //         .text(function (d) { return 'PBD ' + d; });
-
-
     });
     </script>
-
 
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
         integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
