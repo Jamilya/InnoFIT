@@ -22,17 +22,15 @@ session_start();
     <meta name="author" content="">
     <link rel="icon" href="data/ico/innofit.ico">
     <title>Forecast Quality Visualization</title>
-
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
         integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <!-- <script src="lib/jquery/jquery-3.2.1.min.js"></script> -->
     <link rel="stylesheet" href="./src/css/index.css">
 
     <script src="http://d3js.org/d3.v4.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
         integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
     </script>
-    <script src="/lib/js/bootstrap.bundle.min.js"></script>
+    <!-- <script src="/lib/js/bootstrap.bundle.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
     </script>
@@ -72,12 +70,29 @@ session_start();
         margin: 0 auto;
     }
 
-    @media (min-width: 768px) {
-        .abs-center-x {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-        }
+    #footer {
+        background: #F8F8F8   !important;
+    }
+
+    #footer ul a {
+        color: #b9b9b9;
+    }
+
+    #footer ul a:hover {
+        color: #b9b9b9;
+    }
+
+    #footer ul {
+        padding: 1px 0;
+        -webkit-transition: .5s all ease;
+        -moz-transition: .5s all ease;
+        transition: .5s all ease;
+    }
+
+    #footer ul:hover {
+        padding: 1px 0;
+        margin-left: 5px;
+        font-weight: 700;
     }
 
     .customContainer {
@@ -141,7 +156,7 @@ session_start();
 
                     <!-- <li class><a href="src/howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown">
-                        <a  href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="src/finalorder.php">Final Order Amount </a></li>
@@ -439,6 +454,17 @@ if (isset($_POST["import"])) {
             </p>
         </div>
     </div>
+    <section id="footer">
+        <div class="container">
+            <!-- Copyright -->
+            <div class="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-2 text-center">
+            <br>
+                <p> Copyright © 2019 St. Pölten University of Applied Sciences <u><ul><a href="https://projekte.ffg.at/projekt/3042801">InnoFIT Research Project </a></ul></u></p>
+            </div>
+            <!-- Copyright -->
+        </div>
+    </section>
+    <script src="/lib/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

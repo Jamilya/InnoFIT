@@ -152,8 +152,8 @@ else {
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li><a href="./configuration.php">Configuration</a></li>
-                    <li><a href="./about.php">About</a></li>
-                    <li class><a href="./howto.php">How to Interpret Error Measures </a></li>
+                    <!-- <li><a href="./about.php">About</a></li> -->
+                    <!-- <li class><a href="./howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
@@ -512,7 +512,7 @@ else {
             dc.renderAll();
 
             // Create Legend
-            var svg = d3.select("#d3Legend").append('svg').attr('width', 300).attr('height', 100)
+            var svg = d3.select("#d3Legend").append('svg').attr('width', 300).attr('height', 35)
             svg.append("path").attr('d', d3.symbol().size(100).type(d3.symbolStar)).style("fill", "#000099")
                 .attr("transform", "translate(75,14)")
             svg.append("path").attr("d", d3.symbol().size(100).type(d3.symbolCircle)).style("fill", "#cc8800")

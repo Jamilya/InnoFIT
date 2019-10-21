@@ -6,7 +6,6 @@ if(session_id() == '' || !isset($_SESSION)) {
 else {
     header("Location: includes/login.php");
 };?>
-
 <!DOCTYPE html>
 <html lang="en">
 <meta charset="utf-8">
@@ -18,8 +17,7 @@ else {
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/data/ico/innofit.ico">
-    <title>Mean Absolute Deviation (MAD) Graph</title>
-
+    <title>Mean Forecast Bias</title>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
         integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
     </script>
@@ -37,17 +35,17 @@ else {
         size: 4980736, // Size of database, in bytes. WebSQL-only for now.
     });
     </script>
-
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
         integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css" />
+
     <style>
     body {
         margin: 0px;
     }
 
     .dc-chart .axis text {
-        font: 12px sans-serif;
+        font: 11px sans-serif;
     }
 
     .dc-chart .brush rect.selection {
@@ -69,7 +67,7 @@ else {
     .tick text,
     .legendCells text {
         fill: #635F5D;
-        font-size: 12px;
+        font-size: 11px;
         font-family: sans-serif;
     }
 
@@ -138,8 +136,6 @@ else {
         display: none !important;
     }
     </style>
-
-
 </head>
 
 <body>
@@ -168,13 +164,13 @@ else {
                             <li><a href="./forecasterror.php">Percentage Error</a></li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Error Measures</li>
-                            <li class="active"><a href="./mad_graph.php">Mean Absolute Deviation (MAD) <span
-                                        class="sr-only">(current)</span></a></li>
+                            <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD)</a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
-                            <li><a href="./mpe.php">Mean Percentage Error (MPE) </a></li>
+                            <li><a href="./mpe.php">Mean Percentage Error (MPE)</a></li>
                             <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
-                            <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
+                            <li class="active"><a href="./meanforecastbias.php">Mean Forecast Bias (MFB) <span
+                                        class="sr-only">(current)</span></a></li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Matrices</li>
                             <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
@@ -198,6 +194,7 @@ else {
                             onclick="doGTranslate('en|de');return false;" title="German" class="gflag nturl"
                             style="background-position:-300px -100px;"><img src="//gtranslate.net/flags/blank.png"
                                 height="12" width="12" alt="German" /></a>
+
 
                         <div id="google_translate_element2"></div>
                         <script type="text/javascript">
@@ -252,7 +249,7 @@ else {
     <div class="customContainer">
         <div class="row" style="margin-bottom: -2%;">
             <div class="col-md-10">
-                <h3>Mean Absolute Deviation (MAD) Graph</h3>
+                <h3>Mean Forecast Bias</h3>
                 <small>
                     <?php
             echo "You are logged in as: ";
@@ -278,24 +275,21 @@ else {
                 </div>
             </div>
         </div>
-
         <div class="row">
             <div class="col-md-12">
                 <br />
-                <p><b> Graph Description: </b>This graph shows calculation of the Mean Absolute Deviation (MAD) of
-                    customer
-                    orders with respect to periods before delivery (PBD). The mean absolute deviation describes the
-                    absolute
-                    average error between the forecasted and the final order amounts.
-                    <br>The formula of the MAD: <img
-                        src="https://latex.codecogs.com/gif.latex?MAD_{j} = \frac{1}{n}\sum_{i=1}^{n}{\left | x_{i,j}-x_{i,0} \right |}"
-                        title="MAD_formula" />. </p>
+                <p> <b>Graph Description:</b> This graph shows the calculation of the Mean Forecast Bias, which is the
+                    description of the forecast error with respect to periods before delivery (PBD).
+                    <br> The <font color="orange"> orange-coloured line </font> is the average (mean) value of the mean
+                    forecast
+                    bias values.
+                    <br>The formula of the Mean Forecast Bias is: <img
+                        src="https://latex.codecogs.com/gif.latex?MFB_{j} = \frac {\sum_{i=1}^{n}x_{i,j}}{\sum_{i=1}^{n}x_{i,0}}"
+                        title="Mean Forecast Bias formula" />. </p>
             </div>
         </div>
         <div class="row">
             <div id="scatter">
-                <a class="reset" href="javascript:MADchart.filterAll(); dc.redrawAll();"
-                    style="display: none;">reset</a>
                 <div class="clearfix"></div>
             </div>
             <div id="pbd">
@@ -311,10 +305,8 @@ else {
                 <table class="table table-hover dc-data-table" id="myTable" style="display:none">
                 </table>
             </div>
-
         </div>
     </div>
-
     <script>
     function myFunction() {
         var x = document.getElementById("myTable");
@@ -325,6 +317,7 @@ else {
         }
     }
     </script>
+
     <script>
     $(document).ready(function() {
         if (localStorage.getItem('checkFiltersActive') === 'true') {
@@ -333,36 +326,85 @@ else {
             $('#filterInfo').hide();
         }
     });
-
+    var forecastlist = dc.selectMenu("#forecastlist"),
+        // productChart = dc.pieChart("#product"),
+        periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
+        visCount = dc.dataCount(".dc-data-count"),
+        MFBchart = dc.scatterPlot("#scatter"),
+        visTable = dc.dataTable(".dc-data-table"),
+        productlist = dc.selectMenu("#productlist");
     const margin = {
         left: 55,
         right: 25,
         top: 20,
         bottom: 30
     };
+
     localforage.getItem("viz_data", function(error, data) {
         data = JSON.parse(data);
-
-        var forecastlist = dc.selectMenu("#forecastlist"),
-            periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
-            visCount = dc.dataCount(".dc-data-count"),
-            MADchart = dc.scatterPlot("#scatter"),
-            visTable = dc.dataTable(".dc-data-table"),
-            productlist = dc.selectMenu("#productlist");
-
-        let absDiff = function(orignalEl, finalOrder) {
-            return Math.abs(orignalEl.OrderAmount - finalOrder);
-        }
 
         let finalOrder = data.filter((el) => {
             return el.PeriodsBeforeDelivery == 0;
         });
-        // console.log("FINAL Orders array: ", finalOrder);
+
+        // let pbd2 = data.filter((el) => {
+        //     return el.PeriodsBeforeDelivery == 5;
+        // });
+
+        // let pb2Filter = pbd2.filter((el) => {
+        //  return el.ActualPeriod <= el.ForecastPeriod;
+        // })
+
+        // console.log('FINAL ORDERS ', finalOrder);
+        // console.log('PBD 2 ', pbd2);
+        // console.log('PBD 2 FILTER ', pb2Filter);
 
         let uniqueArray = data.filter(function(obj) {
             return finalOrder.indexOf(obj) == -1;
         });
-        // console.log("Unique array: ", uniqueArray);
+
+        let orderByPBD = d3.nest()
+            .key(function(d) {
+                return d.PeriodsBeforeDelivery;
+            })
+            .entries(uniqueArray);
+
+        orderByPBD = orderByPBD.map((el) => {
+            let validForecasts = el.values.filter(e => e.ActualPeriod <= e.ForecastPeriod);
+            let sumOfForecasts = validForecasts.reduce((a, b) => +a + +b.OrderAmount, 0);
+            return {
+                pbd: el.key,
+                forecasts: validForecasts,
+                sumOfForecasts: sumOfForecasts
+            }
+        });
+        console.log('FORECAST ORDERS ', uniqueArray);
+        console.log('FORECAST ORDER BY PBD', orderByPBD);
+
+        // let forecastValueMap = new Map();
+        // orderByPBD.forEach((val) => {
+        //     let keyString = val.pbd;
+        //     let valueString = val.sumOfForecasts;
+        //     forecastValueMap.set(keyString, valueString);
+        // });
+
+        let forecastOrderByPBD = d3.nest()
+            .key(function(d) {
+                return d.pbd;
+            })
+            .entries(orderByPBD);
+        console.log("forecastOrderByPBD: ", forecastOrderByPBD);
+
+        // finalOrderByPBD = finalOrderByPBD.map((el) => {
+        //     let validFinalOrders = el.values.filter(e => e.ActualPeriod <= e.ForecastPeriod);
+        //     let sumOfFinalOrders = validFinalOrders.reduce((a, b) => +a + +b.OrderAmount, 0);
+        //     return {
+        //         pbd: el.key,
+        //         sumofFinalOrders: sumOfFinalOrders
+        //     }
+        // });
+        // // console.log('FINAL ORDERS ', finalOrder);
+        // console.log('FINAL ORDER BY PBD', finalOrderByPBD);
 
         let valueMap = new Map();
         finalOrder.forEach((val) => {
@@ -370,35 +412,38 @@ else {
             let valueString = val.OrderAmount;
             valueMap.set(keyString, valueString);
         });
-        // console.log("valueMap: ", valueMap);
 
-        let absValuesArray = uniqueArray.map((el) => {
-            let value = absDiff(el, valueMap.get(el.ForecastPeriod));
-            return {
-                ActualDate: el.ActualDate,
-                ForecastDate: el.ForecastDate,
-                ActualPeriod: el.ActualPeriod,
-                ForecastPeriod: el.ForecastPeriod,
-                OrderAmount: el.OrderAmount,
-                Product: el.Product,
-                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                AbsoluteDiff: value
-            };
+        let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +
+            b);
+
+        /////////////Calculate sum of forecasted orders////////////////////
+        let divisionOfSums = orderByPBD.map((el) => {
+            for (i = 0; i < orderByPBD.length; i++) {
+                let value = el.sumOfForecasts / sumOfAllFinalOrders;
+                return {
+                    ActualDate: el.values.ActualDate,
+                    PeriodsBeforeDelivery: el.pbd,
+                    DivisionOfSums: value
+                };
+            }
         });
+        console.log("MFB: ", divisionOfSums);
 
-        console.log("Abs values array: ", absValuesArray);
-
-        let seperatedByPeriods = d3.nest()
+        let dataGroupedByPBD = d3.nest()
             .key(function(d) {
-                return d.PeriodsBeforeDelivery
+                return d.PeriodsBeforeDelivery;
             })
-            .entries(absValuesArray);
+            .entries(uniqueArray);
 
-        let bubu = seperatedByPeriods.map((el) => {
-            for (i = 0; i < seperatedByPeriods.length; i++) {
-                let meanValue = d3.mean(el.values, function(d) {
-                    return d.AbsoluteDiff;
-                });
+        let finalDataGroupedByPBD = d3.nest()
+            .key(function(d) {
+                return d.PeriodsBeforeDelivery;
+            })
+            .entries(finalOrder);
+
+        let bubu = dataGroupedByPBD.map((el) => {
+            for (i = 0; i < dataGroupedByPBD.length; i++) {
+                let sum = el.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
                 return {
                     ActualDate: el.values[i].ActualDate,
                     ForecastDate: el.values[i].ForecastDate,
@@ -407,23 +452,45 @@ else {
                     ForecastPeriod: el.values[i].ForecastPeriod,
                     OrderAmount: el.values[i].OrderAmount,
                     PeriodsBeforeDelivery: el.key,
-                    MAD: meanValue
+                    SumOfForecast: sum
                 };
             }
-
         });
-        console.log("separatedArray: ", bubu);
-        bubu.forEach(function(d) {
+
+        let finalForecastBias = bubu.map((el) => {
+            for (i = 0; i < dataGroupedByPBD.length; i++) {
+                let finalForecastBiasPBD = el.SumOfForecast / sumOfAllFinalOrders;
+                return {
+                    ActualDate: el.ActualDate,
+                    ForecastDate: el.ForecastDate,
+                    Product: el.Product,
+                    ActualPeriod: el.ActualPeriod,
+                    ForecastPeriod: el.ForecastPeriod,
+                    OrderAmount: el.OrderAmount,
+                    PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                    MFB: finalForecastBiasPBD.toFixed(3)
+                };
+            }
+        });
+        console.log('Final mfb: ', finalForecastBias);
+
+        finalForecastBias.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
         });
 
-        var ndx = crossfilter(bubu);
+        var dataMean = d3.mean(finalForecastBias, function(
+            d) { //Define mean value of Order Amount, i.e. Avg. Order Amount
+            return d.MFB;
+        });
+        console.log("Mean Value: ", dataMean);
+
+        var ndx = crossfilter(finalForecastBias);
         var all = ndx.groupAll();
         var forecastPeriodDim = ndx.dimension(function(d) {
             return +d.ForecastPeriod;
         });
         var ndxDim = ndx.dimension(function(d) {
-            return [+d.PeriodsBeforeDelivery, +d.MAD, +d.Product];
+            return [+d.PeriodsBeforeDelivery, +d.MFB, +d.Product];
         });
         var productDim = ndx.dimension(function(d) {
             return d.Product;
@@ -434,12 +501,8 @@ else {
         var dateDim = ndx.dimension(function(d) {
             return +d.ActualDate;
         });
-
         var forecastPeriodGroup = forecastPeriodDim.group();
         var productGroup = productDim.group();
-        // var ndxGroup = ndxDim.group().reduceSum(function(d) {
-        //     return +d.MAD;
-        // });
         var ndxGroup = ndxDim.group();
         var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
         var dateGroup = dateDim.group();
@@ -465,7 +528,7 @@ else {
 
         // console.log("ndxDim: ", ndxGroup.top(Infinity));
 
-        MADchart
+        MFBchart
             .width(768)
             .height(480)
             .dimension(ndxDim)
@@ -479,28 +542,61 @@ else {
             })
             .excludedSize(2)
             .excludedOpacity(0.5)
-            .x(d3.scaleLinear().domain(0, d3.extent(bubu, function(d) {
+            .x(d3.scaleLinear().domain(d3.extent(finalForecastBias, function(d) {
                 return d.PeriodsBeforeDelivery
             })))
             .brushOn(true)
             .clipPadding(10)
             .xAxisLabel("Periods Before Delivery")
-            .yAxisLabel("MAD")
+            .yAxisLabel("MFB")
             // .mouseZoomable(true)
             .renderTitle(true)
             .title(function(d) {
                 return [
                     'Periods Before Delivery: ' + d.key[0],
-                    'MAD: ' + d.key[1]
+                    'MFB: ' + d.key[1],
+                    'Product: ' + d.key[2]
                 ].join('\n');
             })
             .elasticX(true)
             .elasticY(true)
+            .on('renderlet', function(MFBchart) {
+                var x_vert = width;
+                var extra_data = [{
+                        x: 47,
+                        y: MFBchart.y()(dataMean)
+                    },
+                    {
+                        x: MFBchart.x()(x_vert),
+                        y: MFBchart.y()(dataMean)
+                    }
+                ];
+
+                var line = d3.line()
+                    .x(function(d) {
+                        return d.x;
+                    })
+                    .y(function(d) {
+                        return d.y;
+                    })
+                    .curve(d3.curveLinear);
+                var chartBody = MFBchart.select('g');
+                var path = chartBody.selectAll('path.extra').data([extra_data]);
+                path = path.enter()
+                    .append('path')
+                    .attr('class', 'oeExtra')
+                    .attr('stroke', 'orange')
+                    .attr('id', 'oeLine')
+                    .attr("stroke-width", 1)
+                    .style("stroke-dasharray", ("10,3"))
+                    .merge(path);
+                path.attr('d', line);
+            })
             .xAxis().tickFormat(d3.format('d'));
-        // console.log('ndxgroup data:', ndxDim);
-        MADchart.selectAll('path.symbol')
-            .attr('opacity', 0.3);
-        MADchart.margins().left = 50;
+
+        MFBchart.symbol(d3.symbolCircle);
+        MFBchart.margins().left = 50;
+
         visCount
             .dimension(ndx)
             .group(all);
@@ -514,10 +610,12 @@ else {
             .columns([
                 "Product",
                 "PeriodsBeforeDelivery",
-                "MAD"
+                "MFB"
             ]);
         dc.renderAll();
+
     });
+    const width = "960";
     </script>
 
     <script src="/lib/js/bootstrap.bundle.min.js"></script>

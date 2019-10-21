@@ -153,8 +153,8 @@ else {
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li><a href="./configuration.php">Configuration</a></li>
-                    <li><a href="./about.php">About</a></li>
-                    <li class><a href="./howto.php">How to Interpret Error Measures </a></li>
+                    <!-- <li><a href="./about.php">About</a></li> -->
+                    <!-- <li class><a href="./howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
@@ -280,9 +280,8 @@ else {
 <br/>
                 <p> <b>Graph Description:</b> This graph shows the calculation of the Mean Forecast Bias, which is the
                     description of the forecast error with respect to periods before delivery (PBD).
-                    <br> The <font color="orange"> orange-coloured line </font> is the average (mean) value of forecast
-                    bias
-                    values.
+                    <br> The <font color="orange"> orange-coloured line </font> is the average (mean) value of the mean forecast
+                    bias values.
                     <br>The formula of the Mean Forecast Bias is: <img
                         src="https://latex.codecogs.com/gif.latex?MFB_{j} = \frac {\sum_{i=1}^{n}x_{i,j}}{\sum_{i=1}^{n}x_{i,0}}"
                         title="Mean Forecast Bias formula" />. </p>
@@ -347,7 +346,6 @@ else {
             return el.PeriodsBeforeDelivery == 0;
         });
 
-
         let uniqueArray = data.filter(function(obj) {
             return finalOrder.indexOf(obj) == -1;
         });
@@ -366,7 +364,6 @@ else {
                 return d.PeriodsBeforeDelivery;
             })
             .entries(finalOrder);
-
 
         let bubu = dataGroupedByPBD.map((el) => {
             for (i = 0; i < dataGroupedByPBD.length; i++) {
@@ -549,21 +546,6 @@ else {
                 "MFB"
             ]);
         dc.renderAll();
-
-        /* Old Calculation of MFB */
-        // let finalForecastBias = dataGroupedByPBD.map((val) => {
-        //     let sum = val.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-        //         console.log('sum for pbd: ', val.key, ' sum: ', sum);
-        //         let finalForecastBiasPBD = sum / sumOfAllFinalOrders;
-        //         console.log('Final Forecast Bias by PBD: ', finalForecastBiasPBD);
-
-        //         return {
-        //             PeriodsBeforeDelivery: val.key,
-        //             ForecastBiasPBD: finalForecastBiasPBD
-        //         };
-        //     });
-
-        // console.log('Final Forecast Bias: ', finalForecastBias);
 
     });
     const width = "960";

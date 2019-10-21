@@ -155,8 +155,8 @@ else {
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li><a href="./configuration.php">Configuration</a></li>
-                    <li><a href="./about.php">About</a></li>
-                    <li class><a href="./howto.php">How to Interpret Error Measures </a></li>
+                    <!-- <li><a href="./about.php">About</a></li> -->
+                    <!-- <li class><a href="./howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>

@@ -164,8 +164,8 @@ else {
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li><a href="./configuration.php">Configuration</a></li>
-                    <li><a href="./about.php">About</a></li>
-                    <li class><a href="./howto.php">How to Interpret Error Measures </a></li>
+                    <!-- <li><a href="./about.php">About</a></li> -->
+                    <!-- <li class><a href="./howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
@@ -292,7 +292,7 @@ else {
                     The <font color="green"> green-coloured </font> line
                     is the average (mean) value of all final orders. <br> Additionally, the calculations of several
                     statistical
-                    measures are shown in the table below.
+                    measures are shown in the table on the right.
                 </p>
             </div>
         </div>
@@ -313,12 +313,8 @@ else {
                 </div>
                 <div style="clear: both"></div>
             </div>
-            
+
             <div class="col-6 .col-md-4">
-                <div class="dc-data-count">
-                    <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
-                        href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a><br />
-                </div><br />
                 <div class="col-md-3">
                     <br />Statistical measures:<br />
                     <div id="selections_table"></div>
@@ -377,6 +373,9 @@ else {
 
             localforage.getItem("viz_data", function(error, data) {
                 data = JSON.parse(data);
+
+                const width = "960";
+                const lineWidth = "860";
 
                 let finalOrder = data.filter((el) => {
                     //  return el.PeriodsBeforeDelivery==0;
@@ -489,18 +488,20 @@ else {
                     .symbolSize(10)
                     .group(ndxGroup)
                     .dimension(ndxDim)
-                    .keyAccessor(function(d) {
-                        return d.key[0];
-                    })
-                    .valueAccessor(function(d) {
-                        return d.key[1];
-                    })
+                    // .legend(dc.legend().x(60).y(440).itemHeight(10).gap(1))
                     .colorAccessor(function(d) {
                         return d.key[2];
                     })
                     .colors(function(colorKey) {
                         return plotColorMap(colorKey);
                     })
+                    .keyAccessor(function(d) {
+                        return d.key[0];
+                    })
+                    .valueAccessor(function(d) {
+                        return d.key[1];
+                    })
+
                     .x(d3.scaleLinear().domain(d3.extent(finalOrder, function(d) {
                         return d.ForecastPeriod
                     })))
@@ -521,7 +522,7 @@ else {
                     .elasticY(true)
 
                     .on('renderlet', function(FinalOrderChart) {
-                        var x_vert = width;
+                        var x_vert = lineWidth;
                         var extra_data = [{
                                 x: 47,
                                 y: FinalOrderChart.y()(dataMean)
@@ -577,21 +578,17 @@ else {
                 dc.renderAll();
 
                 // Create Legend
-                var svg = d3.select("#d3Legend").append('svg').attr('width', 300).attr('height', 35)
-                svg.append("path").attr('d', d3.symbol().size(100).type(d3.symbolCircle)).style("fill", "#1f77b4")
-                    .attr("transform", "translate(75,14)")
-                svg.append("path").attr("d", d3.symbol().size(100).type(d3.symbolCircle)).style("fill",
-                        "#9467bd")
-                    .attr("transform", "translate(185,14)")
-
-                //svg.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#404080")
-                svg.append("text").attr("x", 90).attr("y", 15).text("Product ID").style("font-size", "15px")
-                    .attr(
-                        "alignment-baseline", "middle")
-                svg.append("text").attr("x", 200).attr("y", 15).text("Product ID ...").style("font-size",
-                        "15px")
-                    .attr(
-                        "alignment-baseline", "middle")
+                // var svg = d3.select("#d3Legend").append('svg').attr('width', 300).attr('height', 35)
+                // svg.append("path").attr('d', d3.symbol().size(100).type(d3.symbolCircle)).style("fill", "#1f77b4")
+                //     .attr("transform", "translate(75,14)")
+                // svg.append("path").attr("d", d3.symbol().size(100).type(d3.symbolCircle)).style("fill",
+                //         "#9467bd")
+                //     .attr("transform", "translate(185,14)")
+                // svg.append("text").attr("x", 90).attr("y", 15).text("Product ID1").style("font-size", "15px")
+                //     .attr("alignment-baseline", "middle")
+                // svg.append("text").attr("x", 200).attr("y", 15).text("Product ID2").style("font-size",
+                //         "15px")
+                //     .attr("alignment-baseline", "middle")
 
                 tabulate(valuesToPrint, ['Description', 'Value']);
 
@@ -612,6 +609,10 @@ else {
         </div>
         <div id="d3Legend"></div>
         <div class="row">
+            <div class="dc-data-count">
+                <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
+                    href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a><br />
+            </div><br />
             <br />
             <button onclick="myFunction()">Data table display</button>
             <table class="table table-hover dc-data-table" id="newTable" style="display:none">
@@ -619,8 +620,6 @@ else {
             <br />
         </div>
         <script>
-        const width = "960";
-
         function myFunction() {
             var x = document.getElementById("newTable");
             if (x.style.display === "none") {

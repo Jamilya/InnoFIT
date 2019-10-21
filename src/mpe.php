@@ -160,8 +160,8 @@ else {
                     <!--  <li class="nav-item">
                         <a class="nav-link" href="index.php">Home</a>
                     </li > -->
-                    <li><a href="./about.php">About</a></li>
-                    <li class><a href="./howto.php">How to Interpret Error Measures </a></li>
+                    <!-- <li><a href="./about.php">About</a></li> -->
+                    <!-- <li class><a href="./howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>

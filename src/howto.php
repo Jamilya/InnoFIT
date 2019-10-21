@@ -100,11 +100,8 @@ else {
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="nav navbar-nav">
             <li><a href="./configuration.php">Configuration</a></li>
-                    <!--  <li class="nav-item">
-                        <a class="nav-link" href="index.php">Home</a>
-                    </li > -->
-            <li class><a href="./about.php">About</a></li>
-            <li class = "active"><a href="./howto.php">How to Interpret Error Measures   <span class="sr-only">(current)</span></a></li>
+            <!-- <li class><a href="./about.php">About</a></li>
+            <li class = "active"><a href="./howto.php">How to Interpret Error Measures   <span class="sr-only">(current)</span></a></li> -->
             <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations<span class="caret"></span></a>
                 <ul class="dropdown-menu">

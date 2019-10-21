@@ -156,8 +156,8 @@ else {
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li><a href="./configuration.php">Configuration</a></li>
-                    <li><a href="./about.php">About</a></li>
-                    <li class><a href="./howto.php">How to Interpret Error Measures </a></li>
+                    <!-- <li><a href="./about.php">About</a></li> -->
+                    <!-- <li class><a href="./howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
@@ -476,8 +476,18 @@ else {
                         });
                 })
                 .excludedSize(2)
+                .x(d3.scale.linear().domain([0, 20]))
+                .xUnits(dc.units.ordinal)
                 .excludedOpacity(0.5)
-                .x(d3.scaleLinear().domain([0, 100]))
+                ._rangeBandPadding(1)
+                // .x(d3.scaleLinear().domain([0, d3.max(bubu, function(d) {
+                //     return d.PeriodsBeforeDelivery;
+                // })]))
+                // .nice()
+                // .y(d3.scaleLinear().domain([0, d3.max(bubu, function(d) {
+                //     return d.RMSE;
+                // })]))
+                .nice()
                 .brushOn(true)
                 .clipPadding(10)
                 .xAxisLabel("Periods Before Delivery")
