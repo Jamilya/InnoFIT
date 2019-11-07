@@ -343,154 +343,112 @@ else {
     localforage.getItem("viz_data", function(error, data) {
         data = JSON.parse(data);
 
+        // PBD = 0 means Final Orders
         let finalOrder = data.filter((el) => {
             return el.PeriodsBeforeDelivery == 0;
         });
 
-        // let pbd2 = data.filter((el) => {
-        //     return el.PeriodsBeforeDelivery == 5;
-        // });
+        let finalOrdersForecastPeriods = new Map();
+        finalOrder.map(e => {
+            finalOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
+        });
 
-        // let pb2Filter = pbd2.filter((el) => {
-        //  return el.ActualPeriod <= el.ForecastPeriod;
-        // })
+        console.log('FINAL ORDER MAP: ', finalOrdersForecastPeriods);
 
-        // console.log('FINAL ORDERS ', finalOrder);
-        // console.log('PBD 2 ', pbd2);
-        // console.log('PBD 2 FILTER ', pb2Filter);
+        //Order All data by PBD
+        // Order the Final Orders
+        let dataByPBD = d3.nest()
+            .key(function(d) {
+                return d.ActualPeriod;
+            })
+            .entries(data);
 
+        // PBD != 0 means all Others or Forecast Orders
         let uniqueArray = data.filter(function(obj) {
             return finalOrder.indexOf(obj) == -1;
         });
+        //Find the max number of Actual periods in Final orders array
+        let maxActualPeriod = Math.max.apply(Math, finalOrder.map(function(o) {
+            return o.ActualPeriod;
+        }))
+        console.log('maxActualPeriod: ', maxActualPeriod);
 
+        // Order the Products by PBD in order to calculate sum of Forecasts and FinalOrders
         let orderByPBD = d3.nest()
             .key(function(d) {
                 return d.PeriodsBeforeDelivery;
             })
             .entries(uniqueArray);
 
-        orderByPBD = orderByPBD.map((el) => {
-            let validForecasts = el.values.filter(e => e.ActualPeriod <= e.ForecastPeriod);
+        // Calculate the sum for the Forecasts for each pbd != 0
+        let calculationsOrderByPBD = orderByPBD.map((el) => {
+            const uniqueNames = [...new Set(el.values.map(i => i.Product))];
+
+            // Forecast Sums
+            let validForecasts = el.values.filter(e => e.ForecastPeriod <= maxActualPeriod);
+            console.log('validForecasts: ', validForecasts);
+
+            let forecastOrdersForecastPeriods = new Map();
+            validForecasts.map(e => {
+                forecastOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
+            });
+
+            let invalidForecasts = el.values.filter(function(obj) {
+                return validForecasts.indexOf(obj) == -1;
+            });
             let sumOfForecasts = validForecasts.reduce((a, b) => +a + +b.OrderAmount, 0);
+
+            // FinalOrder Sums
+            let items = el.values;
+            let forecastItems = items.map(el => el.ForecastPeriod);
+            let sumFinalOrders = 0;
+            let difference = [];
+            forecastItems.forEach(e => {
+                if (finalOrdersForecastPeriods.get(e) !== undefined) {
+                    sumFinalOrders += parseInt(finalOrdersForecastPeriods.get(e), 0);
+                    difference.push(Math.abs(finalOrdersForecastPeriods.get(e) - forecastOrdersForecastPeriods.get(e)));
+                }
+            });
+            console.log('items: ', items);
+            console.log('difference: ', difference);
+            let sumOfDifferences = difference.reduce((a, b) => +a + +b, 0);
+            console.log('sumOfDifferences: ', sumOfDifferences);
+
+            // MFB & MAPE
+            let mfbValue = sumOfForecasts / sumFinalOrders;
+            let mapeValue = sumOfDifferences / sumFinalOrders;
+
             return {
-                pbd: el.key,
-                forecasts: validForecasts,
-                sumOfForecasts: sumOfForecasts
+                PeriodsBeforeDelivery: el.key,
+                Product: uniqueNames,
+                ActualPeriod: el.values[0].ActualPeriod,
+                ForecastPeriod: el.values[0].ForecastPeriod,
+                ActualDate: el.values[0].ActualDate,
+                sumOfForecasts: sumOfForecasts,
+                sumOfFinalOrders: sumFinalOrders,
+                difference: difference,
+                FinalMape: mapeValue
             }
         });
-        console.log('FORECAST ORDERS ', uniqueArray);
-        console.log('FORECAST ORDER BY PBD', orderByPBD);
+        console.log('Forecast, FinalOrders, MAPE all orderByPBD: ', calculationsOrderByPBD);
 
-        // let forecastValueMap = new Map();
-        // orderByPBD.forEach((val) => {
-        //     let keyString = val.pbd;
-        //     let valueString = val.sumOfForecasts;
-        //     forecastValueMap.set(keyString, valueString);
-        // });
-
-        let forecastOrderByPBD = d3.nest()
-            .key(function(d) {
-                return d.pbd;
-            })
-            .entries(orderByPBD);
-        console.log("forecastOrderByPBD: ", forecastOrderByPBD);
-
-        // finalOrderByPBD = finalOrderByPBD.map((el) => {
-        //     let validFinalOrders = el.values.filter(e => e.ActualPeriod <= e.ForecastPeriod);
-        //     let sumOfFinalOrders = validFinalOrders.reduce((a, b) => +a + +b.OrderAmount, 0);
-        //     return {
-        //         pbd: el.key,
-        //         sumofFinalOrders: sumOfFinalOrders
-        //     }
-        // });
-        // // console.log('FINAL ORDERS ', finalOrder);
-        // console.log('FINAL ORDER BY PBD', finalOrderByPBD);
-
-        let valueMap = new Map();
-        finalOrder.forEach((val) => {
-            let keyString = val.ActualPeriod;
-            let valueString = val.OrderAmount;
-            valueMap.set(keyString, valueString);
-        });
-
-        let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +
-            b);
-
-        /////////////Calculate sum of forecasted orders////////////////////
-        let divisionOfSums = orderByPBD.map((el) => {
-            for (i = 0; i < orderByPBD.length; i++) {
-                let value = el.sumOfForecasts / sumOfAllFinalOrders;
-                return {
-                    ActualDate: el.values.ActualDate,
-                    PeriodsBeforeDelivery: el.pbd,
-                    DivisionOfSums: value
-                };
-            }
-        });
-        console.log("MFB: ", divisionOfSums);
-
-        let dataGroupedByPBD = d3.nest()
-            .key(function(d) {
-                return d.PeriodsBeforeDelivery;
-            })
-            .entries(uniqueArray);
-
-        let finalDataGroupedByPBD = d3.nest()
-            .key(function(d) {
-                return d.PeriodsBeforeDelivery;
-            })
-            .entries(finalOrder);
-
-        let bubu = dataGroupedByPBD.map((el) => {
-            for (i = 0; i < dataGroupedByPBD.length; i++) {
-                let sum = el.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-                return {
-                    ActualDate: el.values[i].ActualDate,
-                    ForecastDate: el.values[i].ForecastDate,
-                    Product: el.values[i].Product,
-                    ActualPeriod: el.values[i].ActualPeriod,
-                    ForecastPeriod: el.values[i].ForecastPeriod,
-                    OrderAmount: el.values[i].OrderAmount,
-                    PeriodsBeforeDelivery: el.key,
-                    SumOfForecast: sum
-                };
-            }
-        });
-
-        let finalForecastBias = bubu.map((el) => {
-            for (i = 0; i < dataGroupedByPBD.length; i++) {
-                let finalForecastBiasPBD = el.SumOfForecast / sumOfAllFinalOrders;
-                return {
-                    ActualDate: el.ActualDate,
-                    ForecastDate: el.ForecastDate,
-                    Product: el.Product,
-                    ActualPeriod: el.ActualPeriod,
-                    ForecastPeriod: el.ForecastPeriod,
-                    OrderAmount: el.OrderAmount,
-                    PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                    MFB: finalForecastBiasPBD.toFixed(3)
-                };
-            }
-        });
-        console.log('Final mfb: ', finalForecastBias);
-
-        finalForecastBias.forEach(function(d) {
+        calculationsOrderByPBD.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
         });
-
-        var dataMean = d3.mean(finalForecastBias, function(
-            d) { //Define mean value of Order Amount, i.e. Avg. Order Amount
-            return d.MFB;
+        //Define mean value of Order Amount, i.e. Avg. Order Amount
+        var dataMean = d3.mean(calculationsOrderByPBD, function(
+            d) {
+            return d.FinalMape;
         });
         console.log("Mean Value: ", dataMean);
 
-        var ndx = crossfilter(finalForecastBias);
+        var ndx = crossfilter(calculationsOrderByPBD);
         var all = ndx.groupAll();
         var forecastPeriodDim = ndx.dimension(function(d) {
             return +d.ForecastPeriod;
         });
         var ndxDim = ndx.dimension(function(d) {
-            return [+d.PeriodsBeforeDelivery, +d.MFB, +d.Product];
+            return [+d.PeriodsBeforeDelivery, +d.FinalMape, d.Product];
         });
         var productDim = ndx.dimension(function(d) {
             return d.Product;
@@ -516,7 +474,6 @@ else {
         productlist
             .dimension(productDim)
             .group(productGroup)
-            //.controlsUseVisibility(true)
             .multiple(true)
             .numberVisible(15);
 
@@ -525,8 +482,6 @@ else {
             .group(periodsBeforeDeliveryGroup)
             .multiple(true)
             .numberVisible(15);
-
-        // console.log("ndxDim: ", ndxGroup.top(Infinity));
 
         MFBchart
             .width(768)
@@ -542,7 +497,7 @@ else {
             })
             .excludedSize(2)
             .excludedOpacity(0.5)
-            .x(d3.scaleLinear().domain(d3.extent(finalForecastBias, function(d) {
+            .x(d3.scaleLinear().domain(d3.extent(calculationsOrderByPBD, function(d) {
                 return d.PeriodsBeforeDelivery
             })))
             .brushOn(true)
@@ -554,8 +509,7 @@ else {
             .title(function(d) {
                 return [
                     'Periods Before Delivery: ' + d.key[0],
-                    'MFB: ' + d.key[1],
-                    'Product: ' + d.key[2]
+                    'MFB: ' + d.key[1]
                 ].join('\n');
             })
             .elasticX(true)
@@ -610,7 +564,7 @@ else {
             .columns([
                 "Product",
                 "PeriodsBeforeDelivery",
-                "MFB"
+                "FinalMFB"
             ]);
         dc.renderAll();
 

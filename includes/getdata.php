@@ -8,32 +8,31 @@ else {
 };?>
 
 <?php
+    // phpinfo();
     $DB_USERNAME = "jnurgazina"; 
     $DB_PASSWORD = "fuSdebNbZDX+";   
     $DB_SERVER = "mysql5";
     $DB_NAME="db_jnurgazina_1";
     
-    $server = mysql_connect($DB_SERVER, $DB_USERNAME, $DB_PASSWORD);
-    $connection = mysql_select_db($DB_NAME, $server);
-    
-    //$username = $_SESSION[`session_username`];
+    $server = mysqli_connect($DB_SERVER, $DB_USERNAME, $DB_PASSWORD);
+    // $server = mysqli_connect("mysql5","jnurgazina","fuSdebNbZDX");
+    $connection = mysqli_select_db($server, $DB_NAME);
 
     $myquery = "SELECT  Product, ActualDate, ForecastDate, OrderAmount, ActualDay, ActualPeriod, ForecastDay, ForecastPeriod, ActualYear, ForecastYear, PeriodsBeforeDelivery 
     FROM newOrders WHERE username = '" . $_SESSION['session_username'] . "'";
-    $query = mysql_query($myquery);
+    $query = mysqli_query($server, $myquery);
     
-    if ( ! $query ) {
-        echo mysql_error();
-        die;
-    }
+    // if ( ! $query ) {
+    //     echo mysqli_error($err);
+    //     die;
+    // }
     
     $data = array();
     
-    for ($x = 0; $x < mysql_num_rows($query); $x++) {
-        $data[] = mysql_fetch_assoc($query);
+    for ($x = 0; $x < mysqli_num_rows($query); $x++) {
+        $data[] = mysqli_fetch_assoc($query);
     }
     
     echo json_encode($data);     
-     
-    mysql_close($server);
+
 ?>

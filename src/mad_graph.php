@@ -92,6 +92,11 @@ else {
         stroke: #C0C0BB;
     }
 
+    div {
+        padding-right: 30px;
+        padding-left: 30px;
+    }
+
     .info-container {
         display: inline-block;
         width: calc(100% + -50px);
@@ -157,8 +162,6 @@ else {
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li><a href="./configuration.php">Configuration</a></li>
-                    <!-- <li><a href="./about.php">About</a></li> -->
-                    <!-- <li class><a href="./howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
@@ -288,8 +291,9 @@ else {
                     absolute
                     average error between the forecasted and the final order amounts.
                     <br>The formula of the MAD: <img
-                        src="https://latex.codecogs.com/gif.latex?MAD_{j} = \frac{1}{n}\sum_{i=1}^{n}{\left | x_{i,j}-x_{i,0} \right |}"
-                        title="MAD_formula" />. </p>
+                        src="https://latex.codecogs.com/gif.latex?MAD_{j}&space;=&space;\frac{1}{n}\sum_{i=1}^{n}{\left&space;|&space;x_{i,j}-x_{i,0}&space;\right&space;|}"
+                        title="MAD formula" /></a></p>
+                <!-- MAD_{j} = \frac{1}{n}\sum_{i=1}^{n}{\left | x_{i,j}-x_{i,0} \right |} -->
             </div>
         </div>
         <div class="row">
@@ -299,7 +303,8 @@ else {
                 <div class="clearfix"></div>
             </div>
             <div id="pbd">
-                <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
+                <p style="text-align:center;"><strong>Periods Before Delivery (PBD)<br /><small>(PBD: number of records)
+                        </small></strong></p>
             </div>
             <div style="clear: both"></div>
             <div>
@@ -413,11 +418,15 @@ else {
 
         });
         console.log("separatedArray: ", bubu);
-        bubu.forEach(function(d) {
+        newFinalArray = bubu.filter((el) => {
+            return !isNaN(el.MAD);
+        })
+
+        newFinalArray.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
         });
 
-        var ndx = crossfilter(bubu);
+        var ndx = crossfilter(newFinalArray);
         var all = ndx.groupAll();
         var forecastPeriodDim = ndx.dimension(function(d) {
             return +d.ForecastPeriod;
@@ -479,7 +488,7 @@ else {
             })
             .excludedSize(2)
             .excludedOpacity(0.5)
-            .x(d3.scaleLinear().domain(0, d3.extent(bubu, function(d) {
+            .x(d3.scaleLinear().domain(0, d3.extent(newFinalArray, function(d) {
                 return d.PeriodsBeforeDelivery
             })))
             .brushOn(true)

@@ -358,137 +358,194 @@ else {
                 composite = dc.compositeChart("#compositeChart"),
                 visTable = dc.dataTable(".dc-data-table");
 
-
-            //         let uniqueArray = data.filter(function (obj) { return finalOrder.indexOf(obj) == -1; });
+            // let uniqueArray = data.filter(function(obj) {
+            //     return finalOrder.indexOf(obj) == -1;
+            // });
 
             // let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
             // console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
 
-            //     let dataGroupedByPBD = d3.nest()
-            //         .key(function(d) { return d.PeriodsBeforeDelivery; })
-            //         .entries(uniqueArray);
+            // let dataGroupedByPBD = d3.nest()
+            //     .key(function(d) {
+            //         return d.PeriodsBeforeDelivery;
+            //     })
+            //     .entries(uniqueArray);
 
-
-            // let finalForecastBias = dataGroupedByPBD.map((val) => {
+            // let finalMFB = dataGroupedByPBD.map((val) => {
             //     let sum = val.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-            //         //console.log('sum for pbd: ', val.key, ' sum: ', sum);
-            //         let finalForecastBiasPBD = sum / sumOfAllFinalOrders;
-            //         //console.log('Final Forecast Bias by PBD: ', finalForecastBiasPBD);
+            //     let mfbCurrentPBD = sum / sumOfAllFinalOrders;
+            //     return {
+            //         ActualPeriod: val.ActualPeriod,
+            //         ForecastPeriod: val.ForecastPeriod,
+            //         PeriodsBeforeDelivery: val.key,
+            //         OrderAmount: JSON.stringify(mfbCurrentPBD)
+            //     };
+            // });
 
+            // let newValueMap = new Map(); // Map of Mean forecast bias
+            // finalMFB.forEach((val) => {
+            //     let keyString = val.PeriodsBeforeDelivery;
+            //     let valueString = val.OrderAmount;
+            //     newValueMap.set(keyString, valueString);
+            // });
+            // console.log("newValueMap: ", newValueMap.values());
+
+
+            // let divisionOne = function(uniqueArray, finalMFB) { //Calculate division of forecasted orders
+            //     return uniqueArray.OrderAmount / finalMFB;
+            // }
+
+            // let divisionArray = uniqueArray.map((el) => {
+            //     let divArray = divisionOne(el, newValueMap.get(el.PeriodsBeforeDelivery))
+            //     return {
+            //         ActualDate: el.ActualDate,
+            //         ForecastPeriod: el.ForecastPeriod,
+            //         //  OrderAmount: el.OrderAmount,
+            //         Product: el.Product,
+            //         PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+            //         OrderAmount: divArray
+            //     };
+            // });
+            // console.log("divisionArray: ", divisionArray);
+
+
+            // let secondValueMap = new Map();
+            // divisionArray.forEach((val) => {
+            //     let keyString = val.PeriodsBeforeDelivery;
+            //     let valueString = val.OrderAmount;
+            //     secondValueMap.set(keyString, valueString);
+            // });
+            // console.log("secondValueMap: ", secondValueMap);
+
+
+            // let squaredDiff = function(originalEl, divisionArray) {
+            //     return Math.pow((originalEl.OrderAmount - divisionArray), 2);
+            // }
+
+            // let valueMap = new Map();
+            // finalOrder.forEach((val) => {
+            //     let keyString = val.ActualPeriod;
+            //     let valueString = val.OrderAmount;
+            //     valueMap.set(keyString, valueString);
+            // });
+
+
+            // let squaredDifference = divisionArray.map((el) => {
+            //     let value = squaredDiff(el, valueMap.get(el.ForecastPeriod));
+            //     return {
+            //         ActualDate: el.ActualDate,
+            //         OrderAmount: el.OrderAmount,
+            //         PeriodsBeforeDelivery: (el.PeriodsBeforeDelivery),
+            //         SquaredDiff: value
+            //     };
+            // });
+            // console.log("squared Diff: ", squaredDifference);
+
+
+            // let seperatedByPeriodsTwo = d3.nest()
+            //     .key(function(d) {
+            //         return d.PeriodsBeforeDelivery
+            //     })
+            //     .entries(squaredDifference);
+            // console.log("seperatedByPeriodsTwo: ", seperatedByPeriodsTwo);
+
+            // let bubu = seperatedByPeriodsTwo.map((el) => {
+            //     for (i = 0; i < seperatedByPeriodsTwo.length; i++) {
+            //         let CRMSE = Math.sqrt(d3.mean(el.values, function(d) {
+            //             return d.SquaredDiff;
+            //         }), 2);
             //         return {
-            //             PeriodsBeforeDelivery: val.key,
-            //             OrderAmount: finalForecastBiasPBD
+            //             ActualDate: el.values[i].ActualDate,
+            //             PeriodsBeforeDelivery: el.key,
+            //             MeanOfThisPeriod: CRMSE.toFixed(3)
             //         };
-            //     });
+            //     }
+            // });
+            // console.log("final CRMSE Array: ", bubu);
+            // bubu.forEach(function(d) {
+            //     d.ActualDate = new Date(d.ActualDate);
+            // });
 
-            // console.log('Final Forecast Bias: ', finalForecastBias);
+            //MFB calculation
 
+            let finalOrdersForecastPeriods = new Map();
+            finalOrder.map(e => {
+                finalOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
+            });
+            console.log('FINAL ORDER MAP: ', finalOrdersForecastPeriods);
 
+            //Order All data by PBD
+            // Order the Final Orders
+
+            // PBD != 0 means all Others or Forecast Orders
             let uniqueArray = data.filter(function(obj) {
                 return finalOrder.indexOf(obj) == -1;
             });
-            
-            let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-            console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
+            //Find the max number of Actual periods in Final orders array
+            let maxActualPeriod = Math.max.apply(Math, finalOrder.map(function(o) {
+                return o.ActualPeriod;
+            }))
+            console.log('maxActualPeriod: ', maxActualPeriod);
 
-            let dataGroupedByPBD = d3.nest()
+            // Order the Products by PBD in order to calculate sum of Forecasts and FinalOrders
+            let orderByPBD = d3.nest()
                 .key(function(d) {
                     return d.PeriodsBeforeDelivery;
                 })
                 .entries(uniqueArray);
 
-            let finalMFB = dataGroupedByPBD.map((val) => {
-                let sum = val.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-                let mfbCurrentPBD = sum / sumOfAllFinalOrders;
-                return {
-                    ActualPeriod: val.ActualPeriod,
-                    ForecastPeriod: val.ForecastPeriod,
-                    PeriodsBeforeDelivery: val.key,
-                    OrderAmount: JSON.stringify(mfbCurrentPBD)
-                };
-            });
+            // Calculate the sum for the Forecasts for each pbd != 0
+            let calculationsOrderByPBD = orderByPBD.map((el) => {
+                const uniqueNames = [...new Set(el.values.map(i => i.Product))];
 
-            let newValueMap = new Map(); // Map of Mean forecast bias
-            finalMFB.forEach((val) => {
-                let keyString = val.PeriodsBeforeDelivery;
-                let valueString = val.OrderAmount;
-                newValueMap.set(keyString, valueString);
-            });
-            console.log("newValueMap: ", newValueMap.values());
+                // Forecast Sums
+                let validForecasts = el.values.filter(e => e.ForecastPeriod <= maxActualPeriod);
+                let invalidForecasts = el.values.filter(function(obj) {
+                    return validForecasts.indexOf(obj) == -1;
+                });
 
+                let forecastOrdersForecastPeriods = new Map();
+                validForecasts.map(e => {
+                    forecastOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
+                });
+                let sumOfForecasts = validForecasts.reduce((a, b) => +a + +b.OrderAmount, 0);
 
-            let divisionOne = function(uniqueArray, finalMFB) { //Calculate division of forecasted orders
-                return uniqueArray.OrderAmount / finalMFB;
-            }
+                // FinalOrder Sums
+                let items = el.values;
+                let forecastItems = items.map(el => el.ForecastPeriod);
+                let sumFinalOrders = 0;
+                // MFB
 
-            let divisionArray = uniqueArray.map((el) => {
-                let divArray = divisionOne(el, newValueMap.get(el.PeriodsBeforeDelivery))
-                return {
-                    ActualDate: el.ActualDate,
-                    ForecastPeriod: el.ForecastPeriod,
-                    //  OrderAmount: el.OrderAmount,
-                    Product: el.Product,
-                    PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                    OrderAmount: divArray
-                };
-            });
-            console.log("divisionArray: ", divisionArray);
+                forecastItems.forEach(e => {
+                    if (finalOrdersForecastPeriods.get(e) !== undefined) {
+                        sumFinalOrders += parseInt(finalOrdersForecastPeriods.get(e), 0);
+                    }
+                });
+                console.log('items: ', items);
+                let mfbValue = sumOfForecasts / sumFinalOrders;
 
-
-            let secondValueMap = new Map();
-            divisionArray.forEach((val) => {
-                let keyString = val.PeriodsBeforeDelivery;
-                let valueString = val.OrderAmount;
-                secondValueMap.set(keyString, valueString);
-            });
-            console.log("secondValueMap: ", secondValueMap);
-
-
-            let squaredDiff = function(originalEl, divisionArray) {
-                return Math.pow((originalEl.OrderAmount - divisionArray), 2);
-            }
-
-            let valueMap = new Map();
-            finalOrder.forEach((val) => {
-                let keyString = val.ActualPeriod;
-                let valueString = val.OrderAmount;
-                valueMap.set(keyString, valueString);
-            });
-
-
-            let squaredDifference = divisionArray.map((el) => {
-                let value = squaredDiff(el, valueMap.get(el.ForecastPeriod));
-                return {
-                    ActualDate: el.ActualDate,
-                    OrderAmount: el.OrderAmount,
-                    PeriodsBeforeDelivery: (el.PeriodsBeforeDelivery),
-                    SquaredDiff: value
-                };
-            });
-            console.log("squared Diff: ", squaredDifference);
-
-
-            let seperatedByPeriodsTwo = d3.nest()
-                .key(function(d) {
-                    return d.PeriodsBeforeDelivery
+                let calcByPBD = items.map(el => el.PeriodsBeforeDelivery);
+                let division = [];
+                calcByPBD.forEach(e => {
+                    division.push(Math.pow(finalOrdersForecastPeriods.get(e) - (
+                        forecastOrdersForecastPeriods.get(e) / mfbValue)), 2);
                 })
-                .entries(squaredDifference);
-            console.log("seperatedByPeriodsTwo: ", seperatedByPeriodsTwo);
 
-            let bubu = seperatedByPeriodsTwo.map((el) => {
-                for (i = 0; i < seperatedByPeriodsTwo.length; i++) {
-                    let CRMSE = Math.sqrt(d3.mean(el.values, function(d) {
-                        return d.SquaredDiff;
-                    }), 2);
-                    return {
-                        ActualDate: el.values[i].ActualDate,
-                        PeriodsBeforeDelivery: el.key,
-                        MeanOfThisPeriod: CRMSE.toFixed(3)
-                    };
+                console.log('calcByPBD: ', calcByPBD);
+
+                return {
+                    PeriodsBeforeDelivery: el.key,
+                    Product: uniqueNames,
+                    ActualPeriod: el.values[0].ActualPeriod,
+                    ForecastPeriod: el.values[0].ForecastPeriod,
+                    ActualDate: el.values[0].ActualDate,
+                    MFB: mfbValue.toFixed(3),
+                    CRMSE: Math.sqrt(d3.mean(division))
                 }
             });
-            console.log("final CRMSE Array: ", bubu);
-            bubu.forEach(function(d) {
+            console.log('Forecast, FinalOrders, MFB, CRMSE all orderByPBD: ', calculationsOrderByPBD);
+
+            calculationsOrderByPBD.forEach(function(d) {
                 d.ActualDate = new Date(d.ActualDate);
             });
 

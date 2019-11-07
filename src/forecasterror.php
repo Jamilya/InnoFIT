@@ -112,6 +112,11 @@ else {
         text-align: center;
     }
 
+    div {
+        padding-right: 30px;
+        padding-left: 30px;
+    }
+
     .info-container {
         display: inline-block;
         width: calc(100% + -50px);
@@ -175,8 +180,6 @@ else {
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li><a href="./configuration.php">Configuration</a></li>
-                    <!-- <li><a href="./about.php">About</a></li> -->
-                    <!-- <li class><a href="./howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
@@ -260,9 +263,7 @@ else {
 
                 </ul>
             </div>
-            <!--/.nav-collapse -->
         </div>
-        <!--/.container-fluid -->
     </nav>
     <div class="customContainer">
         <div class="row" style="margin-bottom: -2%;">
@@ -304,7 +305,7 @@ else {
                     comparing the forecasted order amounts to the final order amounts with respect to periods before
                     delivery.<br>
                     The formula of the Percentage Error:
-                    <img src="https://latex.codecogs.com/gif.latex?e_{i,j} = (\frac{ x_{i,j} - x_{i,0} }{x_{i,0}})*100"
+                    <img src="https://latex.codecogs.com/gif.latex?e_{i,j} = \frac{ x_{i,j} - x_{i,0} }{x_{i,0}}"
                         title="Percentage (forecast) Error formula" />.
                 </p>
             </div>
@@ -319,11 +320,11 @@ else {
 
             <div id="forecastlist">
                 <br />
-                <p style="text-align:center;"> <strong>Due date</strong></p>
+                <p> <strong>Due date <br /><small>(due date: number of records) </small></strong></p>
                 <div class="clearfix"></div>
             </div>
             <div id="pbd"><br />
-                <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
+                <p><strong>Periods Before Delivery (PBD) <br /><small>(PBD: number of records)</small></strong></p>
             </div>
             <div style="clear: both"></div>
             <br />
@@ -398,6 +399,22 @@ else {
                 };
             })
             console.log("FINAL Array with deviation: ", finalArray);
+            newFinalArray = finalArray.filter((el) => {
+                return !isNaN(el.Deviation);
+            })
+            isfinitearray = newFinalArray.filter((el) => {
+                return isFinite(el.Deviation) == true;
+            })
+            console.log("isfinitearrayt: ", isfinitearray);
+            let deviationCalc = d3.values(isfinitearray, function(d) {
+                return d.Deviation;
+            })
+            var deviationMax = d3.max(deviationCalc, function(d) {
+                return +d.Deviation;
+            });
+            var deviationMin = d3.min(deviationCalc, function(d) { //Define minimum  value of Order Amount
+                return +d.Deviation;
+            });
 
             var forecastlist = dc.selectMenu("#forecastlist"),
                 productChart = dc.selectMenu("#product"),
@@ -406,18 +423,17 @@ else {
                 forecastErrorChart = dc.scatterPlot("#scatter"),
                 visTable = dc.dataTable(".dc-data-table");
 
-
-            finalArray.forEach(function(d) {
+            isfinitearray.forEach(function(d) {
                 d.ActualDate = new Date(d.ActualDate);
             });
 
-            var ndx = crossfilter(finalArray);
+            var ndx = crossfilter(isfinitearray);
             var all = ndx.groupAll();
             var forecastPeriodDim = ndx.dimension(function(d) {
                 return +d.ForecastPeriod;
             });
             var ndxDim = ndx.dimension(function(d) {
-                return [+d.PeriodsBeforeDelivery, +d.Deviation, +d.ActualPeriod];
+                return [+d.PeriodsBeforeDelivery, +d.Deviation, +d.ForecastPeriod];
             });
             var productDim = ndx.dimension(function(d) {
                 return d.Product;
@@ -431,7 +447,6 @@ else {
             var dateDim = ndx.dimension(function(d) {
                 return +d.ActualDate;
             });
-            console.log("final array: ", finalArray);
 
             var forecastPeriodGroup = forecastPeriodDim.group();
             var productGroup = productDim.group();
@@ -443,15 +458,14 @@ else {
             var dateGroup = dateDim.group();
             console.log("ndxDim: ", ndxGroup.top(Infinity));
 
+
             forecastlist
                 .dimension(forecastPeriodDim)
                 .group(forecastPeriodGroup)
                 .multiple(true)
                 .numberVisible(15);
-            // .elasticX(true);
 
             productChart
-                //.height(800)
                 .dimension(productDim)
                 .group(productGroup)
                 .multiple(true)
@@ -462,7 +476,6 @@ else {
                 .group(periodsBeforeDeliveryGroup)
                 .multiple(true)
                 .numberVisible(15);
-            // .elasticX(true);
             var plotColorMap = d3.scaleOrdinal(d3.schemeCategory10);
 
             forecastErrorChart
@@ -474,25 +487,27 @@ else {
                 .data(function(group) {
                     return group.all()
                         .filter(function(d) {
-                            return d.key !== NaN || d.key !== Infinity || d.key !==
-                                undefined;
+                            return !isNaN(d.key[1]);
                         });
                 })
-                .keyAccessor(function(d) {
-                    return d.key[0];
-                })
-                .valueAccessor(function(d) {
-                    return d.key[1];
-                })
+                // .keyAccessor(function(d) {
+                //     return d.key[0];
+                // })
+                // .valueAccessor(function(d) {
+                //     return d.key[1] * 100;
+                // })
                 .colorAccessor(function(d) {
                     return d.key[2];
                 })
                 .colors(function(colorKey) {
                     return plotColorMap(colorKey);
                 })
-                .x(d3.scaleLinear().domain(d3.extent(finalArray, function(d) {
+                .excludedSize(2)
+                .excludedOpacity(0.5)
+                .x(d3.scaleLinear().domain(d3.extent(isfinitearray, function(d) {
                     return d.PeriodsBeforeDelivery
                 })))
+                .brushOn(true)
                 .clipPadding(10)
                 .xAxisLabel("Periods Before Delivery")
                 .yAxisLabel("Deviation")

@@ -90,6 +90,11 @@ else {
         stroke: #C0C0BB;
     }
 
+    div {
+        padding-right: 30px;
+        padding-left: 30px;
+    }
+
     .info-container {
         display: inline-block;
         width: calc(100% + -50px);
@@ -295,7 +300,8 @@ else {
                 <div class="clearfix"></div>
             </div>
             <div id="pbd">
-                <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
+                <p style="text-align:center;"><strong>Periods Before Delivery (PBD)<br /><small>(PBD: number of records)
+                        </small></strong></p>
             </div>
             <div style="clear: both"></div>
 
@@ -349,75 +355,110 @@ else {
     localforage.getItem("viz_data", function(error, data) {
         data = JSON.parse(data);
 
+        // PBD = 0 means Final Orders
         let finalOrder = data.filter((el) => {
             return el.PeriodsBeforeDelivery == 0;
         });
 
+        let finalOrdersForecastPeriods = new Map();
+        finalOrder.map(e => {
+            finalOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
+        });
+
+        console.log('FINAL ORDER MAP: ', finalOrdersForecastPeriods);
+
+        //Order All data by PBD
+        // Order the Final Orders
+        let dataByPBD = d3.nest()
+            .key(function(d) {
+                return d.ActualPeriod;
+            })
+            .entries(data);
+
+        // PBD != 0 means all Others or Forecast Orders
         let uniqueArray = data.filter(function(obj) {
             return finalOrder.indexOf(obj) == -1;
         });
+        //Find the max number of Actual periods in Final orders array
+        let maxActualPeriod = Math.max.apply(Math, finalOrder.map(function(o) {
+            return o.ActualPeriod;
+        }))
+        console.log('maxActualPeriod: ', maxActualPeriod);
 
-        let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +
-            b);
-
-        let dataGroupedByPBD = d3.nest()
+        // Order the Products by PBD in order to calculate sum of Forecasts and FinalOrders
+        let orderByPBD = d3.nest()
             .key(function(d) {
                 return d.PeriodsBeforeDelivery;
             })
             .entries(uniqueArray);
 
-        // console.log('Grouped data: ', dataGroupedByPBD);
+        // Calculate the sum for the Forecasts for each pbd != 0
+        let calculationsOrderByPBD = orderByPBD.map((el) => {
+            const uniqueNames = [...new Set(el.values.map(i => i.Product))];
 
-        let bubu = dataGroupedByPBD.map((el) => {
-            for (i = 0; i < dataGroupedByPBD.length; i++) {
-                let sum = el.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-                return {
-                    ActualDate: el.values[i].ActualDate,
-                    ForecastDate: el.values[i].ForecastDate,
-                    Product: el.values[i].Product,
-                    ActualPeriod: el.values[i].ActualPeriod,
-                    ForecastPeriod: el.values[i].ForecastPeriod,
-                    OrderAmount: el.values[i].OrderAmount,
-                    PeriodsBeforeDelivery: el.key,
-                    SumOfForecast: sum
-                };
+            // Forecast Sums
+            let validForecasts = el.values.filter(e => e.ForecastPeriod <= maxActualPeriod);
+            console.log('validForecasts: ', validForecasts);
+
+            let forecastOrdersForecastPeriods = new Map();
+            validForecasts.map(e => {
+                forecastOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
+            });
+
+            let invalidForecasts = el.values.filter(function(obj) {
+                return validForecasts.indexOf(obj) == -1;
+            });
+            let sumOfForecasts = validForecasts.reduce((a, b) => +a + +b.OrderAmount, 0);
+
+            // FinalOrder Sums
+            let items = el.values;
+            let forecastItems = items.map(el => el.ForecastPeriod);
+            let sumFinalOrders = 0;
+            let difference = [];
+            forecastItems.forEach(e => {
+                if (finalOrdersForecastPeriods.get(e) !== undefined) {
+                    sumFinalOrders += parseInt(finalOrdersForecastPeriods.get(e), 0);
+                    difference.push(Math.abs(finalOrdersForecastPeriods.get(e) -
+                        forecastOrdersForecastPeriods.get(e)));
+                }
+            });
+            console.log('items: ', items);
+            console.log('difference: ', difference);
+            let sumOfDifferences = difference.reduce((a, b) => +a + +b, 0);
+            console.log('sumOfDifferences: ', sumOfDifferences);
+
+            // MFB & MAPE
+            let mfbValue = sumOfForecasts / sumFinalOrders;
+            let mapeValue = sumOfDifferences / sumFinalOrders;
+
+            return {
+                PeriodsBeforeDelivery: el.key,
+                Product: uniqueNames,
+                ActualPeriod: el.values[0].ActualPeriod,
+                ForecastPeriod: el.values[0].ForecastPeriod,
+                ActualDate: el.values[0].ActualDate,
+                sumOfForecasts: sumOfForecasts,
+                sumOfFinalOrders: sumFinalOrders,
+                difference: difference,
+                MAPE: mapeValue.toFixed(3)
             }
         });
-        // console.log('current mape: ', bubu);
-
-        let mapeCurrentPBD = bubu.map((el) => {
-            for (i = 0; i < dataGroupedByPBD.length; i++) {
-                let mape = Math.abs(el.SumOfForecast - sumOfAllFinalOrders) /
-                    sumOfAllFinalOrders;
-                return {
-                    ActualDate: el.ActualDate,
-                    ForecastDate: el.ForecastDate,
-                    Product: el.Product,
-                    ActualPeriod: el.ActualPeriod,
-                    ForecastPeriod: el.ForecastPeriod,
-                    OrderAmount: el.OrderAmount,
-                    PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                    MAPE: mape.toFixed(3)
-                };
-            }
-        });
-        console.log('Final mape: ', mapeCurrentPBD);
-
-        let mapeCalc = d3.values(mapeCurrentPBD, function(d) {
-            return d.MAPE;
+        console.log('Forecast, FinalOrders, MAPE all orderByPBD: ', calculationsOrderByPBD);
+        newFinalArray = calculationsOrderByPBD.filter((el) => {
+            return !isNaN(el.MAPE);
         })
 
-        var dataMean = d3.mean(mapeCalc, function(
+        newFinalArray.forEach(function(d) {
+            d.ActualDate = new Date(d.ActualDate);
+        });
+        //Define mean value of Order Amount, i.e. Avg. Order Amount
+        var dataMean = d3.mean(newFinalArray, function(
             d) {
-            return +d.MAPE;
+            return d.MAPE;
         });
         console.log("Mean Value: ", dataMean);
 
-        mapeCurrentPBD.forEach(function(d) {
-            d.ActualDate = new Date(d.ActualDate);
-        });
-
-        var ndx = crossfilter(mapeCurrentPBD);
+        var ndx = crossfilter(newFinalArray);
         var all = ndx.groupAll();
         var forecastPeriodDim = ndx.dimension(function(d) {
             return +d.ForecastPeriod;
@@ -449,7 +490,6 @@ else {
         productlist
             .dimension(productDim)
             .group(productGroup)
-            //.controlsUseVisibility(true)
             .multiple(true)
             .numberVisible(15);
 
@@ -467,26 +507,25 @@ else {
             .dimension(ndxDim)
             .symbolSize(10)
             .group(ndxGroup)
-            .excludedSize(2)
-            .excludedOpacity(0.5)
             .data(function(group) {
                 return group.all()
                     .filter(function(d) {
                         return d.key !== undefined || d.key !== NaN;
                     });
             })
-            .x(d3.scaleLinear().domain([0, 100]))
+            // .x(d3.scaleLinear().domain([0, 100]))
+            .x(d3.scaleLinear().domain([0, d3.max(newFinalArray, function(d) {
+                    return d.PeriodsBeforeDelivery;
+                })]))
             .brushOn(true)
             .clipPadding(10)
             .xAxisLabel("Periods Before Delivery")
             .yAxisLabel("MAPE")
-            // .mouseZoomable(true)
             .renderTitle(true)
             .title(function(d) {
                 return [
                     'Periods Before Delivery: ' + d.key[0],
-                    'MAPE: ' + d.key[1],
-                    'Product: ' + d.key[2]
+                    'MAPE: ' + d.key[1]
                 ].join('\n');
             })
             .elasticX(true)
@@ -495,7 +534,6 @@ else {
 
         MAPEchart.selectAll('path.symbol')
             .attr('opacity', 0.3);
-
         MAPEchart.margins().left = 50;
 
 

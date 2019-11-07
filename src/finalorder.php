@@ -92,6 +92,11 @@ else {
         stroke: #C0C0BB;
     }
 
+    div {
+        padding-right: 30px;
+        padding-left: 30px;
+    }
+
     .info-container {
         display: inline-block;
         width: calc(100% + -50px);
@@ -164,8 +169,6 @@ else {
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li><a href="./configuration.php">Configuration</a></li>
-                    <!-- <li><a href="./about.php">About</a></li> -->
-                    <!-- <li class><a href="./howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
@@ -298,326 +301,90 @@ else {
         </div>
 
         <div class="row">
-            <div class="col-12 col-md-8">
+            <div class="col-md-8">
                 <div id="scatter">
                     <div class="clearfix"></div>
                 </div>
                 <div id="forecastlist">
                     <br />
-                    <p style="text-align:center;"><strong>Due date </strong></p>
+                    <p style="text-align:left;"><strong>Due date <br /><small>(due date: number of
+                                records)</small></strong></p>
                     <div class="clearfix"></div>
                 </div>
-
                 <div id="select1"><br />
-                    <p style="text-align:center;"><strong>Product</strong></p>
+                    <p style="text-align:left;"><strong>Product<br /><small>(product ID: number of
+                                records)</small></strong></p>
                 </div>
                 <div style="clear: both"></div>
             </div>
-
-            <div class="col-6 .col-md-4">
-                <div class="col-md-3">
-                    <br />Statistical measures:<br />
-                    <div id="selections_table"></div>
-                </div>
-
-            </div>
-            <br /><br />
-            <script>
-            $(document).ready(function() {
-                if (localStorage.getItem('checkFiltersActive') === 'true') {
-                    $('#filterInfo').show();
-                } else {
-                    $('#filterInfo').hide();
-                }
-            });
-            // The table generation function
-            function tabulate(data, columns) {
-                var table = d3.select('#selections_table').append('selections_table')
-                var thead = table.append('thead')
-                var tbody = table.append('tbody');
-                thead.append('tr')
-                    .selectAll('th')
-                    .data(columns).enter()
-                    .append('th')
-                    .text(function(column) {
-                        return column;
-                    });
-                var rows = tbody.selectAll('tr')
-                    .data(data)
-                    .enter()
-                    .append('tr');
-                var cells = rows.selectAll('td')
-                    .data(function(row) {
-                        return columns.map(function(column) {
-                            return {
-                                column: column,
-                                value: row[column]
-                            };
+            <div class="col-md-4">
+                <br />Statistical measures:<br />
+                <div id="selections_table"></div>
+                <br /><br />
+                <script>
+                $(document).ready(function() {
+                    if (localStorage.getItem('checkFiltersActive') === 'true') {
+                        $('#filterInfo').show();
+                    } else {
+                        $('#filterInfo').hide();
+                    }
+                });
+                // The table generation function
+                function tabulate(data, columns) {
+                    var table = d3.select('#selections_table').append('selections_table')
+                    var thead = table.append('thead')
+                    var tbody = table.append('tbody');
+                    thead.append('tr')
+                        .selectAll('th')
+                        .data(columns).enter()
+                        .append('th')
+                        .text(function(column) {
+                            return column;
                         });
-                    })
-                    .enter()
-                    .append('td')
-                    .text(function(d) {
-                        return d.value;
-                    });
-                return table;
-            }
-
-            function generateDescObject(desc, value) {
-                const obj = {};
-                obj['Description'] = desc;
-                obj['Value'] = value;
-                return obj;
-            }
-            var valuesToPrint = [];
-
-            localforage.getItem("viz_data", function(error, data) {
-                data = JSON.parse(data);
-
-                const width = "960";
-                const lineWidth = "860";
-
-                let finalOrder = data.filter((el) => {
-                    //  return el.PeriodsBeforeDelivery==0;
-                    return el.PeriodsBeforeDelivery == 0 && el.PeriodsBeforeDelivery == "0";
-                });
-                let finalOrderCalc = d3.values(finalOrder, function(d) {
-                    return d.OrderAmount;
-                })
-
-                var dataMean = d3.mean(finalOrderCalc, function(
-                    d) {
-                    return +d.OrderAmount;
-                });
-                console.log("Mean Value: ", dataMean);
-
-                var dataMedian = d3.median(finalOrderCalc, function(
-                    d) {
-                    return +d.OrderAmount;
-                });
-                var dataMax = d3.max(finalOrderCalc, function(d) {
-                    return +d.OrderAmount;
-                });
-                var dataMin = d3.min(finalOrderCalc, function(d) { //Define minimum  value of Order Amount
-                    return +d.OrderAmount;
-                });
-                var dataQuantile1 = d3.quantile(finalOrder, 0.99, function(d) {
-                    return d.OrderAmount;
-                });
-                var dataQuantile2 = d3.quantile(finalOrder, 0.95, function(d) {
-                    return d.OrderAmount;
-                });
-                var dataQuantile3 = d3.quantile(finalOrder, 0.75, function(d) {
-                    return d.OrderAmount;
-                });
-                var dataMaxPer = d3.max(finalOrder, function(d) {
-                    return d.ActualPeriod;
-                });
-                var standardDev = d3.deviation(finalOrder, function(
-                    d) { //Define a standard deviation variable
-                    return d.OrderAmount;
-                });
-                var varKo = standardDev / dataMean;
-                var roundVarKo = varKo.toFixed(2);
-
-                valuesToPrint.push(generateDescObject('Mean Value: ', dataMean.toFixed(2) + " "));
-                valuesToPrint.push(generateDescObject('Median Value: ', dataMedian + " "));
-                valuesToPrint.push(generateDescObject('Min Value: ', dataMin + "      "));
-                valuesToPrint.push(generateDescObject('Max Value: ', dataMax + "      "));
-                valuesToPrint.push(generateDescObject('99% Quantile: ', dataQuantile1.toFixed(2) + '  '));
-                valuesToPrint.push(generateDescObject('95% Quantile: ', dataQuantile2.toFixed(2) + '  '));
-                valuesToPrint.push(generateDescObject('75% Quantile: ', dataQuantile3.toFixed(2) + '  '));
-                valuesToPrint.push(generateDescObject('Max Period', dataMaxPer + " "));
-                valuesToPrint.push(generateDescObject('Var. Ko.:: ', roundVarKo + " "));
-                valuesToPrint.push(generateDescObject('St. Dev.: ', standardDev.toFixed(2), 1));
-                var forecastlist = dc.selectMenu("#forecastlist"),
-                    visCount = dc.dataCount(".dc-data-count"),
-                    FinalOrderChart = dc.scatterPlot("#scatter"),
-                    visTable = dc.dataTable(".dc-data-table"),
-                    select1 = dc.selectMenu("#select1");
+                    var rows = tbody.selectAll('tr')
+                        .data(data)
+                        .enter()
+                        .append('tr');
+                    var cells = rows.selectAll('td')
+                        .data(function(row) {
+                            return columns.map(function(column) {
+                                return {
+                                    column: column,
+                                    value: row[column]
+                                };
+                            });
+                        })
+                        .enter()
+                        .append('td')
+                        .text(function(d) {
+                            return d.value;
+                        });
+                    return table;
+                }
 
 
-
-                finalOrder.forEach(function(d) {
-                    d.ActualDate = new Date(d.ActualDate),
-                        d.ForecastDate = new Date(d.ForecastDate);
-                });
-                console.log("finalOrder: ", finalOrder);
-
-                var ndx = crossfilter(finalOrder);
-                var all = ndx.groupAll();
-                var actualPeriodDim = ndx.dimension(function(d) {
-                    return +d.ActualPeriod;
-                });
-                var forecastPeriodDim = ndx.dimension(function(d) {
-                    return +d.ForecastPeriod;
-                });
-                var ndxDim = ndx.dimension(function(d) {
-                    return [+d.ForecastPeriod, +d.OrderAmount, d.Product];
-                });
-                var productDim = ndx.dimension(function(d) {
-                    return d.Product;
-                });
-                var dateDim = ndx.dimension(function(d) {
-                    return +d.ActualDate;
-                });
-                var plotColorMap = d3.scaleOrdinal(d3.schemeCategory10);
-
-                var actualPeriodGroup = actualPeriodDim.group();
-                var productGroup = productDim.group();
-                var ndxGroup = ndxDim.group();
-                var forecastPeriodGroup = forecastPeriodDim.group();
-                var dateGroup = dateDim.group();
-
-                forecastlist
-                    .dimension(forecastPeriodDim)
-                    .group(forecastPeriodGroup)
-                    .multiple(true)
-                    .numberVisible(15);
-
-                select1
-                    .dimension(productDim)
-                    .group(productGroup)
-                    //.controlsUseVisibility(true)
-                    .multiple(true);
-
-                // console.log("ndxDim: ", ndxGroup.top(Infinity));
-                FinalOrderChart
-                    .width(768)
-                    .height(480)
-                    .symbolSize(10)
-                    .group(ndxGroup)
-                    .dimension(ndxDim)
-                    // .legend(dc.legend().x(60).y(440).itemHeight(10).gap(1))
-                    .colorAccessor(function(d) {
-                        return d.key[2];
-                    })
-                    .colors(function(colorKey) {
-                        return plotColorMap(colorKey);
-                    })
-                    .keyAccessor(function(d) {
-                        return d.key[0];
-                    })
-                    .valueAccessor(function(d) {
-                        return d.key[1];
-                    })
-
-                    .x(d3.scaleLinear().domain(d3.extent(finalOrder, function(d) {
-                        return d.ForecastPeriod
-                    })))
-                    .brushOn(true)
-                    .clipPadding(10)
-                    .xAxisLabel("Due Date (forecast period)")
-                    // .xAxisPadding(10)
-                    .yAxisLabel("Order Amount (pcs)")
-                    .renderTitle(true)
-                    .title(function(d) {
-                        return [
-                            'Product: ' + d.key[2],
-                            'Order Amount: ' + d.key[1],
-                            'Forecast Period: ' + d.key[0]
-                        ].join('\n');
-                    })
-                    .elasticX(true)
-                    .elasticY(true)
-
-                    .on('renderlet', function(FinalOrderChart) {
-                        var x_vert = lineWidth;
-                        var extra_data = [{
-                                x: 47,
-                                y: FinalOrderChart.y()(dataMean)
-                            },
-                            {
-                                x: FinalOrderChart.x()(x_vert),
-                                y: FinalOrderChart.y()(dataMean)
-                            }
-                        ];
-                        var line = d3.line()
-                            .x(function(d) {
-                                return d.x;
-                            })
-                            .y(function(d) {
-                                return d.y;
-                            })
-                            .curve(d3.curveLinear);
-                        var chartBody = FinalOrderChart.select('g');
-                        var path = chartBody.selectAll('path.extra').data([extra_data]);
-                        path = path.enter()
-                            .append('path')
-                            .attr('class', 'oeExtra')
-                            .attr('stroke', 'green')
-                            .attr('id', 'oeLine')
-                            .attr("stroke-width", 1)
-                            .style("stroke-dasharray", ("10,3"))
-                            .merge(path);
-                        path.attr('d', line);
-                    })
-                    .xAxis().tickFormat(d3.format('d'));
-
-                FinalOrderChart.symbol(d3.symbolCircle);
-                FinalOrderChart.margins().left = 50;
-
-                visCount
-                    .dimension(ndx)
-                    .group(all);
-
-                visTable
-                    .dimension(dateDim)
-                    .group(function(d) {
-                        var format = d3.format('02d');
-                        return d.ActualDate.getFullYear() + '/' + format((d.ActualDate.getMonth() + 1));
-                    })
-                    .columns([
-                        "Product",
-                        "ActualPeriod",
-                        "ForecastPeriod",
-                        "PeriodsBeforeDelivery",
-                        "OrderAmount"
-                    ]);
-
-                dc.renderAll();
-
-                // Create Legend
-                // var svg = d3.select("#d3Legend").append('svg').attr('width', 300).attr('height', 35)
-                // svg.append("path").attr('d', d3.symbol().size(100).type(d3.symbolCircle)).style("fill", "#1f77b4")
-                //     .attr("transform", "translate(75,14)")
-                // svg.append("path").attr("d", d3.symbol().size(100).type(d3.symbolCircle)).style("fill",
-                //         "#9467bd")
-                //     .attr("transform", "translate(185,14)")
-                // svg.append("text").attr("x", 90).attr("y", 15).text("Product ID1").style("font-size", "15px")
-                //     .attr("alignment-baseline", "middle")
-                // svg.append("text").attr("x", 200).attr("y", 15).text("Product ID2").style("font-size",
-                //         "15px")
-                //     .attr("alignment-baseline", "middle")
-
-                tabulate(valuesToPrint, ['Description', 'Value']);
-
-                const margin = {
-                    left: 55,
-                    right: 25,
-                    top: 20,
-                    bottom: 30
-                };
-
-                console.log("DataMin: ", dataMin);
-                console.log("DataMax: ", dataMax);
-                console.log("Standard Deviation: ", standardDev, 1);
-                console.log("Var Ko : ", varKo);
-
-            });
-            </script>
+                function generateDescObject(desc, value) {
+                    const obj = {};
+                    obj['Description'] = desc;
+                    obj['Value'] = value;
+                    return obj;
+                }
+                var valuesToPrint = [];
+                </script>
+            </div>
         </div>
         <div id="d3Legend"></div>
-        <div class="row">
-            <div class="dc-data-count">
-                <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
-                    href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a><br />
-            </div><br />
+
+        <div class="dc-data-count">
+            <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
+                href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a><br />
+
             <br />
             <button onclick="myFunction()">Data table display</button>
             <table class="table table-hover dc-data-table" id="newTable" style="display:none">
             </table>
             <br />
+
         </div>
         <script>
         function myFunction() {
@@ -629,6 +396,242 @@ else {
             }
         }
         </script>
+        <script>
+        localforage.getItem("viz_data", function(error, data) {
+            data = JSON.parse(data);
+
+            const width = "960";
+            const lineWidth = "860";
+
+            let finalOrder = data.filter((el) => {
+                //  return el.PeriodsBeforeDelivery==0;
+                return el.PeriodsBeforeDelivery == 0 && el.PeriodsBeforeDelivery == "0";
+            });
+            let finalOrderCalc = d3.values(finalOrder, function(d) {
+                return d.OrderAmount;
+            })
+
+            var dataMean = d3.mean(finalOrderCalc, function(
+                d) {
+                return +d.OrderAmount;
+            });
+            console.log("Mean Value: ", dataMean);
+
+            var dataMedian = d3.median(finalOrderCalc, function(
+                d) {
+                return +d.OrderAmount;
+            });
+            var dataMax = d3.max(finalOrderCalc, function(d) {
+                return +d.OrderAmount;
+            });
+            var dataMin = d3.min(finalOrderCalc, function(d) { //Define minimum  value of Order Amount
+                return +d.OrderAmount;
+            });
+            var dataQuantile1 = d3.quantile(finalOrder, 0.99, function(d) {
+                return d.OrderAmount;
+            });
+            var dataQuantile2 = d3.quantile(finalOrder, 0.95, function(d) {
+                return d.OrderAmount;
+            });
+            var dataQuantile3 = d3.quantile(finalOrder, 0.75, function(d) {
+                return d.OrderAmount;
+            });
+            var dataMaxPer = d3.max(finalOrder, function(d) {
+                return d.ActualPeriod;
+            });
+            var standardDev = d3.deviation(finalOrder, function(
+                d) { //Define a standard deviation variable
+                return d.OrderAmount;
+            });
+            var varKo = standardDev / dataMean;
+            var roundVarKo = varKo.toFixed(2);
+
+            valuesToPrint.push(generateDescObject('Mean Value: ', dataMean.toFixed(2) + " "));
+            valuesToPrint.push(generateDescObject('Median Value: ', dataMedian + " "));
+            valuesToPrint.push(generateDescObject('Min Value: ', dataMin + "      "));
+            valuesToPrint.push(generateDescObject('Max Value: ', dataMax + "      "));
+            valuesToPrint.push(generateDescObject('99% Quantile: ', dataQuantile1.toFixed(2) + '  '));
+            valuesToPrint.push(generateDescObject('95% Quantile: ', dataQuantile2.toFixed(2) + '  '));
+            valuesToPrint.push(generateDescObject('75% Quantile: ', dataQuantile3.toFixed(2) + '  '));
+            valuesToPrint.push(generateDescObject('Max Period', dataMaxPer + " "));
+            valuesToPrint.push(generateDescObject('Var. Ko.:: ', roundVarKo + " "));
+            valuesToPrint.push(generateDescObject('St. Dev.: ', standardDev.toFixed(2), 1));
+            var forecastlist = dc.selectMenu("#forecastlist"),
+                visCount = dc.dataCount(".dc-data-count"),
+                FinalOrderChart = dc.scatterPlot("#scatter"),
+                visTable = dc.dataTable(".dc-data-table"),
+                select1 = dc.selectMenu("#select1");
+
+
+
+            finalOrder.forEach(function(d) {
+                d.ActualDate = new Date(d.ActualDate),
+                    d.ForecastDate = new Date(d.ForecastDate);
+            });
+            console.log("finalOrder: ", finalOrder);
+
+            var ndx = crossfilter(finalOrder);
+            var all = ndx.groupAll();
+            var actualPeriodDim = ndx.dimension(function(d) {
+                return +d.ActualPeriod;
+            });
+            var forecastPeriodDim = ndx.dimension(function(d) {
+                return +d.ForecastPeriod;
+            });
+            var ndxDim = ndx.dimension(function(d) {
+                return [+d.ForecastPeriod, +d.OrderAmount, d.Product];
+            });
+            var productDim = ndx.dimension(function(d) {
+                return d.Product;
+            });
+            var dateDim = ndx.dimension(function(d) {
+                return +d.ActualDate;
+            });
+            var plotColorMap = d3.scaleOrdinal(d3.schemeCategory10);
+
+            var actualPeriodGroup = actualPeriodDim.group();
+            var productGroup = productDim.group();
+            var ndxGroup = ndxDim.group();
+            var forecastPeriodGroup = forecastPeriodDim.group();
+            var dateGroup = dateDim.group();
+
+            forecastlist
+                .dimension(forecastPeriodDim)
+                .group(forecastPeriodGroup)
+                .multiple(true)
+                .numberVisible(15);
+
+            select1
+                .dimension(productDim)
+                .group(productGroup)
+                .multiple(true);
+
+            // console.log("ndxDim: ", ndxGroup.top(Infinity));
+            FinalOrderChart
+                .width(768)
+                .height(480)
+                .symbolSize(10)
+                .group(ndxGroup)
+                .dimension(ndxDim)
+                // .legend(dc.legend().x(60).y(440).itemHeight(10).gap(1))
+                .colorAccessor(function(d) {
+                    return d.key[2];
+                })
+                .colors(function(colorKey) {
+                    return plotColorMap(colorKey);
+                })
+                .keyAccessor(function(d) {
+                    return d.key[0];
+                })
+                .valueAccessor(function(d) {
+                    return d.key[1];
+                })
+
+                .x(d3.scaleLinear().domain(d3.extent(finalOrder, function(d) {
+                    return d.ForecastPeriod
+                })))
+                .brushOn(true)
+                .clipPadding(10)
+                .xAxisLabel("Due Date (forecast period)")
+                // .xAxisPadding(10)
+                .yAxisLabel("Order Amount (pcs)")
+                .renderTitle(true)
+                .title(function(d) {
+                    return [
+                        'Product: ' + d.key[2],
+                        'Order Amount: ' + d.key[1],
+                        'Forecast Period: ' + d.key[0]
+                    ].join('\n');
+                })
+                .elasticX(true)
+                .elasticY(true)
+
+                .on('renderlet', function(FinalOrderChart) {
+                    var x_vert = lineWidth;
+                    var extra_data = [{
+                            x: 47,
+                            y: FinalOrderChart.y()(dataMean)
+                        },
+                        {
+                            x: FinalOrderChart.x()(x_vert),
+                            y: FinalOrderChart.y()(dataMean)
+                        }
+                    ];
+                    var line = d3.line()
+                        .x(function(d) {
+                            return d.x;
+                        })
+                        .y(function(d) {
+                            return d.y;
+                        })
+                        .curve(d3.curveLinear);
+                    var chartBody = FinalOrderChart.select('g');
+                    var path = chartBody.selectAll('path.extra').data([extra_data]);
+                    path = path.enter()
+                        .append('path')
+                        .attr('class', 'oeExtra')
+                        .attr('stroke', 'green')
+                        .attr('id', 'oeLine')
+                        .attr("stroke-width", 1)
+                        .style("stroke-dasharray", ("10,3"))
+                        .merge(path);
+                    path.attr('d', line);
+                })
+                .xAxis().tickFormat(d3.format('d'));
+
+            FinalOrderChart.symbol(d3.symbolCircle);
+            // FinalOrderChart.margins().left = 50;
+
+            visCount
+                .dimension(ndx)
+                .group(all);
+
+            visTable
+                .dimension(dateDim)
+                .group(function(d) {
+                    var format = d3.format('02d');
+                    return d.ActualDate.getFullYear() + '/' + format((d.ActualDate.getMonth() + 1));
+                })
+                .columns([
+                    "Product",
+                    "ActualPeriod",
+                    "ForecastPeriod",
+                    "PeriodsBeforeDelivery",
+                    "OrderAmount"
+                ]);
+
+            dc.renderAll();
+
+            // Create Legend
+            // var svg = d3.select("#d3Legend").append('svg').attr('width', 300).attr('height', 35)
+            // svg.append("path").attr('d', d3.symbol().size(100).type(d3.symbolCircle)).style("fill", "#1f77b4")
+            //     .attr("transform", "translate(75,14)")
+            // svg.append("path").attr("d", d3.symbol().size(100).type(d3.symbolCircle)).style("fill",
+            //         "#9467bd")
+            //     .attr("transform", "translate(185,14)")
+            // svg.append("text").attr("x", 90).attr("y", 15).text("Product ID1").style("font-size", "15px")
+            //     .attr("alignment-baseline", "middle")
+            // svg.append("text").attr("x", 200).attr("y", 15).text("Product ID2").style("font-size",
+            //         "15px")
+            //     .attr("alignment-baseline", "middle")
+
+            tabulate(valuesToPrint, ['Description', 'Value']);
+
+            const margin = {
+                left: 55,
+                right: 25,
+                top: 20,
+                bottom: 30
+            };
+
+            console.log("DataMin: ", dataMin);
+            console.log("DataMax: ", dataMax);
+            console.log("Standard Deviation: ", standardDev, 1);
+            console.log("Var Ko : ", varKo);
+
+        });
+        </script>
+
 
         <script src="/lib/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"

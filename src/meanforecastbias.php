@@ -90,6 +90,11 @@ else {
         stroke: #C0C0BB;
     }
 
+    div {
+        padding-right: 30px;
+        padding-left: 30px;
+    }
+
     .info-container {
         display: inline-block;
         width: calc(100% + -50px);
@@ -153,8 +158,6 @@ else {
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li><a href="./configuration.php">Configuration</a></li>
-                    <!-- <li><a href="./about.php">About</a></li> -->
-                    <!-- <li class><a href="./howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
@@ -249,7 +252,7 @@ else {
     <div class="customContainer">
         <div class="row" style="margin-bottom: -2%;">
             <div class="col-md-10">
-                <h3>Mean Forecast Bias</h3>
+                <h3>Mean Forecast Bias (MFB)</h3>
                 <small>
                     <?php
             echo "You are logged in as: ";
@@ -277,12 +280,14 @@ else {
         </div>
         <div class="row">
             <div class="col-md-12">
-<br/>
-                <p> <b>Graph Description:</b> This graph shows the calculation of the Mean Forecast Bias, which is the
+                <br />
+                <p> <b>Graph Description:</b> This graph shows the calculation of the Mean Forecast Bias (MFB), which is
+                    the
                     description of the forecast error with respect to periods before delivery (PBD).
-                    <br> The <font color="orange"> orange-coloured line </font> is the average (mean) value of the mean forecast
+                    <br> The <font color="orange"> orange-coloured line </font> is the average (mean) value of the mean
+                    forecast
                     bias values.
-                    <br>The formula of the Mean Forecast Bias is: <img
+                    <br>The formula of the Mean Forecast Bias (MFB) is: <img
                         src="https://latex.codecogs.com/gif.latex?MFB_{j} = \frac {\sum_{i=1}^{n}x_{i,j}}{\sum_{i=1}^{n}x_{i,0}}"
                         title="Mean Forecast Bias formula" />. </p>
             </div>
@@ -342,88 +347,95 @@ else {
     localforage.getItem("viz_data", function(error, data) {
         data = JSON.parse(data);
 
+        // PBD = 0 means Final Orders
         let finalOrder = data.filter((el) => {
             return el.PeriodsBeforeDelivery == 0;
         });
 
+        let finalOrdersForecastPeriods = new Map();
+        finalOrder.map(e => {
+            finalOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
+        });
+
+        console.log('FINAL ORDER MAP: ', finalOrdersForecastPeriods);
+
+        //Order All data by PBD
+        // Order the Final Orders
+
+        // PBD != 0 means all Others or Forecast Orders
         let uniqueArray = data.filter(function(obj) {
             return finalOrder.indexOf(obj) == -1;
         });
+        //Find the max number of Actual periods in Final orders array
+        let maxActualPeriod = Math.max.apply(Math, finalOrder.map(function(o) {
+            return o.ActualPeriod;
+        }))
+        console.log('maxActualPeriod: ', maxActualPeriod);
 
-        let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +
-            b);
-
-        let dataGroupedByPBD = d3.nest()
+        // Order the Products by PBD in order to calculate sum of Forecasts and FinalOrders
+        let orderByPBD = d3.nest()
             .key(function(d) {
                 return d.PeriodsBeforeDelivery;
             })
             .entries(uniqueArray);
 
-        let finalDataGroupedByPBD = d3.nest()
-            .key(function(d) {
-                return d.PeriodsBeforeDelivery;
-            })
-            .entries(finalOrder);
+        // Calculate the sum for the Forecasts for each pbd != 0
+        let calculationsOrderByPBD = orderByPBD.map((el) => {
+            const uniqueNames = [...new Set(el.values.map(i => i.Product))];
 
-        let bubu = dataGroupedByPBD.map((el) => {
-            for (i = 0; i < dataGroupedByPBD.length; i++) {
-                let sum = el.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-                return {
-                    ActualDate: el.values[i].ActualDate,
-                    ForecastDate: el.values[i].ForecastDate,
-                    Product: el.values[i].Product,
-                    ActualPeriod: el.values[i].ActualPeriod,
-                    ForecastPeriod: el.values[i].ForecastPeriod,
-                    OrderAmount: el.values[i].OrderAmount,
-                    PeriodsBeforeDelivery: el.key,
-                    SumOfForecast: sum
-                };
-            }
-        });
-        let finalSumCalc = finalDataGroupedByPBD.map((val) => {
-            let sum = val.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
+            // Forecast Sums
+            let validForecasts = el.values.filter(e => e.ForecastPeriod <= maxActualPeriod);
+            let invalidForecasts = el.values.filter(function(obj) {
+                return validForecasts.indexOf(obj) == -1;
+            });
+            let sumOfForecasts = validForecasts.reduce((a, b) => +a + +b.OrderAmount, 0);
+
+            // FinalOrder Sums
+            let items = el.values;
+            items = items.map(el => el.ForecastPeriod);
+            let sumFinalOrders = 0;
+            items.forEach(e => {
+                if (finalOrdersForecastPeriods.get(e) !== undefined) {
+                    sumFinalOrders += parseInt(finalOrdersForecastPeriods.get(e), 0);
+                }
+            });
+
+            // MFB
+            let mfbValue = sumOfForecasts / sumFinalOrders;
+
             return {
-                PeriodsBeforeDelivery: val.key,
-                FinalOrderSum: sum
-            };
-        });
-        console.log('Final orders sum calc: ', finalSumCalc);
-        console.log('Sum of all final orders: ', sumOfAllFinalOrders);
-
-        let finalForecastBias = bubu.map((el) => {
-            for (i = 0; i < dataGroupedByPBD.length; i++) {
-                let finalForecastBiasPBD = el.SumOfForecast / sumOfAllFinalOrders;
-                return {
-                    ActualDate: el.ActualDate,
-                    ForecastDate: el.ForecastDate,
-                    Product: el.Product,
-                    ActualPeriod: el.ActualPeriod,
-                    ForecastPeriod: el.ForecastPeriod,
-                    OrderAmount: el.OrderAmount,
-                    PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                    MFB: finalForecastBiasPBD.toFixed(3)
-                };
+                PeriodsBeforeDelivery: el.key,
+                Product: uniqueNames,
+                ActualPeriod: el.values[0].ActualPeriod,
+                ForecastPeriod: el.values[0].ForecastPeriod,
+                ActualDate: el.values[0].ActualDate,
+                sumOfForecasts: sumOfForecasts,
+                sumOfFinalOrders: sumFinalOrders,
+                MFB: mfbValue.toFixed(3)
             }
         });
-        console.log('Final mfb: ', finalForecastBias);
+        console.log('Forecast, FinalOrders, MFB all orderByPBD: ', calculationsOrderByPBD);
+        newFinalArray = calculationsOrderByPBD.filter((el) => {
+            return !isNaN(el.MFB);
+        })
 
-        finalForecastBias.forEach(function(d) {
+        newFinalArray.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
         });
-
-        var dataMean = d3.mean(finalForecastBias, function(
-            d) { //Define mean value of Order Amount, i.e. Avg. Order Amount
+        //Define mean value of Order Amount, i.e. Avg. Order Amount
+        var dataMean = d3.mean(newFinalArray, function(
+            d) {
             return d.MFB;
         });
         console.log("Mean Value: ", dataMean);
 
-        var ndx = crossfilter(finalForecastBias);
+        var ndx = crossfilter(newFinalArray);
         var all = ndx.groupAll();
         var forecastPeriodDim = ndx.dimension(function(d) {
             return +d.ForecastPeriod;
         });
         var ndxDim = ndx.dimension(function(d) {
-            return [+d.PeriodsBeforeDelivery, +d.MFB, +d.Product];
+            return [+d.PeriodsBeforeDelivery, +d.MFB, d.Product];
         });
         var productDim = ndx.dimension(function(d) {
             return d.Product;
@@ -449,7 +461,6 @@ else {
         productlist
             .dimension(productDim)
             .group(productGroup)
-            //.controlsUseVisibility(true)
             .multiple(true)
             .numberVisible(15);
 
@@ -458,8 +469,6 @@ else {
             .group(periodsBeforeDeliveryGroup)
             .multiple(true)
             .numberVisible(15);
-
-        // console.log("ndxDim: ", ndxGroup.top(Infinity));
 
         MFBchart
             .width(768)
@@ -475,9 +484,9 @@ else {
             })
             .excludedSize(2)
             .excludedOpacity(0.5)
-            .x(d3.scaleLinear().domain(d3.extent(finalForecastBias, function(d) {
-                return d.PeriodsBeforeDelivery
-            })))
+            .x(d3.scaleLinear().domain([0, d3.max(newFinalArray, function(d) {
+                return d.PeriodsBeforeDelivery;
+            })]))
             .brushOn(true)
             .clipPadding(10)
             .xAxisLabel("Periods Before Delivery")
@@ -487,8 +496,7 @@ else {
             .title(function(d) {
                 return [
                     'Periods Before Delivery: ' + d.key[0],
-                    'MFB: ' + d.key[1],
-                    'Product: ' + d.key[2]
+                    'MFB: ' + d.key[1]
                 ].join('\n');
             })
             .elasticX(true)

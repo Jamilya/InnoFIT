@@ -83,6 +83,11 @@ else {
         stroke: #C0C0BB;
     }
 
+    div {
+        padding-right: 30px;
+        padding-left: 30px;
+    }
+
     .info-container {
         display: inline-block;
         width: calc(100% + -50px);
@@ -404,8 +409,8 @@ else {
         var mousemove = function(d) {
             tooltip
                 .html("Order Amount:<br> " + d.OrderAmount)
-                .style("left", (d3.mouse(this)[0] + 25) + "px")
-                .style("top", (d3.mouse(this)[0] + 25) + "px")
+                .style("left", (d3.event.pageX + 20) + "px")
+                .style("top", (d3.event.pageY + 10) + "px")
         }
         var mouseleave = function(d) {
             tooltip

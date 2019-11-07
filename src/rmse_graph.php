@@ -90,6 +90,11 @@ else {
         stroke: #C0C0BB;
     }
 
+    div {
+        padding-right: 30px;
+        padding-left: 30px;
+    }
+
     .info-container {
         display: inline-block;
         width: calc(100% + -50px);
@@ -302,7 +307,8 @@ else {
                 </div>
 
                 <div id="pbd">
-                    <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
+                    <p style="text-align:center;"><strong>Periods Before Delivery (PBD)<br /><small>(PBD: number of
+                                records)</small></strong></p>
                     <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
                     <!-- <a class="reset" href="javascript:periodsBeforeDeliveryChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a> -->
                 </div>
@@ -414,11 +420,15 @@ else {
                 }
             });
             console.log("separatedArray: ", bubu);
-            bubu.forEach(function(d) {
+            newFinalArray = bubu.filter((el) => {
+                return !isNaN(el.RMSE);
+            })
+
+            newFinalArray.forEach(function(d) {
                 d.ActualDate = new Date(d.ActualDate);
             });
 
-            var ndx = crossfilter(bubu);
+            var ndx = crossfilter(newFinalArray);
             var all = ndx.groupAll();
             var forecastPeriodDim = ndx.dimension(function(d) {
                 return +d.ForecastPeriod;
@@ -472,33 +482,22 @@ else {
                 .data(function(group) {
                     return group.all()
                         .filter(function(d) {
-                            return d.key !== NaN;
+                            return d.key !== NaN || d.key !== "NaN" || d.key !== Infinity;
                         });
                 })
-                .excludedSize(2)
-                .x(d3.scale.linear().domain([0, 20]))
-                .xUnits(dc.units.ordinal)
-                .excludedOpacity(0.5)
-                ._rangeBandPadding(1)
-                // .x(d3.scaleLinear().domain([0, d3.max(bubu, function(d) {
-                //     return d.PeriodsBeforeDelivery;
-                // })]))
-                // .nice()
-                // .y(d3.scaleLinear().domain([0, d3.max(bubu, function(d) {
-                //     return d.RMSE;
-                // })]))
-                .nice()
+                // .x(d3.scaleLinear().domain([0, 20]))
+                .x(d3.scaleLinear().domain([0, d3.max(newFinalArray, function(d) {
+                    return d.PeriodsBeforeDelivery;
+                })]))
                 .brushOn(true)
                 .clipPadding(10)
                 .xAxisLabel("Periods Before Delivery")
                 .yAxisLabel("RMSE")
-                // .mouseZoomable(true)
                 .renderTitle(true)
                 .title(function(d) {
                     return [
                         'Periods Before Delivery: ' + d.key[0],
                         'RMSE: ' + d.key[1],
-                        'Product: ' + d.key[2]
                     ].join('\n');
                 })
                 .elasticX(true)

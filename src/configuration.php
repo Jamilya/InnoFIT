@@ -51,6 +51,11 @@ else {
         margin: 0 auto;
     }
 
+    div {
+        padding-right: 30px;
+        padding-left: 30px;
+    }
+
     .info-container {
         display: inline-block;
         width: calc(100% + -50px);
@@ -241,258 +246,258 @@ else {
     </nav>
     <div class="customContainer">
         <div class="row" style="margin-bottom: -2%;">
-                <div class="col-md-10">
-                <h1>Configuration</h1><br/>
-                    <h4><?php   echo "Dear ";
+            <div class="col-md-10">
+                <h1>Configuration</h1><br />
+                <h4><?php   echo "Dear ";
                     print_r($_SESSION["session_username"]);
                     echo ",";?></h4>
-                    <p>On this page you can find the instructions on the data format requirements and the filter
-                        settings.
-                    </p>
-                </div>
-                <div class="col-md-2">
-                    <div id="filterInfo" class="alert alert-info" style="text-align: center" role="info">
-                        <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
-                            class="glyphicon glyphicon-info-sign alert-info" aria-hidden="true"></span>
-                        <div class="info-container">
-                            <div class="row">
-                                <span style="font-size: 14px; vertical-align: middle;" class="alert-info"
-                                    role="info">Filters
-                                    are applied!</span>
-                            </div>
-                            <div class="row">
-                                <span style="font-size: 11px; vertical-align: middle;" class="alert-info" role="info">
-                                    To
-                                    change settings please visit <a href="./configuration.php"><u>Configuration</u></a>.</span>
-                            </div>
+                <p>On this page you can adjust the filter settings of the visualizations.
+                </p>
+            </div>
+            <div class="col-md-2">
+                <div id="filterInfo" class="alert alert-info" style="text-align: center" role="info">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-info" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-info"
+                                role="info">Filters
+                                are applied!</span>
+                        </div>
+                        <div class="row">
+                            <span style="font-size: 11px; vertical-align: middle;" class="alert-info" role="info">
+                                To
+                                change settings please visit <a
+                                    href="./configuration.php"><u>Configuration</u></a>.</span>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <h3>Product Selection</h3>
-                    <p>Please select the product or products you want to visualize </p> <br />
-                    <select name=productsList[] id="products" class="form-control" multiple="multiple" size="5">
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Product Selection</h3>
+                <p>Please select the product or products you want to visualize </p> <br />
+                <select name=productsList[] id="products" class="form-control" multiple="multiple" size="5">
 
-                        <option value="">- Select None -</option>
-                        <!-- <option value='1'>Software Development</option> -->
-                    </select>
+                    <option value="">- Select None -</option>
+                    <!-- <option value='1'>Software Development</option> -->
+                </select>
 
-                </div>
             </div>
-
-            <div class="row" style="margin-top: 5%;">
-                <div class="col-md-12">
-                    <h3>Actual Date Slider</h3>
-                    <p>Please select the Actual Date range here: the data will be filtered from the selected range
-                        onwards.
-                    </p>
-                    <br />
-                    <input id="actualDateSlider" type="text" class="js-range-slider" name="my_range" value="" />
-                </div>
-            </div>
-            <div class="row" style="margin-top: 5%;">
-                <div class="col-md-12">
-                    <h3>Due Date Slider</h3>
-                    <p>Please select the Due Date range here: the data will be filtered until the selected time range.
-                    </p>
-                    <br />
-                    <input id="forecastDateSlider" type="text" class="js-range-slider" name="my_range" value="" />
-                </div>
-            </div>
-            <div class="row" style="margin-top: 5%;">
-                <div class="col-md-2">
-                    <button id="btnResetFilters" class="btn btn-secondary">Reset Filters</button>
-                </div>
-                <div class="col-md-10 pull-right">
-                    <button id="btnApplyFilters" class="btn btn-primary">Apply Filters</button>
-                </div>
-            </div>
-
         </div>
 
-        <script>
-        $(document).ready(function() {
-            if (localStorage.getItem('checkFiltersActive') === 'true') {
-                $('#filterInfo').show();
-            } else {
-                $('#filterInfo').hide();
-            }
-        });
+        <div class="row" style="margin-top: 5%;">
+            <div class="col-md-12">
+                <h3>Actual Date Slider</h3>
+                <p>Please select the Actual Date range here: the data will be filtered from the selected range
+                    onwards.
+                </p>
+                <br />
+                <input id="actualDateSlider" type="text" class="js-range-slider" name="my_range" value="" />
+            </div>
+        </div>
+        <div class="row" style="margin-top: 5%;">
+            <div class="col-md-12">
+                <h3>Due Date Slider</h3>
+                <p>Please select the Due Date range here: the data will be filtered until the selected time range.
+                </p>
+                <br />
+                <input id="forecastDateSlider" type="text" class="js-range-slider" name="my_range" value="" />
+            </div>
+        </div>
+        <div class="row" style="margin-top: 5%;">
+            <div class="col-md-2">
+                <button id="btnResetFilters" class="btn btn-secondary">Reset Filters</button>
+            </div>
+            <div class="col-md-10 pull-right">
+                <button id="btnApplyFilters" class="btn btn-primary">Apply Filters</button>
+            </div>
+        </div>
 
-        let lang = "en-GB";
-        let actualDateMinValue = 0;
-        let actualDateMaxValue = 0;
-        let forecastDateMinValue = 0;
-        let forecastDateMaxValue = 0;
-        let newProductList = [];
+    </div>
 
-
-        $(document).ready(function() {
-            if (localStorage.getItem('checkFiltersActive') === 'true') {
-                console.log('I WANT TO RESET');
-                $('#btnResetFilters').prop('disabled', false);
-            } else {
-                d3.select('#btnResetFilters').attr('disabled', true);
-            }
-        });
-
-        function dateToTS(date) {
-            return date.valueOf();
+    <script>
+    $(document).ready(function() {
+        if (localStorage.getItem('checkFiltersActive') === 'true') {
+            $('#filterInfo').show();
+        } else {
+            $('#filterInfo').hide();
         }
+    });
 
-        function tsToDate(ts) {
-            var d = new Date(ts);
+    let lang = "en-GB";
+    let actualDateMinValue = 0;
+    let actualDateMaxValue = 0;
+    let forecastDateMinValue = 0;
+    let forecastDateMaxValue = 0;
+    let newProductList = [];
 
-            return d.toLocaleDateString(lang, {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
+
+    $(document).ready(function() {
+        if (localStorage.getItem('checkFiltersActive') === 'true') {
+            console.log('I WANT TO RESET');
+            $('#btnResetFilters').prop('disabled', false);
+        } else {
+            d3.select('#btnResetFilters').attr('disabled', true);
         }
+    });
 
-        localforage.getItem('all_data').then(function(data) {
-            data = JSON.parse(data);
-            console.log('ORIGINAL DATA', data);
+    function dateToTS(date) {
+        return date.valueOf();
+    }
 
-            // Get the unique names of our products
-            const uniqueNames = [...new Set(data.map(i => i.Product))];
-            console.log('Names array: ', uniqueNames);
+    function tsToDate(ts) {
+        var d = new Date(ts);
 
-
-            // Get min and max ActualDate
-            const minADate = (data.reduce((m, v, i) => (v.ActualDate < m.ActualDate) && i ? v : m)
-                .ActualDate).slice(0, -9);
-            // console.log('Min ADate: ', minADate);
-            const maxADate = (data.reduce((m, v, i) => (v.ActualDate > m.ActualDate) && i ? v : m)
-                .ActualDate).slice(0, -9);
-            // console.log('Max ADate: ', maxADate);
-
-            // Get min and max ForecastDate
-            const minFDate = (data.reduce((m, v, i) => (v.ForecastDate < m.ForecastDate) && i ? v : m)
-                .ForecastDate).slice(0, -9);
-            // console.log('Min FDate: ', minFDate);
-            const maxFDate = (data.reduce((m, v, i) => (v.ForecastDate > m.ForecastDate) && i ? v : m)
-                .ForecastDate).slice(0, -9);
-            // console.log('Max FDate: ', maxFDate);
-
-            $("#actualDateSlider").ionRangeSlider({
-                type: "double",
-                skin: 'round',
-                step: 86400000,
-                min: dateToTS(new Date(minADate)),
-                max: dateToTS(new Date(maxADate)),
-                from: dateToTS(new Date(minADate)),
-                to: dateToTS(new Date(maxADate)),
-                grid: true,
-                prettify: tsToDate,
-                onStart: function(data) {
-                    actualDateMinValue = data.from;
-                    actualDateMaxValue = data.to;
-                },
-                onFinish: function(data) {
-                    actualDateMinValue = data.from;
-                    actualDateMaxValue = data.to;
-                },
-            });
-
-            $("#forecastDateSlider").ionRangeSlider({
-                type: "double",
-                skin: 'round',
-                step: 86400000,
-                min: dateToTS(new Date(minFDate)),
-                max: dateToTS(new Date(maxFDate)),
-                from: dateToTS(new Date(minFDate)),
-                to: dateToTS(new Date(maxFDate)),
-                grid: true,
-                prettify: tsToDate,
-                onStart: function(data) {
-                    forecastDateMinValue = data.from;
-                    forecastDateMaxValue = data.to;
-                },
-                onFinish: function(data) {
-                    forecastDateMinValue = data.from;
-                    forecastDateMaxValue = data.to;
-                },
-            });
-
-            var options = '';
-            for (var i = 0; i < uniqueNames.length; i++) {
-                options += '<option value="' + uniqueNames[i] + '">' + uniqueNames[i] + '</option>';
-            }
-            $("#products").append(options);
-
-            d3.select('#btnApplyFilters').on('click', function(e) {
-                let productNames = $.map($(".form-control option:selected"), function(option) {
-                    return option.value;
-                });
-
-                console.log('FILTERING STARTS HERE');
-                console.log('Filter Parameters: ');
-                console.log('Product Names', productNames);
-                console.log('actual Min Date: ', actualDateMinValue);
-                console.log('actual Max Date: ', actualDateMaxValue);
-                console.log('forecast Min Date: ', forecastDateMinValue);
-                console.log('forecast Max Date: ', forecastDateMaxValue);
-
-                // 1. Filter by Product Name
-                let filteredByProduct = data;
-                if (productNames.length > 0 && productNames[0] !== "") {
-                    filteredByProduct = data.filter(item => productNames.includes(item
-                        .Product));
-                    console.log('Product: ', filteredByProduct);
-                }
-                // 2. Filter by Actual Date based on filtered product
-                let filteredByActualDate = filteredByProduct.filter((item) => {
-                    const actualDateInt = new Date(item.ActualDate.slice(0, -9)).getTime();
-
-                    return actualDateInt >= actualDateMinValue && actualDateInt <=
-                        actualDateMaxValue;
-                });
-                console.log('Product and Actual Date filter applied: ', filteredByActualDate);
-
-                // 3. Filter by Forecast Date based on filtered product and actual date
-                let filteredByForecastDate = filteredByActualDate.filter((item) => {
-                    const forecastDateInt = new Date(item.ForecastDate.slice(0, -9)).getTime();
-
-                    return forecastDateInt >= forecastDateMinValue && forecastDateInt <=
-                        forecastDateMaxValue;
-                });
-
-                console.log('Product, Actual Date and Forecast Date filters applied: ',
-                    filteredByForecastDate);
-
-                productNames = [];
-                Swal.fire(
-                    'Filters applied!',
-                    'Your filters have been applied. Please visit the Visualizations.',
-                    'success');
-                localforage.setItem('viz_data', JSON.stringify(filteredByForecastDate));
-
-                if (data.length === filteredByForecastDate.length) {
-                    localStorage.setItem('checkFiltersActive', false);
-                } else {
-                    localStorage.setItem('checkFiltersActive', true);
-                }
-            });
-
-            d3.select('#btnResetFilters').on('click', function(e) {
-                Swal.fire(
-                    'Filters reset!',
-                    'Your filter settings have been reset. No Filters are applied!',
-                    'info');
-                localforage.setItem('all_data', JSON.stringify(data));
-                localforage.setItem('viz_data', JSON.stringify(data));
-            });
-
+        return d.toLocaleDateString(lang, {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
         });
-        </script>
+    }
 
-        <script src="/lib/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
-        </script>
+    localforage.getItem('all_data').then(function(data) {
+        data = JSON.parse(data);
+        console.log('ORIGINAL DATA', data);
+
+        // Get the unique names of our products
+        const uniqueNames = [...new Set(data.map(i => i.Product))];
+        console.log('Names array: ', uniqueNames);
+
+
+        // Get min and max ActualDate
+        const minADate = (data.reduce((m, v, i) => (v.ActualDate < m.ActualDate) && i ? v : m)
+            .ActualDate).slice(0, -9);
+        // console.log('Min ADate: ', minADate);
+        const maxADate = (data.reduce((m, v, i) => (v.ActualDate > m.ActualDate) && i ? v : m)
+            .ActualDate).slice(0, -9);
+        // console.log('Max ADate: ', maxADate);
+
+        // Get min and max ForecastDate
+        const minFDate = (data.reduce((m, v, i) => (v.ForecastDate < m.ForecastDate) && i ? v : m)
+            .ForecastDate).slice(0, -9);
+        // console.log('Min FDate: ', minFDate);
+        const maxFDate = (data.reduce((m, v, i) => (v.ForecastDate > m.ForecastDate) && i ? v : m)
+            .ForecastDate).slice(0, -9);
+        // console.log('Max FDate: ', maxFDate);
+
+        $("#actualDateSlider").ionRangeSlider({
+            type: "double",
+            skin: 'round',
+            step: 86400000,
+            min: dateToTS(new Date(minADate)),
+            max: dateToTS(new Date(maxADate)),
+            from: dateToTS(new Date(minADate)),
+            to: dateToTS(new Date(maxADate)),
+            grid: true,
+            prettify: tsToDate,
+            onStart: function(data) {
+                actualDateMinValue = data.from;
+                actualDateMaxValue = data.to;
+            },
+            onFinish: function(data) {
+                actualDateMinValue = data.from;
+                actualDateMaxValue = data.to;
+            },
+        });
+
+        $("#forecastDateSlider").ionRangeSlider({
+            type: "double",
+            skin: 'round',
+            step: 86400000,
+            min: dateToTS(new Date(minFDate)),
+            max: dateToTS(new Date(maxFDate)),
+            from: dateToTS(new Date(minFDate)),
+            to: dateToTS(new Date(maxFDate)),
+            grid: true,
+            prettify: tsToDate,
+            onStart: function(data) {
+                forecastDateMinValue = data.from;
+                forecastDateMaxValue = data.to;
+            },
+            onFinish: function(data) {
+                forecastDateMinValue = data.from;
+                forecastDateMaxValue = data.to;
+            },
+        });
+
+        var options = '';
+        for (var i = 0; i < uniqueNames.length; i++) {
+            options += '<option value="' + uniqueNames[i] + '">' + uniqueNames[i] + '</option>';
+        }
+        $("#products").append(options);
+
+        d3.select('#btnApplyFilters').on('click', function(e) {
+            let productNames = $.map($(".form-control option:selected"), function(option) {
+                return option.value;
+            });
+
+            console.log('FILTERING STARTS HERE');
+            console.log('Filter Parameters: ');
+            console.log('Product Names', productNames);
+            console.log('actual Min Date: ', actualDateMinValue);
+            console.log('actual Max Date: ', actualDateMaxValue);
+            console.log('forecast Min Date: ', forecastDateMinValue);
+            console.log('forecast Max Date: ', forecastDateMaxValue);
+
+            // 1. Filter by Product Name
+            let filteredByProduct = data;
+            if (productNames.length > 0 && productNames[0] !== "") {
+                filteredByProduct = data.filter(item => productNames.includes(item
+                    .Product));
+                console.log('Product: ', filteredByProduct);
+            }
+            // 2. Filter by Actual Date based on filtered product
+            let filteredByActualDate = filteredByProduct.filter((item) => {
+                const actualDateInt = new Date(item.ActualDate.slice(0, -9)).getTime();
+
+                return actualDateInt >= actualDateMinValue && actualDateInt <=
+                    actualDateMaxValue;
+            });
+            console.log('Product and Actual Date filter applied: ', filteredByActualDate);
+
+            // 3. Filter by Forecast Date based on filtered product and actual date
+            let filteredByForecastDate = filteredByActualDate.filter((item) => {
+                const forecastDateInt = new Date(item.ForecastDate.slice(0, -9)).getTime();
+
+                return forecastDateInt >= forecastDateMinValue && forecastDateInt <=
+                    forecastDateMaxValue;
+            });
+
+            console.log('Product, Actual Date and Forecast Date filters applied: ',
+                filteredByForecastDate);
+
+            productNames = [];
+            Swal.fire(
+                'Filters applied!',
+                'Your filters have been applied. Please visit the Visualizations.',
+                'success');
+            localforage.setItem('viz_data', JSON.stringify(filteredByForecastDate));
+
+            if (data.length === filteredByForecastDate.length) {
+                localStorage.setItem('checkFiltersActive', false);
+            } else {
+                localStorage.setItem('checkFiltersActive', true);
+            }
+        });
+
+        d3.select('#btnResetFilters').on('click', function(e) {
+            Swal.fire(
+                'Filters reset!',
+                'Your filter settings have been reset. No Filters are applied!',
+                'info');
+            localforage.setItem('all_data', JSON.stringify(data));
+            localforage.setItem('viz_data', JSON.stringify(data));
+        });
+
+    });
+    </script>
+
+    <script src="/lib/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
+    </script>
 
 </body>
 

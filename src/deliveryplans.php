@@ -46,7 +46,7 @@ else {
     }
 
     .dc-chart .axis text {
-        font: 11px sans-serif;
+        font: 12px sans-serif;
     }
 
     .dc-chart .brush rect.selection {
@@ -60,6 +60,7 @@ else {
     }
 
     .domain {
+        /* display: none; */
         stroke: #635F5D;
         stroke-width: 1;
     }
@@ -67,7 +68,7 @@ else {
     .tick text,
     .legendCells text {
         fill: #635F5D;
-        font-size: 11px;
+        font-size: 12px;
         font-family: sans-serif;
     }
 
@@ -78,6 +79,7 @@ else {
         font-family: sans-serif;
     }
 
+    /*  .axis path, */
     .axis line {
         fill: none;
         stroke: grey;
@@ -87,6 +89,32 @@ else {
 
     .tick line {
         stroke: #C0C0BB;
+    }
+
+    .d3-tip {
+        line-height: 1;
+        font-weight: bold;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        border-radius: 2px;
+    }
+
+    .d3-tip:after {
+        box-sizing: border-box;
+        display: inline;
+        font-size: 10px;
+        width: 100%;
+        line-height: 1;
+        color: rgba(0, 0, 0, 0.8);
+        content: "\25BC";
+        position: absolute;
+        text-align: center;
+    }
+
+    div {
+        padding-right: 30px;
+        padding-left: 30px;
     }
 
     .info-container {
@@ -280,41 +308,38 @@ else {
         </div>
 
         <div class="row">
-            <div id="scatter">
-                <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
-                <a class="reset" href="javascript:DeliveryPlansChart.filterAll(); dc.redrawAll();"
-                    style="display: none;">reset</a>
-                <div class="clearfix"></div>
-            </div>
-            <div id="forecastlist">
-                <p style="text-align:center;"> <strong>Due date </strong></p>
-                <div>
+                <div id="scatter">
+                    <div class="clearfix"></div>
                 </div>
-                <div class="clearfix"></div>
-            </div>
-            <div id="productlist">
-                <p style="text-align:center;"><strong>Product</strong></p>
-                <div>
+
+                <div id="forecastlist">
+                    <p> <strong>Due date <br /><small>(due date: number of
+                                records)</small></strong></p>
+                    <div class="clearfix"></div>
                 </div>
-                <div class="clearfix"></div>
-            </div>
-            <div id="pbd">
-                <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
-            </div>
-            <div style="clear: both"></div>
+                <div id="productlist">
+                    <p><strong>Product<br /><small>(product ID: number of
+                                records)</small></strong></p>
+                    <div class="clearfix"></div>
+                </div>
+                    <div id="pbd">
+                        <p><strong>Periods Before Delivery (PBD)<br /><small>(PBD: number of
+                                    records)</small></strong></p>
+                    </div>
+                    <div style="clear: both"></div>
+                    <br />
 
             <div id="d3Legend"></div>
 
-            <div>
-                <div class="dc-data-count">
-                    <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
-                        href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
-                </div><br /><br />
-                <button onclick="myFunction()">Data table display</button>
-                <table class="table table-hover dc-data-table" id="myTable" style="display:none">
-                </table>
-            </div>
+            <div class="dc-data-count">
+                <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
+                    href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
+            </div><br /><br />
+            <button onclick="myFunction()">Data table display</button>
+            <table class="table table-hover dc-data-table" id="myTable" style="display:none">
+            </table>
         </div>
+
         <script>
         function myFunction() {
             var x = document.getElementById("myTable");
@@ -363,19 +388,6 @@ else {
                 d.ActualDate = new Date(d.ActualDate);
             });
 
-            function remove_empty_bins(source_group) {
-                return {
-                    all: function() {
-                        return source_group.all().filter(function(d) {
-                            //return Math.abs(d.value) > 0.00001; // if using floating-point numbers
-                            return d.value !== 0; // if integers only
-                        });
-                    }
-                };
-            }
-            // data = data.sort((a, b) => (a.PeriodsBeforeDelivery > b.PeriodsBeforeDelivery) ? -1 : 1);
-            // console.log('Data: ', data);
-
             var ndx = crossfilter(data);
             var all = ndx.groupAll();
             var forecastPeriodDim = ndx.dimension(function(d) {
@@ -399,8 +411,6 @@ else {
 
             var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
             var dateGroup = dateDim.group();
-
-            // ndxGroup = remove_empty_bins(ndxGroup);
 
             const plotColorMap = {
                 1: '#cc8800',
@@ -481,7 +491,7 @@ else {
                 .xAxis().tickFormat(d3.format('d'));
 
             // DeliveryPlansChart.symbol(d3.symbolDiamond);
-            // DeliveryPlansChart.margins().left = 50;
+            DeliveryPlansChart.margins().left = 50;
             DeliveryPlansChart.symbol(function(d) {
                 if (d.key[2] == 0) {
                     return d3.symbolStar;

@@ -283,6 +283,7 @@ session_start();
     // });
     d3.json("/includes/getdata.php", function(error, data) {
         if (error) throw error;
+        console.log('Read Data: ', data);
 
         var stringData = JSON.stringify(data);
         var newData = Number(data);
@@ -351,14 +352,13 @@ if (isset($_POST["import"])) {
                 if ($actualYear == $forecastYear){
                     $pbd = $forecastWeek - $actualWeek;
                 } elseif  ($actualYear < $forecastYear){
-                    $pbd = $pbdSubtr  + $forecastWeek - $actualWeek;
+                    $pbd = $forecastWeek - $actualWeek + $pbdSubtr * ($forecastYear - $actualYear);
                 }else {
                     $pbd = $forecastWeek + $actualWeek; //assume only one year behind
                 }
                 $actualDay = date("d", strtotime("$column[1]"));
                 $forecastDay = date("d", strtotime("$column[2]"));                
 
-           //$session_username = mysql_real_escape_string($_SESSION["session_username"]);
             $sqlInsert = "INSERT into `newOrders` (Product, ActualDate, ForecastDate, OrderAmount, ActualDay, ActualPeriod, ForecastDay, ForecastPeriod, ActualYear, ForecastYear, PeriodsBeforeDelivery, username, Date )
             values ('$column[0]', '$column[1]', '$column[2]','$column[3]', $actualDay, $actualWeek, $forecastDay, $forecastWeek, $actualYear, $forecastYear, $pbd, '{$_SESSION['session_username']}', NOW())";
             $result = mysqli_query($conn, $sqlInsert);
@@ -428,9 +428,9 @@ if (isset($_POST["import"])) {
         <div class="col-md-13">
             <h3>Data format:</h3>
             <p> Please upload your data in .csv format in the correct data structure.
-                The correct data structure shown in the table below. Set the dates format as: <b>YYYY-MM-DD
-                    (year-month-day)</b>. Please keep Order Amounts as <b>integers </b>.
-                For MS Office in German language please add a new line in the beginning of the file: <b>sep=;</b>and
+                The correct data structure is shown in the table below. Set the date format as: <b>YYYY-MM-DD
+                    (year-month-day)</b>. Please keep Order Amounts as <b>integers</b>.
+                For MS Office in German language please add a new line in the beginning of the file: <b>sep=; </b>and
                 save
                 the file as .csv.</p>
             <!-- <u>Step 1:</u> Create a new Excel file and add the data, so that values of each column (Product, ActualDate,
