@@ -407,7 +407,7 @@ else {
                     ForecastPeriod: el.values[i].ForecastPeriod,
                     OrderAmount: el.values[i].OrderAmount,
                     PeriodsBeforeDelivery: el.key,
-                    MAD: meanValue.toFixed(3)
+                    MAD: meanValue
                 };
             }
 
@@ -471,7 +471,8 @@ else {
         let periodsBD = newFinalArray.map(function(d){
             return d.PeriodsBeforeDelivery
         });
-        periodsBD.unshift("0");
+        let periodsMax = Math.max(...periodsBD);
+
 
         MADchart
             .width(768 + margin.left + margin.right)
@@ -487,7 +488,7 @@ else {
             })
             .excludedSize(2)
             .excludedOpacity(0.5)
-            .x(d3.scaleLinear().domain(d3.extent(periodsBD)))
+            .x(d3.scaleLinear().domain([0, periodsMax]))
             .brushOn(false)
             .clipPadding(10)
             .xAxisLabel("Periods Before Delivery")
@@ -500,8 +501,6 @@ else {
                     'MAD: ' + d.key[1]
                 ].join('\n');
             })
-            .elasticX(true)
-            .elasticY(true)
             .xAxis().tickFormat(d3.format('d'));
                 
         MADchart.selectAll('path.symbol')

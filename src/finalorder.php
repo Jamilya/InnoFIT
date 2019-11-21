@@ -43,8 +43,79 @@ else {
 
 
     <style>
-    body {
-        margin: 0px;
+    /* Adapt the margins according to screen size*/
+    @media all (max-width: 2000px) and (min-width: 1800px) {
+        .customContainer {
+            width: 30%;
+            height: 5%;
+            margin: 5px;
+        }
+
+        .col-md-4 {
+            font: 12px sans-serif;
+        }
+
+        .myScatter {
+            width: 15%;
+            height: 5%;
+            margin: 5px;
+        }
+
+        #selections_table,
+        #select1,
+        #forecastlist {
+            width: 35%-150px;
+            height: 5%-50px;
+            margin: 5px;
+        }
+    }
+
+//    .customContainer {
+//         height: calc(90vh - 450px);
+//         width: calc(90vh - 450px);
+//     }
+
+    @media all (max-width: 800px) {
+        .customContainer {
+            width: 20%;
+            height: 15%;
+            margin: 5px;
+        }
+
+        .col-md-4 {
+            font: 10px sans-serif;
+        }
+
+        .myScatter {
+            width: 30% - 450px;
+            height: 5%;
+            margin: 35px;
+        }
+
+        #scatter {
+            width: 30% - 150px;
+            height: 5%;
+            /* of body width */
+        }
+    }
+
+    #scatter>div {
+        display: inline-block;
+        margin: auto;
+        text-align: center;
+    }
+
+    #scatter>div:first-child {
+        width: 21%;
+    }
+
+    #scatter>div:nth-child(2) {
+        width: 12%;
+        /* or less */
+    }
+
+    #scatter>div:last-child {
+        width: 10%;
     }
 
     .dc-chart .axis text {
@@ -256,7 +327,7 @@ else {
         <!--/.container-fluid -->
     </nav>
 
-    <div class="customContainer">
+    <div class="customContainer" id="myCustomContainer">
         <div class="row" style="margin-bottom: -2%;">
             <div class="col-md-10">
                 <h3>Final Order Amount</h3>
@@ -301,7 +372,7 @@ else {
 
         <div class="row">
             <div class="col-md-8">
-                <div id="scatter">
+                <div class="myScatter" id="scatter">
                     <div class="clearfix"></div>
                 </div>
                 <div id="forecastlist">
@@ -481,7 +552,7 @@ else {
 
             let minFormat = JSON.stringify(minDate.slice(0, 10));
             let maxFormat = JSON.stringify(maxDate.slice(0, 10));
-            let weeksArray =[];
+            let weeksArray = [];
 
             newMinFormat = new Date(minFormat);
             newMaxFormat = new Date(maxFormat);
@@ -551,12 +622,6 @@ else {
                 .height(410 + margin.top + margin.bottom)
                 .symbolSize(10)
                 .group(ndxGroup)
-                // .data(function(group) {
-                //     return group.all()
-                //         .sort(function(a) {
-                //             return d3.ascending(a.ForecastDate);
-                //         });
-                // })
                 .dimension(ndxDim)
                 .colorAccessor(function(d) {
                     return d.key[2];
@@ -574,9 +639,9 @@ else {
                 .excludedOpacity(0.5)
                 // .x(d3.scaleLinear().domain([minWeek, maxWeek]))
                 .x(d3.scaleTime().domain(d3.extent(finalOrder, function(d) {
-                    return d.ForecastDate
-                }))
-                .range([0, 410]) 
+                        return d.ForecastDate
+                    }))
+                    .range([0, 410])
                 )
                 .brushOn(false)
                 .clipPadding(10)
@@ -590,9 +655,7 @@ else {
                         'Forecast Period: ' + d.key[3]
                     ].join('\n');
                 })
-                // .elasticY(true)
-                // .elasticX(true)
-                
+
                 .on('renderlet', function(FinalOrderChart) {
                     var x_vert = lineWidth;
                     var extra_data = [{

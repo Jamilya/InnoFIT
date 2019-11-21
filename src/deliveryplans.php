@@ -373,6 +373,22 @@ else {
                 return d.OrderAmount
             });
 
+            let minDate = d3.min(data, (d) => d.ForecastDate);
+            let maxDate = d3.max(data, (d) => d.ForecastDate);
+
+            let minFormat = JSON.stringify(minDate.slice(0, 10));
+            let maxFormat = JSON.stringify(maxDate.slice(0, 10));
+            let weeksArray = [];
+
+            newMinFormat = new Date(minFormat);
+            newMaxFormat = new Date(maxFormat);
+            let onejan = new Date(newMinFormat.getFullYear(), 0, 1);
+            let twojan = new Date(newMaxFormat.getFullYear(), 0, 1);
+            let minWeek = Math.ceil((((newMinFormat - onejan) / 86400000) + onejan.getDay() +
+                1) / 7);
+            let maxWeek = Math.ceil((((newMaxFormat - twojan) / 86400000) + twojan.getDay() + 1) /
+                7);
+
             var forecastlist = dc.selectMenu("#forecastlist"),
                 periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
                 visCount = dc.dataCount(".dc-data-count"),
@@ -381,7 +397,8 @@ else {
                 productlist = dc.selectMenu("#productlist");
 
             data.forEach(function(d) {
-                d.ActualDate = new Date(d.ActualDate);
+                d.ActualDate = new Date(d.ActualDate),
+                    d.ForecastDate = new Date(d.ForecastDate)
             });
 
             var ndx = crossfilter(data);
@@ -389,8 +406,11 @@ else {
             var forecastPeriodDim = ndx.dimension(function(d) {
                 return +d.ForecastPeriod;
             });
+            var forecastDateDim = ndx.dimension(function(d) {
+                return +d.ForecastDate;
+            });
             var ndxDim = ndx.dimension(function(d) {
-                return [+d.ForecastPeriod, +d.OrderAmount, +d.PeriodsBeforeDelivery];
+                return [+d.ForecastDate, +d.OrderAmount, +d.PeriodsBeforeDelivery, +d.ForecastPeriod];
             });
             var productDim = ndx.dimension(function(d) {
                 return d.Product;
@@ -404,9 +424,9 @@ else {
             var forecastPeriodGroup = forecastPeriodDim.group();
             var productGroup = productDim.group();
             var ndxGroup = ndxDim.group();
-
             var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
             var dateGroup = dateDim.group();
+            var forecastDateGroup = forecastDateDim.group();
 
             const plotColorMap = {
                 1: '#cc8800',
@@ -426,12 +446,10 @@ else {
                 .group(forecastPeriodGroup)
                 .multiple(true)
                 .numberVisible(15);
-            // .elasticX(true);
 
             productlist
                 .dimension(productDim)
                 .group(productGroup)
-                //.controlsUseVisibility(true)
                 .multiple(true)
                 .numberVisible(15);
 
@@ -440,8 +458,6 @@ else {
                 .group(periodsBeforeDeliveryGroup)
                 .multiple(true)
                 .numberVisible(15);
-
-            // console.log("ndxDim: ", ndxGroup.top(Infinity));
 
             DeliveryPlansChart
                 .width(768 + margin.left + margin.right)
@@ -461,14 +477,20 @@ else {
                     } else {
                         return 1;
                     }
-                    // return d.key[2];
                 })
                 .colors(function(colorKey) {
                     return plotColorMap[colorKey];
                 })
-                .x(d3.scaleLinear().domain(d3.extent(data, function(d) {
-                    return d.ForecastPeriod
-                })))
+                .excludedSize(2)
+                .excludedOpacity(0.5)
+                // .x(d3.scaleLinear().domain(d3.extent(data, function(d) {
+                //     return d.ForecastPeriod
+                // })))
+                .x(d3.scaleTime().domain(d3.extent(data, function(d) {
+                        return d.ForecastDate
+                    }))
+                    .range([0, 410])
+                )
                 .brushOn(false)
                 .clipPadding(10)
                 .xAxisLabel("Due Date (forecast period)")
@@ -478,14 +500,11 @@ else {
                     return [
                         'Periods Before Delivery: ' + d.key[2],
                         'Order Amount: ' + d.key[1],
-                        'Forecast Period: ' + d.key[0]
+                        'Forecast Period: ' + d.key[3]
                     ].join('\n');
                 })
-                .elasticX(true)
-                .elasticY(true)
-                .xAxis().tickFormat(d3.format('d'));
-
-            // DeliveryPlansChart.symbol(d3.symbolDiamond);
+                .xAxis().tickFormat(d3.timeFormat("%W"));
+            // .xAxis().tickFormat(d3.format('d'));
             DeliveryPlansChart.margins(margin);
             DeliveryPlansChart.symbol(function(d) {
                 if (d.key[2] == 0) {
@@ -523,7 +542,6 @@ else {
             svg.append("path").attr("d", d3.symbol().size(100).type(d3.symbolCircle)).style("fill", "#cc8800")
                 .attr("transform", "translate(185,14)")
 
-            //svg.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#404080")
             svg.append("text").attr("x", 90).attr("y", 15).text("Final Order").style("font-size", "15px").attr(
                 "alignment-baseline", "middle")
             svg.append("text").attr("x", 200).attr("y", 15).text("Forecast Order").style("font-size", "15px")

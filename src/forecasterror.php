@@ -495,8 +495,12 @@ else {
                 .colors(function(colorKey) {
                     return plotColorMap(colorKey);
                 })
-                .excludedSize(2)
-                .excludedOpacity(0.5)
+                .keyAccessor(function(d) {
+                    return d.key[0];
+                })
+                .valueAccessor(function(d) {
+                    return d.key[1];
+                })
                 .x(d3.scaleLinear().domain(d3.extent(isfinitearray, function(d) {
                     return d.PeriodsBeforeDelivery
                 })))
@@ -512,8 +516,6 @@ else {
                         'Actual Period: ' + d.key[2]
                     ].join('\n');
                 })
-                .elasticX(true)
-                .elasticY(true)
                 .xAxis().tickFormat(d3.format('d'));
 
             forecastErrorChart.yAxis().tickFormat(d3.format('.0%'));

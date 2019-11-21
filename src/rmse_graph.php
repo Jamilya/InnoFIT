@@ -423,6 +423,10 @@ else {
             newFinalArray.forEach(function(d) {
                 d.ActualDate = new Date(d.ActualDate);
             });
+            let periodsBD = newFinalArray.map(function(d) {
+                return d.PeriodsBeforeDelivery
+            });
+            let periodsMax = Math.max(...periodsBD);
 
             var ndx = crossfilter(newFinalArray);
             var all = ndx.groupAll();
@@ -481,10 +485,10 @@ else {
                             return d.key !== NaN || d.key !== "NaN" || d.key !== Infinity;
                         });
                 })
-                // .x(d3.scaleLinear().domain([0, 20]))
-                .x(d3.scaleLinear().domain([0, d3.max(newFinalArray, function(d) {
-                    return d.PeriodsBeforeDelivery;
-                })]))
+                // .x(d3.scaleLinear().domain([0, d3.max(newFinalArray, function(d) {
+                //     return d.PeriodsBeforeDelivery;
+                // })]))
+                .x(d3.scaleLinear().domain([0, periodsMax]))
                 .brushOn(false)
                 .clipPadding(10)
                 .xAxisLabel("Periods Before Delivery")
@@ -496,10 +500,7 @@ else {
                         'RMSE: ' + d.key[1],
                     ].join('\n');
                 })
-                .elasticX(true)
-                .elasticY(true)
                 .xAxis().tickFormat(d3.format('d'));
-            // console.log('ndxgroup data:', ndxDim);
 
             RMSEchart.selectAll('path.symbol')
                 .attr('opacity', 0.3);

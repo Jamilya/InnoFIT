@@ -434,6 +434,11 @@ else {
         newFinalArray.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
         });
+
+        let periodsBD = newFinalArray.map(function(d) {
+            return d.PeriodsBeforeDelivery
+        });
+        let periodsMax = Math.max(...periodsBD);
         //Define mean value of Order Amount, i.e. Avg. Order Amount
         var dataMean = d3.mean(newFinalArray, function(
             d) {
@@ -496,9 +501,10 @@ else {
             })
             .excludedSize(2)
             .excludedOpacity(0.5)
-            .x(d3.scaleLinear().domain([0, d3.max(newFinalArray, function(d) {
-                return d.PeriodsBeforeDelivery;
-            })]))
+            .x(d3.scaleLinear().domain([0, periodsMax]))
+            // .x(d3.scaleLinear().domain([0, d3.max(newFinalArray, function(d) {
+            //     return d.PeriodsBeforeDelivery;
+            // })]))
             .brushOn(false)
             .clipPadding(10)
             .xAxisLabel("Periods Before Delivery")
@@ -510,8 +516,6 @@ else {
                     'MFB: ' + d.key[1]
                 ].join('\n');
             })
-            .elasticX(true)
-            .elasticY(true)
             .on('renderlet', function(MFBchart) {
                 var x_vert = width;
                 var extra_data = [{

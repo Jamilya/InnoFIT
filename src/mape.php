@@ -453,6 +453,11 @@ else {
         newFinalArray.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
         });
+
+        let periodsBD = newFinalArray.map(function(d) {
+            return d.PeriodsBeforeDelivery
+        });
+        let periodsMax = Math.max(...periodsBD);
         //Define mean value of Order Amount, i.e. Avg. Order Amount
         var dataMean = d3.mean(newFinalArray, function(
             d) {
@@ -501,8 +506,6 @@ else {
             .multiple(true)
             .numberVisible(15);
 
-        // console.log("ndxDim: ", ndxGroup.top(Infinity));
-
         MAPEchart
             .width(width + margin.left + margin.right)
             .height(height + margin.top + margin.bottom)
@@ -515,10 +518,10 @@ else {
                         return d.key !== undefined || d.key !== NaN;
                     });
             })
-            // .x(d3.scaleLinear().domain([0, 100]))
-            .x(d3.scaleLinear().domain([0, d3.max(newFinalArray, function(d) {
-                return d.PeriodsBeforeDelivery;
-            })]))
+            .x(d3.scaleLinear().domain([0, periodsMax]))
+            // .x(d3.scaleLinear().domain([0, d3.max(newFinalArray, function(d) {
+            //     return d.PeriodsBeforeDelivery;
+            // })]))
             .brushOn(false)
             .clipPadding(10)
             .xAxisLabel("Periods Before Delivery")
@@ -530,8 +533,6 @@ else {
                     'MAPE: ' + d.key[1]
                 ].join('\n');
             })
-            .elasticX(true)
-            .elasticY(true)
             .xAxis().tickFormat(d3.format('d'));
 
         MAPEchart.selectAll('path.symbol')

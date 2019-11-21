@@ -410,7 +410,7 @@ else {
                     ForecastPeriod: el.values[i].ForecastPeriod,
                     OrderAmount: el.values[i].OrderAmount,
                     PeriodsBeforeDelivery: el.key,
-                    MSE: meanValue.toFixed(3)
+                    MSE: meanValue
                 };
             }
         });
@@ -421,6 +421,11 @@ else {
         newFinalArray.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
         });
+        let periodsBD = newFinalArray.map(function(d){
+            return d.PeriodsBeforeDelivery
+        });
+        let periodsMax = Math.max(...periodsBD);
+        
         var ndx = crossfilter(newFinalArray);
         var all = ndx.groupAll();
         var forecastPeriodDim = ndx.dimension(function(d) {
@@ -480,7 +485,7 @@ else {
             })
             .excludedSize(2)
             .excludedOpacity(0.5)
-            .x(d3.scaleLinear().domain([0, 100]))
+            .x(d3.scaleLinear().domain([0, periodsMax]))
             .brushOn(false)
             .clipPadding(10)
             .xAxisLabel("Periods Before Delivery")
@@ -493,8 +498,6 @@ else {
                     'MSE: ' + d.key[1]
                 ].join('\n');
             })
-            .elasticX(true)
-            .elasticY(true)
             .xAxis().tickFormat(d3.format('d'));
 
         MSEchart.yAxis().tickFormat(d3.format(".2s"));
@@ -523,10 +526,10 @@ else {
 
         dc.renderAll();
 
-        var maxLabel = d3.max(isfinitearray, function(d) {
-                return d.MSE;
-            }),
-            maxWidth;
+        // var maxLabel = d3.max(isfinitearray, function(d) {
+        //         return d.MSE;
+        //     }),
+        //     maxWidth;
     });
     </script>
     <script src="/lib/js/bootstrap.bundle.min.js"></script>
