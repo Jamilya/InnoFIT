@@ -28,6 +28,21 @@ else {
         margin: 0px;
     }
 
+    div {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+    .info-container {
+        display: inline-block;
+        width: calc(100% + -50px);
+        vertical-align: middle;
+    }
+
+    .customContainer {
+        padding: 0 3% 0 3%;
+    }
+
     path {
         stroke: steelblue;
         stroke-width: 2;
@@ -59,38 +74,26 @@ else {
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
-                <li><a href="./configuration.php">Configuration</a>
+                    <li><a href="./configuration.php">Configuration</a>
                     </li>
-                    <!--  <li class="nav-item">
-                        <a class="nav-link" href="index.php">Home</a>
-                    </li > -->
-                    <!-- <li class="active"><a href="./about.php">About <span
-                                class="sr-only">(current)</span></a></li> -->
-                    <!-- <li class><a href="./howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                            <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
+                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
                             <li><a href="./forecasterror.php">Percentage Error</a></li>
+                            <li><a href="./matrixvariance.php">Delivery Plans Matrix with Percentage Error </a></li>
                             <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Error Measures</li>
+                            <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
                             <li><a href="./mpe.php">Mean Percentage Error (MPE) </a></li>
                             <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Matrices</li>
-                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
-                            <li><a href="./matrixvariance.php">Delivery Plans Matrix - With Variance </a></li>
-                            <!-- <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">New Graphs</li>
-                            <li>
-                                <a class="dropdown-item" href="./boxplot.php">Box Plot</a>
-                            </li> -->
                         </ul>
                     </li>
                     <!-- </ul> -->
@@ -104,8 +107,6 @@ else {
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-
-
                         <!-- GTranslate: https://gtranslate.io/ -->
                         <a href="#" onclick="doGTranslate('en|en');return false;" title="English" class="gflag nturl"
                             style="background-position:-0px -0px;"><img src="//gtranslate.net/flags/blank.png"
@@ -202,92 +203,83 @@ else {
         <!--/.container-fluid -->
     </nav>
 
-    <div class="row1" style="padding-left:39px">
-        <div class="col-sm-8">
-            <small>
-                <?php
-echo "You are logged in as: ";
-print_r($_SESSION["session_username"]);
-echo ".";
-?></small>
-            <br><br>
-            <h5 class="card-title"><strong>About research project</strong></h5><br>
-            <div class="row1">
-                <div class="col-sm-6">
-                    <p class="class-text">
-                        <br>
-                        This tool was created as a part of the <strong>InnoFIT research project</strong>, which aims at
-                        developing innovative forecasting tools for improved production
-                        planning. The project is funded by the Austrian Research Promotion Agency
-                        <a href="https://www.ffg.at/en/content/about-ffg"
-                            title="Austrian Research Promotion Agency">(FFG)</a> and runs from 1 June 2018 until 31 May
-                        2021.
-                        <br></p>
-                </div>
-                <div class="col-sm-6">
-                    <picture><img src="/data/img/Logo_transparent.png" sizes="50vw" srcset="/data/img/Logo_transparent.png 100w, /data/img/Logo_transparent.png 900w,
+    <div class="customContainer">
+        <div class="row" style="margin-bottom: -2%;">
+            <h3 class="card-title"><strong>About research project</strong></h5><br>
+                <small>
+                    <?php
+                            echo "You are logged in as: ";
+                            print_r($_SESSION["session_username"]);
+                            echo ".";
+                            ?></small><br />
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="class-text">
+                            <br>
+                            This tool was created as a part of the <strong>InnoFIT research project</strong>,
+                            which aims at
+                            developing innovative forecasting tools for improved production
+                            planning. The project is funded by the Austrian Research Promotion Agency
+                            <a href="https://www.ffg.at/en/content/about-ffg"
+                                title="Austrian Research Promotion Agency">(FFG)</a> and runs from 1 June 2018
+                            until 31 May
+                            2021.
+                            <br></p>
+                    </div>
+                    <div class="col-sm-6">
+                        <picture><img src="/data/img/Logo_transparent.png" sizes="35vw" srcset="/data/img/Logo_transparent.png 100w, /data/img/Logo_transparent.png 900w,
 				/data/img/Logo_transparent.png 7000w">
-                    </picture>
+                        </picture>
+                    </div>
                 </div>
-            </div>
+
+                <div class="row">
+                    <h5><strong> Project Partners</strong> </h5><br>
+                    <small>
+                        <ul>
+                            <li>University of Applied Sciences Upper Austria, Campus Steyr
+                                <ul>
+                                    <li>UAS Steyr Project leader: <a
+                                            href="http://research.fh-ooe.at/en/staff/3584">Priv.
+                                            Doz.
+                                            FH-Prof. DI (FH) Klaus Altendorfer PhD</a></li>
+                                </ul>
+                            </li>
+                            <li>St. Pölten University of Applied Sciences
+                                <ul>
+                                    <li> UAS St. Pölten Project leader: <a
+                                            href="https://www.fhstp.ac.at/en/about-us/staff-a-z/felberbauer-thomas">Dr.
+                                            Thomas
+                                            Felberbauer, MSc</a></li>
+                                </ul>
+                            </li>
+                            <li><b>Industrial Project Partners:</b> RISC Software GmbH, NKE Austria GmbH, ZF Steyr, MWS
+                                Hightec GmbH,
+                                Lecapell
+                                GmbH</li>
+                        </ul>
+                    </small>
+                </div><br><br>
+                <div class="row">
+                    <h5><i>Download the InnoFIT project poster:</i> </h5>
+                    Office 365 access: <a
+                        href="https://fhstp.sharepoint.com/sites/InnoFIT/Freigegebene%20Dokumente/General/Posters/InnoFIT_one%20version.pdf"
+                        target="_blank">Download link 1</a><br>
+                    External access: <a href="https://www.dropbox.com/s/c2a2ew6o48wdubs/InnoFIT_one%20version.pdf?dl=0"
+                        target="blank"> Download link 2 </a>
+                </div>
+                <br><br>
+                <div class="row">
+                    <h5><strong>Project Team Photo</strong></h5><br>
+                    <img src="/data/img/Projektteam.jpg" style="max-width:100%;height:auto;">
+                    <br>
+                    <small>Image source: UAS Upper Austria / Andreas Schober</small> <br><br>
+                </div>
+                <footer style="text-align: center">
+                    <small>&copy; Copyright 2019 St.Pölten University of Applied Sciences</small>
+                </footer>
         </div>
     </div>
-    <div style="padding-left:39px">
-        <br><br>
-        <h5><strong> Project Partners</strong> </h5><br>
-        <small>
-            <ul>
-                <li>University of Applied Sciences Upper Austria, Campus Steyr
-                    <ul>
-                        <li>UAS Steyr Project leader: <a href="http://research.fh-ooe.at/en/staff/3584">Priv. Doz.
-                                FH-Prof. DI (FH) Klaus Altendorfer PhD</a></li>
-                    </ul>
-                </li>
-                <li>St. Pölten University of Applied Sciences
-                    <ul>
-                        <li> UAS St. Pölten Project leader: <a
-                                href="https://www.fhstp.ac.at/en/about-us/staff-a-z/felberbauer-thomas">Dr. Thomas
-                                Felberbauer, MSc</a></li>
-                    </ul>
-                </li>
-                <li><b>Project Partners:</b> RISC Software GmbH, NKE Austria GmbH, ZF Steyr, MWS Hightec GmbH, Lecapell
-                    GmbH</li>
-            </ul>
-        </small>
-    </div><br><br>
-    <div style="padding-left:39px">
-        <br><br>
-        <h5><i>Download the InnoFIT project poster:</i> </h5>
-        Office 365 access: <a
-            href="https://fhstp.sharepoint.com/sites/InnoFIT/Freigegebene%20Dokumente/General/Posters/InnoFIT_one%20version.pdf"
-            target="_blank">Download link 1</a><br>
-        External access: <a href="https://www.dropbox.com/s/c2a2ew6o48wdubs/InnoFIT_one%20version.pdf?dl=0"
-            target="blank"> Download link 2 </a>
-    </div>
-    <br><br>
-    <div style="padding-left:39px">
-        <h5><strong>Project Team Photo</strong></h5><br>
-        <img src="/data/img/Projektteam.jpg" style="max-width:100%;height:auto;">
-        <br>
-        <small>Image source: UAS Upper Austria / Andreas Schober</small> <br><br>
-    </div>
-    <!-- 	<div style="padding-left:39px">
-		<br>
-		<br>
-		<h5><strong>Contact us:</strong></h5>
-		<br>
-		<p>For questions regarding the project and general information (St. Pölten UAS):
-			<br> <b>Dr. Thomas Felberbauer, MSc</b>
-			<br> Lecturer Industry 4.0
-			<br>Deputy Academic Director Smart Engineering (BA)
-			<br>Department of Media and Digital Technologies
-			<br>St.Pölten University of Applied Sciences
-			<br>M: <a href="tel:43676847228693">+43/676/847 228 693</a>
-			<br>E: <a href="mailto:thomas.felberbauer@fhstp.ac.at">thomas.felberbauer@fhstp.ac.at</a>
-			<br>I: <a href="https://www.fhstp.ac.at" title="St.Pölten University of Applied Sciences Home Page"> https://www.fhstp.ac.at</a></p>
-	
-	</div> -->
-
 
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
         integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
@@ -298,10 +290,7 @@ echo ".";
     </script>
 
 
-    <footer style="padding-left:39px">
-        <!-- <a href="#">Imprint</a><br><br> -->
-        <small>&copy; Copyright 2019 St.Pölten University of Applied Sciences</small>
-    </footer>
+
 </body>
 
 </html>

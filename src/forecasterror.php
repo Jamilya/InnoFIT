@@ -113,8 +113,8 @@ else {
     }
 
     div {
-        padding-right: 30px;
-        padding-left: 30px;
+        padding-right: 10px;
+        padding-left: 10px;
     }
 
     .info-container {
@@ -184,22 +184,21 @@ else {
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="./finalorder.php">Final Order Amount</a></li>
-                            <li><a href="./deliveryplans.php">Delivery Plans</a></li>
+                            <li class="dropdown-header">Basic Order Analysis</li>
+                            <li><a href="./finalorder.php">Final Order Amount </a></li>
+                            <li><a href="./deliveryplans.php">Delivery Plans </a></li>
+                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
                             <li class="active"><a href="./forecasterror.php">Percentage Error <span
                                         class="sr-only">(current)</span></a></li>
+                            <li><a href="./matrixvariance.php">Delivery Plans Matrix with Percentage Error </a></li>
                             <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Error Measures</li>
+                            <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
                             <li><a href="./mpe.php">Mean Percentage Error (MPE) </a></li>
                             <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Matrices</li>
-                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
-                            <li><a href="./matrixvariance.php">Delivery Plans Matrix - With Variance </a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -360,15 +359,15 @@ else {
                 $('#filterInfo').hide();
             }
         });
+        const margin = {
+            top: 10,
+            right: 10,
+            bottom: 80,
+            left: 80
+        };
         localforage.getItem("viz_data", function(error, data) {
             data = JSON.parse(data);
 
-            const margin = {
-                left: 55,
-                right: 25,
-                top: 20,
-                bottom: 30
-            };
             let calcDeviation = function(orignalEl, finalOrder) {
                 return (orignalEl.OrderAmount - finalOrder) / finalOrder;
             }
@@ -479,8 +478,8 @@ else {
             var plotColorMap = d3.scaleOrdinal(d3.schemeCategory10);
 
             forecastErrorChart
-                .width(768)
-                .height(480)
+                .width(768 + margin.left + margin.right)
+                .height(480 + margin.top + margin.bottom)
                 .dimension(ndxDim)
                 .symbolSize(10)
                 .group(ndxGroup)
@@ -490,12 +489,6 @@ else {
                             return !isNaN(d.key[1]);
                         });
                 })
-                // .keyAccessor(function(d) {
-                //     return d.key[0];
-                // })
-                // .valueAccessor(function(d) {
-                //     return d.key[1] * 100;
-                // })
                 .colorAccessor(function(d) {
                     return d.key[2];
                 })
@@ -507,7 +500,7 @@ else {
                 .x(d3.scaleLinear().domain(d3.extent(isfinitearray, function(d) {
                     return d.PeriodsBeforeDelivery
                 })))
-                .brushOn(true)
+                .brushOn(false)
                 .clipPadding(10)
                 .xAxisLabel("Periods Before Delivery")
                 .yAxisLabel("Deviation")
@@ -523,8 +516,10 @@ else {
                 .elasticY(true)
                 .xAxis().tickFormat(d3.format('d'));
 
+            forecastErrorChart.yAxis().tickFormat(d3.format('.0%'));
+
             forecastErrorChart.symbol(d3.symbolCircle);
-            forecastErrorChart.margins().left = 50;
+            forecastErrorChart.margins(margin);
 
             visCount
                 .dimension(ndx)

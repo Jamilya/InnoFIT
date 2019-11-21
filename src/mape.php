@@ -27,6 +27,7 @@ else {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
     <script src="../lib/js/dc.js"></script>
     <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
+    <script src="./js/util.js"></script>
     <script>
     localforage.config({
         driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()
@@ -91,8 +92,8 @@ else {
     }
 
     div {
-        padding-right: 30px;
-        padding-left: 30px;
+        padding-right: 10px;
+        padding-left: 10px;
     }
 
     .info-container {
@@ -158,28 +159,25 @@ else {
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li><a href="./configuration.php">Configuration</a></li>
-                    <!-- <li><a href="./about.php">About</a></li> -->
-                    <!-- <li class><a href="./howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="./finalorder.php">Final Order Amount</a></li>
-                            <li><a href="./deliveryplans.php">Delivery Plans</a></li>
+                            <li class="dropdown-header">Basic Order Analysis</li>
+                            <li><a href="./finalorder.php">Final Order Amount </a></li>
+                            <li><a href="./deliveryplans.php">Delivery Plans </a></li>
+                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
                             <li><a href="./forecasterror.php">Percentage Error</a></li>
+                            <li><a href="./matrixvariance.php">Delivery Plans Matrix with Percentage Error </a></li>
                             <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Error Measures</li>
-                            <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD)</a></li>
+                            <li class="dropdown-header">Forecast Error Measures</li>
+                            <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
-                            <li><a href="./mpe.php">Mean Percentage Error (MPE)</a></li>
+                            <li><a href="./mpe.php">Mean Percentage Error (MPE) </a></li>
                             <li class="active"><a href="./mape.php">Mean Absolute Percentage Error (MAPE) <span
                                         class="sr-only">(current)</span></a></li>
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Matrices</li>
-                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
-                            <li><a href="./matrixvariance.php">Delivery Plans Matrix - With Variance </a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -344,13 +342,17 @@ else {
         visTable = dc.dataTable(".dc-data-table"),
         productlist = dc.selectMenu("#productlist");
 
+    // Chart setup
+    // -------------------------
     const margin = {
-        left: 55,
-        right: 25,
-        top: 20,
-        bottom: 30
+        top: 10,
+        right: 10,
+        bottom: 80,
+        left: 80
     };
-
+    const result = getAppropriateDimensions();
+    let width = result.width;
+    let height = result.height;
 
     localforage.getItem("viz_data", function(error, data) {
         data = JSON.parse(data);
@@ -502,8 +504,8 @@ else {
         // console.log("ndxDim: ", ndxGroup.top(Infinity));
 
         MAPEchart
-            .width(768)
-            .height(480)
+            .width(width + margin.left + margin.right)
+            .height(height + margin.top + margin.bottom)
             .dimension(ndxDim)
             .symbolSize(10)
             .group(ndxGroup)
@@ -515,9 +517,9 @@ else {
             })
             // .x(d3.scaleLinear().domain([0, 100]))
             .x(d3.scaleLinear().domain([0, d3.max(newFinalArray, function(d) {
-                    return d.PeriodsBeforeDelivery;
-                })]))
-            .brushOn(true)
+                return d.PeriodsBeforeDelivery;
+            })]))
+            .brushOn(false)
             .clipPadding(10)
             .xAxisLabel("Periods Before Delivery")
             .yAxisLabel("MAPE")
@@ -534,7 +536,7 @@ else {
 
         MAPEchart.selectAll('path.symbol')
             .attr('opacity', 0.3);
-        MAPEchart.margins().left = 50;
+        MAPEchart.margins(margin);
 
 
         visCount

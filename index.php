@@ -70,8 +70,13 @@ session_start();
         margin: 0 auto;
     }
 
+    div {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
     #footer {
-        background: #F8F8F8   !important;
+        background: #F8F8F8 !important;
     }
 
     #footer ul a {
@@ -153,27 +158,24 @@ session_start();
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li><a href="src/configuration.php">Configuration</a></li>
-
-                    <!-- <li class><a href="src/howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                            <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="src/finalorder.php">Final Order Amount </a></li>
                             <li><a href="src/deliveryplans.php">Delivery Plans </a></li>
+                            <li><a href="src/matrix.php">Delivery Plans Matrix</a></li>
                             <li><a href="src/forecasterror.php">Percentage Error</a></li>
+                            <li><a href="src/matrixvariance.php">Delivery Plans Matrix with Percentage Error </a></li>
                             <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Error Measures</li>
+                            <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="src/mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
                             <li> <a href="src/mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="src/rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
                             <li><a href="src/mpe.php">Mean Percentage Error (MPE) </a></li>
                             <li><a href="src/mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
                             <li><a href="src/meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Matrices</li>
-                            <li><a href="src/matrix.php">Delivery Plans Matrix</a></li>
-                            <li><a href="src/matrixvariance.php">Delivery Plans Matrix - With Variance </a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -235,7 +237,7 @@ session_start();
                         /* ]]> */
                         </script>
                     </li>
-                    <li><a href="/includes/logout.php">Logout</a></li>
+                    <li><a id="btnLogout" href="/includes/logout.php">Logout</a></li>
 
                 </ul>
             </div>
@@ -278,9 +280,6 @@ session_start();
     <br />
 
     <script>
-    // $(document).ready(function() {
-    //     $("#flash-msg").delay(3000).fadeOut("slow");
-    // });
     d3.json("/includes/getdata.php", function(error, data) {
         if (error) throw error;
         console.log('Read Data: ', data);
@@ -292,7 +291,6 @@ session_start();
             return (orignalEl.OrderAmount - finalOrder) / finalOrder;
         }
         let finalOrder = data.filter((el) => {
-            // return el.PeriodsBeforeDelivery==0;
             return el.PeriodsBeforeDelivery == "0";
         });
 
@@ -339,8 +337,8 @@ if (isset($_POST["import"])) {
 
                 $actualDate = DateTime::createFromFormat("Y-m-d H:i:s", "$column[1]");
                 $forecastDate = DateTime::createFromFormat("Y-m-d H:i:s", "$column[2]");
-                $actualDate = date("Y-m-d H:i:s",strtotime('+20 minutes',strtotime("$column[1]")));
-                $forecastDate = date("Y-m-d H:i:s",strtotime('+20 minutes',strtotime("$column[2]")));
+                $actualDate = date("Y-m-d H:i:s",strtotime('-5 minutes',strtotime("$column[1]")));
+                $forecastDate = date("Y-m-d H:i:s",strtotime('-5 minutes',strtotime("$column[2]")));
                 $newactualDate = date("Y-m-d H:i:s",strtotime($actualDate));
                 $newforecastDate = date("Y-m-d H:i:s",strtotime($forecastDate));
                 $pbdSubtr = 52;
@@ -353,9 +351,8 @@ if (isset($_POST["import"])) {
                     $pbd = $forecastWeek - $actualWeek;
                 } elseif  ($actualYear < $forecastYear){
                     $pbd = $forecastWeek - $actualWeek + $pbdSubtr * ($forecastYear - $actualYear);
-                }else {
-                    $pbd = $forecastWeek + $actualWeek; //assume only one year behind
                 }
+                
                 $actualDay = date("d", strtotime("$column[1]"));
                 $forecastDay = date("d", strtotime("$column[2]"));                
 
@@ -428,11 +425,12 @@ if (isset($_POST["import"])) {
         <div class="col-md-13">
             <h3>Data format:</h3>
             <p> Please upload your data in .csv format in the correct data structure.
-                The correct data structure is shown in the table below. Set the date format as: <b>YYYY-MM-DD
-                    (year-month-day)</b>. Please keep Order Amounts as <b>integers</b>.
-                For MS Office in German language please add a new line in the beginning of the file: <b>sep=; </b>and
-                save
-                the file as .csv.</p>
+                The correct data structure is shown in the table below. Set the dates (ActualDate and ForecastDate)
+                format as: <b>YYYY-MM-DD
+                    (year-month-day) and format as a date</b>. Please keep Order Amounts as <b>integers</b>.
+                <!-- For MS Office in German language please add a new line in the beginning of the file: <b>sep=; </b>and
+                save the file as .csv. -->
+            </p>
             <!-- <u>Step 1:</u> Create a new Excel file and add the data, so that values of each column (Product, ActualDate,
         ForecastDate, OrderAmount) are in a separate column.
         <br> Please keep the date in the following format: <b>YYYY-MM-DD</b>.<br>
@@ -458,8 +456,10 @@ if (isset($_POST["import"])) {
         <div class="container">
             <!-- Copyright -->
             <div class="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-2 text-center">
-            <br>
-                <p> Copyright © 2019 St. Pölten University of Applied Sciences <u><ul><a href="https://projekte.ffg.at/projekt/3042801">InnoFIT Research Project </a></ul></u></p>
+                <br>
+                <p> Copyright © 2019 St. Pölten University of Applied Sciences <u>
+                        <ul><a href="https://projekte.ffg.at/projekt/3042801">InnoFIT Research Project </a></ul>
+                    </u></p>
             </div>
             <!-- Copyright -->
         </div>

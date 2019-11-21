@@ -91,8 +91,8 @@ else {
     }
 
     div {
-        padding-right: 30px;
-        padding-left: 30px;
+        padding-right: 10px;
+        padding-left: 10px;
     }
 
     .info-container {
@@ -162,22 +162,21 @@ else {
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="./finalorder.php">Final Order Amount</a></li>
-                            <li><a href="./deliveryplans.php">Delivery Plans</a></li>
+                            <li class="dropdown-header">Basic Order Analysis</li>
+                            <li><a href="./finalorder.php">Final Order Amount </a></li>
+                            <li><a href="./deliveryplans.php">Delivery Plans </a></li>
+                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
                             <li><a href="./forecasterror.php">Percentage Error</a></li>
+                            <li><a href="./matrixvariance.php">Delivery Plans Matrix with Percentage Error </a></li>
                             <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Error Measures</li>
-                            <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD)</a></li>
+                            <li class="dropdown-header">Forecast Error Measures</li>
+                            <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
-                            <li><a href="./mpe.php">Mean Percentage Error (MPE)</a></li>
+                            <li><a href="./mpe.php">Mean Percentage Error (MPE) </a></li>
                             <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
                             <li class="active"><a href="./meanforecastbias.php">Mean Forecast Bias (MFB) <span
                                         class="sr-only">(current)</span></a></li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Matrices</li>
-                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
-                            <li><a href="./matrixvariance.php">Delivery Plans Matrix - With Variance </a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -338,10 +337,10 @@ else {
         visTable = dc.dataTable(".dc-data-table"),
         productlist = dc.selectMenu("#productlist");
     const margin = {
-        left: 55,
-        right: 25,
-        top: 20,
-        bottom: 30
+        top: 10,
+        right: 10,
+        bottom: 80,
+        left: 80
     };
 
     localforage.getItem("viz_data", function(error, data) {
@@ -388,20 +387,27 @@ else {
             let invalidForecasts = el.values.filter(function(obj) {
                 return validForecasts.indexOf(obj) == -1;
             });
+            let forecastOrdersForecastPeriods = new Map();
+            validForecasts.map(e => {
+                forecastOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
+            });
             let sumOfForecasts = validForecasts.reduce((a, b) => +a + +b.OrderAmount, 0);
 
             // FinalOrder Sums
             let items = el.values;
             items = items.map(el => el.ForecastPeriod);
             let sumFinalOrders = 0;
+            let forecastSum = 0;
             items.forEach(e => {
                 if (finalOrdersForecastPeriods.get(e) !== undefined) {
                     sumFinalOrders += parseInt(finalOrdersForecastPeriods.get(e), 0);
+                    forecastSum += parseInt(forecastOrdersForecastPeriods.get(e), 0);
                 }
             });
+            console.log('forecastSum: ', forecastSum);
 
             // MFB
-            let mfbValue = sumOfForecasts / sumFinalOrders;
+            let mfbValue = forecastSum / sumFinalOrders;
 
             return {
                 PeriodsBeforeDelivery: el.key,
@@ -409,14 +415,20 @@ else {
                 ActualPeriod: el.values[0].ActualPeriod,
                 ForecastPeriod: el.values[0].ForecastPeriod,
                 ActualDate: el.values[0].ActualDate,
-                sumOfForecasts: sumOfForecasts,
+                sumOfForecasts: forecastSum,
                 sumOfFinalOrders: sumFinalOrders,
                 MFB: mfbValue.toFixed(3)
             }
         });
         console.log('Forecast, FinalOrders, MFB all orderByPBD: ', calculationsOrderByPBD);
-        newFinalArray = calculationsOrderByPBD.filter((el) => {
+        oneFinalArray = calculationsOrderByPBD.filter((el) => {
             return !isNaN(el.MFB);
+        })
+        twoFinalArray = oneFinalArray.filter((el) => {
+            return el.MFB !== Infinity;
+        })
+        newFinalArray = twoFinalArray.filter((el) => {
+            return el.MFB !== 'Infinity';
         })
 
         newFinalArray.forEach(function(d) {
@@ -471,15 +483,15 @@ else {
             .numberVisible(15);
 
         MFBchart
-            .width(768)
-            .height(480)
+            .width(768 + margin.left + margin.right)
+            .height(480 + margin.top + margin.bottom)
             .dimension(ndxDim)
             .symbolSize(10)
             .group(ndxGroup)
             .data(function(group) {
                 return group.all()
                     .filter(function(d) {
-                        return d.key !== NaN;
+                        return d.key !== Infinity;
                     });
             })
             .excludedSize(2)
@@ -487,11 +499,10 @@ else {
             .x(d3.scaleLinear().domain([0, d3.max(newFinalArray, function(d) {
                 return d.PeriodsBeforeDelivery;
             })]))
-            .brushOn(true)
+            .brushOn(false)
             .clipPadding(10)
             .xAxisLabel("Periods Before Delivery")
             .yAxisLabel("MFB")
-            // .mouseZoomable(true)
             .renderTitle(true)
             .title(function(d) {
                 return [
@@ -536,7 +547,7 @@ else {
             .xAxis().tickFormat(d3.format('d'));
 
         MFBchart.symbol(d3.symbolCircle);
-        MFBchart.margins().left = 50;
+        MFBchart.margins(margin);
 
         visCount
             .dimension(ndx)

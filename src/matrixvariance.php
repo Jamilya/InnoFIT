@@ -37,20 +37,6 @@ else {
         margin: 0px;
     }
 
-    .dc-chart .axis text {
-        font: 12px sans-serif;
-    }
-
-    .dc-chart .brush rect.selection {
-        fill: #4682b4;
-        fill-opacity: .125;
-    }
-
-    .dc-chart .symbol {
-        stroke: #000;
-        stroke-width: 0.5px;
-    }
-
     .domain {
         /* display: none; */
         stroke: #635F5D;
@@ -84,8 +70,8 @@ else {
     }
 
     div {
-        padding-right: 30px;
-        padding-left: 30px;
+        padding-right: 10px;
+        padding-left: 10px;
     }
 
     .info-container {
@@ -157,22 +143,21 @@ else {
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="./finalorder.php">Final Order Amount</a></li>
-                            <li><a href="./deliveryplans.php">Delivery Plans</a></li>
+                            <li class="dropdown-header">Basic Order Analysis</li>
+                            <li><a href="./finalorder.php">Final Order Amount </a></li>
+                            <li><a href="./deliveryplans.php">Delivery Plans </a></li>
+                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
                             <li><a href="./forecasterror.php">Percentage Error</a></li>
+                            <li class="active"><a href="./matrixvariance.php">Delivery Plans Matrix with Percentage
+                                    Error <span class="sr-only">(current)</span></a></li>
                             <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Error Measures</li>
-                            <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD)</a></li>
+                            <li class="dropdown-header">Forecast Error Measures</li>
+                            <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
-                            <li><a href="./mpe.php">Mean Percentage Error (MPE)</a></li>
+                            <li><a href="./mpe.php">Mean Percentage Error (MPE) </a></li>
                             <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Matrices</li>
-                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
-                            <li class="active"><a href="./matrixvariance.php">Delivery Plans Matrix - With Variance
-                                    <span class="sr-only">(current)</span></a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -339,15 +324,23 @@ else {
             return isFinite(el.Deviation) == true;
         })
 
+        newFinalArray = newFinalArray.sort((a, b) => {
+            return d3.ascending(a.ActualDate, b.ActualDate);
+        });
+
+        newFinalArray = newFinalArray.sort((a, b) => {
+            return d3.ascending(a.ForecastDate, b.ForecastDate);
+        });
+
 
         var margin = {
-                top: 30,
+                top: 10,
                 right: 90,
-                bottom: 30,
-                left: 30
+                bottom: 80,
+                left: 60
             },
-            width = 600 - margin.left - margin.right,
-            height = 550 - margin.top - margin.bottom;
+            width = 790 - margin.left - margin.right,
+            height = 650 - margin.top - margin.bottom;
 
         // append the svg object to the body of the page
         var svg = d3.select("#my_dataviz")
@@ -408,14 +401,13 @@ else {
         // Build color scale
         var myColor = d3.scaleSequential();
         myColor.interpolator(d3.interpolateRdBu);
-        // .domain([d3.min(finalArray, function(d) {
-        //     return d.Deviation
-        // }), d3.max(finalArray, function(d) {
-        //     return d.Deviation
-        // })]);
-        // myColor.domain([0, d3.max(finalArray, function(d) {
+
+        // myColor.domain([d3.min(newFinalArray, function(d) {
+        //     return d.Deviation;
+        // }), d3.max(newFinalArray, function(d) {
         //     return d.Deviation;
         // })]);
+
         myColor.domain([d3.min(newFinalArray, function(d) {
             return d.Deviation;
         }), d3.max(newFinalArray, function(d) {
@@ -527,16 +519,16 @@ else {
             .text("");
 
         svg.append("text")
-            .attr("x", 200)
-            .attr("y", 520)
+            .attr("x", 250)
+            .attr("y", 610)
             .attr("text-anchor", "left")
             .style("font-size", "12px sans-serif")
             .style("fill", "#000")
             .text("Actual Period");
 
         svg.append("text")
-            .attr("x", -280)
-            .attr("y", -19)
+            .attr("x", -320)
+            .attr("y", -45)
             .attr("text-anchor", "left")
             .style("font-size", "12px sans-serif")
             .style("fill", "#000")

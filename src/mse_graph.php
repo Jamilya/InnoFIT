@@ -46,7 +46,7 @@ else {
     }
 
     .dc-chart .axis text {
-        font: 9px sans-serif;
+        font: 12px sans-serif;
     }
 
     .dc-chart .brush rect.selection {
@@ -92,8 +92,8 @@ else {
     }
 
     div {
-        padding-right: 30px;
-        padding-left: 30px;
+        padding-right: 10px;
+        padding-left: 10px;
     }
 
     .info-container {
@@ -160,28 +160,25 @@ else {
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li><a href="./configuration.php">Configuration</a></li>
-                    <!-- <li><a href="./about.php">About</a></li> -->
-                    <!-- <li class><a href="./howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="./finalorder.php">Final Order Amount</a></li>
-                            <li><a href="./deliveryplans.php">Delivery Plans</a></li>
+                            <li class="dropdown-header">Basic Order Analysis</li>
+                            <li><a href="./finalorder.php">Final Order Amount </a></li>
+                            <li><a href="./deliveryplans.php">Delivery Plans </a></li>
+                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
                             <li><a href="./forecasterror.php">Percentage Error</a></li>
+                            <li><a href="./matrixvariance.php">Delivery Plans Matrix with Percentage Error </a></li>
                             <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Error Measures</li>
-                            <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD)</a></li>
+                            <li class="dropdown-header">Forecast Error Measures</li>
+                            <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
                             <li class="active"> <a href="./mse_graph.php">Mean Square Error (MSE) <span
                                         class="sr-only">(current)</span></a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE) </a></li>
                             <li><a href="./mpe.php">Mean Percentage Error (MPE) </a></li>
                             <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Matrices</li>
-                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
-                            <li><a href="./matrixvariance.php">Delivery Plans Matrix - With Variance </a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -290,7 +287,7 @@ else {
                     meaning perfect accuracy). <br>
                     The Formula of the Mean Squared Error (MSE) is:
                     <img src="https://latex.codecogs.com/gif.latex?MSE_{j} = \frac{1}{n}\sum_{i=1}^{n}(x_{i,j}-x_{i,0})^{2}"
-                        title="MSE formula" />. </p>
+                        title="MSE formula" />. Note MSE values: M = millions, K = thousands </p>
             </div>
         </div>
 
@@ -336,18 +333,21 @@ else {
             $('#filterInfo').hide();
         }
     });
+
+    const margin = {
+        top: 10,
+        right: 10,
+        bottom: 80,
+        left: 80
+    };
+
     localforage.getItem("viz_data", function(error, data) {
         data = JSON.parse(data);
 
         let finalOrder = data.filter((el) => {
             return el.PeriodsBeforeDelivery == 0;
         });
-        const margin = {
-            left: 55,
-            right: 25,
-            top: 20,
-            bottom: 30
-        };
+
         var forecastlist = dc.selectMenu("#forecastlist"),
             periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
             visCount = dc.dataCount(".dc-data-count"),
@@ -410,7 +410,7 @@ else {
                     ForecastPeriod: el.values[i].ForecastPeriod,
                     OrderAmount: el.values[i].OrderAmount,
                     PeriodsBeforeDelivery: el.key,
-                    MSE: meanValue
+                    MSE: meanValue.toFixed(3)
                 };
             }
         });
@@ -467,8 +467,8 @@ else {
         // console.log("ndxDim: ", ndxGroup.top(Infinity));
 
         MSEchart
-            .width(768)
-            .height(480)
+            .width(768 + margin.left + margin.right)
+            .height(480 + margin.top + margin.bottom)
             .dimension(ndxDim)
             .symbolSize(10)
             .group(ndxGroup)
@@ -481,7 +481,7 @@ else {
             .excludedSize(2)
             .excludedOpacity(0.5)
             .x(d3.scaleLinear().domain([0, 100]))
-            .brushOn(true)
+            .brushOn(false)
             .clipPadding(10)
             .xAxisLabel("Periods Before Delivery")
             .yAxisLabel("MSE")
@@ -496,12 +496,14 @@ else {
             .elasticX(true)
             .elasticY(true)
             .xAxis().tickFormat(d3.format('d'));
+
+        MSEchart.yAxis().tickFormat(d3.format(".2s"));
         // console.log('ndxgroup data:', ndxDim);
 
 
         MSEchart.selectAll('path.symbol')
             .attr('opacity', 0.3);
-        MSEchart.margins().left = 50;
+        MSEchart.margins(margin);
 
         visCount
             .dimension(ndx)

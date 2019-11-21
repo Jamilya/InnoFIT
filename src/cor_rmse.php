@@ -159,34 +159,27 @@ else {
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li><a href="./configuration.php">Configuration</a></li>
-                    <!--  <li class="nav-item">
-                        <a class="nav-link" href="index.php">Home</a>
-                    </li > -->
-                    <!-- <li><a href="./about.php">About</a></li>
-            <li class><a href="./howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="./finalorder.php">Final Order Amount</a></li>
-                            <li><a href="./deliveryplans.php">Delivery Plans</a></li>
+                            <li class="dropdown-header">Basic Order Analysis</li>
+                            <li><a href="./finalorder.php">Final Order Amount </a></li>
+                            <li><a href="./deliveryplans.php">Delivery Plans </a></li>
+                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
                             <li><a href="./forecasterror.php">Percentage Error</a></li>
+                            <li><a href="./matrixvariance.php">Delivery Plans Matrix with Percentage Error </a></li>
                             <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Error Measures</li>
-                            <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD)</a></li>
+                            <li class="dropdown-header">Forecast Error Measures</li>
+                            <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
-                            <li><a href="./mpe.php">Mean Percentage Error (MPE)</a></li>
+                            <li><a href="./mpe.php">Mean Percentage Error (MPE) </a></li>
                             <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Matrices</li>
-                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
-                            <li><a href="./matrixvariance.php">Delivery Plans Matrix - With Variance </a></li>
                         </ul>
                     </li>
-                    <!-- </ul> -->
-                    <li class="dropdown active">
+                    <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Corrections <span class="caret"></span> </a>
                         <ul class="dropdown-menu">
@@ -305,8 +298,6 @@ else {
 
                 <div id="pbd">
                     <p style="text-align:center;"><strong>Periods Before Delivery</strong></p>
-                    <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
-                    <!-- <a class="reset" href="javascript:periodsBeforeDeliveryChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a> -->
                 </div>
                 <div style="clear: both"></div>
 
@@ -422,12 +413,12 @@ else {
             //     return Math.pow((originalEl.OrderAmount - divisionArray), 2);
             // }
 
-            // let valueMap = new Map();
-            // finalOrder.forEach((val) => {
-            //     let keyString = val.ActualPeriod;
-            //     let valueString = val.OrderAmount;
-            //     valueMap.set(keyString, valueString);
-            // });
+            let valueMap = new Map();
+            finalOrder.forEach((val) => {
+                let keyString = val.ActualPeriod;
+                let valueString = val.OrderAmount;
+                valueMap.set(keyString, valueString);
+            });
 
 
             // let squaredDifference = divisionArray.map((el) => {
@@ -514,21 +505,22 @@ else {
                 let items = el.values;
                 let forecastItems = items.map(el => el.ForecastPeriod);
                 let sumFinalOrders = 0;
+                let forecastSum = 0;
                 // MFB
 
                 forecastItems.forEach(e => {
                     if (finalOrdersForecastPeriods.get(e) !== undefined) {
                         sumFinalOrders += parseInt(finalOrdersForecastPeriods.get(e), 0);
+                        forecastSum += parseInt(forecastOrdersForecastPeriods.get(e), 0);
                     }
                 });
                 console.log('items: ', items);
-                let mfbValue = sumOfForecasts / sumFinalOrders;
+                let mfbValue = forecastSum / sumFinalOrders;
 
                 let calcByPBD = items.map(el => el.PeriodsBeforeDelivery);
-                let division = [];
+                let difference = [];
                 calcByPBD.forEach(e => {
-                    division.push(Math.pow(finalOrdersForecastPeriods.get(e) - (
-                        forecastOrdersForecastPeriods.get(e) / mfbValue)), 2);
+                    difference.push(Math.pow(finalOrdersForecastPeriods.get(e) - forecastOrdersForecastPeriods.get(e)));
                 })
 
                 console.log('calcByPBD: ', calcByPBD);
@@ -540,7 +532,8 @@ else {
                     ForecastPeriod: el.values[0].ForecastPeriod,
                     ActualDate: el.values[0].ActualDate,
                     MFB: mfbValue.toFixed(3),
-                    CRMSE: Math.sqrt(d3.mean(division))
+                    division: difference / mfbValue
+                    // CRMSE: Math.sqrt(d3.mean(division))
                 }
             });
             console.log('Forecast, FinalOrders, MFB, CRMSE all orderByPBD: ', calculationsOrderByPBD);
@@ -565,7 +558,6 @@ else {
                     SquaredAbsoluteDiff: value
                 };
             });
-            // console.log("squaredAbsValuesArray:", squaredAbsValuesArray);
 
             let seperatedByPeriods2 = d3.nest()
                 .key(function(d) {
@@ -581,7 +573,7 @@ else {
                     return {
                         ActualDate: el.values[i].ActualDate,
                         PeriodsBeforeDelivery: el.key,
-                        MeanOfThisPeriod2: RMSE
+                        RMSE: RMSE
                     };
                 }
             });
@@ -589,14 +581,14 @@ else {
 
 
 
-            const mergeById = (bubu, bebe) =>
-                bubu.map(itm => ({
+            const mergeById = (calculationsOrderByPBD, bebe) =>
+            calculationsOrderByPBD.map(itm => ({
                     ...bebe.find((item) => (item.PeriodsBeforeDelivery === itm
                         .PeriodsBeforeDelivery) && item),
                     ...itm
                 }));
 
-            console.log("merged array:", mergeById(bubu, bebe));
+            console.log("merged array:", mergeById(calculationsOrderByPBD, bebe));
 
             bebe.forEach(function(d) {
                 d.ActualDate = new Date(d.ActualDate);
@@ -623,16 +615,16 @@ else {
             // });
             // console.log("dataMax", dataMax);
 
-            var ndx = crossfilter(mergeById(bubu, bebe));
+            var ndx = crossfilter(mergeById(calculationsOrderByPBD, bebe));
             var all = ndx.groupAll();
             var CRMSEDim = ndx.dimension(function(d) {
                 return +d.MeanOfThisPeriod;
             });
             var RMSEDim = ndx.dimension(function(d) {
-                return +d.MeanOfThisPeriod2;
+                return +d.RMSE;
             })
             var ndxDim = ndx.dimension(function(d) {
-                return [+d.PeriodsBeforeDelivery, +d.MeanOfThisPeriod2, +d.MeanOfThisPeriod];
+                return [+d.PeriodsBeforeDelivery, +d.RMSE, +d.MeanOfThisPeriod];
             });
 
             var periodsBeforeDeliveryDim = ndx.dimension(function(d) {
@@ -643,7 +635,7 @@ else {
             });
 
             var CRMSEGroup = CRMSEDim.group().reduceSum(function(d) {
-                return d.MeanOfThisPeriod2;
+                return d.RMSE;
             });
             var RMSEGroup = RMSEDim.group().reduceSum(function(d) {
                 return d.MeanOfThisPeriod;
@@ -665,7 +657,7 @@ else {
                 .width(768)
                 .height(480)
                 .dimension(ndxDim)
-                .x(d3.scaleLinear().domain(d3.extent(mergeById(bubu, bebe), function(d) {
+                .x(d3.scaleLinear().domain(d3.extent(mergeById(calculationsOrderByPBD, bebe), function(d) {
                     return d.PeriodsBeforeDelivery
                 })))
                 .xAxisLabel("Periods Before Delivery")
@@ -713,7 +705,7 @@ else {
                 .columns([
                     "PeriodsBeforeDelivery",
                     "MeanOfThisPeriod",
-                    "MeanOfThisPeriod2"
+                    "RMSE"
                 ]);
 
             dc.renderAll();

@@ -37,20 +37,6 @@ else {
         margin: 0px;
     }
 
-    .dc-chart .axis text {
-        font: 12px sans-serif;
-    }
-
-    .dc-chart .brush rect.selection {
-        fill: #4682b4;
-        fill-opacity: .125;
-    }
-
-    .dc-chart .symbol {
-        stroke: #000;
-        stroke-width: 0.5px;
-    }
-
     .domain {
         /* display: none; */
         stroke: #635F5D;
@@ -84,8 +70,8 @@ else {
     }
 
     div {
-        padding-right: 30px;
-        padding-left: 30px;
+        padding-right: 10px;
+        padding-left: 10px;
     }
 
     .info-container {
@@ -152,28 +138,25 @@ else {
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li><a href="./configuration.php">Configuration</a></li>
-                    <!-- <li><a href="./about.php">About</a></li>
-                    <li class><a href="./howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                            <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount</a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans</a></li>
+                            <li class="active"><a href="./matrix.php">Delivery Plans Matrix <span
+                                        class="sr-only">(current)</span></a></li>
                             <li><a href="./forecasterror.php">Percentage Error</a></li>
+                            <li><a href="./matrixvariance.php">Delivery Plans Matrix with Percentage Error </a></li>
                             <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Error Measures</li>
+                            <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD)</a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
                             <li><a href="./mpe.php">Mean Percentage Error (MPE)</a></li>
                             <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Matrices</li>
-                            <li class="active"><a href="./matrix.php">Delivery Plans Matrix <span
-                                        class="sr-only">(current)</span></a></li>
-                            <li><a href="./matrixvariance.php">Delivery Plans Matrix - With Variance</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -279,7 +262,7 @@ else {
         <div class="row">
             <div class="col-md-12">
                 <br />
-                <p> <b>Graph Description:</b> Delivery plans matrix. </p>
+                <p> <b>Graph Description:</b> Delivery plans matrix representation with respect to actual and forecast periods. NOTE: the periods in the matrix are sorted by date (ascending order). </p>
             </div>
         </div>
 
@@ -307,14 +290,22 @@ else {
             d.OrderAmount = +d.OrderAmount;
         });
 
+        data = data.sort((a, b) => {
+            return d3.ascending(a.ActualDate, b.ActualDate);
+        });
+
+        data = data.sort((a, b) => {
+            return d3.ascending(a.ForecastDate, b.ForecastDate);
+        });
+
         var margin = {
-                top: 30,
+                top: 10,
                 right: 90,
-                bottom: 30,
-                left: 30
+                bottom: 80,
+                left: 60
             },
-            width = 600 - margin.left - margin.right,
-            height = 550 - margin.top - margin.bottom;
+            width = 790 - margin.left - margin.right,
+            height = 650 - margin.top - margin.bottom;
 
         // append the svg object to the body of the page
         var svg = d3.select("#my_dataviz")
@@ -357,10 +348,12 @@ else {
             .range([0, width])
             .domain(data.map(d => d.ActualPeriod))
             .padding(0.05);
+        let xAxis = d3.axisBottom(x).tickSize(0);
+
         svg.append("g")
             .style("font-size", "12px sans-serif")
             .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x).tickSize(0))
+            .call(xAxis)
             .select(".domain").remove()
 
         // Build Y scales and axis:
@@ -439,7 +432,7 @@ else {
             .style("fill", function(d) {
                 return myColor(d.OrderAmount)
             })
-            .style("stroke-width", 4)
+            .style("stroke-width", 1)
             .style("stroke", "none")
             .style("opacity", 0.8)
             .on("mouseover", mouseover)
@@ -475,29 +468,21 @@ else {
             .text("");
 
         svg.append("text")
-            .attr("x", 200)
-            .attr("y", 520)
+            .attr("x", 250)
+            .attr("y", 610)
             .attr("text-anchor", "left")
             .style("font-size", "12px sans-serif")
             .style("fill", "#000")
             .text("Actual Period");
 
         svg.append("text")
-            .attr("x", -280)
-            .attr("y", -19)
+            .attr("x", -320)
+            .attr("y", -45)
             .attr("text-anchor", "left")
             .style("font-size", "12px sans-serif")
             .style("fill", "#000")
             .attr("transform", "rotate(-90)")
             .text("Forecast Period");
-
-        svg.append("text")
-            .attr("x", 0)
-            .attr("y", -20)
-            .attr("text-anchor", "left")
-            .style("font-size", "12px sans-serif")
-            .style("fill", "#000")
-            .style("max-width", 400);
 
         svg.selectAll(".tile")
             .style("fill", function(d) {

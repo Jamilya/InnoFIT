@@ -91,8 +91,8 @@ else {
     }
 
     div {
-        padding-right: 30px;
-        padding-left: 30px;
+        padding-right: 10px;
+        padding-left: 10px;
     }
 
     .info-container {
@@ -141,7 +141,6 @@ else {
         display: none !important;
     }
     </style>
-    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script> -->
 
 </head>
 
@@ -161,28 +160,25 @@ else {
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li><a href="./configuration.php">Configuration</a></li>
-                    <!-- <li><a href="./about.php">About</a></li> -->
-                    <!-- <li class><a href="./howto.php">How to Interpret Error Measures </a></li> -->
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="./finalorder.php">Final Order Amount</a></li>
-                            <li><a href="./deliveryplans.php">Delivery Plans</a></li>
+                            <li class="dropdown-header">Basic Order Analysis</li>
+                            <li><a href="./finalorder.php">Final Order Amount </a></li>
+                            <li><a href="./deliveryplans.php">Delivery Plans </a></li>
+                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
                             <li><a href="./forecasterror.php">Percentage Error</a></li>
+                            <li><a href="./matrixvariance.php">Delivery Plans Matrix with Percentage Error </a></li>
                             <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Error Measures</li>
-                            <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD)</a></li>
+                            <li class="dropdown-header">Forecast Error Measures</li>
+                            <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li class="active"><a href="./rmse_graph.php">Root Mean Square Error (RMSE) <span
                                         class="sr-only">(current)</span></a></li>
                             <li><a href="./mpe.php">Mean Percentage Error (MPE) </a></li>
                             <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Matrices</li>
-                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
-                            <li><a href="./matrixvariance.php">Delivery Plans Matrix - With Variance </a></li>
                         </ul>
                     </li>
                     <!-- </ul> -->
@@ -345,18 +341,18 @@ else {
                 $('#filterInfo').hide();
             }
         });
+        const margin = {
+            top: 10,
+            right: 10,
+            bottom: 80,
+            left: 80
+        };
         localforage.getItem("viz_data", function(error, data) {
             data = JSON.parse(data);
 
             let finalOrder = data.filter((el) => {
                 return el.PeriodsBeforeDelivery == 0;
             });
-            const margin = {
-                left: 55,
-                right: 25,
-                top: 20,
-                bottom: 30
-            };
 
             var forecastlist = dc.selectMenu("#forecastlist"),
                 periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
@@ -474,8 +470,8 @@ else {
             console.log("ndxDim: ", ndxGroup.top(Infinity));
 
             RMSEchart
-                .width(768)
-                .height(480)
+                .width(768 + margin.left + margin.right)
+                .height(480 + margin.top + margin.bottom)
                 .dimension(ndxDim)
                 .symbolSize(10)
                 .group(ndxGroup)
@@ -489,7 +485,7 @@ else {
                 .x(d3.scaleLinear().domain([0, d3.max(newFinalArray, function(d) {
                     return d.PeriodsBeforeDelivery;
                 })]))
-                .brushOn(true)
+                .brushOn(false)
                 .clipPadding(10)
                 .xAxisLabel("Periods Before Delivery")
                 .yAxisLabel("RMSE")
@@ -508,7 +504,7 @@ else {
             RMSEchart.selectAll('path.symbol')
                 .attr('opacity', 0.3);
 
-            RMSEchart.margins().left = 50;
+            RMSEchart.margins(margin);
 
             visCount
                 .dimension(ndx)

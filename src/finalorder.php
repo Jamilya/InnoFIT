@@ -93,8 +93,8 @@ else {
     }
 
     div {
-        padding-right: 30px;
-        padding-left: 30px;
+        padding-right: 10px;
+        padding-left: 10px;
     }
 
     .info-container {
@@ -173,22 +173,21 @@ else {
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                            <li class="dropdown-header">Basic Order Analysis</li>
                             <li class="active"><a href="./finalorder.php">Final Order Amount <span
                                         class="sr-only">(current)</span></a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
+                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
                             <li><a href="./forecasterror.php">Percentage Error</a></li>
+                            <li><a href="./matrixvariance.php">Delivery Plans Matrix with Percentage Error </a></li>
                             <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Error Measures</li>
+                            <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
                             <li><a href="./mpe.php">Mean Percentage Error (MPE) </a></li>
                             <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Matrices</li>
-                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
-                            <li><a href="./matrixvariance.php">Delivery Plans Matrix - With Variance </a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -397,16 +396,31 @@ else {
         }
         </script>
         <script>
+        const margin = {
+            top: 10,
+            right: 7,
+            bottom: 80,
+            left: 50
+        };
+
         localforage.getItem("viz_data", function(error, data) {
             data = JSON.parse(data);
 
-            const width = "960";
-            const lineWidth = "860";
+            const width = "790";
+            const lineWidth = "410";
 
             let finalOrder = data.filter((el) => {
                 //  return el.PeriodsBeforeDelivery==0;
                 return el.PeriodsBeforeDelivery == 0 && el.PeriodsBeforeDelivery == "0";
             });
+
+            // Order Ascending
+            finalOrder = finalOrder.sort((a, b) => {
+                return d3.ascending(a.ForecastDate, b.ForecastDate);
+            });
+
+
+
             let finalOrderCalc = d3.values(finalOrder, function(d) {
                 return d.OrderAmount;
             })
@@ -462,13 +476,32 @@ else {
                 visTable = dc.dataTable(".dc-data-table"),
                 select1 = dc.selectMenu("#select1");
 
+            let minDate = d3.min(finalOrder, (d) => d.ForecastDate);
+            let maxDate = d3.max(finalOrder, (d) => d.ForecastDate);
 
+            let minFormat = JSON.stringify(minDate.slice(0, 10));
+            let maxFormat = JSON.stringify(maxDate.slice(0, 10));
+            let weeksArray =[];
+
+            newMinFormat = new Date(minFormat);
+            newMaxFormat = new Date(maxFormat);
+            let onejan = new Date(newMinFormat.getFullYear(), 0, 1);
+            let twojan = new Date(newMaxFormat.getFullYear(), 0, 1);
+            let minWeek = Math.ceil((((newMinFormat - onejan) / 86400000) + onejan.getDay() +
+                1) / 7);
+            let maxWeek = Math.ceil((((newMaxFormat - twojan) / 86400000) + twojan.getDay() + 1) /
+                7);
+
+            weeksArray.push(minWeek);
+            weeksArray.push(maxWeek);
 
             finalOrder.forEach(function(d) {
                 d.ActualDate = new Date(d.ActualDate),
-                    d.ForecastDate = new Date(d.ForecastDate);
+                    d.ForecastDate = new Date(d.ForecastDate)
             });
             console.log("finalOrder: ", finalOrder);
+            console.log("weeksArray: ", weeksArray);
+
 
             var ndx = crossfilter(finalOrder);
             var all = ndx.groupAll();
@@ -478,8 +511,12 @@ else {
             var forecastPeriodDim = ndx.dimension(function(d) {
                 return +d.ForecastPeriod;
             });
+            var forecastDateDim = ndx.dimension(function(d) {
+                return +d.ForecastDate;
+            });
+
             var ndxDim = ndx.dimension(function(d) {
-                return [+d.ForecastPeriod, +d.OrderAmount, d.Product];
+                return [+d.ForecastDate, +d.OrderAmount, d.Product, +d.ForecastPeriod];
             });
             var productDim = ndx.dimension(function(d) {
                 return d.Product;
@@ -493,6 +530,7 @@ else {
             var productGroup = productDim.group();
             var ndxGroup = ndxDim.group();
             var forecastPeriodGroup = forecastPeriodDim.group();
+            var forecastDateGroup = forecastDateDim.group();
             var dateGroup = dateDim.group();
 
             forecastlist
@@ -507,13 +545,19 @@ else {
                 .multiple(true);
 
             // console.log("ndxDim: ", ndxGroup.top(Infinity));
+
             FinalOrderChart
-                .width(768)
-                .height(480)
+                .width(700 + margin.left + margin.right)
+                .height(410 + margin.top + margin.bottom)
                 .symbolSize(10)
                 .group(ndxGroup)
+                // .data(function(group) {
+                //     return group.all()
+                //         .sort(function(a) {
+                //             return d3.ascending(a.ForecastDate);
+                //         });
+                // })
                 .dimension(ndxDim)
-                // .legend(dc.legend().x(60).y(440).itemHeight(10).gap(1))
                 .colorAccessor(function(d) {
                     return d.key[2];
                 })
@@ -526,26 +570,29 @@ else {
                 .valueAccessor(function(d) {
                     return d.key[1];
                 })
-
-                .x(d3.scaleLinear().domain(d3.extent(finalOrder, function(d) {
-                    return d.ForecastPeriod
-                })))
-                .brushOn(true)
+                .excludedSize(2)
+                .excludedOpacity(0.5)
+                // .x(d3.scaleLinear().domain([minWeek, maxWeek]))
+                .x(d3.scaleTime().domain(d3.extent(finalOrder, function(d) {
+                    return d.ForecastDate
+                }))
+                .range([0, 410]) 
+                )
+                .brushOn(false)
                 .clipPadding(10)
                 .xAxisLabel("Due Date (forecast period)")
-                // .xAxisPadding(10)
                 .yAxisLabel("Order Amount (pcs)")
                 .renderTitle(true)
                 .title(function(d) {
                     return [
                         'Product: ' + d.key[2],
                         'Order Amount: ' + d.key[1],
-                        'Forecast Period: ' + d.key[0]
+                        'Forecast Period: ' + d.key[3]
                     ].join('\n');
                 })
-                .elasticX(true)
-                .elasticY(true)
-
+                // .elasticY(true)
+                // .elasticX(true)
+                
                 .on('renderlet', function(FinalOrderChart) {
                     var x_vert = lineWidth;
                     var extra_data = [{
@@ -577,10 +624,11 @@ else {
                         .merge(path);
                     path.attr('d', line);
                 })
-                .xAxis().tickFormat(d3.format('d'));
+                // .xAxis().tickFormat(d3.format('d'));
+                .xAxis().tickFormat(d3.timeFormat("%V"));
 
             FinalOrderChart.symbol(d3.symbolCircle);
-            // FinalOrderChart.margins().left = 50;
+            FinalOrderChart.margins(margin);
 
             visCount
                 .dimension(ndx)
@@ -616,13 +664,6 @@ else {
             //     .attr("alignment-baseline", "middle")
 
             tabulate(valuesToPrint, ['Description', 'Value']);
-
-            const margin = {
-                left: 55,
-                right: 25,
-                top: 20,
-                bottom: 30
-            };
 
             console.log("DataMin: ", dataMin);
             console.log("DataMax: ", dataMax);
