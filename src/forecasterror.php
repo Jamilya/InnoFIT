@@ -450,6 +450,14 @@ else {
             var forecastPeriodGroup = forecastPeriodDim.group();
             var productGroup = productDim.group();
             var ndxGroup = ndxDim.group();
+            // var group = ndxDim.group();
+            // var reducer = reductio()
+            //     .exception(function(d) {
+            //         return d.PeriodsBeforeDelivery;
+            //     })
+            //     .exceptionCount(true);
+            // reducer(group);
+
             var forecastErrorGroup = forecastErrorDim.group(function(d) {
                 return d.Deviation;
             });
@@ -508,6 +516,7 @@ else {
                 .clipPadding(10)
                 .xAxisLabel("Periods Before Delivery")
                 .yAxisLabel("Deviation")
+                .legend(dc.legend().x(790).y(10).itemHeight(20).gap(2))
                 .renderTitle(true)
                 .title(function(d) {
                     return [
@@ -522,6 +531,7 @@ else {
 
             forecastErrorChart.symbol(d3.symbolCircle);
             forecastErrorChart.margins(margin);
+            forecastErrorChart.legend(dc.legend().legendText("Actual Period"));
 
             visCount
                 .dimension(ndx)

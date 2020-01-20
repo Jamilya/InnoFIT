@@ -339,7 +339,7 @@ else {
                 bottom: 80,
                 left: 60
             },
-            width = 790 - margin.left - margin.right,
+            width = 900 - margin.left - margin.right,
             height = 650 - margin.top - margin.bottom;
 
         // append the svg object to the body of the page
@@ -444,7 +444,7 @@ else {
         }
         var mousemove = function(d) {
             tooltip
-                .html("Percentage error (deviation):<br> " + d.Deviation)
+            .html("Product: " + d.Product + "<br>"+ "Percentage error: " + d.Deviation  + "<br>" + "Actual Period: " + d.ActualPeriod + "<br>" + "Forecast Period: " +d.ForecastPeriod + "<br>")
                 .style("left", (d3.event.pageX + 20) + "px")
                 .style("top", (d3.event.pageY + 10) + "px")
         }
@@ -519,7 +519,7 @@ else {
             .text("");
 
         svg.append("text")
-            .attr("x", 250)
+            .attr("x", 345)
             .attr("y", 610)
             .attr("text-anchor", "left")
             .style("font-size", "12px sans-serif")

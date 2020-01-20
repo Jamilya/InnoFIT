@@ -70,14 +70,14 @@ else {
     .tick text,
     .legendCells text {
         fill: #635F5D;
-        font-size: 11px;
+        font-size: 12px;
         font-family: sans-serif;
     }
 
     .axis-label,
     .legend-label {
         fill: #635F5D;
-        font-size: 11px;
+        font-size: 12px;
         font-family: sans-serif;
     }
 
@@ -91,6 +91,11 @@ else {
 
     .tick line {
         stroke: #C0C0BB;
+    }
+
+    div {
+        padding-right: 10px;
+        padding-left: 10px;
     }
 
     .info-container {
@@ -307,13 +312,13 @@ else {
                         <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
                             href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
                     </div><br /><br />
-                    <button onclick="myFunction()">Data table display</button>
+                    <!-- <button onclick="myFunction()">Data table display</button>
                     <table class="table table-hover dc-data-table" id="myTable" style="display:none">
-                    </table>
+                    </table> -->
                 </div>
             </div>
         </div>
-        <script>
+        <!-- <script>
         function myFunction() {
             var x = document.getElementById("myTable");
             if (x.style.display === "none") {
@@ -322,7 +327,7 @@ else {
                 x.style.display = "none";
             }
         }
-        </script>
+        </script> -->
         <script>
         $(document).ready(function() {
             if (localStorage.getItem('checkFiltersActive') === 'true') {
@@ -331,87 +336,23 @@ else {
                 $('#filterInfo').hide();
             }
         });
+        const margin = {
+            top: 10,
+            right: 10,
+            bottom: 80,
+            left: 80
+        };
         localforage.getItem("viz_data", function(error, data) {
             data = JSON.parse(data);
 
             let finalOrder = data.filter((el) => {
                 return el.PeriodsBeforeDelivery == 0;
             });
-            const margin = {
-                left: 55,
-                right: 25,
-                top: 20,
-                bottom: 30
-            };
 
             var periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
                 visCount = dc.dataCount(".dc-data-count"),
-                composite = dc.compositeChart("#compositeChart"),
-                visTable = dc.dataTable(".dc-data-table");
-
-            // let uniqueArray = data.filter(function(obj) {
-            //     return finalOrder.indexOf(obj) == -1;
-            // });
-
-            // let sumOfAllFinalOrders = finalOrder.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-            // console.log('Sum of all final Orders: ', sumOfAllFinalOrders);
-
-            // let dataGroupedByPBD = d3.nest()
-            //     .key(function(d) {
-            //         return d.PeriodsBeforeDelivery;
-            //     })
-            //     .entries(uniqueArray);
-
-            // let finalMFB = dataGroupedByPBD.map((val) => {
-            //     let sum = val.values.map(item => item.OrderAmount).reduce((a, b) => +a + +b);
-            //     let mfbCurrentPBD = sum / sumOfAllFinalOrders;
-            //     return {
-            //         ActualPeriod: val.ActualPeriod,
-            //         ForecastPeriod: val.ForecastPeriod,
-            //         PeriodsBeforeDelivery: val.key,
-            //         OrderAmount: JSON.stringify(mfbCurrentPBD)
-            //     };
-            // });
-
-            // let newValueMap = new Map(); // Map of Mean forecast bias
-            // finalMFB.forEach((val) => {
-            //     let keyString = val.PeriodsBeforeDelivery;
-            //     let valueString = val.OrderAmount;
-            //     newValueMap.set(keyString, valueString);
-            // });
-            // console.log("newValueMap: ", newValueMap.values());
-
-
-            // let divisionOne = function(uniqueArray, finalMFB) { //Calculate division of forecasted orders
-            //     return uniqueArray.OrderAmount / finalMFB;
-            // }
-
-            // let divisionArray = uniqueArray.map((el) => {
-            //     let divArray = divisionOne(el, newValueMap.get(el.PeriodsBeforeDelivery))
-            //     return {
-            //         ActualDate: el.ActualDate,
-            //         ForecastPeriod: el.ForecastPeriod,
-            //         //  OrderAmount: el.OrderAmount,
-            //         Product: el.Product,
-            //         PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-            //         OrderAmount: divArray
-            //     };
-            // });
-            // console.log("divisionArray: ", divisionArray);
-
-
-            // let secondValueMap = new Map();
-            // divisionArray.forEach((val) => {
-            //     let keyString = val.PeriodsBeforeDelivery;
-            //     let valueString = val.OrderAmount;
-            //     secondValueMap.set(keyString, valueString);
-            // });
-            // console.log("secondValueMap: ", secondValueMap);
-
-
-            // let squaredDiff = function(originalEl, divisionArray) {
-            //     return Math.pow((originalEl.OrderAmount - divisionArray), 2);
-            // }
+                composite = dc.compositeChart("#compositeChart");
+            // visTable = dc.dataTable(".dc-data-table");
 
             let valueMap = new Map();
             finalOrder.forEach((val) => {
@@ -420,51 +361,12 @@ else {
                 valueMap.set(keyString, valueString);
             });
 
-
-            // let squaredDifference = divisionArray.map((el) => {
-            //     let value = squaredDiff(el, valueMap.get(el.ForecastPeriod));
-            //     return {
-            //         ActualDate: el.ActualDate,
-            //         OrderAmount: el.OrderAmount,
-            //         PeriodsBeforeDelivery: (el.PeriodsBeforeDelivery),
-            //         SquaredDiff: value
-            //     };
-            // });
-            // console.log("squared Diff: ", squaredDifference);
-
-
-            // let seperatedByPeriodsTwo = d3.nest()
-            //     .key(function(d) {
-            //         return d.PeriodsBeforeDelivery
-            //     })
-            //     .entries(squaredDifference);
-            // console.log("seperatedByPeriodsTwo: ", seperatedByPeriodsTwo);
-
-            // let bubu = seperatedByPeriodsTwo.map((el) => {
-            //     for (i = 0; i < seperatedByPeriodsTwo.length; i++) {
-            //         let CRMSE = Math.sqrt(d3.mean(el.values, function(d) {
-            //             return d.SquaredDiff;
-            //         }), 2);
-            //         return {
-            //             ActualDate: el.values[i].ActualDate,
-            //             PeriodsBeforeDelivery: el.key,
-            //             MeanOfThisPeriod: CRMSE.toFixed(3)
-            //         };
-            //     }
-            // });
-            // console.log("final CRMSE Array: ", bubu);
-            // bubu.forEach(function(d) {
-            //     d.ActualDate = new Date(d.ActualDate);
-            // });
-
-            //MFB calculation
-
             let finalOrdersForecastPeriods = new Map();
             finalOrder.map(e => {
                 finalOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
             });
             console.log('FINAL ORDER MAP: ', finalOrdersForecastPeriods);
-
+            ///////////////////////////////////////////                * CRMSE Calc **           ///////////////////////////////////////////
             //Order All data by PBD
             // Order the Final Orders
 
@@ -507,23 +409,43 @@ else {
                 let sumFinalOrders = 0;
                 let forecastSum = 0;
                 // MFB
-
+                let division = [];
+                let difference = [];
                 forecastItems.forEach(e => {
                     if (finalOrdersForecastPeriods.get(e) !== undefined) {
                         sumFinalOrders += parseInt(finalOrdersForecastPeriods.get(e), 0);
                         forecastSum += parseInt(forecastOrdersForecastPeriods.get(e), 0);
                     }
                 });
-                console.log('items: ', items);
                 let mfbValue = forecastSum / sumFinalOrders;
 
-                let calcByPBD = items.map(el => el.PeriodsBeforeDelivery);
-                let difference = [];
-                calcByPBD.forEach(e => {
-                    difference.push(Math.pow(finalOrdersForecastPeriods.get(e) - forecastOrdersForecastPeriods.get(e)));
+                forecastItems.forEach(e => {
+                    if (forecastOrdersForecastPeriods.get(e) !== undefined) {
+                        division.push({
+                            key: e,
+                            value: forecastOrdersForecastPeriods.get(e) / mfbValue
+                        });
+                    }
+                })
+                divisionCalc = new Map();
+                division.map(e => {
+                    divisionCalc.set(e.key, e.value);
+                });
+                console.log('divisionCalc: ', divisionCalc);
+
+                forecastItems.forEach(e => {
+                    if (finalOrdersForecastPeriods.get(e) !== undefined) {
+                        difference.push(parseInt((finalOrdersForecastPeriods.get(e)) -
+                            divisionCalc.get(e)));
+                    }
                 })
 
-                console.log('calcByPBD: ', calcByPBD);
+                let mathPow = difference.map(x => x ** 2);
+
+                console.log('difference: ', difference);
+                let average = d3.mean(mathPow);
+                let crmseCalc = Math.sqrt(average);
+
 
                 return {
                     PeriodsBeforeDelivery: el.key,
@@ -532,26 +454,32 @@ else {
                     ForecastPeriod: el.values[0].ForecastPeriod,
                     ActualDate: el.values[0].ActualDate,
                     MFB: mfbValue.toFixed(3),
-                    division: difference / mfbValue
-                    // CRMSE: Math.sqrt(d3.mean(division))
+                    CRMSE: crmseCalc
                 }
             });
-            console.log('Forecast, FinalOrders, MFB, CRMSE all orderByPBD: ', calculationsOrderByPBD);
+            console.log('CRMSE: ', calculationsOrderByPBD);
+            newFinalArray1 = calculationsOrderByPBD.filter((el) => {
+                return !isNaN(el.CRMSE);
+            })
 
-            calculationsOrderByPBD.forEach(function(d) {
-                d.ActualDate = new Date(d.ActualDate);
+            newFinalArray1.forEach(function(d) {
+                d.ActualDate = new Date(d.ActualDate),
+                    d.ForecastDate = new Date(d.ForecastDate)
             });
+            let periodsBD = newFinalArray1.map(function(d) {
+                return d.PeriodsBeforeDelivery
+            });
+            let periodsMax = Math.max(...periodsBD);
 
 
-            /**    RMSE Calc */ ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /**    RMSE Calc */ /////////////////////////////////////////////////
 
             let powerDiff = function(orignalEl, finalOrder) {
                 return Math.pow((orignalEl.OrderAmount - finalOrder), 2);
             }
 
-
             let squaredAbsValuesArray = uniqueArray.map((el) => {
-                let value = powerDiff(el, valueMap.get(el.ActualPeriod));
+                let value = powerDiff(el, valueMap.get(el.ForecastPeriod));
                 return {
                     ActualDate: el.ActualDate,
                     PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
@@ -577,70 +505,69 @@ else {
                     };
                 }
             });
-            console.log("bebe:", bebe);
+            console.log("RMSE array:", bebe);
+            newFinalArray2 = bebe.filter((el) => {
+                return !isNaN(el.RMSE);
+            })
 
 
 
-            const mergeById = (calculationsOrderByPBD, bebe) =>
-            calculationsOrderByPBD.map(itm => ({
-                    ...bebe.find((item) => (item.PeriodsBeforeDelivery === itm
+            const mergeById = (newFinalArray1, newFinalArray2) =>
+                newFinalArray1.map(itm => ({
+                    ...newFinalArray2.find((item) => (item.PeriodsBeforeDelivery === itm
                         .PeriodsBeforeDelivery) && item),
                     ...itm
                 }));
 
-            console.log("merged array:", mergeById(calculationsOrderByPBD, bebe));
+            console.log("merged array:", mergeById(newFinalArray1, newFinalArray2));
 
-            bebe.forEach(function(d) {
-                d.ActualDate = new Date(d.ActualDate);
+            newFinalArray2.forEach(function(d) {
+                d.ActualDate = new Date(d.ActualDate),
+                    d.ForecastDate = new Date(d.ForecastDate);
             });
 
+            // var ndx = crossfilter(mergeById(newFinalArray1, newFinalArray2));
 
-            // const yMax = Math.max.apply(Math,mergeById(bubu, bebe).map(function(o){return o.MeanOfThisPeriod;}))
-            // var yMax = function(arr) {
-            //     return arr.reduce(
-            //         function(acc, cur) {
-            //             var max = Math.max(acc, cur)
-            //             if (isNaN(max)) {
-            //                 return (isNaN(max) ? acc : max);
-            //             }
-            //             return max;
-            //         });
-            // }
-            // console.log(yMax(mergeById(bubu, bebe)));
-
-            // var dataMax = mergeById(bubu, bebe).reduce(function(prev, current) {
-            //     return (prev.MeanOfThisPeriod > current.MeanOfThisPeriod) ? prev
-            //         .MeanOfThisPeriod2 : current
-            //         .MeanOfThisPeriod2
+            // var ndxDim = ndx.dimension(function(d) {
+            //     return [+d.PeriodsBeforeDelivery, +d.RMSE, +d.CRMSE];
             // });
-            // console.log("dataMax", dataMax);
 
-            var ndx = crossfilter(mergeById(calculationsOrderByPBD, bebe));
+            // var CRMSEDim = ndx.dimension(function(d) {
+            //     return +d.CRMSE;
+            // });
+            // var RMSEDim = ndx.dimension(function(d) {
+            //     return +d.RMSE;
+            // })
+
+            var ndx = crossfilter();
+            ndx.add(mergeById(newFinalArray1, newFinalArray2).map(function(d) {
+                return {
+                    x: +d.PeriodsBeforeDelivery,
+                    y2: 0,
+                    y1: d.CRMSE,
+                    ActualDate: +d.ActualDate
+                };
+            }));
+            ndx.add(mergeById(newFinalArray1, newFinalArray2).map(function(d) {
+                return {
+                    x: +d.PeriodsBeforeDelivery,
+                    y1: 0,
+                    y2: d.RMSE,
+                    ActualDate: +d.ActualDate
+                };
+            }));
             var all = ndx.groupAll();
-            var CRMSEDim = ndx.dimension(function(d) {
-                return +d.MeanOfThisPeriod;
-            });
-            var RMSEDim = ndx.dimension(function(d) {
-                return +d.RMSE;
-            })
-            var ndxDim = ndx.dimension(function(d) {
-                return [+d.PeriodsBeforeDelivery, +d.RMSE, +d.MeanOfThisPeriod];
-            });
 
-            var periodsBeforeDeliveryDim = ndx.dimension(function(d) {
-                return +d.PeriodsBeforeDelivery;
-            });
-            var dateDim = ndx.dimension(function(d) {
-                return +d.ActualDate;
-            });
+            var dim = ndx.dimension(dc.pluck('x')),
+                grp1 = dim.group().reduceSum(dc.pluck('y1')),
+                grp2 = dim.group().reduceSum(dc.pluck('y2'));
+            console.log("grp2: ", grp2.top(Infinity));
+            console.log("grp1: ", grp1.top(Infinity));
+            console.log("dim: ", dim.top(Infinity));
 
-            var CRMSEGroup = CRMSEDim.group().reduceSum(function(d) {
-                return d.RMSE;
-            });
-            var RMSEGroup = RMSEDim.group().reduceSum(function(d) {
-                return d.MeanOfThisPeriod;
-            });
-            var ndxGroup = ndxDim.group();
+            var periodsBeforeDeliveryDim = ndx.dimension(dc.pluck('x'));
+            var dateDim = ndx.dimension(dc.pluck('ActualDate'));
+
             var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
             var dateGroup = dateDim.group();
 
@@ -651,80 +578,44 @@ else {
                 .multiple(true)
                 .numberVisible(15);
 
-            // console.log("ndxDim: ", ndxGroup.top(Infinity));
 
             composite
-                .width(768)
-                .height(480)
-                .dimension(ndxDim)
-                .x(d3.scaleLinear().domain(d3.extent(mergeById(calculationsOrderByPBD, bebe), function(d) {
-                    return d.PeriodsBeforeDelivery
-                })))
+                .width(768 + margin.left + margin.right)
+                .height(480 + margin.top + margin.bottom)
+                .x(d3.scaleLinear().domain([0, periodsMax]))
+                // .x(d3.scaleLinear().domain(d3.extent(mergeById(newFinalArray1, newFinalArray2), function(d) {
+                //     return d.PeriodsBeforeDelivery
+                // })))
+                .brushOn(false)
+                .clipPadding(10)
                 .xAxisLabel("Periods Before Delivery")
                 .yAxisLabel("CRMSE & RMSE")
-                // .renderHorizontalGridLines(true)
-                .legend(dc.legend().x(720).y(10).itemHeight(20).gap(2))
+                .legend(dc.legend().x(790).y(10).itemHeight(20).gap(2))
                 .compose([
-                    dc.scatterPlot(composite)
-                    .dimension(ndxDim)
-                    .group(ndxGroup)
-                    .colors('green')
-                    .keyAccessor(function(d) {
-                        return d.key[0];
-                    })
-                    .valueAccessor(function(d) {
-                        return d.key[1];
-                    }),
+                    dc.lineChart(composite)
+                    .dimension(dim)
+                    .group(grp1, 'CRMSE')
+                    .colors(['green']),
+                    dc.lineChart(composite)
+                    .dimension(dim)
+                    .group(grp2, 'RMSE')
+                    .colors(['blue'])
+                    .dashStyle([2, 2])
+                ])
+                .xAxis().tickFormat(d3.format('d'));
+            composite.title(function(d) {
+                return ndx.dimension(dc.pluck('ActualDate')) + ' ' + key + '' + value;
+            });
 
-                    dc.scatterPlot(composite)
-                    .dimension(ndxDim)
-                    .group(ndxGroup)
-                    .colors('blue')
-                    .keyAccessor(function(d) {
-                        return d.key[0];
-                    })
-                    .valueAccessor(function(d) {
-                        return d.key[2];
-                    })
-                ]);
-            composite.selectAll('path.symbol')
-                .attr('opacity', 0.3);
-
-            composite.margins().left = 50;
+            composite.margins(margin);
 
             visCount
                 .dimension(ndx)
                 .group(all);
 
-            visTable
-                .dimension(dateDim)
-                .group(function(d) {
-                    var format = d3.format('02d');
-                    return d.ActualDate.getFullYear() + '/' + format((d.ActualDate.getMonth() + 1));
-                })
-                .columns([
-                    "PeriodsBeforeDelivery",
-                    "MeanOfThisPeriod",
-                    "RMSE"
-                ]);
+            // console.log("dateDim: ", dateGroup.top(Infinity));
 
             dc.renderAll();
-
-
-
-
-            var svg = d3.select("#new_legend")
-            svg.append("circle").attr("cx", 70).attr("cy", 15).attr("r", 6).style("fill", "red")
-            svg.append("circle").attr("cx", 180).attr("cy", 15).attr("r", 6).style("fill",
-                "green")
-
-            //svg.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#404080")
-            svg.append("text").attr("x", 90).attr("y", 15).text("CRMSE").style("font-size",
-                "15px").attr(
-                "alignment-baseline", "middle")
-            svg.append("text").attr("x", 200).attr("y", 15).text("RMSE").style("font-size",
-                "15px").attr(
-                "alignment-baseline", "middle")
 
 
         });

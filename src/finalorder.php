@@ -43,79 +43,8 @@ else {
 
 
     <style>
-    /* Adapt the margins according to screen size*/
-    @media all (max-width: 2000px) and (min-width: 1800px) {
-        .customContainer {
-            width: 30%;
-            height: 5%;
-            margin: 5px;
-        }
-
-        .col-md-4 {
-            font: 12px sans-serif;
-        }
-
-        .myScatter {
-            width: 15%;
-            height: 5%;
-            margin: 5px;
-        }
-
-        #selections_table,
-        #select1,
-        #forecastlist {
-            width: 35%-150px;
-            height: 5%-50px;
-            margin: 5px;
-        }
-    }
-
-//    .customContainer {
-//         height: calc(90vh - 450px);
-//         width: calc(90vh - 450px);
-//     }
-
-    @media all (max-width: 800px) {
-        .customContainer {
-            width: 20%;
-            height: 15%;
-            margin: 5px;
-        }
-
-        .col-md-4 {
-            font: 10px sans-serif;
-        }
-
-        .myScatter {
-            width: 30% - 450px;
-            height: 5%;
-            margin: 35px;
-        }
-
-        #scatter {
-            width: 30% - 150px;
-            height: 5%;
-            /* of body width */
-        }
-    }
-
-    #scatter>div {
-        display: inline-block;
-        margin: auto;
-        text-align: center;
-    }
-
-    #scatter>div:first-child {
-        width: 21%;
-    }
-
-    #scatter>div:nth-child(2) {
-        width: 12%;
-        /* or less */
-    }
-
-    #scatter>div:last-child {
-        width: 10%;
+    body {
+        margin: 0px;
     }
 
     .dc-chart .axis text {
@@ -327,18 +256,16 @@ else {
         <!--/.container-fluid -->
     </nav>
 
-    <div class="customContainer" id="myCustomContainer">
+    <div class="customContainer">
         <div class="row" style="margin-bottom: -2%;">
             <div class="col-md-10">
                 <h3>Final Order Amount</h3>
                 <small>
                     <?php
-    echo "You are logged in as: ";
-    print_r($_SESSION["session_username"]);
-    echo ".";
-    ?>
-                </small>
-                <br>
+        echo "You are logged in as: ";
+        print_r($_SESSION["session_username"]);
+        echo ".";
+        ?></small>
             </div>
             <div class="col-md-2">
                 <div id="filterInfo" class="alert alert-info" style="text-align: center" role="info">
@@ -372,17 +299,23 @@ else {
 
         <div class="row">
             <div class="col-md-8">
-                <div class="myScatter" id="scatter">
+                <div id="scatter">
                     <div class="clearfix"></div>
                 </div>
                 <div id="forecastlist">
                     <br />
-                    <p style="text-align:left;"><strong>Due date <br /><small>(due date: number of
+                    <p style="text-align:left;"><strong>Due Date <br /><small>(due date: no. of
+                                records)</small></strong></p>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="forecastWeek">
+                    <br />
+                    <p style="text-align:left;"><strong>Due date (forecast period) <br /><small>(due date: no. of
                                 records)</small></strong></p>
                     <div class="clearfix"></div>
                 </div>
                 <div id="select1"><br />
-                    <p style="text-align:left;"><strong>Product<br /><small>(product ID: number of
+                    <p style="text-align:left;"><strong>Product<br /><small>(product ID: no. of
                                 records)</small></strong></p>
                 </div>
                 <div style="clear: both"></div>
@@ -469,9 +402,9 @@ else {
         <script>
         const margin = {
             top: 10,
-            right: 7,
+            right: 10,
             bottom: 80,
-            left: 50
+            left: 80
         };
 
         localforage.getItem("viz_data", function(error, data) {
@@ -545,7 +478,8 @@ else {
                 visCount = dc.dataCount(".dc-data-count"),
                 FinalOrderChart = dc.scatterPlot("#scatter"),
                 visTable = dc.dataTable(".dc-data-table"),
-                select1 = dc.selectMenu("#select1");
+                select1 = dc.selectMenu("#select1"),
+                forecastWeek = dc.selectMenu("#forecastWeek");
 
             let minDate = d3.min(finalOrder, (d) => d.ForecastDate);
             let maxDate = d3.max(finalOrder, (d) => d.ForecastDate);
@@ -587,7 +521,7 @@ else {
             });
 
             var ndxDim = ndx.dimension(function(d) {
-                return [+d.ForecastDate, +d.OrderAmount, d.Product, +d.ForecastPeriod];
+                return [+d.ForecastDate, +d.OrderAmount, d.Product, +d.ForecastPeriod, d.ForecastDate];
             });
             var productDim = ndx.dimension(function(d) {
                 return d.Product;
@@ -605,6 +539,15 @@ else {
             var dateGroup = dateDim.group();
 
             forecastlist
+                .dimension(forecastDateDim)
+                .group(forecastDateGroup)
+                .multiple(true)
+                .numberVisible(15)
+                .title(function(d) {
+                    return `${new Date(d.key).toDateString()}:${d.value}`;
+                });
+
+            forecastWeek
                 .dimension(forecastPeriodDim)
                 .group(forecastPeriodGroup)
                 .multiple(true)
@@ -615,13 +558,19 @@ else {
                 .group(productGroup)
                 .multiple(true);
 
-            // console.log("ndxDim: ", ndxGroup.top(Infinity));
+            console.log("ndxDim: ", ndxGroup.top(Infinity));
 
             FinalOrderChart
                 .width(700 + margin.left + margin.right)
                 .height(410 + margin.top + margin.bottom)
                 .symbolSize(10)
                 .group(ndxGroup)
+                // .data(function(group) {
+                //     return group.all()
+                //         .sort(function(a) {
+                //             return d3.ascending(a.ForecastDate);
+                //         });
+                // })
                 .dimension(ndxDim)
                 .colorAccessor(function(d) {
                     return d.key[2];
@@ -652,18 +601,21 @@ else {
                     return [
                         'Product: ' + d.key[2],
                         'Order Amount: ' + d.key[1],
-                        'Forecast Period: ' + d.key[3]
+                        'Forecast Period: ' + d.key[3],
+                        'Forecast Date: ' + new Date(d.key[0]).toDateString()
                     ].join('\n');
                 })
+                // .elasticY(true)
+                // .elasticX(true)
 
                 .on('renderlet', function(FinalOrderChart) {
-                    var x_vert = lineWidth;
+                    var x_vert = width;
                     var extra_data = [{
                             x: 47,
                             y: FinalOrderChart.y()(dataMean)
                         },
                         {
-                            x: FinalOrderChart.x()(x_vert),
+                            x: x_vert,
                             y: FinalOrderChart.y()(dataMean)
                         }
                     ];

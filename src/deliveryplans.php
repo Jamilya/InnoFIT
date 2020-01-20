@@ -310,7 +310,12 @@ else {
             </div>
 
             <div id="forecastlist">
-                <p> <strong>Due date <br /><small>(due date: number of
+                <p> <strong>Due Date <br /><small>(due date: number of
+                            records)</small></strong></p>
+                <div class="clearfix"></div>
+            </div>
+            <div id="forecastWeek">
+                <p style="text-align:left;"><strong>Due date (forecast period) <br /><small>(due date: number of
                             records)</small></strong></p>
                 <div class="clearfix"></div>
             </div>
@@ -394,7 +399,8 @@ else {
                 visCount = dc.dataCount(".dc-data-count"),
                 DeliveryPlansChart = dc.scatterPlot("#scatter"),
                 visTable = dc.dataTable(".dc-data-table"),
-                productlist = dc.selectMenu("#productlist");
+                productlist = dc.selectMenu("#productlist"),
+                forecastWeek = dc.selectMenu("#forecastWeek");
 
             data.forEach(function(d) {
                 d.ActualDate = new Date(d.ActualDate),
@@ -410,7 +416,9 @@ else {
                 return +d.ForecastDate;
             });
             var ndxDim = ndx.dimension(function(d) {
-                return [+d.ForecastDate, +d.OrderAmount, +d.PeriodsBeforeDelivery, +d.ForecastPeriod];
+                return [+d.ForecastDate, +d.OrderAmount, +d.PeriodsBeforeDelivery, +d.ForecastPeriod, d
+                    .ForecastDate
+                ];
             });
             var productDim = ndx.dimension(function(d) {
                 return d.Product;
@@ -442,6 +450,15 @@ else {
             };
 
             forecastlist
+                .dimension(forecastDateDim)
+                .group(forecastDateGroup)
+                .multiple(true)
+                .numberVisible(15)
+                .title(function(d) {
+                    return `${new Date(d.key).toDateString()}:${d.value}`;
+                });
+
+            forecastWeek
                 .dimension(forecastPeriodDim)
                 .group(forecastPeriodGroup)
                 .multiple(true)
@@ -488,8 +505,8 @@ else {
                 // })))
                 .x(d3.scaleTime().domain(d3.extent(data, function(d) {
                         return d.ForecastDate
-                    }))
-                    .range([0, 410])
+                    })).clamp(true).nice()
+                    // .range([0, 410])
                 )
                 .brushOn(false)
                 .clipPadding(10)
@@ -500,10 +517,11 @@ else {
                     return [
                         'Periods Before Delivery: ' + d.key[2],
                         'Order Amount: ' + d.key[1],
-                        'Forecast Period: ' + d.key[3]
+                        'Forecast Period: ' + d.key[3],
+                        'Forecast Date: ' + new Date(d.key[0]).toDateString()
                     ].join('\n');
                 })
-                .xAxis().tickFormat(d3.timeFormat("%W"));
+                .xAxis().tickFormat(d3.timeFormat("%V"));
             // .xAxis().tickFormat(d3.format('d'));
             DeliveryPlansChart.margins(margin);
             DeliveryPlansChart.symbol(function(d) {

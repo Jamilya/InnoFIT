@@ -337,27 +337,31 @@ if (isset($_POST["import"])) {
 
                 $actualDate = DateTime::createFromFormat("Y-m-d H:i:s", "$column[1]");
                 $forecastDate = DateTime::createFromFormat("Y-m-d H:i:s", "$column[2]");
-                $actualDate = date("Y-m-d H:i:s",strtotime('-5 minutes',strtotime("$column[1]")));
-                $forecastDate = date("Y-m-d H:i:s",strtotime('-5 minutes',strtotime("$column[2]")));
-                $newactualDate = date("Y-m-d H:i:s",strtotime($actualDate));
-                $newforecastDate = date("Y-m-d H:i:s",strtotime($forecastDate));
+                $actualDate = date("Y-m-d H:i:s",strtotime('0 minutes',strtotime("$column[1]")));
+                $forecastDate = date("Y-m-d H:i:s",strtotime('0 minutes',strtotime("$column[2]")));
                 $pbdSubtr = 52;
                 $forecastYear = date("Y",strtotime($forecastDate));
-                $actualYear = date("Y",strtotime($newactualDate));
-                $actualWeek = date("W", strtotime($newactualDate));
+                $actualYear = date("Y",strtotime($actualDate));
+                $actualWeek = date("W", strtotime($actualDate));
                 $forecastWeek = date("W", strtotime($forecastDate));
 
                 if ($actualYear == $forecastYear){
                     $pbd = $forecastWeek - $actualWeek;
-                } elseif  ($actualYear < $forecastYear){
+                } elseif  ($actualYear < $forecastYear && ($actualWeek != "1")){
                     $pbd = $forecastWeek - $actualWeek + $pbdSubtr * ($forecastYear - $actualYear);
+                } elseif (($actualYear < $forecastYear) && ($actualWeek == "1")) {
+                    $pbd = $forecastWeek;
+                }
+                else {
+                    $pbd = $forecastWeek;
+                  //  $pbd = $actualWeek - $forecastWeek + $pbdSubtr; // in case of backlog = when forecast is behind the actual date
                 }
                 
                 $actualDay = date("d", strtotime("$column[1]"));
                 $forecastDay = date("d", strtotime("$column[2]"));                
 
             $sqlInsert = "INSERT into `newOrders` (Product, ActualDate, ForecastDate, OrderAmount, ActualDay, ActualPeriod, ForecastDay, ForecastPeriod, ActualYear, ForecastYear, PeriodsBeforeDelivery, username, Date )
-            values ('$column[0]', '$column[1]', '$column[2]','$column[3]', $actualDay, $actualWeek, $forecastDay, $forecastWeek, $actualYear, $forecastYear, $pbd, '{$_SESSION['session_username']}', NOW())";
+            values ('$column[0]', '$actualDate', '$forecastDate','$column[3]', $actualDay, $actualWeek, $forecastDay, $forecastWeek, $actualYear, $forecastYear, $pbd, '{$_SESSION['session_username']}', NOW())";
             $result = mysqli_query($conn, $sqlInsert);
     
             if (! empty($result)) {
