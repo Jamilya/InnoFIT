@@ -1,3 +1,16 @@
+<?php
+ob_start(); ?>
+<?php
+session_start();
+
+// if(session_id() !== '' || !isset($_SESSION["session_username"])) {
+    if(!isset($_SESSION["session_username"])) {
+    header("Location:includes/login.php");
+}
+ 
+ ?>
+<?php require_once("includes/connection.php"); ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
