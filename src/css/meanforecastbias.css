@@ -1,0 +1,113 @@
+body {
+    margin: 0px;
+    top: 0 !important;
+}
+
+.dc-chart .axis text {
+    font: 11px sans-serif;
+}
+
+.dc-chart .brush rect.selection {
+    fill: #4682b4;
+    fill-opacity: .125;
+}
+
+.dc-chart .symbol {
+    stroke: #000;
+    stroke-width: 0.5px;
+}
+
+.domain {
+    /* display: none; */
+    stroke: #635F5D;
+    stroke-width: 1;
+}
+
+.tick text,
+.legendCells text {
+    fill: #635F5D;
+    font-size: 11px;
+    font-family: sans-serif;
+}
+
+.axis-label,
+.legend-label {
+    fill: #635F5D;
+    font-size: 12px;
+    font-family: sans-serif;
+}
+
+/*  .axis path, */
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+.tick line {
+    stroke: #C0C0BB;
+}
+
+div {
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.info-container {
+    display: inline-block;
+    width: calc(100% + -50px);
+    vertical-align: middle;
+}
+
+.customContainer {
+    padding: 0 3% 0 3%;
+}
+
+a.gflag {
+    vertical-align: middle;
+    font-size: 16px;
+    padding: 1px 0;
+    background-repeat: no-repeat;
+    background-image: url(//gtranslate.net/flags/16.png);
+}
+
+a.gflag img {
+    border: 0;
+}
+
+a.gflag:hover {
+    background-image: url(//gtranslate.net/flags/16a.png);
+}
+
+#goog-gt-tt {
+    display: none !important;
+}
+
+.goog-te-banner-frame {
+    display: none !important;
+}
+
+.goog-te-menu-value:hover {
+    text-decoration: none !important;
+}
+
+#google_translate_element2 {
+    display: none !important;
+}
+
+#myTable {
+    margin-top: 20px;
+}
+
+.badge {
+    padding: 4px 8px !important;
+}
+
+#forecastlist, #forecastWeek, #select1 {
+    width: 80%;
+}
+
+.dc-select-menu {
+    width: 100% !important;
+}

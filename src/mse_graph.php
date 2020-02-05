@@ -44,11 +44,6 @@ else {
         size: 4980736, // Size of database, in bytes. WebSQL-only for now.
     });
     </script>
-
-    <style>
-
-    </style>
-
 </head>
 
 <body>
