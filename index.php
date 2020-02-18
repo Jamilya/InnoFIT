@@ -428,12 +428,18 @@ if (isset($_POST["import"])) {
         <br><br>
         <div class="col-md-13">
             <h3>Data format:</h3>
-            <p> Please upload your data in .csv format in the correct data structure.
-                The correct data structure is shown in the table below. Set the dates (ActualDate and ForecastDate)
+            <p> Please upload your data in .csv (comma-separated value) format in the defined data structure, please
+                keep comma <b>(,) </b>as a delimiter.
+                The required data structure is shown in the image below. Set the dates (ActualDate and ForecastDate)
                 format as: <b>YYYY-MM-DD
-                    (year-month-day) and format as a date</b>. Please keep Order Amounts as <b>integers</b>.
+                    (year-month-day) </b> and keep the format as <b>a date</b>. Please keep OrderAmount values as
+                <b>integers</b>.
                 <!-- For MS Office in German language please add a new line in the beginning of the file: <b>sep=; </b>and
                 save the file as .csv. -->
+            </p>
+            <p>The detailed description of data format requirements can be found here:
+                <a href="src/dataformat.php">Data Format Requirements </a>
+                <br />
             </p>
             <!-- <u>Step 1:</u> Create a new Excel file and add the data, so that values of each column (Product, ActualDate,
         ForecastDate, OrderAmount) are in a separate column.
@@ -443,8 +449,8 @@ if (isset($_POST["import"])) {
         documents.<br>
         <u>Step 3:</u> Save the file as "CSV (Comma delimited) (*.csv)" -->
             <br>
-            <p>The format of the table headings and structure:<br><br> <img src="/data/img/newExampleData.jpg"
-                    alt="Data Format Example" align="middle" height="185" width="420"><br></p>
+            <p>The format of the table headings and structure:<br><br> <img src="/data/img/example_3.jpg"
+                    alt="Data Format Example" align="middle" height="175" width="360"><br></p>
             <br>
         </div>
         <div class="col-md-13">
@@ -461,7 +467,7 @@ if (isset($_POST["import"])) {
             <!-- Copyright -->
             <div class="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-2 text-center">
                 <br>
-                <p> Copyright © 2019 St. Pölten University of Applied Sciences <u>
+                <p> Copyright © 2020 St. Pölten University of Applied Sciences <u>
                         <ul><a href="https://projekte.ffg.at/projekt/3042801">InnoFIT Research Project </a></ul>
                     </u></p>
             </div>
