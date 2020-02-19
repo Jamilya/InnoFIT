@@ -320,9 +320,9 @@ else {
                 </div>
                 <div style="clear: both"></div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" style="text-align: center" role="info">
                 <br />Statistical measures:<br />
-                <div id="selections_table"></div>
+                <div id="selections_table" style="text-align: center" role="info"></div>
                 <br /><br />
                 <script>
                 $(document).ready(function() {
