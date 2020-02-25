@@ -6,7 +6,6 @@ if(session_id() == '' || !isset($_SESSION)) {
 else {
     header("Location: includes/login.php");
 };?>
-
 <!DOCTYPE html>
 <html lang="en">
 <meta charset="utf-8">
@@ -17,8 +16,8 @@ else {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="/data/ico/innofit.ico">
-    <title>Percentage Error</title>
+    <link rel="icon" href="/data//ico/innofit.ico">
+    <title>Normalized Root Mean Square Error (RMSE*) Graph</title>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
         integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
     </script>
@@ -91,27 +90,6 @@ else {
         stroke: #C0C0BB;
     }
 
-    .d3-tip {
-        line-height: 1;
-        font-weight: bold;
-        padding: 12px;
-        background: rgba(0, 0, 0, 0.8);
-        color: #fff;
-        border-radius: 2px;
-    }
-
-    .d3-tip:after {
-        box-sizing: border-box;
-        display: inline;
-        font-size: 10px;
-        width: 100%;
-        line-height: 1;
-        color: rgba(0, 0, 0, 0.8);
-        content: "\25BC";
-        position: absolute;
-        text-align: center;
-    }
-
     div {
         padding-right: 10px;
         padding-left: 10px;
@@ -163,9 +141,11 @@ else {
         display: none !important;
     }
     </style>
+
 </head>
 
 <body>
+
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -188,19 +168,21 @@ else {
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
                             <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
-                            <li class="active"><a href="./forecasterror.php">Percentage Error <span
-                                        class="sr-only">(current)</span></a></li>
+                            <li><a href="./forecasterror.php">Percentage Error</a></li>
                             <li><a href="./matrixvariance.php">Delivery Plans Matrix with Percentage Error </a></li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
+                            <li class="active"><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)
+                                    <span class="sr-only">(current)</span></a></li>
                             <li><a href="./mpe.php">Mean Percentage Error (MPE) </a></li>
                             <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
+                    <!-- </ul> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Corrections <span class="caret"></span> </a>
@@ -231,6 +213,8 @@ else {
                         <script type="text/javascript"
                             src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit2">
                         </script>
+
+
                         <script type="text/javascript">
                         /* <![CDATA[ */
                         eval(function(p, a, c, k, e, r) {
@@ -262,18 +246,22 @@ else {
 
                 </ul>
             </div>
+            <!--/.nav-collapse -->
         </div>
+        <!--/.container-fluid -->
     </nav>
+
+
     <div class="customContainer">
         <div class="row" style="margin-bottom: -2%;">
             <div class="col-md-10">
-                <h3>Percentage Error</h3>
+                <h3>Normalized Root Mean Square Error (RMSE*)</h3>
                 <small>
                     <?php
-        echo "You are logged in as: ";
-        print_r($_SESSION["session_username"]);
-        echo ".";
-        ?></small>
+                echo "You are logged in as: ";
+                print_r($_SESSION["session_username"]);
+                echo ".";
+                ?></small>
                 <br>
             </div>
             <div class="col-md-2">
@@ -292,52 +280,43 @@ else {
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <br />
-                <p><b> Graph Description:</b> This graph shows the Information Quality (IQ) representation for each
-                    final order with
-                    respect to
-                    the
-                    periods before delivery (PBD). The relative deviation is calculated
-                    comparing the forecasted order amounts to the final order amounts with respect to periods before
-                    delivery.<br>
-                    The formula of the Percentage Error:
-                    <img src="https://latex.codecogs.com/gif.latex?e_{i,j} = \frac{ x_{i,j} - x_{i,0} }{x_{i,0}}"
-                        title="Percentage (forecast) Error formula" />.
-                </p>
-            </div>
-        </div>
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script>
-
-        <div class="row">
-            <div id="scatter">
-                <div class="clearfix"></div>
+            <div class="row">
+                <div class="col-md-12">
+                    <br />
+                    <p> <b>Graph Description:</b> This graph shows the Normalized Root Mean Square Error (RMSE*) graph
+                        with respect to periods before
+                        delivery
+                        (PBD).
+                        <br> Root Mean Square Error like the Mean Squared error, also measures
+                        accuracy (zero meaning perfect score). The Formula of the Normalized Root Mean Square Error
+                        (RMSE*) is:
+                        <img src="https://latex.codecogs.com/gif.latex?RMSE*_{j} = \frac{\sqrt{\frac{1}{n}\sum_{i=1}^{n} ( x_{i,j} - x_{i,0})^{2}}}{\frac{1}{n}\sum_{i=1}^{n} x_{i,0}}"
+                            title="NRMSE formula" />. </p>
+                    <!-- \sqrt{\frac{1}{n}\sum_{i=1}^{n} ( x_{i,j} - x_{i,0})^{2}} -->
+                </div>
             </div>
 
-            <div id="forecastlist">
-                <br />
-                <p> <strong>Due date <br /><small>(due date: number of records) </small></strong></p>
-                <div class="clearfix"></div>
-            </div>
-            <div id="pbd"><br />
-                <p><strong>Periods Before Delivery (PBD) <br /><small>(PBD: number of records)</small></strong></p>
-            </div>
-            <div style="clear: both"></div>
-            <br />
-            <div id="d3Legend"></div>
-            <div>
-                <div class="dc-data-count">
-                    <span class="filter-count"></span> selected out of <span class="total-count"></span>records |
-                    <a href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
-                </div><br /><br />
-                <button onclick="myFunction()">Data table display</button>
-                <table class="table table-hover dc-data-table" id="myTable" style="display:none">
-                </table>
-            </div>
-            <div><br />
+            <div class="row">
+                <div id="scatter">
+                    <div class="clearfix"></div>
+                </div>
+
+                <div id="pbd">
+                    <p style="text-align:center;"><strong>Periods Before Delivery (PBD)<br /><small>(PBD: number of
+                                records)</small></strong></p>
+                </div>
+                <div style="clear: both"></div>
+
+
+                <div>
+                    <div class="dc-data-count">
+                        <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
+                            href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
+                    </div><br /><br />
+                    <button onclick="myFunction()">Data table display</button>
+                    <table class="table table-hover dc-data-table" id="myTable" style="display:none">
+                    </table>
+                </div>
             </div>
         </div>
         <script>
@@ -368,23 +347,96 @@ else {
         localforage.getItem("viz_data", function(error, data) {
             data = JSON.parse(data);
 
-            let calcDeviation = function(orignalEl, finalOrder) {
-                return (orignalEl.OrderAmount - finalOrder) / finalOrder;
-            }
-            let filterValues = data.filter((el) => {
+            let finalOrder = data.filter((el) => {
                 return el.PeriodsBeforeDelivery == 0;
             });
-            console.log("Final Orders: ", filterValues);
+            let finalOrderForecastPeriods = finalOrder.map(e => e.ForecastPeriod);
+
+            let finalOrdersForecastPeriods = new Map();
+            finalOrder.map(e => {
+                finalOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
+            });
+
+            var forecastlist = dc.selectMenu("#forecastlist"),
+                periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
+                visCount = dc.dataCount(".dc-data-count"),
+                NRMSEchart = dc.scatterPlot("#scatter"),
+                visTable = dc.dataTable(".dc-data-table"),
+                productlist = dc.selectMenu("#productlist");
+
+            let powerDiff = function(orignalEl, finalOrder) {
+                return Math.pow((orignalEl.OrderAmount - finalOrder), 2);
+            }
+
+            let uniqueArray = data.filter(function(obj) {
+                return finalOrder.indexOf(obj) == -1;
+            });
+
             let valueMap = new Map();
-            filterValues.forEach((val) => {
+            finalOrder.forEach((val) => {
                 let keyString = val.ActualPeriod;
                 let valueString = val.OrderAmount;
                 valueMap.set(keyString, valueString);
             });
-            console.log("Mapped final order array: ", valueMap);
+            //////// Calculate max number of forecast periods in forecasts array/////////////////////////////
+            let maxActualPeriod = Math.max.apply(Math, finalOrder.map(function(o) {
+                return o.ActualPeriod;
+            }))
 
-            let finalArray = data.map((el) => {
-                let deviation = calcDeviation(el, valueMap.get(el.ForecastPeriod))
+            let orderByPBD = d3.nest()
+                .key(function(d) {
+                    return d.PeriodsBeforeDelivery;
+                })
+                .entries(uniqueArray);
+
+            let calculationsOrderByPBD = orderByPBD.map((elem) => {
+                let pbdForecasts = elem.values.map(e => e.ForecastPeriod);
+                // ALL valid Forecast Periods for each Period before delivery
+                let validForecasts = finalOrderForecastPeriods.filter(value => -1 !== pbdForecasts
+                    .indexOf(value));
+
+                let noFinalOrders = validForecasts.length;
+
+                let sumFinalOrders = 0;
+                validForecasts.forEach(e => {
+                    if (finalOrdersForecastPeriods.get(e) !== undefined) {
+                        sumFinalOrders += parseInt(finalOrdersForecastPeriods.get(e), 0);
+                    }
+                });
+                let meanFinalOrders = sumFinalOrders / noFinalOrders;
+                console.log('MEAN', meanFinalOrders, ' for PBD: ', elem.values[0]
+                    .PeriodsBeforeDelivery);
+
+                return {
+                    PeriodsBeforeDelivery: elem.key,
+                    // Product: elem.values[0].Product,
+                    // ActualPeriod: elem.values[0].ActualPeriod,
+                    // ForecastPeriod: elem.values[0].ForecastPeriod,
+                    // ActualDate: elem.values[0].ActualDate,
+                    // ForecastDate: elem.values[0].ForecastDate,
+                    // OrderAmount: elem.values[0].OrderAmount,
+                    MeanFinalOrders: meanFinalOrders
+                }
+            });
+            console.log("Mean Final Orders By PBD: ", calculationsOrderByPBD);
+
+            let squaredAbsValuesArray = uniqueArray.map((el) => {
+                let value = powerDiff(el, valueMap.get(el.ForecastPeriod));
+                // let finalOrderSum = 0;
+                // finalOrderSum += parseInt(valueMap.get(el.ForecastPeriod));
+                // let items = valueMap.get(el.ForecastPeriod);
+                // let periodsBeforeDelivery = el.PeriodsBeforeDelivery;
+                // console.log("el", items);
+                // console.log("finalOrderSum", finalOrderSum);
+                // items.forEach(e => {
+                //     if (finalOrdersForecastPeriods.get(e) !== undefined) {
+                //         sumFinalOrders += parseInt(finalOrdersForecastPeriods.get(
+                //             e), 0);
+                //     }
+                //     // if (valueMap.get(e) !== undefined) {
+                //     //     finalOrderSum += parseInt((e), 0);
+                //     // }
+                // })
                 return {
                     ActualDate: el.ActualDate,
                     ForecastDate: el.ForecastDate,
@@ -392,56 +444,108 @@ else {
                     ForecastPeriod: el.ForecastPeriod,
                     OrderAmount: el.OrderAmount,
                     Product: el.Product,
-                    FinalOrder: valueMap.get(el.ForecastPeriod),
                     PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                    Deviation: deviation.toFixed(2)
+                    MeanFinalOrders: el.MeanFinalOrders,
+                    SquaredAbsoluteDiff: value
                 };
-            })
-            console.log("FINAL Array with deviation: ", finalArray);
-            newFinalArray = finalArray.filter((el) => {
-                return !isNaN(el.Deviation);
-            })
-            isfinitearray = newFinalArray.filter((el) => {
-                return isFinite(el.Deviation) == true;
-            })
-            console.log("isfinitearrayt: ", isfinitearray);
-            let deviationCalc = d3.values(isfinitearray, function(d) {
-                return d.Deviation;
-            })
-            var deviationMax = d3.max(deviationCalc, function(d) {
-                return +d.Deviation;
             });
-            var deviationMin = d3.min(deviationCalc, function(d) { //Define minimum  value of Order Amount
-                return +d.Deviation;
+            // console.log('squaredAbsValuesArray: ', squaredAbsValuesArray);
+
+            var squaredAbsValuesArray2 = squaredAbsValuesArray.reduce((arr, e) => {
+                arr.push(Object.assign({}, e, calculationsOrderByPBD.find(a => a.PeriodsBeforeDelivery == e.PeriodsBeforeDelivery)))
+                return arr;
+            }, [])
+
+            console.log("new squaredAbsValuesArray", squaredAbsValuesArray2);
+
+
+            // let meanFinalOrdersArray = squaredAbsValuesArray.map((el) => {
+            //     let temp = calculationsOrderByPBD.find(element => element.PeriodsBeforeDelivery === el.PeriodsBeforeDelivery)
+            //     return {
+            //         ActualDate: el.ActualDate,
+            //         ForecastDate: el.ForecastDate,
+            //         ActualPeriod: el.ActualPeriod,
+            //         ForecastPeriod: el.ForecastPeriod,
+            //         OrderAmount: el.OrderAmount,
+            //         Product: el.Product,
+            //         PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+            //         MeanFinalOrders: el.MeanFinalOrders,
+            //         SquaredAbsoluteDiff: value
+            //     };
+            // })
+
+            let finalOrderCalc = d3.values(finalOrder, function(d) {
+                return d.OrderAmount;
+            })
+
+            let seperatedByPeriods = d3.nest()
+                .key(function(d) {
+                    return d.PeriodsBeforeDelivery
+                })
+                .entries(squaredAbsValuesArray2);
+
+            let bubu = seperatedByPeriods.map((el) => {
+                for (i = 0; i < seperatedByPeriods.length; i++) {
+                    let meanValue = Math.sqrt(d3.mean(el.values, function(d) {
+                        return d.SquaredAbsoluteDiff;
+                    }), 2);
+                    let normRMSE = meanValue / el.values[i].MeanFinalOrders;
+                    return {
+                        ActualDate: el.values[i].ActualDate,
+                        ForecastDate: el.values[i].ForecastDate,
+                        Product: el.values[i].Product,
+                        ActualPeriod: el.values[i].ActualPeriod,
+                        ForecastPeriod: el.values[i].ForecastPeriod,
+                        OrderAmount: el.values[i].OrderAmount,
+                        PeriodsBeforeDelivery: el.key,
+                        RMSE: meanValue,
+                        NRMSE: normRMSE
+                    };
+                }
+
             });
+            console.log("final NRMSE array: ", bubu);
 
-            var forecastlist = dc.selectMenu("#forecastlist"),
-                productChart = dc.selectMenu("#product"),
-                periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
-                visCount = dc.dataCount(".dc-data-count"),
-                forecastErrorChart = dc.scatterPlot("#scatter"),
-                visTable = dc.dataTable(".dc-data-table");
 
-            isfinitearray.forEach(function(d) {
+            oneFinalArray = bubu.filter((el) => {
+                return !isNaN(el.NRMSE);
+            })
+            twoFinalArray = oneFinalArray.filter((el) => {
+                return el.NRMSE !== Infinity;
+            })
+            newFinalArray = twoFinalArray.filter((el) => {
+                return el.NRMSE !== 'Infinity';
+            })
+
+            newFinalArray.forEach(function(d) {
                 d.ActualDate = new Date(d.ActualDate);
             });
 
-            var ndx = crossfilter(isfinitearray);
+            // newFinalArray = bubu.filter((el) => {
+            //     return !isNaN(el.NRMSE);
+            // })
+
+            // newFinalArray.forEach(function(d) {
+            //     d.ActualDate = new Date(d.ActualDate);
+            // });
+            let periodsBD = newFinalArray.map(function(d) {
+                return d.PeriodsBeforeDelivery
+            });
+            let periodsMax = Math.max(...periodsBD);
+
+            var ndx = crossfilter(newFinalArray);
             var all = ndx.groupAll();
             var forecastPeriodDim = ndx.dimension(function(d) {
                 return +d.ForecastPeriod;
             });
             var ndxDim = ndx.dimension(function(d) {
-                return [+d.PeriodsBeforeDelivery, +d.Deviation, +d.ForecastPeriod];
+                return [+d.PeriodsBeforeDelivery, +d.NRMSE, +d.Product];
             });
             var productDim = ndx.dimension(function(d) {
                 return d.Product;
             });
             var periodsBeforeDeliveryDim = ndx.dimension(function(d) {
                 return +d.PeriodsBeforeDelivery;
-            });
-            var forecastErrorDim = ndx.dimension(function(d) {
-                return +d.Deviation;
             });
             var dateDim = ndx.dimension(function(d) {
                 return +d.ActualDate;
@@ -450,21 +554,8 @@ else {
             var forecastPeriodGroup = forecastPeriodDim.group();
             var productGroup = productDim.group();
             var ndxGroup = ndxDim.group();
-            // var group = ndxDim.group();
-            // var reducer = reductio()
-            //     .exception(function(d) {
-            //         return d.PeriodsBeforeDelivery;
-            //     })
-            //     .exceptionCount(true);
-            // reducer(group);
-
-            var forecastErrorGroup = forecastErrorDim.group(function(d) {
-                return d.Deviation;
-            });
             var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
             var dateGroup = dateDim.group();
-            console.log("ndxDim: ", ndxGroup.top(Infinity));
-
 
             forecastlist
                 .dimension(forecastPeriodDim)
@@ -472,9 +563,10 @@ else {
                 .multiple(true)
                 .numberVisible(15);
 
-            productChart
+            productlist
                 .dimension(productDim)
                 .group(productGroup)
+                //.controlsUseVisibility(true)
                 .multiple(true)
                 .numberVisible(15);
 
@@ -483,9 +575,10 @@ else {
                 .group(periodsBeforeDeliveryGroup)
                 .multiple(true)
                 .numberVisible(15);
-            var plotColorMap = d3.scaleOrdinal(d3.schemeCategory10);
 
-            forecastErrorChart
+            console.log("ndxDim: ", ndxGroup.top(Infinity));
+
+            NRMSEchart
                 .width(768 + margin.left + margin.right)
                 .height(480 + margin.top + margin.bottom)
                 .dimension(ndxDim)
@@ -494,44 +587,31 @@ else {
                 .data(function(group) {
                     return group.all()
                         .filter(function(d) {
-                            return !isNaN(d.key[1]);
+                            return d.key !== NaN || d.key !== "NaN" || d.key !==
+                                Infinity;
                         });
                 })
-                .colorAccessor(function(d) {
-                    return d.key[2];
-                })
-                .colors(function(colorKey) {
-                    return plotColorMap(colorKey);
-                })
-                .keyAccessor(function(d) {
-                    return d.key[0];
-                })
-                .valueAccessor(function(d) {
-                    return d.key[1];
-                })
-                .x(d3.scaleLinear().domain(d3.extent(isfinitearray, function(d) {
-                    return d.PeriodsBeforeDelivery
-                })))
+                // .x(d3.scaleLinear().domain([0, d3.max(newFinalArray, function(d) {
+                //     return d.PeriodsBeforeDelivery;
+                // })]))
+                .x(d3.scaleLinear().domain([0, periodsMax]))
                 .brushOn(false)
                 .clipPadding(10)
                 .xAxisLabel("Periods Before Delivery")
-                .yAxisLabel("Deviation")
-                .legend(dc.legend().x(790).y(10).itemHeight(20).gap(2))
+                .yAxisLabel("NRMSE")
                 .renderTitle(true)
                 .title(function(d) {
                     return [
                         'Periods Before Delivery: ' + d.key[0],
-                        'Deviation: ' + d.key[1],
-                        'Actual Period: ' + d.key[2]
+                        'NRMSE: ' + d.key[1],
                     ].join('\n');
                 })
                 .xAxis().tickFormat(d3.format('d'));
 
-            forecastErrorChart.yAxis().tickFormat(d3.format('.0%'));
+            NRMSEchart.selectAll('path.symbol')
+                .attr('opacity', 0.3);
 
-            forecastErrorChart.symbol(d3.symbolCircle);
-            forecastErrorChart.margins(margin);
-            forecastErrorChart.legend(dc.legend().legendText("Actual Period"));
+            NRMSEchart.margins(margin);
 
             visCount
                 .dimension(ndx)
@@ -541,28 +621,22 @@ else {
                 .dimension(dateDim)
                 .group(function(d) {
                     var format = d3.format('02d');
-                    return d.ActualDate.getFullYear() + '/' + format((d.ActualDate.getMonth() +
+                    return d.ActualDate.getFullYear() + '/' + format((d.ActualDate
+                        .getMonth() +
                         1));
                 })
                 .columns([
                     "Product",
-                    "ActualPeriod",
-                    "ForecastPeriod",
                     "PeriodsBeforeDelivery",
-                    "OrderAmount",
-                    "Deviation"
+                    "NRMSE"
                 ]);
+
             dc.renderAll();
-            const colorScale = d3.scaleOrdinal()
-                .range(d3.schemeCategory10);
-            const colorLegend = d3.legendColor()
-                .scale(colorScale)
-                .shape('circle');
-            var Deviation = function(d) {
-                return d.Deviation === (d.OrderAmount - d.FinalOrder) / d.FinalOrder;
-            };
+
+
         });
         </script>
+
         <script src="/lib/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
             integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">

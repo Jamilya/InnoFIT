@@ -18,7 +18,7 @@ else {
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/data/ico/innofit.ico">
-    <title>About This Tool</title>
+    <title>Data Format Requirements</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
         integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -205,79 +205,39 @@ else {
 
     <div class="customContainer">
         <div class="row" style="margin-bottom: -2%;">
-            <h3 class="card-title"><strong>About research project</strong></h5><br>
-                <small>
-                    <?php
+            <h3 class="card-title"><strong>Data Format Requirements</strong></h3><br>
+            <small>
+                <?php
                             echo "You are logged in as: ";
                             print_r($_SESSION["session_username"]);
                             echo ".";
                             ?></small><br />
+            
                 <div class="row">
-                    <div class="col-sm-6">
-                        <p class="class-text">
-                            <br>
-                            This tool was created as a part of the <strong>InnoFIT research project</strong>,
-                            which aims at
-                            developing innovative forecasting tools for improved production
-                            planning. The project is funded by the Austrian Research Promotion Agency
-                            <a href="https://www.ffg.at/en/content/about-ffg"
-                                title="Austrian Research Promotion Agency">(FFG)</a> and runs from 1 June 2018
-                            until 31 May
-                            2021.
-                            <br></p>
-                    </div>
-                    <div class="col-sm-6">
-                        <picture><img src="/data/img/Logo_transparent.png" sizes="35vw" srcset="/data/img/Logo_transparent.png 100w, /data/img/Logo_transparent.png 900w,
-				/data/img/Logo_transparent.png 7000w">
-                        </picture>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <h5><strong> Project Partners</strong> </h5><br>
-                    <small>
-                        <ul>
-                            <li>University of Applied Sciences Upper Austria, Campus Steyr
-                                <ul>
-                                    <li>UAS Steyr Project leader: <a
-                                            href="http://research.fh-ooe.at/en/staff/3584">Priv.
-                                            Doz.
-                                            FH-Prof. DI (FH) Klaus Altendorfer PhD</a></li>
-                                </ul>
-                            </li>
-                            <li>St. Pölten University of Applied Sciences
-                                <ul>
-                                    <li> UAS St. Pölten Project leader: <a
-                                            href="https://www.fhstp.ac.at/en/about-us/staff-a-z/felberbauer-thomas">Dr.
-                                            Thomas
-                                            Felberbauer, MSc</a></li>
-                                </ul>
-                            </li>
-                            <li><b>Industrial Project Partners:</b> RISC Software GmbH, NKE Austria GmbH, ZF Steyr, MWS
-                                Hightec GmbH,
-                                Lecapell
-                                GmbH</li>
-                        </ul>
-                    </small>
-                </div><br><br>
-                <div class="row">
-                    <h5><i>Download the InnoFIT project poster:</i> </h5>
-                    Office 365 access: <a
-                        href="https://fhstp.sharepoint.com/sites/InnoFIT/Freigegebene%20Dokumente/General/Posters/InnoFIT_one%20version.pdf"
-                        target="_blank">Download link 1</a><br>
-                    External access: <a href="https://www.dropbox.com/s/c2a2ew6o48wdubs/InnoFIT_one%20version.pdf?dl=0"
-                        target="blank"> Download link 2 </a>
-                </div>
-                <br><br>
-                <div class="row">
-                    <h5><strong>Project Team Photo</strong></h5><br>
-                    <img src="/data/img/Projektteam.jpg" style="max-width:100%;height:auto;">
+                <p class="class-text">
                     <br>
-                    <small>Image source: UAS Upper Austria / Andreas Schober</small> <br><br>
-                </div>
-                <footer style="text-align: center">
-                    <small>&copy; Copyright 2020 St.Pölten University of Applied Sciences</small>
-                </footer>
+                    <li><b>Chrome browser </b> is advised for better visualization quality</li><br>
+                    <li>Please upload data in CSV format (comma-separated value as a delimiter)</li><br>
+                    <li>Please <b>do not overwrite the data </b> in the tool. Either remove the old data and upload new dataset including old and new data; or upload only data that was not uploaded before.</li><br>
+                    <li>Keep data upload limit up till <b>1 MB </b>(per user)</li><br>
+                    <li>No spacing is allowed, no empty cells or empty rows</li><br>
+                    <li><b>No negative OrderAmount </b> values</li><br>
+                    <li>Date format: <b>YYYY-MM-DD (year-month-day) </b> and formatted as a date</li><br><br>
+                    Below is the data format structure overview in a tabular form:<br>
+                    <img src="/data/img/dataformat.jpg"
+                    alt="Data Format Example" align="middle" height="110" width="790"><br>
+
+                    <br></p>
+            </div>
+
+
+            <br><br><br><br><br>
+            <div class="row">
+
+            </div>
+            <footer style="text-align: center">
+                <small>&copy; Copyright 2020 St.Pölten University of Applied Sciences</small>
+            </footer>
         </div>
     </div>
 
@@ -288,9 +248,6 @@ else {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
     </script>
-
-
-
 </body>
 
 </html>
