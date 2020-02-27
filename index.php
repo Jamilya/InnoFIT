@@ -173,6 +173,7 @@ session_start();
                             <li><a href="src/mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
                             <li> <a href="src/mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="src/rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
+                            <li><a href="src/normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
                             <li><a href="src/mpe.php">Mean Percentage Error (MPE) </a></li>
                             <li><a href="src/mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
                             <li><a href="src/meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>

@@ -177,6 +177,7 @@ else {
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
+                            <li><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
                             <li class="active"><a href="./mpe.php">Mean Percentage Error (MPE) <span
                                         class="sr-only">(current)</span></a></li>
                             <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
