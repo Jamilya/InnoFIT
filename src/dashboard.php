@@ -173,26 +173,27 @@ else {
             <div class="col-md-5">
                 <div class="card h-100">
                     <div class="card-img-top chartBox drop-shadow">
-                        <div id="scatter">
+                        <div id="scatter4">
                         </div>
                     </div>
                     <div class="card-body">
-                        <h4 class="card-title">Mean Absolute Deviation (MAD)</h4>
+                        <h4 class="card-title">Mean Forecast Bias (MFB)</h4>
                         <p class="card-text">To view the full graph please see the graph page: <a
-                                href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>.</p>
+                                href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a>.</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-5">
                 <div class="card h-100">
                     <div class="card-img-top chartBox drop-shadow">
-                        <div id="scatter6">
+                        <div id="scatter5">
                         </div>
                     </div>
                     <div class="card-body">
-                        <h4 class="card-title">Mean Square Error (MSE)</h4>
-                        <p class="card-text">To view the full graph please see the graph page: <a
-                                href="./mse_graph.php">Mean Square Error (MSE)</a>.</p>
+                        <h4 class="card-title">Mean Percentage Error (MPE)</h4>
+                        <p class="card-text">To view the full graph please see the graph page: <a href="./mpe.php">Mean
+                                Percentage Error (MPE)</a>.</p>
+
                     </div>
                 </div>
             </div>
@@ -219,13 +220,13 @@ else {
             <div class="col-md-5">
                 <div class="card h-100">
                     <div class="card-img-top chartBox drop-shadow">
-                        <div id="scatter5">
+                        <div id="scatter6">
                         </div>
                     </div>
                     <div class="card-body">
-                        <h4 class="card-title">Mean Percentage Error (MPE)</h4>
-                        <p class="card-text">To view the full graph please see the graph page: <a href="./mpe.php">Mean
-                                Percentage Error (MPE)</a>.</p>
+                        <h4 class="card-title">Mean Square Error (MSE)</h4>
+                        <p class="card-text">To view the full graph please see the graph page: <a
+                                href="./mse_graph.php">Mean Square Error (MSE)</a>.</p>
                     </div>
                 </div>
             </div>
@@ -252,13 +253,13 @@ else {
             <div class="col-md-5">
                 <div class="card h-100">
                     <div class="card-img-top chartBox drop-shadow">
-                        <div id="scatter4">
+                        <div id="scatter">
                         </div>
                     </div>
                     <div class="card-body">
-                        <h4 class="card-title">Mean Forecast Bias (MFB)</h4>
+                        <h4 class="card-title">Mean Absolute Deviation (MAD)</h4>
                         <p class="card-text">To view the full graph please see the graph page: <a
-                                href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a>.</p>
+                                href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>.</p>
                     </div>
                 </div>
             </div>
