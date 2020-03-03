@@ -185,6 +185,7 @@ else {
                         </ul>
                     </li>
                     <!-- </ul> -->
+                    <li><a href="./dashboard.php">Dashboard</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Corrections <span class="caret"></span> </a>

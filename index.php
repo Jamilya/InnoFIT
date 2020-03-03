@@ -25,6 +25,7 @@ session_start();
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
         integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel="stylesheet" href="./src/css/index.css">
+    <link rel="stylesheet" href="./src/css/header.css">
 
     <script src="http://d3js.org/d3.v4.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
@@ -35,6 +36,8 @@ session_start();
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
     </script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.js"
+        integrity="sha256-vHsV98JlYVo7h9eo1BQrqWgGQDt6prGrUbKAlHfP+0Y=" crossorigin="anonymous"></script>
     <script src="./lib/js/localforage.js"></script>
 
     <script type="text/javascript">
@@ -66,80 +69,7 @@ session_start();
     });
     </script>
     <style>
-    body {
-        margin: 0 auto;
-    }
 
-    div {
-        padding-right: 10px;
-        padding-left: 10px;
-    }
-
-    #footer {
-        background: #F8F8F8 !important;
-    }
-
-    #footer ul a {
-        color: #b9b9b9;
-    }
-
-    #footer ul a:hover {
-        color: #b9b9b9;
-    }
-
-    #footer ul {
-        padding: 1px 0;
-        -webkit-transition: .5s all ease;
-        -moz-transition: .5s all ease;
-        transition: .5s all ease;
-    }
-
-    #footer ul:hover {
-        padding: 1px 0;
-        margin-left: 5px;
-        font-weight: 700;
-    }
-
-    .customContainer {
-        padding: 0 3% 0 3%;
-    }
-
-
-    a.gflag {
-        vertical-align: middle;
-        font-size: 16px;
-        padding: 1px 0;
-        background-repeat: no-repeat;
-        background-image: url(//gtranslate.net/flags/16.png);
-    }
-
-    a.gflag img {
-        border: 0;
-    }
-
-    a.gflag:hover {
-        background-image: url(//gtranslate.net/flags/16a.png);
-    }
-
-    #goog-gt-tt {
-        display: none !important;
-    }
-
-    .goog-te-banner-frame {
-        display: none !important;
-    }
-
-    .goog-te-menu-value:hover {
-        text-decoration: none !important;
-    }
-
-    body {
-        top: 0 !important;
-    }
-
-    #google_translate_element2 {
-        display: none !important;
-    }
     </style>
 </head>
 
@@ -157,10 +87,10 @@ session_start();
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
-                    <li><a href="src/configuration.php">Configuration</a></li>
+                    <li><a class="specialLine" href="src/configuration.php">Configuration</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Visualizations<span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false">Visualizations <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="src/finalorder.php">Final Order Amount </a></li>
@@ -173,15 +103,15 @@ session_start();
                             <li><a href="src/mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
                             <li> <a href="src/mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="src/rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
-                            <li><a href="src/normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
                             <li><a href="src/mpe.php">Mean Percentage Error (MPE) </a></li>
                             <li><a href="src/mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
                             <li><a href="src/meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
+                    <li><a href="./dashboard.php">Dashboard</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Corrections <span class="caret"></span> </a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
                         <ul class="dropdown-menu">
                             <li><a href="src/cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
@@ -238,8 +168,7 @@ session_start();
                         /* ]]> */
                         </script>
                     </li>
-                    <li><a id="btnLogout" href="/includes/logout.php">Logout</a></li>
-
+                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>
             </div>
             <!--/.nav-collapse -->
@@ -249,35 +178,27 @@ session_start();
     <div class="customContainer">
         <header class="masthead">
             <div class="container h-100">
-                <div class="row h-100 align-items-center">
-                    <div class="row align-items-center">
-                        <div class="span4 align-center">
-                            <div class="col-xs-8 col-sm-8">
-                                <h1 class="text-right">Forecast Quality Visualization </h1>
-                            </div>
-                            <div class="col-xs-4 col-sm-4 ">
-                                <img style="float:center" src="/data/img/Logo_transparent.png" alt="InnoFIT Logo"
-                                    height="55" width="105">
-                            </div>
-                        </div>
-                    </div><br />
+                <div class="row h-100 align-items-center" style='margin-bottom: 4%;'>
+                    <div class="col-xs-8 col-sm-8">
+                        <h1 class="text-right">Forecast Quality Visualization </h1>
+                    </div>
+                    <div class="col-xs-4 col-sm-4 ">
+                        <img style="float:center" src="/data/img/Logo_transparent.png" alt="InnoFIT Logo" height="55"
+                            width="105">
+                    </div>
                 </div>
         </header>
-        <!-- Page Content -->
-        <section class="py-5">
-            <div class="container text-center">
-                <h4 class="font-weight-light"><?php   echo "Dear ";
+        <div class="container text-center">
+            <h4 class="font-weight-light"><?php   echo "Dear ";
                     print_r($_SESSION["session_username"]);
                     echo ",";?></h2>
-                    <p>Welcome to the Forecast Quality Visualization tool - InnoFitVis.
-                    </p>
-                    <p> Happy exploring!</p>
-
-            </div>
+                <p>Welcome to the Forecast Quality Visualization tool - InnoFitVis.</p>
+                <p>Below you can find some quick tips in order to get you started with the tool</p>
+                <p>Happy exploring!</p>
+        </div>
     </div>
-    <hr>
-    </section>
 
+    <hr>
     <br />
 
     <script>
@@ -388,10 +309,10 @@ if (isset($_POST["import"])) {
     ?>
 
     <div class="container">
-        <div class="row">
+        <div class="row" style="margin-bottom: 5%;">
             <div class="col-md-12">
-                <h3>Upload your data here:</h3>
-                <form class="form-horizontal" action="" method="post" name="frmCSVImport" id="frmCSVImport"
+                <h3>Upload Data</h3>
+                <!-- <form class="form-horizontal" action="" method="post" name="frmCSVImport" id="frmCSVImport"
                     enctype="multipart/form-data">
                     <div class="input-row">
                         <label class="col-md-6 control-label">Choose CSV File</label> <input type="file" name="file"
@@ -399,33 +320,57 @@ if (isset($_POST["import"])) {
                         <button type="submit" id="submit" name="import" class="btn btn-primary">Import</button>
                         <br />
                     </div>
+                </form> -->
+                <div style="margin-top: 80px;">
+                <form id="fileUploadForm" action="" method="post" name="frmCSVImport" id="frmCSVImport"
+                    enctype="multipart/form-data">
+                    <fieldset>
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <div class="row">
+                                    <label class="control-label col-md-2 text-right" for="filename"><span>Choose CSV
+                                            File</span></label>
+                                    <div class="col-md-10">
+                                        <div class="input-group">
+                                            <input type="hidden" id="filename" name="filename" value="">
+                                            <input type="file" name="file" id="file" accept=".csv"
+                                                class="form-control form-control-sm">
+                                            <div class="input-group-btn">
+                                                <input type="submit" id="submit" name="import" value="Import"
+                                                    class="rounded-0 btn btn-primary"
+                                                    style="min-width: 140px; font-weight: bolder;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
                 </form>
+                </div>
             </div>
-
-
-            <?php
-      if (!empty($_GET['act'])) {
+        </div>
+        <?php
+        if (!empty($_GET['act'])) {
         //echo "to remove the data in my table"; 
-    } else {
-    ?>
-            <br /><br>
-            <br /><br> <br><br>
-            <hr>
-            <div class="col-md-12 text-center">
+        } else {
+        ?>
+        <hr>
+        <div class="row" style="margin-bottom: 5%;">
+            <div class="col-md-12">
+                <h3>Remove Data</h3>
                 <p>If you'd like to remove all your data from the database - please click on the button "Delete All
-                    Data" below. <br></p>
-                <p> <mark> Please note that the action is irreversible.</mark></p>
+                    Data". This will remove your currently loaded dataset from the database and enables you to add a new
+                    one.</p>
+                <p><mark> Please note that the action is irreversible!!</mark></p>
                 <form action="includes/delete.php" method="get"
                     onsubmit="return confirm('Are you sure you want to remove all data?');">
                     <input type="hidden" name="act" value="run">
-                    <input type="submit" value="Delete All Data">
+                    <input class="btn btn-secondary" type="submit" value="Delete All Data">
                 </form>
             </div>
         </div>
-
-        <hr>
         <?php } ?>
-
         <br><br>
         <div class="col-md-13">
             <h3>Data format:</h3>
@@ -454,15 +399,20 @@ if (isset($_POST["import"])) {
                     alt="Data Format Example" align="middle" height="175" width="360"><br></p>
             <br>
         </div>
-        <div class="col-md-13">
-            <h3>How to interpret error measures</h3>
-            <p>The guidelines on how to interpret forecast error measures visualized in this tool can be found here (you
-                will be redirected to another page):
-                <a href="src/howto.php">How to Interpret Error Measures </a>
-                <br /><br />
-            </p>
+        <hr/>
+        <div class="row" style="margin-bottom: 5%">
+            <div class="col-md-12">
+                <h3>Intepret Error Measures:</h3>
+                <p>The guidelines on how to interpret forecast error measures visualized in this tool can be found here
+                    (you
+                    will be redirected to another page):
+                    <a class="badge badge-light" href="src/howto.php">How to Interpret Error Measures </a>
+                    <br /><br />
+                </p>
+            </div>
         </div>
     </div>
+
     <section id="footer">
         <div class="container">
             <!-- Copyright -->
