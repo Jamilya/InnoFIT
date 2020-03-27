@@ -9,7 +9,6 @@ else {
 <!DOCTYPE html>
 <html lang="en">
 <meta charset="utf-8">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-compatible" content="IE=edge">
@@ -953,11 +952,6 @@ else {
 
     });
     </script>
-
-
-    <!-- <script src="https://code.jquery.com/jquery-1.12.4.min.js"
-                integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ"
-                crossorigin="anonymous"> -->
     </script>
     <script src="/lib/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"

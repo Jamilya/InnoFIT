@@ -18,46 +18,11 @@ else {
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/data/ico/innofit.ico">
-    <title>About This Tool</title>
-
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
         integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-
-    <style>
-    body {
-        margin: 0px;
-    }
-
-    div {
-        padding-right: 10px;
-        padding-left: 10px;
-    }
-
-    .info-container {
-        display: inline-block;
-        width: calc(100% + -50px);
-        vertical-align: middle;
-    }
-
-    .customContainer {
-        padding: 0 3% 0 3%;
-    }
-
-    path {
-        stroke: steelblue;
-        stroke-width: 2;
-        fill: none;
-    }
-
-    .axis path,
-    .axis line {
-        fill: none;
-        stroke: grey;
-        stroke-width: 1;
-        shape-rendering: crispEdges;
-    }
-    </style>
-
+    <link rel="stylesheet" href="./css/about.css">
+    <link rel="stylesheet" href="./css/header.css">
+    <title>About This Tool</title>
 </head>
 
 <body>
@@ -74,11 +39,11 @@ else {
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
-                    <li><a href="./configuration.php">Configuration</a>
+                    <li><a class="specialLine" href="./configuration.php">Configuration</a>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Visualizations<span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false">Visualizations <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
@@ -100,8 +65,8 @@ else {
                     <li><a href="./dashboard.php">Dashboard</a></li>
                     <!-- </ul> -->
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Corrections <span class="caret"></span> </a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
                         <ul class="dropdown-menu">
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
@@ -116,44 +81,6 @@ else {
                             onclick="doGTranslate('en|de');return false;" title="German" class="gflag nturl"
                             style="background-position:-300px -100px;"><img src="//gtranslate.net/flags/blank.png"
                                 height="12" width="12" alt="German" /></a>
-
-                        <style type="text/css">
-                        a.gflag {
-                            vertical-align: middle;
-                            font-size: 16px;
-                            padding: 1px 0;
-                            background-repeat: no-repeat;
-                            background-image: url(//gtranslate.net/flags/16.png);
-                        }
-
-                        a.gflag img {
-                            border: 0;
-                        }
-
-                        a.gflag:hover {
-                            background-image: url(//gtranslate.net/flags/16a.png);
-                        }
-
-                        #goog-gt-tt {
-                            display: none !important;
-                        }
-
-                        .goog-te-banner-frame {
-                            display: none !important;
-                        }
-
-                        .goog-te-menu-value:hover {
-                            text-decoration: none !important;
-                        }
-
-                        body {
-                            top: 0 !important;
-                        }
-
-                        #google_translate_element2 {
-                            display: none !important;
-                        }
-                        </style>
 
                         <div id="google_translate_element2"></div>
                         <script type="text/javascript">
@@ -196,7 +123,8 @@ else {
                         /* ]]> */
                         </script>
                     </li>
-                    <li><a href="/includes/logout.php">Logout</a></li>
+                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span>
+                            Logout</a></li>
 
                 </ul>
             </div>
@@ -206,81 +134,127 @@ else {
     </nav>
 
     <div class="customContainer">
-        <div class="row" style="margin-bottom: -2%;">
-            <h3 class="card-title"><strong>About research project</strong></h5><br>
+        <div class="row" style="margin-bottom: 10px;">
+            <div class="col-md-12">
+                <h2><strong>About the research project</strong></h2><br>
                 <small>
                     <?php
-                            echo "You are logged in as: ";
-                            print_r($_SESSION["session_username"]);
-                            echo ".";
-                            ?></small><br />
-                <div class="row">
-                    <div class="col-sm-6">
-                        <p class="class-text">
-                            <br>
-                            This tool was created as a part of the <strong>InnoFIT research project</strong>,
-                            which aims at
-                            developing innovative forecasting tools for improved production
-                            planning. The project is funded by the Austrian Research Promotion Agency
-                            <a href="https://www.ffg.at/en/content/about-ffg"
-                                title="Austrian Research Promotion Agency">(FFG)</a> and runs from 1 June 2018
-                            until 31 May
-                            2021.
-                            <br></p>
-                    </div>
-                    <div class="col-sm-6">
-                        <picture><img src="/data/img/Logo_transparent.png" sizes="35vw" srcset="/data/img/Logo_transparent.png 100w, /data/img/Logo_transparent.png 900w,
+                                echo "You are logged in as: ";
+                                print_r($_SESSION["session_username"]);
+                                echo ".";
+                                ?></small><br />
+            </div>
+        </div>
+        <hr />
+        <div class="row" style="margin-top: 40px;">
+            <div class="col-md-6">
+                <h4><strong>Introduction</strong></h4>
+                <p class="class-text">
+                    This tool was created as a part of the <strong>InnoFIT research project</strong>,
+                    which aims at
+                    developing innovative forecasting tools for improved production
+                    planning. The project is funded by the Austrian Research Promotion Agency
+                    <a href="https://www.ffg.at/en/content/about-ffg"
+                        title="Austrian Research Promotion Agency">(FFG)</a> and runs from 1 June 2018
+                    until 31 May
+                    2021.
+                </p>
+            </div>
+            <div class="col-md-6">
+                <picture><img src="/data/img/Logo_transparent.png" sizes="35vw" srcset="/data/img/Logo_transparent.png 100w, /data/img/Logo_transparent.png 900w,
 				/data/img/Logo_transparent.png 7000w">
-                        </picture>
-                    </div>
-                </div>
+                </picture>
+            </div>
+        </div>
 
-                <div class="row">
-                    <h5><strong> Project Partners</strong> </h5><br>
+        <div class="row" style="margin-top: 40px;">
+            <div class="col-md-12">
+                <h4><strong> Project Partners</strong>
+                    <br />
+                    <br />
                     <small>
-                        <ul>
-                            <li>University of Applied Sciences Upper Austria, Campus Steyr
-                                <ul>
-                                    <li>UAS Steyr Project leader: <a
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item" style="background: #F8F8F8;">
+                                <strong>Academic Project Partners:</strong>
+                            </li>
+                            <li class="list-group-item">University of Applied Sciences Upper Austria, Campus Steyr
+                                <ul class="list-group inner">
+                                    <li class="list-group-item">UAS Steyr Project leader: <a
                                             href="http://research.fh-ooe.at/en/staff/3584">Priv.
                                             Doz.
                                             FH-Prof. DI (FH) Klaus Altendorfer PhD</a></li>
                                 </ul>
                             </li>
-                            <li>St. Pölten University of Applied Sciences
-                                <ul>
-                                    <li> UAS St. Pölten Project leader: <a
+                            <li class="list-group-item">St. Pölten University of Applied Sciences
+                                <ul class="list-group inner">
+                                    <li class="list-group-item"> UAS St. Pölten Project leader: <a
                                             href="https://www.fhstp.ac.at/en/about-us/staff-a-z/felberbauer-thomas">Dr.
                                             Thomas
                                             Felberbauer, MSc</a></li>
                                 </ul>
                             </li>
-                            <li><b>Industrial Project Partners:</b> RISC Software GmbH, NKE Austria GmbH, ZF Steyr, MWS
-                                Hightec GmbH,
-                                Lecapell
-                                GmbH</li>
+                            <li class="list-group-item" style="background: #F8F8F8;">
+                                <strong>Industrial Project Partners:</strong>
+                            </li>
+                            <li class="list-group-item">
+                                RISC Software GmbH
+                            </li>
+                            <li class="list-group-item">
+                                NKE Austria GmbH
+                            </li>
+                            <li class="list-group-item">
+                                ZF Steyr
+                            </li>
+                            <li class="list-group-item">
+                                MWS
+                            </li>
+                            <li class="list-group-item">
+                                Hightec GmbH
+                            </li>
+                            <li class="list-group-item">
+                                Hightec GmbH
+                            </li>
+                            <li class="list-group-item">
+                                Lecapell GmbH
+                            </li>
                         </ul>
                     </small>
-                </div><br><br>
-                <div class="row">
-                    <h5><i>Download the InnoFIT project poster:</i> </h5>
-                    Office 365 access: <a
-                        href="https://fhstp.sharepoint.com/sites/InnoFIT/Freigegebene%20Dokumente/General/Posters/InnoFIT_one%20version.pdf"
-                        target="_blank">Download link 1</a><br>
-                    External access: <a href="https://www.dropbox.com/s/c2a2ew6o48wdubs/InnoFIT_one%20version.pdf?dl=0"
-                        target="blank"> Download link 2 </a>
-                </div>
-                <br><br>
-                <div class="row">
-                    <h5><strong>Project Team Photo</strong></h5><br>
-                    <img src="/data/img/Projektteam.jpg" style="max-width:100%;height:auto;">
-                    <br>
-                    <small>Image source: UAS Upper Austria / Andreas Schober</small> <br><br>
-                </div>
-                <footer style="text-align: center">
-                    <small>&copy; Copyright 2020 St.Pölten University of Applied Sciences</small>
-                </footer>
+            </div>
         </div>
+
+        <div class="row" style="margin-top: 40px;">
+            <div class="col-md-12">
+                <h4><strong>Download section</strong></h4>
+                <strong><i>InnoFit Project Poser:</i></strong>
+                <br />
+                Office 365 access: <a
+                    href="https://fhstp.sharepoint.com/sites/InnoFIT/Freigegebene%20Dokumente/General/Posters/InnoFIT_one%20version.pdf"
+                    target="_blank">Download link 1</a><br>
+                External access: <a href="https://www.dropbox.com/s/c2a2ew6o48wdubs/InnoFIT_one%20version.pdf?dl=0"
+                    target="blank"> Download link 2 </a>
+            </div>
+        </div>
+        
+        <div class="row" style="margin-top: 40px;">
+        <div class="col-md-12">
+            <h4><strong>Project Team Photo</strong></h4>
+            <div class="card">
+                <img class="card-img-top" src="/data/img/Projektteam.jpg" alt="Team Picture" style="max-width:100%;height:auto;">
+                <div class="card-body">
+                    <p class="card-text"><small>Image source: UAS Upper Austria / Andreas Schober</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="footer" class="text-center" style="margin-top: 20px;">
+        <!-- Copyright -->
+            <br>
+            <p> Copyright © 2019 St. Pölten University of Applied Sciences <u>
+                <ul><a href="https://projekte.ffg.at/projekt/3042801">InnoFIT Research Project </a></ul>
+            </u></p>
+        <!-- Copyright -->
     </div>
 
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
@@ -290,9 +264,6 @@ else {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
     </script>
-
-
-
 </body>
 
 </html>

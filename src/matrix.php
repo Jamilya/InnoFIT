@@ -17,11 +17,20 @@ else {
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/data/ico/innofit.ico">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/finalorder.css">
+    <link rel="stylesheet" href="./css/header.css">
+
     <title>Delivery Plans Matrix</title>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
         integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
     </script>
     <script src="../lib/js/localforage.js"></script>
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="./js/util.js"></script>
+
     <script>
     localforage.config({
         driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()
@@ -30,97 +39,6 @@ else {
         size: 4980736, // Size of database, in bytes. WebSQL-only for now.
     });
     </script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <style>
-    body {
-        margin: 0px;
-    }
-
-    .domain {
-        /* display: none; */
-        stroke: #635F5D;
-        stroke-width: 1;
-    }
-
-    .tick text,
-    .legendCells text {
-        fill: #635F5D;
-        font-size: 12px;
-        font-family: sans-serif;
-    }
-
-    .axis-label,
-    .legend-label {
-        fill: #635F5D;
-        font-size: 12px;
-        font-family: sans-serif;
-    }
-
-    /*  .axis path, */
-    .axis line {
-        fill: none;
-        stroke: grey;
-        stroke-width: 1;
-        shape-rendering: crispEdges;
-    }
-
-    .tick line {
-        stroke: #C0C0BB;
-    }
-
-    div {
-        padding-right: 10px;
-        padding-left: 10px;
-    }
-
-    .info-container {
-        display: inline-block;
-        width: calc(100% + -50px);
-        vertical-align: middle;
-    }
-
-    .customContainer {
-        padding: 0 3% 0 3%;
-    }
-
-    a.gflag {
-        vertical-align: middle;
-        font-size: 12px;
-        padding: 1px 0;
-        background-repeat: no-repeat;
-        background-image: url(//gtranslate.net/flags/16.png);
-    }
-
-    a.gflag img {
-        border: 0;
-    }
-
-    a.gflag:hover {
-        background-image: url(//gtranslate.net/flags/16a.png);
-    }
-
-    #goog-gt-tt {
-        display: none !important;
-    }
-
-    .goog-te-banner-frame {
-        display: none !important;
-    }
-
-    .goog-te-menu-value:hover {
-        text-decoration: none !important;
-    }
-
-    body {
-        top: 0 !important;
-    }
-
-    #google_translate_element2 {
-        display: none !important;
-    }
-    </style>
-
 </head>
 
 <body>
@@ -137,10 +55,10 @@ else {
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
-                    <li><a href="./configuration.php">Configuration</a></li>
+                    <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown active">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Visualizations<span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">Visualizations <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount</a></li>
@@ -162,7 +80,7 @@ else {
                     </li>
                     <li><a href="./dashboard.php">Dashboard</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Corrections <span class="caret"></span> </a>
                         <ul class="dropdown-menu">
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
@@ -221,7 +139,7 @@ else {
                         /* ]]> */
                         </script>
                     </li>
-                    <li><a href="/includes/logout.php">Logout</a></li>
+                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
 
                 </ul>
             </div>
@@ -229,7 +147,6 @@ else {
         </div>
         <!--/.container-fluid -->
     </nav>
-    <script src="http://d3js.org/d3.v4.min.js"></script>
 
     <div class="customContainer">
         <div class="row" style="margin-bottom: -2%;">
@@ -261,18 +178,17 @@ else {
             </div>
         </div>
 
-        <div class="row">
+        <div class="row" style="margin-bottom: 50px;">
             <div class="col-md-12">
                 <br />
                 <p> <b>Graph Description:</b> Delivery plans matrix representation with respect to actual and forecast periods. NOTE: the periods in the matrix are sorted by date (ascending order). </p>
             </div>
         </div>
 
-        <div class="row">
+        <div class="row" style="margin-bottom: 50px;">
             <div id="my_dataviz"></div>
         </div>
     </div>
-    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script>
     $(document).ready(function() {
         if (localStorage.getItem('checkFiltersActive') === 'true') {
@@ -305,9 +221,11 @@ else {
                 right: 90,
                 bottom: 80,
                 left: 60
-            },
-            width = 900 - margin.left - margin.right,
-            height = 650 - margin.top - margin.bottom;
+            };
+        
+        const result = getPercentToPixelDimensions(70);
+        let width = result.width - margin.left - margin.right;
+        let height = 650 - margin.top - margin.bottom;
 
         // append the svg object to the body of the page
         var svg = d3.select("#my_dataviz")
@@ -369,15 +287,11 @@ else {
 
         // Build color scale
         var myColor = d3.scaleSequential();
-        myColor.interpolator(d3.interpolatePurples);
-        // .domain([d3.min(data, function(d) {
-        //     return d.OrderAmount
-        // }), d3.max(data, function(d) {
-        //     return d.OrderAmount
-        // })]);
         myColor.domain([0, d3.max(data, function(d) {
             return d.OrderAmount;
         })]);
+        myColor.interpolator(d3.interpolatePurples);
+
         var myOrders = data.map(function(d) {
             return (d.OrderAmount);
         });
@@ -442,11 +356,11 @@ else {
             .on("mouseleave", mouseleave)
 
         var legend = svg.selectAll(".legend")
-            .data(myColor.ticks(7).slice(1).reverse())
+            .data(myColor.ticks(15).slice(1).reverse())
             .enter().append("g")
             .attr("class", "legend")
             .attr("transform", function(d, i) {
-                return "translate(" + (width + 20) + "," + (20 + i * 20) + ")";
+                return "translate(" + (width + 30) + "," + (20 + i * 20) + ")";
             });
 
         legend.append("rect")
@@ -458,7 +372,7 @@ else {
 
         legend.append("text")
             .attr("x", 28)
-            .attr("y", 10)
+            .attr("y", 18)
             .attr("dy", ".35em")
             .text(String);
 

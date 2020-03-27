@@ -108,7 +108,7 @@ session_start();
                             <li><a href="src/meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
-                    <li><a href="./dashboard.php">Dashboard</a></li>
+                    <li><a href="src/dashboard.php">Dashboard</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
                             aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
@@ -168,7 +168,8 @@ session_start();
                         /* ]]> */
                         </script>
                     </li>
-                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span>
+                            Logout</a></li>
                 </ul>
             </div>
             <!--/.nav-collapse -->
@@ -246,14 +247,36 @@ session_start();
     </script>
 
     <?php
+
 if (isset($_POST["import"])) {
     
     $i=0; //the first row is skipped
     $fileName = $_FILES["file"]["tmp_name"];
-    $result = mysqli_query($conn, 'SELECT * from newOrders');    
+    $result = mysqli_query($conn, 'SELECT * from newOrders');   
+
     if ($_FILES["file"]["size"] > 0) {
         $file = fopen($fileName, "r");
+                    //////////   function to detect delimiter in the csv file  //////////// 
+
+                    // function detectDelimiter($csvFile)
+                    // {
+                    //     $delimiters = array(
+                    //         ';' => ";",
+                    //         ',' => ","
+                    //     );
+                    
+                    //     $handle = fopen($csvFile, "r");
+                    //     $firstLine = fgets($handle);
+                    //     fclose($handle); 
+                    //     foreach ($delimiters as $delimiter => &$count) {
+                    //         $count = count(str_getcsv($firstLine, $delimiter));
+                    //     }
+                    
+                    //     return array_search(max($delimiters), $delimiters);
+                    // }
+                    ////////////////  end of function //////////////////////
         while (($column = fgetcsv($file, 0, ",")) !== FALSE) {
+        // while (($column = fgetcsv($file, 0, detectDelimiter($file))) !== FALSE) {
             
             if ($i>0){
 
@@ -322,31 +345,31 @@ if (isset($_POST["import"])) {
                     </div>
                 </form> -->
                 <div style="margin-top: 80px;">
-                <form id="fileUploadForm" action="" method="post" name="frmCSVImport" id="frmCSVImport"
-                    enctype="multipart/form-data">
-                    <fieldset>
-                        <div class="form-horizontal">
-                            <div class="form-group">
-                                <div class="row">
-                                    <label class="control-label col-md-2 text-right" for="filename"><span>Choose CSV
-                                            File</span></label>
-                                    <div class="col-md-10">
-                                        <div class="input-group">
-                                            <input type="hidden" id="filename" name="filename" value="">
-                                            <input type="file" name="file" id="file" accept=".csv"
-                                                class="form-control form-control-sm">
-                                            <div class="input-group-btn">
-                                                <input type="submit" id="submit" name="import" value="Import"
-                                                    class="rounded-0 btn btn-primary"
-                                                    style="min-width: 140px; font-weight: bolder;">
+                    <form id="fileUploadForm" action="" method="post" name="frmCSVImport" id="frmCSVImport"
+                        enctype="multipart/form-data">
+                        <fieldset>
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="control-label col-md-2 text-right" for="filename"><span>Choose CSV
+                                                File</span></label>
+                                        <div class="col-md-10">
+                                            <div class="input-group">
+                                                <input type="hidden" id="filename" name="filename" value="">
+                                                <input type="file" name="file" id="file" accept=".csv"
+                                                    class="form-control form-control-sm">
+                                                <div class="input-group-btn">
+                                                    <input type="submit" id="submit" name="import" value="Import"
+                                                        class="rounded-0 btn btn-primary"
+                                                        style="min-width: 140px; font-weight: bolder;">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </fieldset>
-                </form>
+                        </fieldset>
+                    </form>
                 </div>
             </div>
         </div>
@@ -399,7 +422,7 @@ if (isset($_POST["import"])) {
                     alt="Data Format Example" align="middle" height="175" width="360"><br></p>
             <br>
         </div>
-        <hr/>
+        <hr />
         <div class="row" style="margin-bottom: 5%">
             <div class="col-md-12">
                 <h3>Intepret Error Measures:</h3>
