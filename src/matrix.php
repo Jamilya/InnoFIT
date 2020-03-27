@@ -17,8 +17,19 @@ else {
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/data/ico/innofit.ico">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/finalorder.css">
+    <link rel="stylesheet" href="./css/header.css">
+
     <title>Delivery Plans Matrix</title>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
+    </script>
     <script src="../lib/js/localforage.js"></script>
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="./js/util.js"></script>
 
     <script>
     localforage.config({
@@ -28,70 +39,6 @@ else {
         size: 4980736, // Size of database, in bytes. WebSQL-only for now.
     });
     </script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <style>
-    body {
-        margin: 0px;
-    }
-
-    td,
-    th {
-        padding: 2px 4px;
-    }
-
-    th {
-        font-weight: bold;
-    }
-
-    .axis text {
-        font: 12px sans-serif;
-    }
-
-    .axis line,
-    .axis path {
-        fill: none;
-        stroke: #000;
-        shape-rendering: crispEdges;
-    }
-
-    a.gflag {
-        vertical-align: middle;
-        font-size: 16px;
-        padding: 1px 0;
-        background-repeat: no-repeat;
-        background-image: url(//gtranslate.net/flags/16.png);
-    }
-
-    a.gflag img {
-        border: 0;
-    }
-
-    a.gflag:hover {
-        background-image: url(//gtranslate.net/flags/16a.png);
-    }
-
-    #goog-gt-tt {
-        display: none !important;
-    }
-
-    .goog-te-banner-frame {
-        display: none !important;
-    }
-
-    .goog-te-menu-value:hover {
-        text-decoration: none !important;
-    }
-
-    body {
-        top: 0 !important;
-    }
-
-    #google_translate_element2 {
-        display: none !important;
-    }
-    </style>
-
 </head>
 
 <body>
@@ -108,33 +55,31 @@ else {
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
-                    <li><a href="./configuration.php">Configuration</a></li>
-                    <li><a href="./about.php">About</a></li>
-                    <li class><a href="./howto.php">How to Interpret Error Measures </a></li>
+                    <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown active">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Visualizations<span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">Visualizations <span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                            <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount</a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans</a></li>
-                            <li><a href="./forecasterror.php">Forecast Error</a></li>
+                            <li class="active"><a href="./matrix.php">Delivery Plans Matrix <span
+                                        class="sr-only">(current)</span></a></li>
+                            <li><a href="./forecasterror.php">Percentage Error</a></li>
+                            <li><a href="./matrixvariance.php">Delivery Plans Matrix with Percentage Error </a></li>
                             <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Error Measures</li>
+                            <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD)</a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
+                            <li><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
                             <li><a href="./mpe.php">Mean Percentage Error (MPE)</a></li>
                             <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Matrices</li>
-                            <li class="active"><a href="./matrix.php">Delivery Plans Matrix <span
-                                        class="sr-only">(current)</span></a></li>
-                            <li><a href="./matrixvariance.php">Delivery Plans Matrix - With Variance</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Corrections <span class="caret"></span> </a>
                         <ul class="dropdown-menu">
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
@@ -193,7 +138,7 @@ else {
                         /* ]]> */
                         </script>
                     </li>
-                    <li><a href="/includes/logout.php">Logout</a></li>
+                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
 
                 </ul>
             </div>
@@ -201,27 +146,56 @@ else {
         </div>
         <!--/.container-fluid -->
     </nav>
-    <script src="http://d3js.org/d3.v4.min.js"></script>
-    <div style="padding-left:39px">
 
-        <h3>Delivery Plans Matrix</h3>
-        <small>
-            <?php
+    <div class="customContainer">
+        <div class="row" style="margin-bottom: -2%;">
+            <div class="col-md-10">
+                <h3>Delivery Plans Matrix</h3>
+                <small>
+                    <?php
                 echo "You are logged in as: ";
                 print_r($_SESSION["session_username"]);
                 echo ".";
                 ?></small>
+                <br>
+            </div>
+            <div class="col-md-2">
+                <div id="filterInfo" class="alert alert-info" style="text-align: center" role="info">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-info" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-info"
+                                role="info">Filters are applied!</span>
+                        </div>
+                        <div class="row">
+                            <span style="font-size: 12px; vertical-align: middle;" class="alert-info" role="info"> To
+                                change settings please visit <a href="./configuration.php">Configuration</a>.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <br><br>
-        <p> <b>Graph Description:</b> Delivery plans matrix. </p>
+        <div class="row" style="margin-bottom: 50px;">
+            <div class="col-md-12">
+                <br />
+                <p> <b>Graph Description:</b> Delivery plans matrix representation with respect to actual and forecast periods. NOTE: the periods in the matrix are sorted by date (ascending order). </p>
+            </div>
+        </div>
 
+        <div class="row" style="margin-bottom: 50px;">
+            <div id="my_dataviz"></div>
+        </div>
     </div>
-
-    <div style="padding-left:39px">
-        <div id="my_dataviz"></div>
-    </div>
-    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script>
+    $(document).ready(function() {
+        if (localStorage.getItem('checkFiltersActive') === 'true') {
+            $('#filterInfo').show();
+        } else {
+            $('#filterInfo').hide();
+        }
+    });
     let array = [];
 
     localforage.getItem("viz_data", function(error, data) {
@@ -233,14 +207,24 @@ else {
             d.OrderAmount = +d.OrderAmount;
         });
 
+        data = data.sort((a, b) => {
+            return d3.ascending(a.ActualDate, b.ActualDate);
+        });
+
+        data = data.sort((a, b) => {
+            return d3.ascending(a.ForecastDate, b.ForecastDate);
+        });
+
         var margin = {
-                top: 30,
-                right: 30,
-                bottom: 30,
-                left: 30
-            },
-            width = 450 - margin.left - margin.right,
-            height = 450 - margin.top - margin.bottom;
+                top: 10,
+                right: 90,
+                bottom: 80,
+                left: 60
+            };
+        
+        const result = getPercentToPixelDimensions(70);
+        let width = result.width - margin.left - margin.right;
+        let height = 650 - margin.top - margin.bottom;
 
         // append the svg object to the body of the page
         var svg = d3.select("#my_dataviz")
@@ -271,14 +255,24 @@ else {
             });
         console.log("orderMin: ", orderMin);
 
+        var extent = d3.extent(data.map(function(d) {
+            return d.OrderAmount;
+        }).filter(function(d) {
+            return d;
+        }));
+        console.log("extent: ", extent);
+
+
         var x = d3.scaleBand()
             .range([0, width])
             .domain(data.map(d => d.ActualPeriod))
             .padding(0.05);
+        let xAxis = d3.axisBottom(x).tickSize(0);
+
         svg.append("g")
-            .style("font-size", 12)
+            .style("font-size", "12px sans-serif")
             .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x).tickSize(0))
+            .call(xAxis)
             .select(".domain").remove()
 
         // Build Y scales and axis:
@@ -287,18 +281,21 @@ else {
             .domain(myRows)
             .padding(0.05);
         svg.append("g")
-            .style("font-size", 12)
             .call(d3.axisLeft(y).tickSize(0))
             .select(".domain").remove()
 
         // Build color scale
-        var myColor = d3.scaleSequential()
-            .interpolator(d3.interpolatePurples)
-            .domain([d3.min(data, function(d) {
-                return d.OrderAmount
-            }), d3.max(data, function(d) {
-                return d.OrderAmount
-            })]);
+        var myColor = d3.scaleSequential();
+        myColor.domain([0, d3.max(data, function(d) {
+            return d.OrderAmount;
+        })]);
+        myColor.interpolator(d3.interpolatePurples);
+
+        var myOrders = data.map(function(d) {
+            return (d.OrderAmount);
+        });
+        var mean = (d3.min(myOrders) + d3.max(myOrders)) / 2;
+        console.log(mean);
 
         var tooltip = d3.select("#my_dataviz")
             .append("div")
@@ -319,9 +316,9 @@ else {
         }
         var mousemove = function(d) {
             tooltip
-                .html("Order Amount:<br> " + d.OrderAmount)
-                .style("left", (d3.mouse(this)[0] + 25) + "px")
-                .style("top", (d3.mouse(this)[0] + 25) + "px")
+                .html("Product: " + d.Product + "<br>"+ "Order Amount: " + d.OrderAmount  + "<br>" + "Actual Period: " + d.ActualPeriod + "<br>" + "Forecast Period: " +d.ForecastPeriod + "<br>")
+                .style("left", (d3.event.pageX + 20) + "px")
+                .style("top", (d3.event.pageY + 10) + "px")
         }
         var mouseleave = function(d) {
             tooltip
@@ -350,7 +347,7 @@ else {
             .style("fill", function(d) {
                 return myColor(d.OrderAmount)
             })
-            .style("stroke-width", 4)
+            .style("stroke-width", 1)
             .style("stroke", "none")
             .style("opacity", 0.8)
             .on("mouseover", mouseover)
@@ -358,56 +355,49 @@ else {
             .on("mouseleave", mouseleave)
 
         var legend = svg.selectAll(".legend")
-            .data(myColor.ticks(7).slice(1).reverse())
+            .data(myColor.ticks(15).slice(1).reverse())
             .enter().append("g")
             .attr("class", "legend")
             .attr("transform", function(d, i) {
-                return "translate(" + (width + 20) + "," + (20 + i * 20) + ")";
+                return "translate(" + (width + 30) + "," + (20 + i * 20) + ")";
             });
 
         legend.append("rect")
             .attr("width", 20)
             .attr("height", 20)
+            .attr("x", 5)
+            .attr("y", 10)
             .style("fill", myColor);
 
         legend.append("text")
-            .attr("x", 26)
-            .attr("y", 10)
-            .attr("dy", ".41em")
+            .attr("x", 28)
+            .attr("y", 18)
+            .attr("dy", ".35em")
             .text(String);
 
         svg.append("text")
             .attr("class", "label")
-            .attr("x", width + 20)
+            .attr("x", width - 10)
             .attr("y", 10)
-            .attr("dy", ".41em")
+            .attr("dy", ".35em")
             .text("");
 
         svg.append("text")
-            .attr("x", 150)
-            .attr("y", 420)
+            .attr("x", 345)
+            .attr("y", 610)
             .attr("text-anchor", "left")
             .style("font-size", "12px sans-serif")
             .style("fill", "#000")
             .text("Actual Period");
 
         svg.append("text")
-            .attr("x", -245)
-            .attr("y", -19)
+            .attr("x", -320)
+            .attr("y", -45)
             .attr("text-anchor", "left")
             .style("font-size", "12px sans-serif")
             .style("fill", "#000")
             .attr("transform", "rotate(-90)")
             .text("Forecast Period");
-
-        svg.append("text")
-            .attr("x", 0)
-            .attr("y", -20)
-            .attr("text-anchor", "left")
-            .style("font-size", "12px sans-serif")
-            .style("fill", "#000")
-            .style("max-width", 400);
-        // .text("This is a chart of orders distribution per each period.");
 
         svg.selectAll(".tile")
             .style("fill", function(d) {
@@ -418,265 +408,8 @@ else {
             .style("fill", myColor);
 
     });
-
-
-    //     let array = [];
-    //     d3.json("/includes/getdata.php", function (error, data) {
-    //     //if (error) throw error;
-    //     let actualPeriods = d3.nest()
-    //         .key(function (d) { return d.ActualPeriod })
-    //         .entries(data);
-    //     console.log("actual periods length:", actualPeriods.length);
-
-    //          var row;
-    //          var matrix = [];
-
-    //          var k,j, i ;
-
-    //          var item;
-    //          k=-1;    
-
-    //         for ( i=0; i<actualPeriods.length; i++){
-    //                 var tempArray = [];
-
-
-    //             for (j=0; j<actualPeriods.length; j++ ){
-
-    //                 if(i<=j) {
-    //                     k++; 
-    //               //  tempArray[i][j]
-    //                 tempArray.push((data[k].OrderAmount));
-    //                  } else { 
-    //                     tempArray.push(0);
-    //                  //tempArray[i][j] = data[i-1][j].OrderAmount + data[i-1][j-1].OrderAmount;
-    //                   }
-    //             }
-    //                 matrix.push(tempArray);
-
-    //         }
-
-
-    //             function transposeArray(array, arrayLength){
-    //                 var newArray = [];
-    //                 for(var i = 0; i < array.length; i++){
-    //                     newArray.push([]);
-    //                 };
-
-    //                 for(var i = 0; i < array.length; i++){
-    //                     for(var j = 0; j < arrayLength; j++){
-    //                         newArray[j].push(array[i][j]);
-    //                     };
-    //                 };
-
-    //                 return newArray;
-    //             }
-    //             var matrixLen = matrix.length;
-    //             var newMatrix;
-    //             newMatrix = transposeArray(matrix, matrixLen);
-
-    //         console.log ("matrix:", newMatrix);
-    //         console.log ("tempArray:", tempArray);
-    //         console.log ("data[10]:", d3.max(data[10].ActualPeriod));
-    //         console.log ("data[10].OrderAmount:", data[10].OrderAmount);
-    //         console.log ("data:", data);
-
-
-
-    //     var labels = ['CW1', 'CW2', 'CW3', 'CW4', 'CW5', 'CW6', 'CW7', 'CW8', 'CW9', 'CW10'];
-
-    //     Matrix({
-    //         container : '#container',
-    //         data      : newMatrix,
-    //         labels    : labels,
-    //         start_color : '#ffffff',
-    //         end_color : '#3498db'
-    //     });
-
-    //     function Matrix(options) {
-    // 	var margin = {top: 50, right: 50, bottom: 100, left: 100},
-    // 	    width = 450,
-    // 	    height = 450,
-    // 	    data = options.data,
-    // 	    container = options.container,
-    // 	    labelsData = options.labels,
-    // 	    startColor = options.start_color,
-    // 	    endColor = options.end_color;
-
-    // 	var widthLegend = 100;
-
-    // 	if(!tempArray){
-    // 		throw new Error('Please pass data');
-    // 	}
-
-    // 	if(!Array.isArray(newMatrix) || !newMatrix.length || !Array.isArray(newMatrix[0])){
-    // 		throw new Error('It should be a 2-D array');
-    // 	}
-
-    //     var maxValue = d3.max(data, function(layer) { return d3.max(layer, function(d) { return d; }); });
-    //     var minValue = d3.min(data, function(layer) { return d3.min(layer, function(d) { return d; }); });
-
-    //         let max = data.map(a => a.OrderAmount);
-    //         let max2 = data.map(({ OrderAmount }) => OrderAmount)
-    //         function getMaxActual() {
-    //             return data.reduce((max, p) => p.OrderAmount > max ? p : max, data[0]);
-    //         };
-    //         console.log("Max: ", getMaxActual(), max, max2);
-    // 	var numrows = data.length;
-    // 	var numcols = data[0].length;
-
-    // 	var svg = d3.select(container).append("svg")
-    // 	    .attr("width", width + margin.left + margin.right)
-    // 	    .attr("height", height + margin.top + margin.bottom)
-    // 		.append("g")
-    // 	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    // 	var background = svg.append("rect")
-    // 	    .style("stroke", "black")
-    // 	    .style("stroke-width", "2px")
-    // 	    .attr("width", width)
-    // 	    .attr("height", height);
-
-    // 	var x = d3.scale.ordinal()
-    // 	    .domain(d3.range(numcols))
-    // 	    .rangeBands([0, width]);
-
-    // 	var y = d3.scale.ordinal()
-    // 	    .domain(d3.range(numrows))
-    // 	    .rangeBands([0, height]);
-
-    // 	var colorMap = d3.scale.linear()
-    // 	    .domain([minValue,maxValue])
-    // 	    .range([startColor, endColor]);
-
-    // 	var row = svg.selectAll(".row")
-    // 	    .data(data)
-    // 	  	.enter().append("g")
-    // 	    .attr("class", "row")
-    // 	    .attr("transform", function(d, i) { return "translate(0," + y(i) + ")"; });
-
-    // 	var cell = row.selectAll(".cell")
-    // 	    .data(function(d) { return d; })
-    // 			.enter().append("g")
-    // 	    .attr("class", "cell")
-    // 	    .attr("transform", function(d, i) { return "translate(" + x(i) + ", 0)"; });
-
-    // 	cell.append('rect')
-    // 	    .attr("width", x.rangeBand())
-    // 	    .attr("height", y.rangeBand())
-    // 	    .style("stroke-width", 0);
-
-    //     cell.append("text")
-    // 	    .attr("dy", ".32em")
-    // 	    .attr("x", x.rangeBand() / 2)
-    // 	    .attr("y", y.rangeBand() / 2)
-    // 	    .attr("text-anchor", "middle")
-    // 	    .style("fill", function(d, i) { return d >= maxValue/2 ? 'white' : 'black'; })
-    // 	    .text(function(d, i) { return d; });
-
-    // 	row.selectAll(".cell")
-    // 	    .data(function(d, i) { return data[i]; })
-    // 	    .style("fill", colorMap);
-
-    // 	var labels = svg.append('g')
-    // 		.attr('class', "labels");
-
-    // 	var columnLabels = labels.selectAll(".column-label")
-    // 	    .data(labelsData)
-    // 	    .enter().append("g")
-    // 	    .attr("class", "column-label")
-    // 	    .attr("transform", function(d, i) { return "translate(" + x(i) + "," + height + ")"; });
-
-    // 	columnLabels.append("line")
-    // 		.style("stroke", "black")
-    // 	    .style("stroke-width", "1px")
-    // 	    .attr("x1", x.rangeBand() / 2)
-    // 	    .attr("x2", x.rangeBand() / 2)
-    // 	    .attr("y1", 0)
-    // 	    .attr("y2", 5);
-
-    // 	columnLabels.append("text")
-    // 	    .attr("x", 0)
-    // 	    .attr("y", y.rangeBand() / 2)
-    // 	    .attr("dy", ".82em")
-    // 	    .attr("text-anchor", "end")
-    // 	    .attr("transform", "rotate(-60)")
-    // 	    .text(function(d, i) { return d; });
-
-    // 	var rowLabels = labels.selectAll(".row-label")
-    // 	    .data(labelsData)
-    // 	  .enter().append("g")
-    // 	    .attr("class", "row-label")
-    // 	    .attr("transform", function(d, i) { return "translate(" + 0 + "," + y(i) + ")"; });
-
-    // 	rowLabels.append("line")
-    // 		.style("stroke", "black")
-    // 	    .style("stroke-width", "1px")
-    // 	    .attr("x1", 0)
-    // 	    .attr("x2", -5)
-    // 	    .attr("y1", y.rangeBand() / 2)
-    // 	    .attr("y2", y.rangeBand() / 2);
-
-    // 	rowLabels.append("text")
-    // 	    .attr("x", -8)
-    // 	    .attr("y", y.rangeBand() / 2)
-    // 	    .attr("dy", ".32em")
-    // 	    .attr("text-anchor", "end")
-    // 	    .text(function(d, i) { return d; });
-
-    //     var key = d3.select("#legend")
-    //     .append("svg")
-    //     .attr("width", widthLegend)
-    //     .attr("height", height + margin.top + margin.bottom);
-
-    //     var legend = key
-    //     .append("defs")
-    //     .append("svg:linearGradient")
-    //     .attr("id", "gradient")
-    //     .attr("x1", "100%")
-    //     .attr("y1", "0%")
-    //     .attr("x2", "100%")
-    //     .attr("y2", "100%")
-    //     .attr("spreadMethod", "pad");
-
-    //     legend
-    //     .append("stop")
-    //     .attr("offset", "0%")
-    //     .attr("stop-color", endColor)
-    //     .attr("stop-opacity", 1);
-
-    //     legend
-    //     .append("stop")
-    //     .attr("offset", "100%")
-    //     .attr("stop-color", startColor)
-    //     .attr("stop-opacity", 1);
-
-    //     key.append("rect")
-    //     .attr("width", widthLegend/2-10)
-    //     .attr("height", height)
-    //     .style("fill", "url(#gradient)")
-    //     .attr("transform", "translate(0," + margin.top + ")");
-
-    //     var y = d3.scale.linear()
-    //     .range([height, 0])
-    //     .domain([minValue, maxValue]);
-
-    //     var yAxis = d3.svg.axis()
-    //     .scale(y)
-    //     .orient("right");
-
-
-    //     key.append("g")
-    //     .attr("class", "y axis")
-    //     .attr("transform", "translate(41," + margin.top + ")")
-    //     .call(yAxis)
-    // };
-
-    // });
     </script>
 
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
-        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
-    </script>
     <script src="/lib/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">

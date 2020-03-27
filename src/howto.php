@@ -100,35 +100,25 @@ else {
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="nav navbar-nav">
             <li><a href="./configuration.php">Configuration</a></li>
-                    <!--  <li class="nav-item">
-                        <a class="nav-link" href="index.php">Home</a>
-                    </li > -->
-            <li class><a href="./about.php">About</a></li>
-            <li class = "active"><a href="./howto.php">How to Interpret Error Measures   <span class="sr-only">(current)</span></a></li>
             <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Visualizations<span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                    <li ><a href="./finalorder.php">Final Order Amount </a></li>
-                    <li ><a href="./deliveryplans.php">Delivery Plans </a></li>
-                     <li><a href="./forecasterror.php">Forecast Error</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li class="dropdown-header">Error Measures</li>                            
-                    <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
-                    <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
-                    <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
-                    <li><a href="./mpe.php">Mean Percentage Error (MPE) </a></li>
-                    <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
-                    <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li class="dropdown-header">Matrices</li>
-                    <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
-                    <li><a href="./matrixvariance.php">Delivery Plans Matrix - With Variance </a></li>
-                            <!-- <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">New Graphs</li>
-                            <li>
-                                <a class="dropdown-item" href="./boxplot.php">Box Plot</a>
-                            </li> -->
-                </ul>
+                <li class="dropdown-header">Basic Order Analysis</li>
+                            <li><a href="./finalorder.php">Final Order Amount </a></li>
+                            <li><a href="./deliveryplans.php">Delivery Plans </a></li>
+                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
+                            <li><a href="./forecasterror.php">Percentage Error</a></li>
+                            <li><a href="./matrixvariance.php">Delivery Plans Matrix with Percentage Error </a></li>
+                            <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">Forecast Error Measures</li>
+                            <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
+                            <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
+                            <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
+                            <li><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
+                            <li><a href="./mpe.php">Mean Percentage Error (MPE) </a></li>
+                            <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
+                            <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li> 
+                        </ul>
             </li>
           <!-- </ul> -->
                 <li class="dropdown">
@@ -184,7 +174,7 @@ print_r($_SESSION["session_username"]);
 echo ".";
 ?></small>
 <br><br>
-		<h5 class = "card-title"><strong>Description and guidelines on how to use the error measures</strong></h5>
+		<h5 class = "card-title"><strong>Description and guidelines on how to interpret and use the error measures</strong></h5>
 	<div class = "row1"> 
 		<div class="col-sm-6">
 		    <p class = "class-text"> 

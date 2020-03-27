@@ -15,7 +15,9 @@ else {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Configuration</title>
-
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
+    </script>
     <script src="../lib/js/localforage.js"></script>
     <script type="text/javascript"
         src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit2">
@@ -47,6 +49,21 @@ else {
     <style>
     body {
         margin: 0 auto;
+    }
+
+    div {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+    .info-container {
+        display: inline-block;
+        width: calc(100% + -50px);
+        vertical-align: middle;
+    }
+
+    .customContainer {
+        padding: 0 3% 0 3%;
     }
 
     a.gflag {
@@ -86,7 +103,10 @@ else {
     }
 
     .irs-handle,
-    .irs-bar, .irs-single, .irs-from:before, .irs-to:before,
+    .irs-bar,
+    .irs-single,
+    .irs-from:before,
+    .irs-to:before,
     .irs--flat {
         cursor: pointer;
         border-top-color: #336699 !important;
@@ -103,8 +123,8 @@ else {
         font-size: 12px;
     }
 
-    .irs-handle, .irs--flat .irs-handle {
-        background-color: #336699 !important;
+    .irs-handle,
+    .irs--flat .irs-handle {
         width: 15px;
         height: 30px;
         left: -.6em;
@@ -138,27 +158,25 @@ else {
                     <li class="active"><a href="./configuration.php">Configuration <span
                                 class="sr-only">(current)</span></a>
                     </li>
-                    <li><a href="./about.php">About</a></li>
-                    <li class><a href="./howto.php">How to Interpret Error Measures </a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                        <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
-                            <li><a href="./forecasterror.php">Forecast Error</a></li>
+                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
+                            <li><a href="./forecasterror.php">Percentage Error</a></li>
+                            <li><a href="./matrixvariance.php">Delivery Plans Matrix with Percentage Error </a></li>
                             <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Error Measures</li>
+                            <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
+                            <li><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
                             <li><a href="./mpe.php">Mean Percentage Error (MPE) </a></li>
                             <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
-                            <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Matrices</li>
-                            <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
-                            <li><a href="./matrixvariance.php">Delivery Plans Matrix - With Variance </a></li>
+                            <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li> 
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -224,26 +242,43 @@ else {
         </div>
         <!--/.container-fluid -->
     </nav>
-
-    <h1>Configuration</h1>
-
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 text-center"><br>
+    <div class="customContainer">
+        <div class="row" style="margin-bottom: -2%;">
+            <div class="col-md-10">
+                <h1>Configuration</h1><br />
                 <h4><?php   echo "Dear ";
                     print_r($_SESSION["session_username"]);
                     echo ",";?></h4>
-                <p>On this page you can find the instructions on the data format requirements and the filter settings.
+                <p>On this page you can adjust the filter settings of the visualizations.
                 </p>
             </div>
-        </div><br><br><br>
+            <div class="col-md-2">
+                <div id="filterInfo" class="alert alert-info" style="text-align: center" role="info">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-info" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-info"
+                                role="info">Filters
+                                are applied!</span>
+                        </div>
+                        <div class="row">
+                            <span style="font-size: 11px; vertical-align: middle;" class="alert-info" role="info">
+                                To
+                                change settings please visit <a
+                                    href="./configuration.php"><u>Configuration</u></a>.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12">
-            <h3>Product Selection</h3>
-               <p>Please select the product or products you want to visualize   </p>    <br />
+                <h3>Product Selection</h3>
+                <p>Please select the product or products you want to visualize </p> <br />
                 <select name=productsList[] id="products" class="form-control" multiple="multiple" size="5">
 
-                    <option value="">- Select -</option>
+                    <option value="">- Select All (Default) -</option>
                     <!-- <option value='1'>Software Development</option> -->
                 </select>
 
@@ -253,7 +288,9 @@ else {
         <div class="row" style="margin-top: 5%;">
             <div class="col-md-12">
                 <h3>Actual Date Slider</h3>
-                <p>Please select the Actual Date range here: the data will be filtered from the selected range onwards.</p>
+                <p>Please select the Actual Date range here: the data will be filtered from the selected range
+                    onwards.
+                </p>
                 <br />
                 <input id="actualDateSlider" type="text" class="js-range-slider" name="my_range" value="" />
             </div>
@@ -261,20 +298,33 @@ else {
         <div class="row" style="margin-top: 5%;">
             <div class="col-md-12">
                 <h3>Due Date Slider</h3>
-                <p>Please select the Due Date range here: the data will be filtered until the selected time range.</p>
+                <p>Please select the Due Date range here: the data will be filtered until the selected time range.
+                </p>
                 <br />
                 <input id="forecastDateSlider" type="text" class="js-range-slider" name="my_range" value="" />
             </div>
         </div>
         <div class="row" style="margin-top: 5%;">
-            <div class="col-md-12 pull-right">
+            <div class="col-md-2">
+                <button id="btnResetFilters" class="btn btn-secondary">Reset Filters</button>
+            </div>
+            <div class="col-md-10 pull-right">
                 <button id="btnApplyFilters" class="btn btn-primary">Apply Filters</button>
             </div>
         </div>
+
     </div>
 
     <script>
-    let lang = "en-US";
+    $(document).ready(function() {
+        if (localStorage.getItem('checkFiltersActive') === 'true') {
+            $('#filterInfo').show();
+        } else {
+            $('#filterInfo').hide();
+        }
+    });
+
+    let lang = "en-GB";
     let actualDateMinValue = 0;
     let actualDateMaxValue = 0;
     let forecastDateMinValue = 0;
@@ -283,13 +333,12 @@ else {
 
 
     $(document).ready(function() {
-        $("button").click(function() {
-
-            $.each($(".form-control option:selected"), function() {
-                newProductList.push($(this).val());
-            }).get();
-            // alert("You have selected the country - " + countries.join(", "));
-        });
+        if (localStorage.getItem('checkFiltersActive') === 'true') {
+            console.log('I WANT TO RESET');
+            $('#btnResetFilters').prop('disabled', false);
+        } else {
+            d3.select('#btnResetFilters').attr('disabled', true);
+        }
     });
 
     function dateToTS(date) {
@@ -306,7 +355,7 @@ else {
         });
     }
 
-    localforage.getItem('viz_data').then(function(data) {
+    localforage.getItem('all_data').then(function(data) {
         data = JSON.parse(data);
         console.log('ORIGINAL DATA', data);
 
@@ -316,19 +365,25 @@ else {
 
 
         // Get min and max ActualDate
-        const minADate = data.reduce((m, v, i) => (v.ActualDate < m.ActualDate) && i ? v : m).ActualDate;
-        console.log('Min ADate: ', minADate);
-        const maxADate = data.reduce((m, v, i) => (v.ActualDate > m.ActualDate) && i ? v : m).ActualDate;
-        console.log('Max ADate: ', maxADate);
+        const minADate = (data.reduce((m, v, i) => (v.ActualDate < m.ActualDate) && i ? v : m)
+            .ActualDate).slice(0, -9);
+        // console.log('Min ADate: ', minADate);
+        const maxADate = (data.reduce((m, v, i) => (v.ActualDate > m.ActualDate) && i ? v : m)
+            .ActualDate).slice(0, -9);
+        // console.log('Max ADate: ', maxADate);
 
         // Get min and max ForecastDate
-        const minFDate = data.reduce((m, v, i) => (v.ForecastDate < m.ForecastDate) && i ? v : m).ForecastDate;
-        console.log('Min FDate: ', minFDate);
-        const maxFDate = data.reduce((m, v, i) => (v.ForecastDate > m.ForecastDate) && i ? v : m).ForecastDate;
-        console.log('Max FDate: ', maxFDate);
+        const minFDate = (data.reduce((m, v, i) => (v.ForecastDate < m.ForecastDate) && i ? v : m)
+            .ForecastDate).slice(0, -9);
+        // console.log('Min FDate: ', minFDate);
+        const maxFDate = (data.reduce((m, v, i) => (v.ForecastDate > m.ForecastDate) && i ? v : m)
+            .ForecastDate).slice(0, -9);
+        // console.log('Max FDate: ', maxFDate);
 
         $("#actualDateSlider").ionRangeSlider({
             type: "double",
+            skin: 'round',
+            step: 86400000,
             min: dateToTS(new Date(minADate)),
             max: dateToTS(new Date(maxADate)),
             from: dateToTS(new Date(minADate)),
@@ -336,17 +391,19 @@ else {
             grid: true,
             prettify: tsToDate,
             onStart: function(data) {
-                actualDateMinValue = new Date(data.from);
-                actualDateMaxValue = new Date(data.to);
+                actualDateMinValue = data.from;
+                actualDateMaxValue = data.to;
             },
             onFinish: function(data) {
-                actualDateMinValue = new Date(data.from);
-                actualDateMaxValue = new Date(data.to);
+                actualDateMinValue = data.from;
+                actualDateMaxValue = data.to;
             },
         });
 
         $("#forecastDateSlider").ionRangeSlider({
             type: "double",
+            skin: 'round',
+            step: 86400000,
             min: dateToTS(new Date(minFDate)),
             max: dateToTS(new Date(maxFDate)),
             from: dateToTS(new Date(minFDate)),
@@ -354,12 +411,12 @@ else {
             grid: true,
             prettify: tsToDate,
             onStart: function(data) {
-                forecastDateMinValue = new Date(data.from);
-                forecastDateMaxValue = new Date(data.to);
+                forecastDateMinValue = data.from;
+                forecastDateMaxValue = data.to;
             },
             onFinish: function(data) {
-                forecastDateMinValue = new Date(data.from);
-                forecastDateMaxValue = new Date(data.to);
+                forecastDateMinValue = data.from;
+                forecastDateMaxValue = data.to;
             },
         });
 
@@ -369,33 +426,76 @@ else {
         }
         $("#products").append(options);
 
-        // newProductList = $('select[name="productsList[]"]').map(function() {
-        //     if ($(this).val())
-        //         return $(this).val();
-        // }).get();
+        d3.select('#btnApplyFilters').on('click', function(e) {
+            let productNames = $.map($(".form-control option:selected"), function(option) {
+                return option.value;
+            });
 
+            console.log('FILTERING STARTS HERE');
+            console.log('Filter Parameters: ');
+            console.log('Product Names', productNames);
+            console.log('actual Min Date: ', actualDateMinValue);
+            console.log('actual Max Date: ', actualDateMaxValue);
+            console.log('forecast Min Date: ', forecastDateMinValue);
+            console.log('forecast Max Date: ', forecastDateMaxValue);
 
-        // $("select option:selected").each(function() {
-        //     newProductList.push($(this).val());
-        // });
+            // 1. Filter by Product Name
+            let filteredByProduct = data;
+            if (productNames.length > 0 && productNames[0] !== "") {
+                filteredByProduct = data.filter(item => productNames.includes(item
+                    .Product));
+                console.log('Product: ', filteredByProduct);
+            }
+            // 2. Filter by Actual Date based on filtered product
+            let filteredByActualDate = filteredByProduct.filter((item) => {
+                const actualDateInt = new Date(item.ActualDate.slice(0, -9)).getTime();
 
+                return actualDateInt >= actualDateMinValue && actualDateInt <=
+                    actualDateMaxValue;
+            });
+            console.log('Product and Actual Date filter applied: ', filteredByActualDate);
 
-    });
+            // 3. Filter by Forecast Date based on filtered product and actual date
+            let filteredByForecastDate = filteredByActualDate.filter((item) => {
+                const forecastDateInt = new Date(item.ForecastDate.slice(0, -9)).getTime();
 
+                return forecastDateInt >= forecastDateMinValue && forecastDateInt <=
+                    forecastDateMaxValue;
+            });
 
-    d3.select('#btnApplyFilters').on('click', function(e) {
-        console.log('FILTERING STARTS HERE');
-        console.log('Filter Parameters: ');
-        console.log('actual Min Date: ', actualDateMinValue);
-        console.log('actual Max Date: ', actualDateMaxValue);
-        console.log('forecast Min Date: ', forecastDateMinValue);
-        console.log('forecast Max Date: ', forecastDateMaxValue);
-        console.log('selected products: ', newProductList);
+            console.log('Product, Actual Date and Forecast Date filters applied: ',
+                filteredByForecastDate);
 
-        Swal.fire('Your filters have been applied! Please Visit Visualizations');
+            productNames = [];
+            Swal.fire(
+                'Filters applied!',
+                'Your filters have been applied. Please visit the Visualizations.',
+                'success');
+            localforage.setItem('viz_data', JSON.stringify(filteredByForecastDate));
+
+            if (data.length === filteredByForecastDate.length) {
+                localStorage.setItem('checkFiltersActive', false);
+            } else {
+                localStorage.setItem('checkFiltersActive', true);
+            }
+        });
+
+        d3.select('#btnResetFilters').on('click', function(e) {
+            Swal.fire(
+                'Filters reset!',
+                'Your filter settings have been reset. No Filters are applied!',
+                'info');
+            localforage.setItem('all_data', JSON.stringify(data));
+            localforage.setItem('viz_data', JSON.stringify(data));
+        });
+
     });
     </script>
 
+    <script src="/lib/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
+    </script>
 
 </body>
 
