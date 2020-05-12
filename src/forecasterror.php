@@ -188,8 +188,8 @@ else {
                     comparing the forecasted order amounts to the final order amounts with respect to periods before
                     delivery.<br>
                     The formula of the Percentage Error:
-                    <img src="https://latex.codecogs.com/gif.latex?e_{i,j} = \frac{ x_{i,j} - x_{i,0} }{x_{i,0}}"
-                        title="Percentage (forecast) Error formula" />.
+                        <img src="../data/img/forecast.png" title="Percentage Error formula" height="56" width="105"/>
+                    . </p>
                 </p>
             </div>
         </div>
@@ -297,7 +297,7 @@ else {
             isfinitearray = newFinalArray.filter((el) => {
                 return isFinite(el.Deviation) == true;
             })
-            console.log("isfinitearrayt: ", isfinitearray);
+            console.log("isfinitearray: ", isfinitearray);
             let deviationCalc = d3.values(isfinitearray, function(d) {
                 return d.Deviation;
             })
@@ -376,7 +376,8 @@ else {
                 .group(periodsBeforeDeliveryGroup)
                 .multiple(true)
                 .numberVisible(15);
-            var plotColorMap = d3.scaleOrdinal(d3.schemeCategory10);
+            var plotColorMap = d3.scaleOrdinal(d3.schemeCategory10)
+                .domain(d3.extent(isfinitearray, function (d){ return d.ForecastPeriod}));
 
             forecastErrorChart
                 .width(768 + margin.left + margin.right)
@@ -393,9 +394,9 @@ else {
                 .colorAccessor(function(d) {
                     return d.key[2];
                 })
-                .colors(function(colorKey) {
-                    return plotColorMap(colorKey);
-                })
+                // .colors(function(d) {
+                //     return plotColorMap(d);
+                // })
                 .keyAccessor(function(d) {
                     return d.key[0];
                 })
@@ -424,7 +425,7 @@ else {
 
             forecastErrorChart.symbol(d3.symbolCircle);
             forecastErrorChart.margins(margin);
-            forecastErrorChart.legend(dc.legend().legendText("Actual Period"));
+            forecastErrorChart.legend(dc.legend().legendText("Actual Period").x(770).y(45));
 
             visCount
                 .dimension(ndx)

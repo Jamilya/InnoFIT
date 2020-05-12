@@ -225,7 +225,7 @@ else {
         <div class="row" style="margin-top: 40px;">
             <div class="col-md-12">
                 <h4><strong>Download section</strong></h4>
-                <strong><i>InnoFit Project Poser:</i></strong>
+                <strong><i>InnoFit Project Poster:</i></strong>
                 <br />
                 Office 365 access: <a
                     href="https://fhstp.sharepoint.com/sites/InnoFIT/Freigegebene%20Dokumente/General/Posters/InnoFIT_one%20version.pdf"

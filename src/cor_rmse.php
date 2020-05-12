@@ -80,14 +80,9 @@ else {
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
-<<<<<<< HEAD
                     <li><a href="./dashboard.php">Dashboard</a></li>
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-=======
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
->>>>>>> ed421effef90da49c1b9890d28a877f6aa46235a
                             aria-expanded="false">Corrections <span class="caret"></span> </a>
                         <ul class="dropdown-menu">
                             <li class="active"><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) <span
@@ -190,12 +185,15 @@ else {
                     <p> <b>Graph Description:</b> This graph presents an estimation of CRMSE and RMSE with respect to
                         periods before
                         delivery (PBD).
-                        <br> The Formula of the Corrected Root Mean Square Error (CRMSE) is: <img
-                            src="https://latex.codecogs.com/gif.latex?CRMSE_{j} = \sqrt{\frac{1}{n}\sum_{1}^{n}(x_{i,0}-(\frac{x_{i,j}}{MFB_{j}}))^{2}}"
-                            title="Corrected RMSE_1" /> , <br>
-                        where MFB (Mean Forecast Bias) = <img
-                            src="https://latex.codecogs.com/gif.latex?MFB_{j} = \frac {\sum_{i=1}^{n}x_{i,j}}{\sum_{i=1}^{n}x_{i,0}}"
-                            title="Mean Forecast Bias formula" /></p>
+                        <br> The Formula of the Corrected Root Mean Square Error (CRMSE) is: 
+                        <!-- <img src="https://latex.codecogs.com/gif.latex?CRMSE_{j} = \sqrt{\frac{1}{n}\sum_{1}^{n}(x_{i,0}-(\frac{x_{i,j}}{MFB_{j}}))^{2}}"
+                            title="Corrected RMSE_1" />  -->
+                        <img src = "../data/img/corr_rmse.gif" title="Corrected RMSE formula"/>, <br>
+                        where MFB (Mean Forecast Bias) = 
+                        <!-- <img src="https://latex.codecogs.com/gif.latex?MFB_{j} = \frac {\sum_{i=1}^{n}x_{i,j}}{\sum_{i=1}^{n}x_{i,0}}"
+                            title="Mean Forecast Bias formula" /> -->
+                        <img src = "../data/img/mfb.gif" title="MFB formula"/>
+                            </p>
                 </div>
             </div>
             <div class="row">

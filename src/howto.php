@@ -195,26 +195,38 @@ echo ".";
 <div class="divTableRow">
 <div class="divTableCell">Mean Absolute Deviation (MAD)</div>
 <div class="divTableCell">The mean absolute deviation describes the absolute average error between the forecasted and the final order amounts. MAD represents the average error of forecast deviation from the final order. Since the estimation is in absolute values, <b> it does not show whether there was over- or under-booking in the forecast. </b></div>
-<div class="divTableCell"><img src="https://latex.codecogs.com/gif.latex?MAD_{j} = \frac{1}{n}\sum_{i=1}^{n}{\left | x_{i,j}-x_{i,0} \right |}" title="MAD_formula"></div>
+<div class="divTableCell">
+<!-- <img src="https://latex.codecogs.com/gif.latex?MAD_{j} = \frac{1}{n}\sum_{i=1}^{n}{\left | x_{i,j}-x_{i,0} \right |}" title="MAD_formula"> -->
+<img src = "../data/img/mad.gif" title="MAD formula"/>
+</div>
 </div>
 <div class="divTableRow">
 <div class="divTableCell">Mean Squared Error (MSE) </div>
 <div class="divTableCell">Mean Squared Error (the mean/average of the squared errors) measures the quality of forecast estimation (zero meaning perfect accuracy) with respect to periods before delivery, and the values closer to zero are better.
 MSE measures the variance and the bias of forecasts to the final customer orders, and <b> it is very sensitive to outliers in data. </b><br>
 <b>The linear regression measure of MSE provides information on performance of the forecasting behaviour and the extent to which the data gets close to the final order estimation.</b></div>
-<div class="divTableCell"><img src="https://latex.codecogs.com/gif.latex?MSE_{j} = \frac{1}{n}\sum_{i=1}^{n}(x_{i,j}-x_{i,0})^{2}" title="MSE formula"></div>
+<div class="divTableCell">
+<!-- <img src="https://latex.codecogs.com/gif.latex?MSE_{j} = \frac{1}{n}\sum_{i=1}^{n}(x_{i,j}-x_{i,0})^{2}" title="MSE formula"> -->
+<img src = "../data/img/mse.gif" title="MSE formula"/>
+</div>
 </div>
 <div class="divTableRow">
 <div class="divTableCell">Root Mean Square Error (RMSE)</div>
 <div class="divTableCell">Root Mean Square Error (square root of the squared errors), like the Mean Squared error,  measures forecast accuracy representing difference between forecasted and final (observed) customer orders (zero meaning perfect score) with respect to periods before delivery. 
 RMSE should always be non-negative, and lower RMSE is better than a higher one. Different forecast horizons would result in different RMSE, since the measure is dependent on the scale of data used. <b>It is also very sensitive to outliers in data.</b> </div>
-<div class="divTableCell"><img src="https://latex.codecogs.com/gif.latex?RMSE_{j} = \sqrt{\frac{1}{n}\sum_{i=1}^{n} ( x_{i,j} - x_{i,0})^{2}}" title="RMSE formula"></div>
+<div class="divTableCell">
+<!-- <img src="https://latex.codecogs.com/gif.latex?RMSE_{j} = \sqrt{\frac{1}{n}\sum_{i=1}^{n} ( x_{i,j} - x_{i,0})^{2}}" title="RMSE formula"> -->
+<img src = "../data/img/rmse.gif" title="RMSE formula"/>
+</div>
 </div>
 <div class="divTableRow">
 <div class="divTableCell">Mean Percentage Error (MPE)</div>
 <div class="divTableCell">MPE represents the evaluation of forecasting accuracy, calculated by the difference between forecasted customer orders and the final customer orders, divided by the final customer orders. It represents the bias in the forecast behaviour with respect to periods before delivery. In our visualization, we provide a weighted mean estimation of MPE.
 <br> <b>Positive or negative estimation represents whether there was over- or under-booking in forecasts.</b></div> 
-<div class="divTableCell"><img src="https://latex.codecogs.com/gif.latex?MPE_{j} = \frac {\sum_{i=1}^{n}x_{i,j}-x_{i,0}}{\sum_{i=1}^{n}x_{i,0}}" title="MAPE formula"></div>
+<div class="divTableCell">
+<!-- <img src="https://latex.codecogs.com/gif.latex?MPE_{j} = \frac {\sum_{i=1}^{n}x_{i,j}-x_{i,0}}{\sum_{i=1}^{n}x_{i,0}}" title="MAPE formula"> -->
+<img src = "../data/img/mpe.gif" title="MPE formula"/>
+</div>
 </div>
 <div class="divTableRow">
 <div class="divTableCell">Mean Absolute Percentage Error (MAPE) </div>
@@ -223,12 +235,18 @@ forecasted customer orders and the final customer orders and divided by the fina
 However, <b> it does not provide good measure of "good" and "bad" forecasts.</b> For example, it can be interpreted differently for stable vs. unstable demand, having the same estimation, 
 it can have different meangings, therefore, there is a risk of overlooking some contexts when the optimal forecast can deviate significantly from a least-mean-percentage-error prediction. 
 Since it only represents the "demand range", the possible solution is to apply this error measure to evaluate to what extent the forecast satisfies the company's objectives (Danese and Kalchschmidt, 2011). </div>
-<div class="divTableCell"><img src="https://latex.codecogs.com/gif.latex?MAPE_{j} = \frac {\sum_{i=1}^{n}|x_{i,j}-x_{i,0}|}{\sum_{i=1}^{n}x_{i,0}}" title="MAPE formula"></div>
+<div class="divTableCell">
+<!-- <img src="https://latex.codecogs.com/gif.latex?MAPE_{j} = \frac {\sum_{i=1}^{n}|x_{i,j}-x_{i,0}|}{\sum_{i=1}^{n}x_{i,0}}" title="MAPE formula"> -->
+<img src = "../data/img/mape.gif" title="MAPE formula"/>
+</div>
 </div>
 <div class="divTableRow">
 <div class="divTableCell">Mean Forecast Bias (MFB)</div>
 <div class="divTableCell">MFB is the measure describing the <b>mean forecast error</b>, or the expected value of forecast errors over a defined time horizon, which is defined by <b>consistent differences between forecasted and final customer order estimations</b>. <br>In our visualization, MFB is calculated as a weighted mean forecast error estimation with respect to periods before delivery.</div>
-<div class="divTableCell"><img src="https://latex.codecogs.com/gif.latex?MFB_{j} = \frac {\sum_{i=1}^{n}x_{i,j}}{\sum_{i=1}^{n}x_{i,0}}" title="Mean Forecast Bias formula"></div>
+<div class="divTableCell">
+<!-- <img src="https://latex.codecogs.com/gif.latex?MFB_{j} = \frac {\sum_{i=1}^{n}x_{i,j}}{\sum_{i=1}^{n}x_{i,0}}" title="Mean Forecast Bias formula"> -->
+<img src = "../data/img/mfb.gif" title="MFB formula"/>
+</div>
 <br>
 </div>
 <!-- <div class="divTableRow">

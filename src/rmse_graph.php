@@ -60,8 +60,8 @@ else {
                 <ul class="nav navbar-nav">
                     <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown active">
-                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Visualizations <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false">Visualizations <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
@@ -84,8 +84,8 @@ else {
                     <!-- </ul> -->
                     <li><a href="./dashboard.php">Dashboard</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Corrections <span class="caret"></span> </a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
                         <ul class="dropdown-menu">
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
@@ -113,8 +113,6 @@ else {
                         <script type="text/javascript"
                             src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit2">
                         </script>
-
-
                         <script type="text/javascript">
                         /* <![CDATA[ */
                         eval(function(p, a, c, k, e, r) {
@@ -142,7 +140,8 @@ else {
                         /* ]]> */
                         </script>
                     </li>
-                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span>
+                            Logout</a></li>
 
                 </ul>
             </div>
@@ -150,8 +149,6 @@ else {
         </div>
         <!--/.container-fluid -->
     </nav>
-
-
     <div class="customContainer">
         <div class="row" style="margin-bottom: -2%;">
             <div class="col-md-10">
@@ -192,9 +189,7 @@ else {
                         <br> Root Mean Square Error (square root of the squared errors), like the Mean Squared error,
                         also measures
                         accuracy (zero meaning perfect score). The Formula of the Root Mean Square Error (RMSE) is:
-                        <img src="https://latex.codecogs.com/gif.latex?RMSE_{j} = \sqrt{\frac{1}{n}\sum_{i=1}^{n} ( x_{i,j} - x_{i,0})^{2}}"
-                            title="RMSE formula" />. </p>
-                    <!-- \sqrt{\frac{1}{n}\sum_{i=1}^{n} ( x_{i,j} - x_{i,0})^{2}} -->
+                        <img src="../data/img/rmse.gif" title="RMSE formula" />. </p>
                 </div>
             </div>
 
@@ -210,8 +205,6 @@ else {
                     <div id="pbd">
                         <p style="text-align:center;"><strong>Periods Before Delivery (PBD)<br /><small>(PBD: number of
                                     records)</small></strong></p>
-                        <!-- <span class ="reset" style="display: none;">Range:<span class="filter"></span></span> -->
-                        <!-- <a class="reset" href="javascript:periodsBeforeDeliveryChart.filterAll(); dc.redrawAll();" style="display: none;">reset</a> -->
                     </div>
                     <div style="clear: both"></div>
                 </div>
@@ -220,10 +213,12 @@ else {
 
             <div class="row" style="margin: 50px 0 50px 0;">
                 <div class="dc-data-count">
-                    There are <span class="filter-count"></span> selected out of <span class="total-count"></span> records | <a class="badge badge-light"
-                        href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a><br />
+                    There are <span class="filter-count"></span> selected out of <span class="total-count"></span>
+                    records | <a class="badge badge-light" href="javascript:dc.filterAll(); dc.renderAll();"> Reset all
+                    </a><br />
                     <br />
                     <button class="btn btn-secondary" onclick="myFunction()"><strong>Show Data table</strong></button>
+                    <button class="btn btn-secondary" id="exportFunction"><strong>Export Data</strong></button>
                     <table class="table table-hover dc-data-table" id="myTable" style="display:none">
                     </table>
                     <br />
@@ -328,7 +323,70 @@ else {
                     };
                 }
             });
-            console.log("separatedArray: ", bubu);
+            // console.log("separatedArray: ", bubu);
+
+            var exportArray = bubu.map((el) => {
+                return {
+                    Product: el.Product,
+                    PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                    RMSE: el.RMSE + "\n"
+                }
+            })
+
+            /**   Convert array to csv function           */
+            function pivot(arr) {
+                var mp = new Map();
+
+                function setValue(a, path, val) {
+                    if (Object(val) !== val) { // primitive value
+                        var pathStr = path.join('.');
+                        var i = (mp.has(pathStr) ? mp : mp.set(pathStr, mp.size)).get(pathStr);
+                        a[i] = val;
+                    } else {
+                        for (var key in val) {
+                            setValue(a, key == '0' ? path : path.concat(key), val[key]);
+                        }
+                    }
+                    return a;
+                }
+                var result = arr.map(obj => setValue([], [], obj));
+                return [
+                    [...mp.keys()], ...result
+                ];
+            }
+
+            function toCsv(arr) {
+                return arr.map(row =>
+                    row.map(val => isNaN(val) ? JSON.stringify(val) : +val).join(',')
+                ).join('\n');
+            }
+            let newCsvContent = toCsv(pivot(exportArray));
+            console.log("newCsvContent array: ", newCsvContent);
+
+            /** Export script */
+            $("#exportFunction").click(function() {
+                saveFile("RMSE.csv", "data:attachment/csv", newCsvContent);
+            });
+
+            /** Function to save file as csv */
+            function saveFile(name, type, data) {
+                if (data != null && navigator.msSaveBlob)
+                    return navigator.msSaveBlob(new Blob([data], {
+                        type: type
+                    }), name);
+                var a = $("<a style='display: none;'/>");
+                var url = window.URL.createObjectURL(new Blob([data], {
+                    type: type
+                }));
+                a.attr("href", url);
+                a.attr("download", name);
+                $("body").append(a);
+                a[0].click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+            }
+            /** End of export function */
+            
             newFinalArray = bubu.filter((el) => {
                 return !isNaN(el.RMSE);
             })

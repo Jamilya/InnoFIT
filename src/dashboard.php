@@ -9,6 +9,7 @@ else {
 <!DOCTYPE html>
 <html lang="en">
 <meta charset="utf-8">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-compatible" content="IE=edge">
@@ -59,8 +60,8 @@ else {
                             aria-haspopup="true" aria-expanded="false">Visualizations <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-header">Basic Order Analysis</li>
-                            <li><a href="./finalorder.php">Final Order Amount <span
-                                        class="sr-only">(current)</span></a></li>
+                            <li><a href="./finalorder.php">Final Order Amount <span class="sr-only">(current)</span></a>
+                            </li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
                             <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
                             <li><a href="./forecasterror.php">Percentage Error</a></li>
@@ -162,7 +163,8 @@ else {
                     measure has a dedicated page itself with a bigger view and
                     the possiblity to adjust some further elements or view specific items and compare them. This view is
                     mainly for a quick comparison and has only the main filters
-                    applied from the <a href="./configuration.php"><strong>Configuration</strong></a> page.
+                    applied from the <a href="./configuration.php"><strong>Configuration</strong></a> page. <button
+                        class="btn btn-secondary" id="exportFunction"><strong>Export Data</strong></button>
                 </p>
             </div>
         </div>
@@ -418,8 +420,7 @@ else {
             });
 
             let meanFinalOrders = sumFinalOrders / noFinalOrders;
-            console.log('MEAN', meanFinalOrders, ' for PBD: ', el.values[0]
-                .PeriodsBeforeDelivery);
+            // console.log('MEAN', meanFinalOrders, ' for PBD: ', el.values[0].PeriodsBeforeDelivery);
             let sumOfDifferences = difference.reduce((a, b) => +a + +b, 0);
             let MPEsumOfDifferences = MPEdifference.reduce((a, b) => +a + +b, 0);
 
@@ -443,6 +444,17 @@ else {
                 MAPE: mapeValue.toFixed(3)
             }
         });
+
+        var exportArray = calculationsOrderByPBD.map((el) => {
+            return {
+                Product: el.Product,
+                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                MFB: el.MFB,
+                MPE: el.MPE,
+                MAPE: el.MAPE + "\n"
+            }
+        })
+
         newFinalArray3 = calculationsOrderByPBD.filter((el) => {
             return !isNaN(el.MAPE);
         })
@@ -527,6 +539,13 @@ else {
                 };
             }
         });
+        var exportArray2 = bubu.map((el) => {
+            return {
+                Product: el.Product,
+                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                MAD: el.MAD + "\n"
+            }
+        })
         //Powered difference values array (needed for RMSE & MSE calculation)
         let squaredAbsValuesArray = uniqueArray.map((el) => {
             let value = powerDiff(el, valueMap.get(el.ForecastPeriod));
@@ -577,6 +596,84 @@ else {
                 };
             }
         });
+
+        var exportArray3 = bubu2.map((el) => {
+            return {
+                Product: el.Product,
+                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                MSE: el.MSE,
+                NRMSE: el.NRMSE,
+                RMSE: el.RMSE + "\n"
+            }
+        })
+
+        /**Combine three export Arrays */
+        // let arr3 = exportArray.map((item, i) => Object.assign({}, item, exportArray2[i]));
+
+        let merged = [];
+        for (let i = 0; i < exportArray.length; i++) {
+            merged.push({
+                ...exportArray[i],
+                ...exportArray2[i],
+                ...exportArray3[i]
+            });
+        }
+        console.log(merged);
+
+        /**   Convert array to csv function           */
+        function pivot(arr) {
+            var mp = new Map();
+
+            function setValue(a, path, val) {
+                if (Object(val) !== val) { // primitive value
+                    var pathStr = path.join('.');
+                    var i = (mp.has(pathStr) ? mp : mp.set(pathStr, mp.size)).get(pathStr);
+                    a[i] = val;
+                } else {
+                    for (var key in val) {
+                        setValue(a, key == '0' ? path : path.concat(key), val[key]);
+                    }
+                }
+                return a;
+            }
+            var result = arr.map(obj => setValue([], [], obj));
+            return [
+                [...mp.keys()], ...result
+            ];
+        }
+
+        function toCsv(arr) {
+            return arr.map(row =>
+                row.map(val => isNaN(val) ? JSON.stringify(val) : +val).join(',')
+            ).join('\n');
+        }
+        let newCsvContent = toCsv(pivot(merged));
+        console.log("newCsvContent array: ", newCsvContent);
+
+        /** Export script */
+        $("#exportFunction").click(function() {
+            saveFile("All_errorMeasures.csv", "data:attachment/csv", newCsvContent);
+        });
+
+        /** Function to save file as csv */
+        function saveFile(name, type, data) {
+            if (data != null && navigator.msSaveBlob)
+                return navigator.msSaveBlob(new Blob([data], {
+                    type: type
+                }), name);
+            var a = $("<a style='display: none;'/>");
+            var url = window.URL.createObjectURL(new Blob([data], {
+                type: type
+            }));
+            a.attr("href", url);
+            a.attr("download", name);
+            $("body").append(a);
+            a[0].click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+        }
+        /** End of export function */
+
         newFinalArray2 = bubu2.filter((el) => {
             return !isNaN(el.RMSE);
         })

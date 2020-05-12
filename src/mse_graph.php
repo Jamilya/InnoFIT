@@ -190,8 +190,10 @@ else {
                     estimation (zero
                     meaning perfect accuracy). <br>
                     The Formula of the Mean Squared Error (MSE) is:
-                    <img src="https://latex.codecogs.com/gif.latex?MSE_{j} = \frac{1}{n}\sum_{i=1}^{n}(x_{i,j}-x_{i,0})^{2}"
-                        title="MSE formula" />. Note MSE values: M = millions, K = thousands </p>
+                    <!-- <img src="https://latex.codecogs.com/gif.latex?MSE_{j} = \frac{1}{n}\sum_{i=1}^{n}(x_{i,j}-x_{i,0})^{2}"
+                        title="MSE formula" /> -->
+                    <img src="../data/img/mse.gif" title="MSE formula" />
+                    . Note MSE values: M = millions, K = thousands </p>
             </div>
         </div>
 
@@ -213,11 +215,12 @@ else {
             </div>
         </div>
         <div class="row" style="margin: 50px 0 50px 0;">
-        <div class="dc-data-count">
-                There are <span class="filter-count"></span> selected out of <span class="total-count"></span> records | <a class="badge badge-light"
-                    href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a><br />
+            <div class="dc-data-count">
+                There are <span class="filter-count"></span> selected out of <span class="total-count"></span> records |
+                <a class="badge badge-light" href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a><br />
                 <br />
                 <button class="btn btn-secondary" onclick="myFunction()"><strong>Show Data table</strong></button>
+                <button class="btn btn-secondary" id="exportFunction"><strong>Export Data</strong></button>
                 <table class="table table-hover dc-data-table" id="myTable" style="display:none">
                 </table>
                 <br />
@@ -328,6 +331,68 @@ else {
                 };
             }
         });
+        var exportArray = bubu.map((el) => {
+            return {
+                Product: el.Product,
+                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                MSE: el.MSE + "\n"
+            }
+        })
+
+        /**   Convert array to csv function           */
+        function pivot(arr) {
+            var mp = new Map();
+
+            function setValue(a, path, val) {
+                if (Object(val) !== val) { // primitive value
+                    var pathStr = path.join('.');
+                    var i = (mp.has(pathStr) ? mp : mp.set(pathStr, mp.size)).get(pathStr);
+                    a[i] = val;
+                } else {
+                    for (var key in val) {
+                        setValue(a, key == '0' ? path : path.concat(key), val[key]);
+                    }
+                }
+                return a;
+            }
+            var result = arr.map(obj => setValue([], [], obj));
+            return [
+                [...mp.keys()], ...result
+            ];
+        }
+
+        function toCsv(arr) {
+            return arr.map(row =>
+                row.map(val => isNaN(val) ? JSON.stringify(val) : +val).join(',')
+            ).join('\n');
+        }
+        let newCsvContent = toCsv(pivot(exportArray));
+        console.log("newCsvContent array: ", newCsvContent);
+
+        /** Export script */
+        $("#exportFunction").click(function() {
+            saveFile("MSE.csv", "data:attachment/csv", newCsvContent);
+        });
+
+        /** Function to save file as csv */
+        function saveFile(name, type, data) {
+            if (data != null && navigator.msSaveBlob)
+                return navigator.msSaveBlob(new Blob([data], {
+                    type: type
+                }), name);
+            var a = $("<a style='display: none;'/>");
+            var url = window.URL.createObjectURL(new Blob([data], {
+                type: type
+            }));
+            a.attr("href", url);
+            a.attr("download", name);
+            $("body").append(a);
+            a[0].click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+        }
+        /** End of export function */
+        
         newFinalArray = bubu.filter((el) => {
             return !isNaN(el.MSE);
         })

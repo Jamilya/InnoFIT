@@ -61,8 +61,8 @@ else {
                 <ul class="nav navbar-nav">
                     <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown active">
-                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Visualizations <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false">Visualizations <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
@@ -85,8 +85,8 @@ else {
                     <!-- </ul> -->
                     <li><a href="./dashboard.php">Dashboard</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Corrections <span class="caret"></span> </a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
                         <ul class="dropdown-menu">
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
@@ -144,7 +144,8 @@ else {
                         /* ]]> */
                         </script>
                     </li>
-                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span>
+                            Logout</a></li>
 
                 </ul>
             </div>
@@ -193,8 +194,10 @@ else {
                     customer orders. The result is divided by a number of
                     periods with respect to periods before delivery (PBD).
                     <br>The formula of the MPE is the following:
-                    <img src="https://latex.codecogs.com/gif.latex?MPE_{j} = \frac {\sum_{i=1}^{n}x_{i,j}-x_{i,0}}{\sum_{i=1}^{n}x_{i,0}}"
-                        title="MPE formula" />
+                    <!-- <img src="https://latex.codecogs.com/gif.latex?MPE_{j} = \frac {\sum_{i=1}^{n}x_{i,j}-x_{i,0}}{\sum_{i=1}^{n}x_{i,0}}"
+                        title="MPE formula" /> -->
+                    <img src="../data/img/mpe.gif" title="MPE formula" />
+
                 </p>
             </div>
         </div>
@@ -206,279 +209,344 @@ else {
                     <div class="clearfix"></div>
                 </div>
             </div>
-        <div class="row">
-            <div class="col-md-3">
-                <div id="pbd">
-                    <p style="text-align:center;"><strong>Periods Before Delivery (PBD)<br /><small>(PBD: number of
-                                records)</small></strong></p>
+            <div class="row">
+                <div class="col-md-3">
+                    <div id="pbd">
+                        <p style="text-align:center;"><strong>Periods Before Delivery (PBD)<br /><small>(PBD: number of
+                                    records)</small></strong></p>
+                    </div>
+                    <div style="clear: both"></div>
                 </div>
-                <div style="clear: both"></div>
+            </div>
+
+            <div class="row" style="margin: 50px 0 50px 0;">
+                <div class="dc-data-count">
+                    There are <span class="filter-count"></span> selected out of <span class="total-count"></span>
+                    records | <a class="badge badge-light" href="javascript:dc.filterAll(); dc.renderAll();"> Reset all
+                    </a><br />
+                    <br />
+                    <button class="btn btn-secondary" onclick="myFunction()"><strong>Show Data table</strong></button>
+                    <button class="btn btn-secondary" id="exportFunction"><strong>Export Data</strong></button>
+                    <table class="table table-hover dc-data-table" id="myTable" style="display:none">
+                    </table>
+                    <br />
+                </div>
             </div>
         </div>
-
-        <div class="row" style="margin: 50px 0 50px 0;">
-            <div class="dc-data-count">
-                There are <span class="filter-count"></span> selected out of <span class="total-count"></span> records | <a class="badge badge-light"
-                    href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a><br />
-                <br />
-                <button class="btn btn-secondary" onclick="myFunction()"><strong>Show Data table</strong></button>
-                <table class="table table-hover dc-data-table" id="myTable" style="display:none">
-                </table>
-                <br />
-            </div>
-        </div>
-    </div>
-    <script>
-    function myFunction() {
-        var x = document.getElementById("myTable");
-        if (x.style.display === "none") {
-            x.style.display = "block";
-        } else {
-            x.style.display = "none";
+        <script>
+        function myFunction() {
+            var x = document.getElementById("myTable");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
         }
-    }
-    </script>
+       
+        </script>
 
 
-    <script>
-    $(document).ready(function() {
-        if (localStorage.getItem('checkFiltersActive') === 'true') {
-            $('#filterInfo').show();
-        } else {
-            $('#filterInfo').hide();
-        }
-    });
-    var forecastlist = dc.selectMenu("#forecastlist"),
-        periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
-        visCount = dc.dataCount(".dc-data-count"),
-        MPEchart = dc.scatterPlot("#scatter"),
-        visTable = dc.dataTable(".dc-data-table"),
-        productlist = dc.selectMenu("#productlist");
-    const margin = {
-        top: 10,
-        right: 10,
-        bottom: 80,
-        left: 80
-    };
-
-    const result = getAppropriateDimensions();
-    let width = result.width;
-    let height = result.height;
-
-    localforage.getItem("viz_data", function(error, data) {
-        data = JSON.parse(data);
-
-        // PBD = 0 means Final Orders
-        let finalOrder = data.filter((el) => {
-            return el.PeriodsBeforeDelivery == 0;
-        });
-
-        let finalOrdersForecastPeriods = new Map();
-        finalOrder.map(e => {
-            finalOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
-        });
-
-        console.log('FINAL ORDER MAP: ', finalOrdersForecastPeriods);
-
-        //Order All data by PBD
-        // Order the Final Orders
-        let dataByPBD = d3.nest()
-            .key(function(d) {
-                return d.ActualPeriod;
-            })
-            .entries(data);
-
-        // PBD != 0 means all Others or Forecast Orders
-        let uniqueArray = data.filter(function(obj) {
-            return finalOrder.indexOf(obj) == -1;
-        });
-        //Find the max number of Actual periods in Final orders array
-        let maxActualPeriod = Math.max.apply(Math, finalOrder.map(function(o) {
-            return o.ActualPeriod;
-        }))
-        console.log('maxActualPeriod: ', maxActualPeriod);
-
-        // Order the Products by PBD in order to calculate sum of Forecasts and FinalOrders
-        let orderByPBD = d3.nest()
-            .key(function(d) {
-                return d.PeriodsBeforeDelivery;
-            })
-            .entries(uniqueArray);
-
-        // Calculate the sum for the Forecasts for each pbd != 0
-        let calculationsOrderByPBD = orderByPBD.map((el) => {
-            const uniqueNames = [...new Set(el.values.map(i => i.Product))];
-
-            // Forecast Sums
-            let validForecasts = el.values.filter(e => e.ForecastPeriod <= maxActualPeriod);
-            console.log('validForecasts: ', validForecasts);
-
-            let forecastOrdersForecastPeriods = new Map();
-            validForecasts.map(e => {
-                forecastOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
-            });
-
-            let invalidForecasts = el.values.filter(function(obj) {
-                return validForecasts.indexOf(obj) == -1;
-            });
-            let sumOfForecasts = validForecasts.reduce((a, b) => +a + +b.OrderAmount, 0);
-
-            // FinalOrder Sums
-            let items = el.values;
-            let forecastItems = items.map(el => el.ForecastPeriod);
-            let sumFinalOrders = 0;
-            let difference = [];
-            forecastItems.forEach(e => {
-                if (finalOrdersForecastPeriods.get(e) !== undefined) {
-                    sumFinalOrders += parseInt(finalOrdersForecastPeriods.get(e), 0);
-                    difference.push(forecastOrdersForecastPeriods.get(e) -
-                        finalOrdersForecastPeriods.get(e));
-                }
-            });
-            console.log('items: ', items);
-            console.log('difference: ', difference);
-            let sumOfDifferences = difference.reduce((a, b) => +a + +b, 0);
-            console.log('sumOfDifferences: ', sumOfDifferences);
-
-            // MFB & MPE
-            let mfbValue = sumOfForecasts / sumFinalOrders;
-            let mpeValue = sumOfDifferences / sumFinalOrders;
-
-            return {
-                PeriodsBeforeDelivery: el.key,
-                Product: uniqueNames,
-                ActualPeriod: el.values[0].ActualPeriod,
-                ForecastPeriod: el.values[0].ForecastPeriod,
-                ActualDate: el.values[0].ActualDate,
-                sumOfForecasts: sumOfForecasts,
-                sumOfFinalOrders: sumFinalOrders,
-                difference: difference,
-                MFB: mfbValue.toFixed(3),
-                MPE: mpeValue.toFixed(3)
+        <script>
+        $(document).ready(function() {
+            if (localStorage.getItem('checkFiltersActive') === 'true') {
+                $('#filterInfo').show();
+            } else {
+                $('#filterInfo').hide();
             }
         });
-        console.log('Forecast, FinalOrders, MPE all orderByPBD: ', calculationsOrderByPBD);
-        newFinalArray = calculationsOrderByPBD.filter((el) => {
-            return !isNaN(el.MPE);
-        })
+        var forecastlist = dc.selectMenu("#forecastlist"),
+            periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
+            visCount = dc.dataCount(".dc-data-count"),
+            MPEchart = dc.scatterPlot("#scatter"),
+            visTable = dc.dataTable(".dc-data-table"),
+            productlist = dc.selectMenu("#productlist");
+        const margin = {
+            top: 10,
+            right: 10,
+            bottom: 80,
+            left: 80
+        };
 
-        newFinalArray.forEach(function(d) {
-            d.ActualDate = new Date(d.ActualDate);
-        });
-        let periodsBD = newFinalArray.map(function(d){
-            return d.PeriodsBeforeDelivery
-        });
-        let periodsMax = Math.max(...periodsBD);
-        //Define mean value of Order Amount, i.e. Avg. Order Amount
-        var dataMean = d3.mean(newFinalArray, function(
-            d) {
-            return d.MPE;
-        });
-        console.log("Mean Value: ", dataMean);
+        const result = getAppropriateDimensions();
+        let width = result.width;
+        let height = result.height;
 
+        localforage.getItem("viz_data", function(error, data) {
+            data = JSON.parse(data);
 
-        var ndx = crossfilter(newFinalArray);
-        var all = ndx.groupAll();
-        var forecastPeriodDim = ndx.dimension(function(d) {
-            return +d.ForecastPeriod;
-        });
-        var ndxDim = ndx.dimension(function(d) {
-            return [+d.PeriodsBeforeDelivery, +d.MPE, +d.Product];
-        });
-        var productDim = ndx.dimension(function(d) {
-            return d.Product;
-        });
-        var periodsBeforeDeliveryDim = ndx.dimension(function(d) {
-            return +d.PeriodsBeforeDelivery;
-        });
-        var dateDim = ndx.dimension(function(d) {
-            return +d.ActualDate;
-        });
+            // PBD = 0 means Final Orders
+            let finalOrder = data.filter((el) => {
+                return el.PeriodsBeforeDelivery == 0;
+            });
 
-        var forecastPeriodGroup = forecastPeriodDim.group();
-        var productGroup = productDim.group();
-        var ndxGroup = ndxDim.group();
-        var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
-        var dateGroup = dateDim.group();
-        forecastlist
-            .dimension(forecastPeriodDim)
-            .group(forecastPeriodGroup)
-            .multiple(true)
-            .numberVisible(15);
+            let finalOrdersForecastPeriods = new Map();
+            finalOrder.map(e => {
+                finalOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
+            });
 
-        productlist
-            .dimension(productDim)
-            .group(productGroup)
-            //.controlsUseVisibility(true)
-            .multiple(true)
-            .numberVisible(15);
+            console.log('FINAL ORDER MAP: ', finalOrdersForecastPeriods);
 
-        periodsBeforeDeliveryChart
-            .dimension(periodsBeforeDeliveryDim)
-            .group(periodsBeforeDeliveryGroup)
-            .multiple(true)
-            .numberVisible(15);
+            //Order All data by PBD
+            // Order the Final Orders
+            let dataByPBD = d3.nest()
+                .key(function(d) {
+                    return d.ActualPeriod;
+                })
+                .entries(data);
 
-        // console.log("ndxDim: ", ndxGroup.top(Infinity));
+            // PBD != 0 means all Others or Forecast Orders
+            let uniqueArray = data.filter(function(obj) {
+                return finalOrder.indexOf(obj) == -1;
+            });
+            //Find the max number of Actual periods in Final orders array
+            let maxActualPeriod = Math.max.apply(Math, finalOrder.map(function(o) {
+                return o.ActualPeriod;
+            }))
+            console.log('maxActualPeriod: ', maxActualPeriod);
 
-        MPEchart
-            .width(width + margin.left + margin.right)
-            .height(height + margin.top + margin.bottom)
-            .dimension(ndxDim)
-            .symbolSize(10)
-            .group(ndxGroup)
-            .data(function(group) {
-                return group.all()
-                    .filter(function(d) {
-                        return d.key !== undefined || d.key !== NaN;
-                    });
+            // Order the Products by PBD in order to calculate sum of Forecasts and FinalOrders
+            let orderByPBD = d3.nest()
+                .key(function(d) {
+                    return d.PeriodsBeforeDelivery;
+                })
+                .entries(uniqueArray);
+
+            // Calculate the sum for the Forecasts for each pbd != 0
+            let calculationsOrderByPBD = orderByPBD.map((el) => {
+                const uniqueNames = [...new Set(el.values.map(i => i.Product))];
+
+                // Forecast Sums
+                let validForecasts = el.values.filter(e => e.ForecastPeriod <= maxActualPeriod);
+                console.log('validForecasts: ', validForecasts);
+
+                let forecastOrdersForecastPeriods = new Map();
+                validForecasts.map(e => {
+                    forecastOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
+                });
+
+                let invalidForecasts = el.values.filter(function(obj) {
+                    return validForecasts.indexOf(obj) == -1;
+                });
+                let sumOfForecasts = validForecasts.reduce((a, b) => +a + +b.OrderAmount, 0);
+
+                // FinalOrder Sums
+                let items = el.values;
+                let forecastItems = items.map(el => el.ForecastPeriod);
+                let sumFinalOrders = 0;
+                let difference = [];
+                forecastItems.forEach(e => {
+                    if (finalOrdersForecastPeriods.get(e) !== undefined) {
+                        sumFinalOrders += parseInt(finalOrdersForecastPeriods.get(e), 0);
+                        difference.push(forecastOrdersForecastPeriods.get(e) -
+                            finalOrdersForecastPeriods.get(e));
+                    }
+                });
+                console.log('items: ', items);
+                console.log('difference: ', difference);
+                let sumOfDifferences = difference.reduce((a, b) => +a + +b, 0);
+                console.log('sumOfDifferences: ', sumOfDifferences);
+
+                // MFB & MPE
+                let mfbValue = sumOfForecasts / sumFinalOrders;
+                let mpeValue = sumOfDifferences / sumFinalOrders;
+
+                return {
+                    PeriodsBeforeDelivery: el.key,
+                    Product: uniqueNames,
+                    ActualPeriod: el.values[0].ActualPeriod,
+                    ForecastPeriod: el.values[0].ForecastPeriod,
+                    ActualDate: el.values[0].ActualDate,
+                    sumOfForecasts: sumOfForecasts,
+                    sumOfFinalOrders: sumFinalOrders,
+                    difference: difference,
+                    MFB: mfbValue.toFixed(3),
+                    MPE: mpeValue.toFixed(3)
+                }
+            });
+            var exportArray = calculationsOrderByPBD.map((el) => {
+                return {
+                    Product: el.Product,
+                    PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                    MPE: el.MPE + "\n"
+                }
             })
-            .x(d3.scaleLinear().domain([0, periodsMax]))
-            // .x(d3.scaleLinear().domain([0, d3.max(newFinalArray, function(d) {
-            //     return d.PeriodsBeforeDelivery;
-            // })]))
-            .brushOn(false)
-            .clipPadding(10)
-            .xAxisLabel("Periods Before Delivery")
-            .yAxisLabel("MPE")
-            .renderTitle(true)
-            .title(function(d) {
+
+            /**   Convert array to csv function           */
+            function pivot(arr) {
+                var mp = new Map();
+
+                function setValue(a, path, val) {
+                    if (Object(val) !== val) { // primitive value
+                        var pathStr = path.join('.');
+                        var i = (mp.has(pathStr) ? mp : mp.set(pathStr, mp.size)).get(pathStr);
+                        a[i] = val;
+                    } else {
+                        for (var key in val) {
+                            setValue(a, key == '0' ? path : path.concat(key), val[key]);
+                        }
+                    }
+                    return a;
+                }
+                var result = arr.map(obj => setValue([], [], obj));
                 return [
-                    'Periods Before Delivery: ' + d.key[0],
-                    'MPE: ' + d.key[1]
-                ].join('\n');
+                    [...mp.keys()], ...result
+                ];
+            }
+
+            function toCsv(arr) {
+                return arr.map(row =>
+                    row.map(val => isNaN(val) ? JSON.stringify(val) : +val).join(',')
+                ).join('\n');
+            }
+            let newCsvContent = toCsv(pivot(exportArray));
+            console.log("newCsvContent array: ", newCsvContent);
+
+            /** Export script */
+            $("#exportFunction").click(function() {
+                saveFile("MPE.csv", "data:attachment/csv", newCsvContent);
+            });
+
+            /** Function to save file as csv */
+            function saveFile(name, type, data) {
+                if (data != null && navigator.msSaveBlob)
+                    return navigator.msSaveBlob(new Blob([data], {
+                        type: type
+                    }), name);
+                var a = $("<a style='display: none;'/>");
+                var url = window.URL.createObjectURL(new Blob([data], {
+                    type: type
+                }));
+                a.attr("href", url);
+                a.attr("download", name);
+                $("body").append(a);
+                a[0].click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+            }
+            /** End of export function */
+
+            // console.log('Forecast, FinalOrders, MPE all orderByPBD: ', calculationsOrderByPBD);
+            newFinalArray = calculationsOrderByPBD.filter((el) => {
+                return !isNaN(el.MPE);
             })
-            .xAxis().tickFormat(d3.format('d'));
-        // console.log('ndxgroup data:', ndxDim);
 
-        MPEchart.selectAll('path.symbol')
-            .attr('opacity', 0.3);
+            newFinalArray.forEach(function(d) {
+                d.ActualDate = new Date(d.ActualDate);
+            });
+            let periodsBD = newFinalArray.map(function(d) {
+                return d.PeriodsBeforeDelivery
+            });
+            let periodsMax = Math.max(...periodsBD);
+            //Define mean value of Order Amount, i.e. Avg. Order Amount
+            var dataMean = d3.mean(newFinalArray, function(
+                d) {
+                return d.MPE;
+            });
+            console.log("Mean Value: ", dataMean);
 
-        MPEchart.margins(margin);
 
-        visCount
-            .dimension(ndx)
-            .group(all);
+            var ndx = crossfilter(newFinalArray);
+            var all = ndx.groupAll();
+            var forecastPeriodDim = ndx.dimension(function(d) {
+                return +d.ForecastPeriod;
+            });
+            var ndxDim = ndx.dimension(function(d) {
+                return [+d.PeriodsBeforeDelivery, +d.MPE, +d.Product];
+            });
+            var productDim = ndx.dimension(function(d) {
+                return d.Product;
+            });
+            var periodsBeforeDeliveryDim = ndx.dimension(function(d) {
+                return +d.PeriodsBeforeDelivery;
+            });
+            var dateDim = ndx.dimension(function(d) {
+                return +d.ActualDate;
+            });
 
-        visTable
-            .dimension(dateDim)
-            .group(function(d) {
-                var format = d3.format('02d');
-                return d.ActualDate.getFullYear() + '/' + format((d.ActualDate.getMonth() + 1));
-            })
-            .columns([
-                "Product",
-                "PeriodsBeforeDelivery",
-                "MPE"
-            ]);
-        dc.renderAll();
-    });
-    </script>
+            var forecastPeriodGroup = forecastPeriodDim.group();
+            var productGroup = productDim.group();
+            var ndxGroup = ndxDim.group();
+            var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
+            var dateGroup = dateDim.group();
+            forecastlist
+                .dimension(forecastPeriodDim)
+                .group(forecastPeriodGroup)
+                .multiple(true)
+                .numberVisible(15);
 
-    <script src="/lib/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
-    </script>
+            productlist
+                .dimension(productDim)
+                .group(productGroup)
+                //.controlsUseVisibility(true)
+                .multiple(true)
+                .numberVisible(15);
+
+            periodsBeforeDeliveryChart
+                .dimension(periodsBeforeDeliveryDim)
+                .group(periodsBeforeDeliveryGroup)
+                .multiple(true)
+                .numberVisible(15);
+
+            // console.log("ndxDim: ", ndxGroup.top(Infinity));
+
+            MPEchart
+                .width(width + margin.left + margin.right)
+                .height(height + margin.top + margin.bottom)
+                .dimension(ndxDim)
+                .symbolSize(10)
+                .group(ndxGroup)
+                .data(function(group) {
+                    return group.all()
+                        .filter(function(d) {
+                            return d.key !== undefined || d.key !== NaN;
+                        });
+                })
+                .x(d3.scaleLinear().domain([0, periodsMax]))
+                // .x(d3.scaleLinear().domain([0, d3.max(newFinalArray, function(d) {
+                //     return d.PeriodsBeforeDelivery;
+                // })]))
+                .brushOn(false)
+                .clipPadding(10)
+                .xAxisLabel("Periods Before Delivery")
+                .yAxisLabel("MPE")
+                .renderTitle(true)
+                .title(function(d) {
+                    return [
+                        'Periods Before Delivery: ' + d.key[0],
+                        'MPE: ' + d.key[1]
+                    ].join('\n');
+                })
+                .xAxis().tickFormat(d3.format('d'));
+            // console.log('ndxgroup data:', ndxDim);
+
+            MPEchart.selectAll('path.symbol')
+                .attr('opacity', 0.3);
+
+            MPEchart.margins(margin);
+
+            visCount
+                .dimension(ndx)
+                .group(all);
+
+            visTable
+                .dimension(dateDim)
+                .group(function(d) {
+                    var format = d3.format('02d');
+                    return d.ActualDate.getFullYear() + '/' + format((d.ActualDate.getMonth() + 1));
+                })
+                .columns([
+                    "Product",
+                    "PeriodsBeforeDelivery",
+                    "MPE"
+                ]);
+            dc.renderAll();
+        });
+        </script>
+
+        <script src="/lib/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
+        </script>
 
 
 </body>

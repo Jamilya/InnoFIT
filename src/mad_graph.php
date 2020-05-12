@@ -191,9 +191,10 @@ else {
                     orders with respect to periods before delivery (PBD). The mean absolute deviation describes the
                     absolute
                     average error between the forecasted and the final order amounts.
-                    <br>The formula of the MAD: <img
-                        src="https://latex.codecogs.com/gif.latex?MAD_{j}&space;=&space;\frac{1}{n}\sum_{i=1}^{n}{\left&space;|&space;x_{i,j}-x_{i,0}&space;\right&space;|}"
-                        title="MAD formula" /></a></p>
+                    <br>The formula of the MAD:
+                    <img src="../data/img/mad.gif" title="MAD formula" />
+                    </a>
+                </p>
                 <!-- MAD_{j} = \frac{1}{n}\sum_{i=1}^{n}{\left | x_{i,j}-x_{i,0} \right |} -->
             </div>
         </div>
@@ -209,7 +210,8 @@ else {
         <div class="row">
             <div class="col-md-3">
                 <div id="pbd">
-                    <p style="text-align:center;"><strong>Periods Before Delivery (PBD)<br /><small>(PBD: number of records)
+                    <p style="text-align:center;"><strong>Periods Before Delivery (PBD)<br /><small>(PBD: number of
+                                records)
                             </small></strong></p>
                 </div>
                 <div style="clear: both"></div>
@@ -217,16 +219,16 @@ else {
         </div>
         <div class="row" style="margin: 50px 0 50px 0;">
             <div class="dc-data-count">
-                There are <span class="filter-count"></span> selected out of <span class="total-count"></span> records | <a class="badge badge-light"
-                    href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a><br />
+                There are <span class="filter-count"></span> selected out of <span class="total-count"></span> records |
+                <a class="badge badge-light" href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a><br />
                 <br />
                 <button class="btn btn-secondary" onclick="myFunction()"><strong>Show Data table</strong></button>
+                <button class="btn btn-secondary" id="exportFunction"><strong>Export Data</strong></button>
                 <table class="table table-hover dc-data-table" id="myTable" style="display:none">
                 </table>
                 <br />
             </div>
         </div>
-
     </div>
 
     <script>
@@ -275,12 +277,10 @@ else {
         let finalOrder = data.filter((el) => {
             return el.PeriodsBeforeDelivery == 0;
         });
-        // console.log("FINAL Orders array: ", finalOrder);
 
         let uniqueArray = data.filter(function(obj) {
             return finalOrder.indexOf(obj) == -1;
         });
-        // console.log("Unique array: ", uniqueArray);
 
         let valueMap = new Map();
         finalOrder.forEach((val) => {
@@ -288,7 +288,6 @@ else {
             let valueString = val.OrderAmount;
             valueMap.set(keyString, valueString);
         });
-        // console.log("valueMap: ", valueMap);
 
         let absValuesArray = uniqueArray.map((el) => {
             let value = absDiff(el, valueMap.get(el.ForecastPeriod));
@@ -304,7 +303,7 @@ else {
             };
         });
 
-        console.log("Abs values array: ", absValuesArray);
+        // console.log("Abs values array: ", absValuesArray);
 
         let seperatedByPeriods = d3.nest()
             .key(function(d) {
@@ -330,7 +329,17 @@ else {
             }
 
         });
-        console.log("separatedArray: ", bubu);
+        console.log("Final MAD Array: ", bubu);
+        // console.log(toCsv(pivot(bubu)));
+        var exportArray = bubu.map((el) => {
+            return {
+                Product: el.Product,
+                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                MAD: el.MAD + "\n"
+            }
+        })
+        // console.log("Export array: ", exportArray);
+
         newFinalArray = bubu.filter((el) => {
             return !isNaN(el.MAD);
         })
@@ -338,6 +347,60 @@ else {
         newFinalArray.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
         });
+
+        /**   Convert array to csv function           */
+        function pivot(arr) {
+            var mp = new Map();
+
+            function setValue(a, path, val) {
+                if (Object(val) !== val) { // primitive value
+                    var pathStr = path.join('.');
+                    var i = (mp.has(pathStr) ? mp : mp.set(pathStr, mp.size)).get(pathStr);
+                    a[i] = val;
+                } else {
+                    for (var key in val) {
+                        setValue(a, key == '0' ? path : path.concat(key), val[key]);
+                    }
+                }
+                return a;
+            }
+            var result = arr.map(obj => setValue([], [], obj));
+            return [
+                [...mp.keys()], ...result
+            ];
+        }
+
+        function toCsv(arr) {
+            return arr.map(row =>
+                row.map(val => isNaN(val) ? JSON.stringify(val) : +val).join(',')
+            ).join('\n');
+        }
+        let newCsvContent = toCsv(pivot(exportArray));
+        console.log("newCsvContent array: ", newCsvContent);
+
+        /** Export script */
+        $("#exportFunction").click(function() {
+            saveFile("MAD.csv", "data:attachment/csv", newCsvContent);
+        });
+        
+        /** Function to save file as csv */
+        function saveFile(name, type, data) {
+            if (data != null && navigator.msSaveBlob)
+                return navigator.msSaveBlob(new Blob([data], {
+                    type: type
+                }), name);
+            var a = $("<a style='display: none;'/>");
+            var url = window.URL.createObjectURL(new Blob([data], {
+                type: type
+            }));
+            a.attr("href", url);
+            a.attr("download", name);
+            $("body").append(a);
+            a[0].click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+        }
+
 
         var ndx = crossfilter(newFinalArray);
         var all = ndx.groupAll();
@@ -359,9 +422,7 @@ else {
 
         var forecastPeriodGroup = forecastPeriodDim.group();
         var productGroup = productDim.group();
-        // var ndxGroup = ndxDim.group().reduceSum(function(d) {
-        //     return +d.MAD;
-        // });
+
         var ndxGroup = ndxDim.group();
         var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
         var dateGroup = dateDim.group();
@@ -375,7 +436,6 @@ else {
         productlist
             .dimension(productDim)
             .group(productGroup)
-            //.controlsUseVisibility(true)
             .multiple(true)
             .numberVisible(15);
 
@@ -411,7 +471,6 @@ else {
             .clipPadding(10)
             .xAxisLabel("Periods Before Delivery")
             .yAxisLabel("MAD")
-            // .mouseZoomable(true)
             .renderTitle(true)
             .title(function(d) {
                 return [
@@ -433,7 +492,8 @@ else {
             .dimension(dateDim)
             .group(function(d) {
                 var format = d3.format('02d');
-                return d.ActualDate.getFullYear() + '/' + format((d.ActualDate.getMonth() + 1));
+                return d.ActualDate.getFullYear() + '/' + format((d.ActualDate.getMonth() +
+                    1));
             })
             .columns([
                 "Product",
