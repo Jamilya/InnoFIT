@@ -145,19 +145,17 @@ else {
         <!--/.container-fluid -->
     </nav>
 
-    <div class="customContainer">
-        <!-- Page Features -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="text-center">
-                    <h2>Forecast Error Measures - Dashboard</h2>
-                    <small>
-                        <?php
+    <!-- Page Features -->
+    <div class="container text-center">
+        <div class="row" style="margin-bottom: -2%;">
+            <div class="col-md-6">
+                <h2>Forecast Error Measures - Dashboard</h2>
+                <small>
+                    <?php
             echo "You are logged in as: ";
             print_r($_SESSION["session_username"]);
             echo ".";
             ?></small>
-                </div>
                 <p style="margin-top: 15px;">
                     On this page you find a overview about the available error measures this tool provides. Each error
                     measure has a dedicated page itself with a bigger view and
@@ -167,133 +165,180 @@ else {
                         class="btn btn-secondary" id="exportFunction"><strong>Export Data</strong></button>
                 </p>
             </div>
-        </div>
-
-        <div class="row text-center" style="margin-top: 4%;">
-            <div class="col-md-1">
-                &nbsp;
-            </div>
-            <div class="col-md-5">
-                <div class="card h-100">
-                    <div class="card-img-top chartBox drop-shadow">
-                        <div id="scatter4">
+            <div class="col-md-2">
+                <div id="filterInfo" class="alert alert-info" style="text-align: center" role="info">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-info" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-info"
+                                role="info">Filters are applied!</span>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Mean Forecast Bias (MFB)</h4>
-                        <p class="card-text">To view the full graph please see the graph page: <a
-                                href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a>.</p>
+                        <div class="row">
+                            <span style="font-size: 12px; vertical-align: middle;" class="alert-info" role="info">
+                                To
+                                change settings please visit <a href="./configuration.php">Configuration</a>.</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-5">
-                <div class="card h-100">
-                    <div class="card-img-top chartBox drop-shadow">
-                        <div id="scatter5">
+            <div class="col-md-2">
+                <div id="filter2Info" class="alert alert-danger" style="text-align: center" role="alert">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                role="info">Filters have not been applied!</span>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Mean Percentage Error (MPE)</h4>
-                        <p class="card-text">To view the full graph please see the graph page: <a href="./mpe.php">Mean
-                                Percentage Error (MPE)</a>.</p>
+                        <div class="row">
+                            <span style="font-size: 11px; vertical-align: middle;" class="alert-danger" role="alert">
+                                Please adjust the Date Filters so that Actual Date <= Forecast Date.</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="row text-center" style="margin-top: 4%;">
-            <div class="col-md-1">
-                &nbsp;
-            </div>
-            <div class="col-md-5">
-                <div class="card h-100">
-                    <div class="card-img-top chartBox drop-shadow">
-                        <div id="scatter2">
+            <div class="col-md-2">
+                <div id="filter3Info" class="alert alert-danger" style="text-align: center" role="alert">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                role="danger">More
+                                than one product have been selected.</span>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Root Mean Square Error (RMSE)</h4>
-                        <p class="card-text">To view the full graph please see the graph page: <a
-                                href="./rmse_graph.php">Root Mean Square Error (RMSE)</a>.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-5">
-                <div class="card h-100">
-                    <div class="card-img-top chartBox drop-shadow">
-                        <div id="scatter6">
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Mean Square Error (MSE)</h4>
-                        <p class="card-text">To view the full graph please see the graph page: <a
-                                href="./mse_graph.php">Mean Square Error (MSE)</a>.</p>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="row text-center" style="margin-top: 4%;">
-            <div class="col-md-1">
-                &nbsp;
-            </div>
-            <div class="col-md-5">
-                <div class="card h-100">
-                    <div class="card-img-top chartBox drop-shadow">
-                        <div id="scatter3">
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Mean Absolute Percentage Error (MAPE)</h4>
-                        <p class="card-text">To view the full graph please see the graph page: <a href="./mape.php">Mean
-                                Absolute Percentage Error (MAPE)</a>.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-5">
-                <div class="card h-100">
-                    <div class="card-img-top chartBox drop-shadow">
-                        <div id="scatter">
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Mean Absolute Deviation (MAD)</h4>
-                        <p class="card-text">To view the full graph please see the graph page: <a
-                                href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>.</p>
-                    </div>
-                </div>
-            </div>
+    <div class="row text-center" style="margin-top: 4%;">
+        <div class="col-md-1">
+            &nbsp;
         </div>
-
-        <div class="row text-center" style="margin-top: 4%;">
-            <div class="col-md-1">
-                &nbsp;
-            </div>
-            <div class="col-md-5">
-                <div class="card h-100">
-                    <div class="card-img-top chartBox drop-shadow">
-                        <div id="scatter7">
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Normalized Root Mean Square Error (RMSE*)</h4>
-                        <p class="card-text">To view the full graph please see the graph page: <a
-                                href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*/NRMSE)</a>.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-5">
-                <div class="card h-100">
-                    <div>
+        <div class="col-md-5">
+            <div class="card h-100">
+                <div class="card-img-top chartBox drop-shadow">
+                    <div id="scatter4">
                     </div>
                 </div>
                 <div class="card-body">
-
+                    <h4 class="card-title">Mean Forecast Bias (MFB)</h4>
+                    <p class="card-text">To view the full graph please see the graph page: <a
+                            href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a>.</p>
                 </div>
             </div>
         </div>
+        <div class="col-md-5">
+            <div class="card h-100">
+                <div class="card-img-top chartBox drop-shadow">
+                    <div id="scatter5">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Mean Percentage Error (MPE)</h4>
+                    <p class="card-text">To view the full graph please see the graph page: <a href="./mpe.php">Mean
+                            Percentage Error (MPE)</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row text-center" style="margin-top: 4%;">
+        <div class="col-md-1">
+            &nbsp;
+        </div>
+        <div class="col-md-5">
+            <div class="card h-100">
+                <div class="card-img-top chartBox drop-shadow">
+                    <div id="scatter2">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Root Mean Square Error (RMSE)</h4>
+                    <p class="card-text">To view the full graph please see the graph page: <a
+                            href="./rmse_graph.php">Root Mean Square Error (RMSE)</a>.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card h-100">
+                <div class="card-img-top chartBox drop-shadow">
+                    <div id="scatter6">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Mean Square Error (MSE)</h4>
+                    <p class="card-text">To view the full graph please see the graph page: <a
+                            href="./mse_graph.php">Mean Square Error (MSE)</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row text-center" style="margin-top: 4%;">
+        <div class="col-md-1">
+            &nbsp;
+        </div>
+        <div class="col-md-5">
+            <div class="card h-100">
+                <div class="card-img-top chartBox drop-shadow">
+                    <div id="scatter3">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Mean Absolute Percentage Error (MAPE)</h4>
+                    <p class="card-text">To view the full graph please see the graph page: <a href="./mape.php">Mean
+                            Absolute Percentage Error (MAPE)</a>.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card h-100">
+                <div class="card-img-top chartBox drop-shadow">
+                    <div id="scatter">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Mean Absolute Deviation (MAD)</h4>
+                    <p class="card-text">To view the full graph please see the graph page: <a
+                            href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row text-center" style="margin-top: 4%;">
+        <div class="col-md-1">
+            &nbsp;
+        </div>
+        <div class="col-md-5">
+            <div class="card h-100">
+                <div class="card-img-top chartBox drop-shadow">
+                    <div id="scatter7">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Normalized Root Mean Square Error (RMSE*)</h4>
+                    <p class="card-text">To view the full graph please see the graph page: <a
+                            href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*/NRMSE)</a>.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card h-100">
+                <div>
+                </div>
+            </div>
+            <div class="card-body">
+
+            </div>
+        </div>
+    </div>
     </div>
 
 
@@ -315,13 +360,21 @@ else {
             $('#filterInfo').hide();
         }
     });
-    // const margin = {
-    //     top: 5,
-    //     right: 5,
-    //     bottom: 5,
-    //     left: 5
-    // };
 
+    $(document).ready(function() {
+        if (localStorage.getItem('check2FiltersActive') === 'true') {
+            $('#filter2Info').show();
+        } else {
+            $('#filter2Info').hide();
+        }
+    });
+    $(document).ready(function() {
+        if (localStorage.getItem('check3FiltersActive') === 'true') {
+            $('#filter3Info').show();
+        } else {
+            $('#filter3Info').hide();
+        }
+    });
     localforage.getItem("viz_data", function(error, data) {
         data = JSON.parse(data);
 
@@ -407,11 +460,13 @@ else {
             let items = el.values;
             let forecastItems = items.map(el => el.ForecastPeriod);
             let sumFinalOrders = 0;
+            let forecastSum = 0;
             let difference = [];
             let MPEdifference = [];
             forecastItems.forEach(e => {
                 if (finalOrdersForecastPeriods.get(e) !== undefined) {
                     sumFinalOrders += parseInt(finalOrdersForecastPeriods.get(e), 0);
+                    forecastSum += parseInt(forecastOrdersForecastPeriods.get(e), 0);
                     difference.push(Math.abs(finalOrdersForecastPeriods.get(e) -
                         forecastOrdersForecastPeriods.get(e)));
                     MPEdifference.push(forecastOrdersForecastPeriods.get(e) -
@@ -425,7 +480,7 @@ else {
             let MPEsumOfDifferences = MPEdifference.reduce((a, b) => +a + +b, 0);
 
             // MFB & MAPE
-            let mfbValue = sumOfForecasts / sumFinalOrders;
+            let mfbValue = forecastSum / sumFinalOrders;
             let mapeValue = sumOfDifferences / sumFinalOrders;
             let mpeValue = MPEsumOfDifferences / sumFinalOrders;
 
@@ -455,16 +510,28 @@ else {
             }
         })
 
-        newFinalArray3 = calculationsOrderByPBD.filter((el) => {
+        oneFinalArray = calculationsOrderByPBD.filter((el) => {
             return !isNaN(el.MAPE);
+        })
+        twoFinalArray = oneFinalArray.filter((el) => {
+            return el.MAPE !== Infinity;
+        })
+        newFinalArray3 = twoFinalArray.filter((el) => {
+            return el.MAPE !== 'Infinity';
         })
 
         newFinalArray3.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
         });
 
-        newFinalArray4 = calculationsOrderByPBD.filter((el) => {
+        oneFinalArrayMFB = calculationsOrderByPBD.filter((el) => {
             return !isNaN(el.MFB);
+        })
+        twoFinalArrayMFB = oneFinalArrayMFB.filter((el) => {
+            return el.MFB !== Infinity;
+        })
+        newFinalArray4 = twoFinalArrayMFB.filter((el) => {
+            return el.MFB !== 'Infinity';
         })
         let periodsBD3 = newFinalArray3.map(function(d) {
             return d.PeriodsBeforeDelivery
@@ -479,8 +546,14 @@ else {
         });
         let periodsMax4 = Math.max(...periodsBD4);
 
-        newFinalArray5 = calculationsOrderByPBD.filter((el) => {
-            return !isNaN(el.MPE);
+        oneFinalArrayMPE = calculationsOrderByPBD.filter((el) => {
+            return !isNaN(el.MFB);
+        })
+        twoFinalArrayMPE = oneFinalArrayMPE.filter((el) => {
+            return el.MFB !== Infinity;
+        })
+        newFinalArray5 = twoFinalArrayMPE.filter((el) => {
+            return el.MPE !== 'Infinity';
         })
         newFinalArray5.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
@@ -691,8 +764,15 @@ else {
             return d.PeriodsBeforeDelivery
         });
         let periodsMax6 = Math.max(...periodsBD6);
-        newFinalArray7 = bubu2.filter((el) => {
+
+        oneFinalArrayNRMSE = bubu2.filter((el) => {
             return !isNaN(el.NRMSE);
+        })
+        twoFinalArrayNRMSE = oneFinalArrayNRMSE.filter((el) => {
+            return el.NRMSE !== Infinity;
+        })
+        newFinalArray7 = twoFinalArrayNRMSE.filter((el) => {
+            return  el.NRMSE !== 'Infinity';
         })
         newFinalArray7.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);

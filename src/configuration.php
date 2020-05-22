@@ -162,7 +162,7 @@ else {
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Visualizations<span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                        <li class="dropdown-header">Basic Order Analysis</li>
+                            <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
                             <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
@@ -176,7 +176,7 @@ else {
                             <li><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
                             <li><a href="./mpe.php">Mean Percentage Error (MPE) </a></li>
                             <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
-                            <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li> 
+                            <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
                     <li><a href="./dashboard.php">Dashboard</a></li>
@@ -245,7 +245,7 @@ else {
     </nav>
     <div class="customContainer">
         <div class="row" style="margin-bottom: -2%;">
-            <div class="col-md-10">
+            <div class="col-md-6">
                 <h1>Configuration</h1><br />
                 <h4><?php   echo "Dear ";
                     print_r($_SESSION["session_username"]);
@@ -260,14 +260,40 @@ else {
                     <div class="info-container">
                         <div class="row">
                             <span style="font-size: 14px; vertical-align: middle;" class="alert-info"
-                                role="info">Filters
-                                are applied!</span>
+                                role="info">Filters are applied!</span>
                         </div>
                         <div class="row">
                             <span style="font-size: 11px; vertical-align: middle;" class="alert-info" role="info">
-                                To
-                                change settings please visit <a
+                                To change settings please visit <a
                                     href="./configuration.php"><u>Configuration</u></a>.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div id="filter2Info" class="alert alert-danger" style="text-align: center" role="alert">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                role="info">Filters have not been applied!</span>
+                        </div>
+                        <div class="row">
+                            <span style="font-size: 11px; vertical-align: middle;" class="alert-danger" role="alert">
+                                Please adjust the Date Filters so that Actual Date <= Forecast Date.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div id="filter3Info" class="alert alert-info" style="text-align: center" role="alert">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-info" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-info" role="info">More
+                                than one product have been selected.</span>
                         </div>
                     </div>
                 </div>
@@ -325,6 +351,22 @@ else {
         }
     });
 
+    $(document).ready(function() {
+        if (localStorage.getItem('check2FiltersActive') === 'true') {
+            $('#filter2Info').show();
+        } else {
+            $('#filter2Info').hide();
+        }
+    });
+
+    $(document).ready(function() {
+        if (localStorage.getItem('check3FiltersActive') === 'true') {
+            $('#filter3Info').show();
+        } else {
+            $('#filter3Info').hide();
+        }
+    });
+
     let lang = "en-GB";
     let actualDateMinValue = 0;
     let actualDateMaxValue = 0;
@@ -358,7 +400,14 @@ else {
 
     localforage.getItem('all_data').then(function(data) {
         data = JSON.parse(data);
-        console.log('ORIGINAL DATA', data);
+        // console.log('ORIGINAL DATA', data);
+
+        let allForecastPBD = d3.nest()
+            .key(function(d) {
+                return d.PeriodsBeforeDelivery;
+            })
+            .entries(data);
+        // console.log('allForecastPBD: ', allForecastPBD);
 
         // Get the unique names of our products
         const uniqueNames = [...new Set(data.map(i => i.Product))];
@@ -427,45 +476,60 @@ else {
         }
         $("#products").append(options);
 
+        // Check data that forecast horizon does not exceed one year and actual date <= forecast date
+        let forecastHorizonCheck = data.filter((item) => {
+            let actualDate = new Date(item.ActualDate);
+            let forecastDate = new Date(item.ForecastDate);
+            let actualYear = actualDate.getFullYear();
+            let forecastYear = forecastDate.getFullYear();
+            const actualDateInt = new Date(item.ActualDate.slice(0, -9)).getTime();
+            const forecastDateInt = new Date(item.ForecastDate.slice(0, -9)).getTime();
+            if (actualYear <= forecastYear && item.PeriodsBeforeDelivery <= 52) {
+                return actualDateInt <= forecastDateInt;
+            }
+        });
+        console.log('Checked data for forecast horizon: ', forecastHorizonCheck);
+
+        let minActualPeriod = Math.min.apply(Math, data.map(function(o) {
+            return new Date(o.ActualPeriod);
+        }));
+        // console.log("minActualPeriod: ", new Date(o.ActualPeriod));
+
         d3.select('#btnApplyFilters').on('click', function(e) {
             let productNames = $.map($(".form-control option:selected"), function(option) {
                 return option.value;
             });
+            console.log('Product Names', productNames.length);
 
-            console.log('FILTERING STARTS HERE');
-            console.log('Filter Parameters: ');
-            console.log('Product Names', productNames);
-            console.log('actual Min Date: ', actualDateMinValue);
-            console.log('actual Max Date: ', actualDateMaxValue);
-            console.log('forecast Min Date: ', forecastDateMinValue);
-            console.log('forecast Max Date: ', forecastDateMaxValue);
+            // console.log('FILTERING STARTS HERE');
+            // console.log('Filter Parameters: ');
+            // console.log('actual Min Date: ', actualDateMinValue);
+            // console.log('actual Max Date: ', actualDateMaxValue);
+            // console.log('forecast Min Date: ', forecastDateMinValue);
+            // console.log('forecast Max Date: ', forecastDateMaxValue);
 
             // 1. Filter by Product Name
             let filteredByProduct = data;
             if (productNames.length > 0 && productNames[0] !== "") {
                 filteredByProduct = data.filter(item => productNames.includes(item
                     .Product));
-                console.log('Product: ', filteredByProduct);
+                // console.log('Product: ', filteredByProduct);
             }
             // 2. Filter by Actual Date based on filtered product
             let filteredByActualDate = filteredByProduct.filter((item) => {
                 const actualDateInt = new Date(item.ActualDate.slice(0, -9)).getTime();
-
                 return actualDateInt >= actualDateMinValue && actualDateInt <=
                     actualDateMaxValue;
             });
-            console.log('Product and Actual Date filter applied: ', filteredByActualDate);
+            // console.log('Product and Actual Date filter applied: ', filteredByActualDate);
 
             // 3. Filter by Forecast Date based on filtered product and actual date
             let filteredByForecastDate = filteredByActualDate.filter((item) => {
                 const forecastDateInt = new Date(item.ForecastDate.slice(0, -9)).getTime();
-
                 return forecastDateInt >= forecastDateMinValue && forecastDateInt <=
                     forecastDateMaxValue;
             });
 
-            console.log('Product, Actual Date and Forecast Date filters applied: ',
-                filteredByForecastDate);
 
             productNames = [];
             Swal.fire(
@@ -478,6 +542,22 @@ else {
                 localStorage.setItem('checkFiltersActive', false);
             } else {
                 localStorage.setItem('checkFiltersActive', true);
+            }
+            let filteredForecastPBD = Math.max.apply(Math, filteredByForecastDate.map(function(o) {
+                return o.PeriodsBeforeDelivery;
+            }));
+
+            if (filteredByForecastDate.map(i => i.ForecastPeriod <= minActualPeriod) &&
+                filteredForecastPBD <= 53) {
+                localStorage.setItem('check2FiltersActive', false);
+            } else {
+                localStorage.setItem('check2FiltersActive', true);
+            }
+
+            if (productNames.length < 1) {
+                localStorage.setItem('check3FiltersActive', false);
+            } else {
+                localStorage.setItem('check3FiltersActive', true);
             }
         });
 

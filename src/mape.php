@@ -151,7 +151,7 @@ else {
     </nav>
     <div class="customContainer">
         <div class="row" style="margin-bottom: -2%;">
-            <div class="col-md-10">
+            <div class="col-md-6">
                 <h3>Mean Absolute Percentage Error (MAPE) Graph</h3>
                 <small>
                     <?php
@@ -173,6 +173,35 @@ else {
                         <div class="row">
                             <span style="font-size: 12px; vertical-align: middle;" class="alert-info" role="info"> To
                                 change settings please visit <a href="./configuration.php">Configuration</a>.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div id="filter2Info" class="alert alert-danger" style="text-align: center" role="alert">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                role="info">Filters have not been applied!</span>
+                        </div>
+                        <div class="row">
+                            <span style="font-size: 11px; vertical-align: middle;" class="alert-danger" role="alert">
+                                Please adjust the Date Filters so that Actual Date <= Forecast Date.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div id="filter3Info" class="alert alert-danger" style="text-align: center" role="alert">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                role="danger">More
+                                than one product have been selected.</span>
                         </div>
                     </div>
                 </div>
@@ -237,7 +266,6 @@ else {
             x.style.display = "none";
         }
     }
-    
     </script>
 
     <script>
@@ -249,6 +277,20 @@ else {
         }
     });
 
+    $(document).ready(function() {
+        if (localStorage.getItem('check2FiltersActive') === 'true') {
+            $('#filter2Info').show();
+        } else {
+            $('#filter2Info').hide();
+        }
+    });
+    $(document).ready(function() {
+        if (localStorage.getItem('check3FiltersActive') === 'true') {
+            $('#filter3Info').show();
+        } else {
+            $('#filter3Info').hide();
+        }
+    });
     var forecastlist = dc.selectMenu("#forecastlist"),
         // productChart = dc.pieChart("#product"),
         periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
@@ -362,88 +404,94 @@ else {
         });
         console.log('Forecast, FinalOrders, MAPE all orderByPBD: ', calculationsOrderByPBD);
 
-         var exportArray = calculationsOrderByPBD.map((el) => {
-                return {
-                    Product: el.Product,
-                    PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                    MAPE: el.MAPE + "\n"
-                }
-            })
+        var exportArray = calculationsOrderByPBD.map((el) => {
+            return {
+                Product: el.Product,
+                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                MAPE: el.MAPE + "\n"
+            }
+        })
 
-            /**   Convert array to csv function           */
-            function pivot(arr) {
-                var mp = new Map();
+        /**   Convert array to csv function           */
+        function pivot(arr) {
+            var mp = new Map();
 
-                function setValue(a, path, val) {
-                    if (Object(val) !== val) { // primitive value
-                        var pathStr = path.join('.');
-                        var i = (mp.has(pathStr) ? mp : mp.set(pathStr, mp.size)).get(pathStr);
-                        a[i] = val;
-                    } else {
-                        for (var key in val) {
-                            setValue(a, key == '0' ? path : path.concat(key), val[key]);
-                        }
+            function setValue(a, path, val) {
+                if (Object(val) !== val) { // primitive value
+                    var pathStr = path.join('.');
+                    var i = (mp.has(pathStr) ? mp : mp.set(pathStr, mp.size)).get(pathStr);
+                    a[i] = val;
+                } else {
+                    for (var key in val) {
+                        setValue(a, key == '0' ? path : path.concat(key), val[key]);
                     }
-                    return a;
                 }
-                var result = arr.map(obj => setValue([], [], obj));
-                return [
-                    [...mp.keys()], ...result
-                ];
+                return a;
             }
+            var result = arr.map(obj => setValue([], [], obj));
+            return [
+                [...mp.keys()], ...result
+            ];
+        }
 
-            function toCsv(arr) {
-                return arr.map(row =>
-                    row.map(val => isNaN(val) ? JSON.stringify(val) : +val).join(',')
-                ).join('\n');
-            }
-            let newCsvContent = toCsv(pivot(exportArray));
-            console.log("newCsvContent array: ", newCsvContent);
+        function toCsv(arr) {
+            return arr.map(row =>
+                row.map(val => isNaN(val) ? JSON.stringify(val) : +val).join(',')
+            ).join('\n');
+        }
+        let newCsvContent = toCsv(pivot(exportArray));
+        console.log("newCsvContent array: ", newCsvContent);
 
-            /** Export script */
-            $("#exportFunction").click(function() {
-                saveFile("MAPE.csv", "data:attachment/csv", newCsvContent);
-            });
+        /** Export script */
+        $("#exportFunction").click(function() {
+            saveFile("MAPE.csv", "data:attachment/csv", newCsvContent);
+        });
 
-            /** Function to save file as csv */
-            function saveFile(name, type, data) {
-                if (data != null && navigator.msSaveBlob)
-                    return navigator.msSaveBlob(new Blob([data], {
-                        type: type
-                    }), name);
-                var a = $("<a style='display: none;'/>");
-                var url = window.URL.createObjectURL(new Blob([data], {
+        /** Function to save file as csv */
+        function saveFile(name, type, data) {
+            if (data != null && navigator.msSaveBlob)
+                return navigator.msSaveBlob(new Blob([data], {
                     type: type
-                }));
-                a.attr("href", url);
-                a.attr("download", name);
-                $("body").append(a);
-                a[0].click();
-                window.URL.revokeObjectURL(url);
-                a.remove();
-            }
-            /** End of export function */
+                }), name);
+            var a = $("<a style='display: none;'/>");
+            var url = window.URL.createObjectURL(new Blob([data], {
+                type: type
+            }));
+            a.attr("href", url);
+            a.attr("download", name);
+            $("body").append(a);
+            a[0].click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+        }
+        /** End of export function */
 
         newFinalArray = calculationsOrderByPBD.filter((el) => {
             return !isNaN(el.MAPE);
         })
+        oneFinalArray = newFinalArray.filter((el) => {
+                return el.MAPE !== Infinity;
+            })
+        twoFinalArray = oneFinalArray.filter((el) => {
+            return el.MAPE !== 'Infinity';
+        })
 
-        newFinalArray.forEach(function(d) {
+        twoFinalArray.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
         });
 
-        let periodsBD = newFinalArray.map(function(d) {
+        let periodsBD = twoFinalArray.map(function(d) {
             return d.PeriodsBeforeDelivery
         });
         let periodsMax = Math.max(...periodsBD);
         //Define mean value of Order Amount, i.e. Avg. Order Amount
-        var dataMean = d3.mean(newFinalArray, function(
+        var dataMean = d3.mean(twoFinalArray, function(
             d) {
             return d.MAPE;
         });
         console.log("Mean Value: ", dataMean);
 
-        var ndx = crossfilter(newFinalArray);
+        var ndx = crossfilter(twoFinalArray);
         var all = ndx.groupAll();
         var forecastPeriodDim = ndx.dimension(function(d) {
             return +d.ForecastPeriod;

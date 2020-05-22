@@ -153,7 +153,7 @@ else {
 
     <div class="customContainer">
         <div class="row" style="margin-bottom: -2%;">
-            <div class="col-md-10">
+            <div class="col-md-6">
                 <h3>Normalized Root Mean Square Error (RMSE*)</h3>
                 <small>
                     <?php
@@ -179,6 +179,36 @@ else {
                     </div>
                 </div>
             </div>
+            <div class="col-md-2">
+                <div id="filter2Info" class="alert alert-danger" style="text-align: center" role="alert">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                role="info">Filters have not been applied!</span>
+                        </div>
+                        <div class="row">
+                            <span style="font-size: 11px; vertical-align: middle;" class="alert-danger" role="alert">
+                                Please adjust the Date Filters so that Actual Date <= Forecast Date.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div id="filter3Info" class="alert alert-danger" style="text-align: center" role="alert">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                role="danger">More
+                                than one product have been selected.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-md-12" style="margin-bottom: 50px;">
                     <br />
@@ -240,45 +270,6 @@ else {
                 x.style.display = "none";
             }
         }
-
-        /**                Export function           */
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     const exportBtn = document.getElementById("export");
-        //     const table = document.getElementById("myTable");
-        //     const toCsv = function(table) {
-        //         // Query all rows
-        //         const rows = table.querySelectorAll('tr');
-
-        //         return [].slice.call(rows)
-        //             .map(function(row) {
-        //                 // Query all cells
-        //                 const cells = row.querySelectorAll('th,td');
-        //                 return [].slice.call(cells)
-        //                     .map(function(cell) {
-        //                         return cell.textContent;
-        //                     })
-        //                     .join(',');
-        //             })
-        //             .join('\n');
-        //     };
-        //     const download = function(text, fileName) {
-        //         const link = document.createElement('a');
-        //         link.setAttribute('href', `data:text/csv;charset=utf-8,${encodeURIComponent(text)}`);
-        //         link.setAttribute('download', fileName);
-
-        //         link.style.display = 'none';
-        //         document.body.appendChild(link);
-        //         link.click();
-        //         document.body.removeChild(link);
-        //     };
-        //     exportBtn.addEventListener('click', function() {
-        //         // Export to csv
-        //         const csv = toCsv(table);
-        //         // Download csv
-        //         download(csv, 'nor_RMSE.csv');
-        //     });
-        // });
-        /**            End of function     */
         </script>
 
         <script>
@@ -287,6 +278,21 @@ else {
                 $('#filterInfo').show();
             } else {
                 $('#filterInfo').hide();
+            }
+        });
+
+        $(document).ready(function() {
+            if (localStorage.getItem('check2FiltersActive') === 'true') {
+                $('#filter2Info').show();
+            } else {
+                $('#filter2Info').hide();
+            }
+        });
+        $(document).ready(function() {
+            if (localStorage.getItem('check3FiltersActive') === 'true') {
+                $('#filter3Info').show();
+            } else {
+                $('#filter3Info').hide();
             }
         });
         const margin = {

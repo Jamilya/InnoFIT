@@ -60,8 +60,8 @@ else {
                 <ul class="nav navbar-nav">
                     <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Visualizations<span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false">Visualizations<span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
@@ -142,7 +142,8 @@ else {
                         /* ]]> */
                         </script>
                     </li>
-                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span>
+                            Logout</a></li>
 
                 </ul>
             </div>
@@ -153,7 +154,7 @@ else {
 
     <div class="customContainer">
         <div class="row" style="margin-bottom: -2%;">
-            <div class="col-md-10">
+            <div class="col-md-6">
                 <h3>Corrected Root Mean Square Error (CRMSE) and Root Mean Square Error (RMSE) comparison </h3>
                 <small>
                     <?php
@@ -179,21 +180,50 @@ else {
                     </div>
                 </div>
             </div>
+            <div class="col-md-2">
+                <div id="filter2Info" class="alert alert-danger" style="text-align: center" role="alert">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                role="info">Filters have not been applied!</span>
+                        </div>
+                        <div class="row">
+                            <span style="font-size: 11px; vertical-align: middle;" class="alert-danger" role="alert">
+                                Please adjust the Date Filters so that Actual Date <= Forecast Date.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div id="filter3Info" class="alert alert-danger" style="text-align: center" role="alert">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                role="danger">More
+                                than one product have been selected.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-12" style="margin-bottom: 50px;">
                     <br />
                     <p> <b>Graph Description:</b> This graph presents an estimation of CRMSE and RMSE with respect to
                         periods before
                         delivery (PBD).
-                        <br> The Formula of the Corrected Root Mean Square Error (CRMSE) is: 
+                        <br> The Formula of the Corrected Root Mean Square Error (CRMSE) is:
                         <!-- <img src="https://latex.codecogs.com/gif.latex?CRMSE_{j} = \sqrt{\frac{1}{n}\sum_{1}^{n}(x_{i,0}-(\frac{x_{i,j}}{MFB_{j}}))^{2}}"
                             title="Corrected RMSE_1" />  -->
-                        <img src = "../data/img/corr_rmse.gif" title="Corrected RMSE formula"/>, <br>
-                        where MFB (Mean Forecast Bias) = 
+                        <img src="../data/img/corr_rmse.gif" title="Corrected RMSE formula" />, <br>
+                        where MFB (Mean Forecast Bias) =
                         <!-- <img src="https://latex.codecogs.com/gif.latex?MFB_{j} = \frac {\sum_{i=1}^{n}x_{i,j}}{\sum_{i=1}^{n}x_{i,0}}"
                             title="Mean Forecast Bias formula" /> -->
-                        <img src = "../data/img/mfb.gif" title="MFB formula"/>
-                            </p>
+                        <img src="../data/img/mfb.gif" title="MFB formula" />
+                    </p>
                 </div>
             </div>
             <div class="row">
@@ -210,8 +240,8 @@ else {
                 <div style="clear: both"></div>
                 <div class="row" style="margin: 50px 0 50px 0;">
                     <div class="dc-data-count">
-                        <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a class="badge badge-light"
-                            href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
+                        <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
+                            class="badge badge-light" href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
                     </div><br /><br />
                 </div>
             </div>
@@ -222,6 +252,21 @@ else {
                 $('#filterInfo').show();
             } else {
                 $('#filterInfo').hide();
+            }
+        });
+
+        $(document).ready(function() {
+            if (localStorage.getItem('check2FiltersActive') === 'true') {
+                $('#filter2Info').show();
+            } else {
+                $('#filter2Info').hide();
+            }
+        });
+        $(document).ready(function() {
+            if (localStorage.getItem('check3FiltersActive') === 'true') {
+                $('#filter3Info').show();
+            } else {
+                $('#filter3Info').hide();
             }
         });
         const margin = {
@@ -260,7 +305,7 @@ else {
             finalOrder.map(e => {
                 finalOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
             });
-            ///////////////////////////////////////////                * CRMSE Calc **           ///////////////////////////////////////////
+            ///////              * CRMSE Calc **          /////
             //Order All data by PBD
             // Order the Final Orders
 
@@ -449,7 +494,6 @@ else {
                     };
                 }
             });
-            // console.log("RMSE array:", bebe);
             newFinalArray2 = bebe.filter((el) => {
                 return !isNaN(el.RMSE);
             })
@@ -469,19 +513,6 @@ else {
                 d.ActualDate = new Date(d.ActualDate),
                     d.ForecastDate = new Date(d.ForecastDate);
             });
-
-            // var ndx = crossfilter(mergeById(newFinalArray1, newFinalArray2));
-
-            // var ndxDim = ndx.dimension(function(d) {
-            //     return [+d.PeriodsBeforeDelivery, +d.RMSE, +d.CRMSE];
-            // });
-
-            // var CRMSEDim = ndx.dimension(function(d) {
-            //     return +d.CRMSE;
-            // });
-            // var RMSEDim = ndx.dimension(function(d) {
-            //     return +d.RMSE;
-            // })
 
             var ndx = crossfilter();
             ndx.add(mergeById(newFinalArray1, newFinalArray2).map(function(d) {
