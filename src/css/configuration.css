@@ -1,0 +1,110 @@
+body {
+    margin: 0 auto;
+    top: 0 !important;
+}
+
+div {
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.info-container {
+    display: inline-block;
+    width: calc(100% + -50px);
+    vertical-align: middle;
+}
+
+.customContainer {
+    padding: 0 3% 0 3%;
+}
+
+a.gflag {
+    vertical-align: middle;
+    font-size: 16px;
+    padding: 1px 0;
+    background-repeat: no-repeat;
+    background-image: url(//gtranslate.net/flags/16.png);
+}
+
+a.gflag img {
+    border: 0;
+}
+
+a.gflag:hover {
+    background-image: url(//gtranslate.net/flags/16a.png);
+}
+
+#goog-gt-tt {
+    display: none !important;
+}
+
+.goog-te-banner-frame {
+    display: none !important;
+}
+
+.goog-te-menu-value:hover {
+    text-decoration: none !important;
+}
+
+#google_translate_element2 {
+    display: none !important;
+}
+
+.irs-handle,
+.irs-bar,
+.irs-single,
+.irs-from:before,
+.irs-to:before,
+.irs--flat {
+    cursor: pointer;
+    border-top-color: #336699 !important;
+}
+
+.irs-bar {
+    background-color: #336699 !important;
+}
+
+.irs-single,
+.irs-from,
+.irs-to {
+    background-color: #336699 !important;
+    font-size: 12px;
+}
+
+.irs-handle,
+.irs--flat .irs-handle {
+    width: 15px;
+    height: 30px;
+    left: -.6em;
+}
+
+.irs-grid-text {
+    font-size: 12px;
+    position: absolute;
+    color: #585858 !important;
+}
+
+/* Change something for the product list */
+#products  {
+    height: auto;
+    min-height: 170px;
+}
+
+/* Fix the dialog things */
+.swal2-popup {
+    font-size: 1.4rem !important;
+}
+
+/* Make the sliders more narrow */
+.narrowSlider {
+    margin-left: 2% !important;
+    margin-right: 2% !important;
+}
+
+/* Link effect for the arrow down */
+#showArrowDown:hover .hideEl {
+    display: contents;
+}
+
+.hideEl { display: none; }
+.pullElRight { float: right; }
