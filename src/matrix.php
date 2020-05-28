@@ -33,7 +33,7 @@ else {
 
     <script>
     localforage.config({
-        driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+        driver: localforage.INDEXEDDB,
         name: 'innoFit',
         version: 1.0,
         size: 4980736, // Size of database, in bytes. WebSQL-only for now.
@@ -286,11 +286,16 @@ else {
             .select(".domain").remove()
 
         // Build color scale
-        var myColor = d3.scaleSequential();
-        myColor.domain([0, d3.max(data, function(d) {
-            return d.OrderAmount;
-        })]);
-        myColor.interpolator(d3.interpolatePurples);
+        // var myColor = d3.scaleSequential();
+        // myColor.domain([0, d3.max(data, function(d) {
+        //     return d.OrderAmount;
+        // })]);
+        // myColor.interpolator(d3.interpolatePurples);
+        const myColor = d3.scaleSequential()
+            .domain([0, d3.max(data, function(d) {
+                return d.OrderAmount;
+            })])
+            .interpolator(d3.interpolateHcl('#f0f0f0', '#756bb1'));
 
         var myOrders = data.map(function(d) {
             return (d.OrderAmount);
@@ -355,8 +360,13 @@ else {
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave)
 
+       // Define the base number of ticks
+       let ticksToShow = myColor.ticks(15).reverse();
+       // Always add the highest value
+       ticksToShow.unshift(orderMax);
+
         var legend = svg.selectAll(".legend")
-            .data(myColor.ticks(15).slice(1).reverse())
+            .data(ticksToShow)
             .enter().append("g")
             .attr("class", "legend")
             .attr("transform", function(d, i) {
@@ -378,10 +388,11 @@ else {
 
         svg.append("text")
             .attr("class", "label")
-            .attr("x", width - 10)
+            .attr("x", width + 53)
             .attr("y", 10)
+            .attr("text-anchor", "middle")
             .attr("dy", ".35em")
-            .text("");
+            .text("Order Amount");
 
         svg.append("text")
             .attr("x", 345)
@@ -399,15 +410,6 @@ else {
             .style("fill", "#000")
             .attr("transform", "rotate(-90)")
             .text("Forecast Period");
-
-        svg.selectAll(".tile")
-            .style("fill", function(d) {
-                return myColor(d.OrderAmount);
-            });
-
-        svg.selectAll(".legend rect")
-            .style("fill", myColor);
-
     });
     </script>
 
