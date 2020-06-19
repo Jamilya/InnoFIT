@@ -117,6 +117,9 @@ session_start();
                             <li><a href="src/cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
                     </li>
+                    <li>
+                        <a href="src/ClusterTest.html">Cluster Test</a>
+                    </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -237,6 +240,7 @@ session_start();
     d3.json("/includes/getdata.php", function(error, data) {
         if (error) throw error;
         console.log('Read Data: ', data);
+        
 
         var stringData = JSON.stringify(data);
         var newData = Number(data);
@@ -247,6 +251,8 @@ session_start();
         let finalOrder = data.filter((el) => {
             return el.PeriodsBeforeDelivery == "0";
         });
+
+        console.log('Final Order Data: ', finalOrder);
 
         let valueMap = new Map();
         // Check data that forecast horizon does not exceed one year and actual date <= forecast date

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="data/ico/innofit.ico">
+    <title>Forecast Quality Visualization</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+    integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css" />
+    <link rel="stylesheet" href="./css/header.css">
+
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ"
+        crossorigin="anonymous">
+        </script>
+    <script src="../lib/js/localforage.js"></script>
+
+    <style>
+    </style>
+    <script>
+        localforage.config({
+            driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+            name: 'innoFit',
+            version: 1.0,
+            size: 4980736, // Size of database, in bytes. WebSQL-only for now.
+        });
+    </script>
+</head>
+
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/index.php">Home</a>
+        </div>
+    </nav>
+    <div class="customContainer">
+        <header class="masthead">
+            <div class="container h-100">
+                <div class="row h-100 align-items-center" style='margin-bottom: 4%;'>
+                    <div class="col-xs-8 col-sm-8">
+                        <h1 class="text-right">Forecast Quality Visualization - Cluster Test</h1>
+                    </div>
+                    <div class="col-xs-4 col-sm-4 ">
+
+                    </div>
+                </div>
+            </div>
+        </header>
+    </div>
+    <script>
+        $(document).ready(function () {
+            if (localStorage.getItem('checkFiltersActive') === 'true') {
+                $('#filterInfo').show();
+            } else {
+                $('#filterInfo').hide();
+            }
+        });
+
+        $(document).ready(function () {
+            if (localStorage.getItem('check2FiltersActive') === 'true') {
+                $('#filter2Info').show();
+            } else {
+                $('#filter2Info').hide();
+            }
+        });
+        $(document).ready(function () {
+            if (localStorage.getItem('check3FiltersActive') === 'true') {
+                $('#filter3Info').show();
+            } else {
+                $('#filter3Info').hide();
+            }
+        });
+
+        localforage.getItem("viz_data", function (error, data) {
+            data = JSON.parse(data);
+            // console.log("Final order: ",  finalOrder);
+            console.log("Data: ",  data);
+        })
+    </script>
+</body>
+
+</html>

@@ -305,7 +305,7 @@ else {
                 <p>Please select the product or products you want to visualize </p> <br />
                 <select name=productsList[] id="products" class="form-control" multiple="multiple" size="5">
 
-                    <option value="">- Select All (Default) -</option>
+                    <option value="" selected>- Select All (Default) -</option>
                     <!-- <option value='1'>Software Development</option> -->
                 </select>
 
@@ -499,7 +499,6 @@ else {
             let productNames = $.map($(".form-control option:selected"), function(option) {
                 return option.value;
             });
-            console.log('Product Names', productNames.length);
 
             // console.log('FILTERING STARTS HERE');
             // console.log('Filter Parameters: ');
@@ -514,6 +513,7 @@ else {
                 filteredByProduct = data.filter(item => productNames.includes(item
                     .Product));
                 // console.log('Product: ', filteredByProduct);
+                console.log('Product Names: ', productNames.length);
             }
             // 2. Filter by Actual Date based on filtered product
             let filteredByActualDate = filteredByProduct.filter((item) => {
@@ -554,9 +554,13 @@ else {
                 localStorage.setItem('check2FiltersActive', true);
             }
 
-            if (productNames.length < 1) {
+            if (!productNames || productNames.length == 1 + "" || productNames.length == "" + 1 || productNames.length ==  "1") {
                 localStorage.setItem('check3FiltersActive', false);
-            } else {
+            } 
+            // else if (productNames.length === 1 || productNames.length == '1' ) {
+            //     localStorage.setItem('check3FiltersActive', false);
+            // }
+            else {
                 localStorage.setItem('check3FiltersActive', true);
             }
         });
