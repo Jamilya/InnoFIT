@@ -34,7 +34,7 @@ else {
     <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
     <script>
     localforage.config({
-        driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+        driver: localforage.INDEXEDDB,
         name: 'innoFit',
         version: 1.0,
         size: 4980736, // Size of database, in bytes. WebSQL-only for now.
