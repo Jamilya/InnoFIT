@@ -15,129 +15,40 @@ else {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Configuration</title>
+
+    <!-- Stylesheets CDNs and Loading Local -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="../lib/css/ion.rangeSlider.css">
+    <link rel="icon" href="../data/ico/innofit.ico">
+    <link rel="stylesheet" href="./css/header.css">
+    <link rel="stylesheet" href="./css/configuration.css">
+
+    <!-- CDNs loading -->
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
         integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
     </script>
-    <script src="../lib/js/localforage.js"></script>
-    <script type="text/javascript"
-        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit2">
-    </script>
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
-        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
-    </script>
-    <script src="/lib/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
     </script>
+    <script type="text/javascript"
+        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit2">
+    </script>
     <script src="http://d3js.org/d3.v4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+    <!-- Loading Local -->
+    <script src="../lib/js/localforage.js"></script>
+    <script src="../lib/js/bootstrap.bundle.min.js"></script>
     <script src="../lib/js/ion.rangeSlider.js"></script>
 
     <script>
     localforage.config({
-        driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+        driver: localforage.INDEXEDDB,
         name: 'innoFit',
         version: 1.0,
         size: 4980736, // Size of database, in bytes. WebSQL-only for now.
     });
-    </script>
-
-    <link rel="stylesheet" href="../lib/css/ion.rangeSlider.css">
-    <link rel="icon" href="/data/ico/innofit.ico">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <style>
-    body {
-        margin: 0 auto;
-    }
-
-    div {
-        padding-right: 10px;
-        padding-left: 10px;
-    }
-
-    .info-container {
-        display: inline-block;
-        width: calc(100% + -50px);
-        vertical-align: middle;
-    }
-
-    .customContainer {
-        padding: 0 3% 0 3%;
-    }
-
-    a.gflag {
-        vertical-align: middle;
-        font-size: 16px;
-        padding: 1px 0;
-        background-repeat: no-repeat;
-        background-image: url(//gtranslate.net/flags/16.png);
-    }
-
-    a.gflag img {
-        border: 0;
-    }
-
-    a.gflag:hover {
-        background-image: url(//gtranslate.net/flags/16a.png);
-    }
-
-    #goog-gt-tt {
-        display: none !important;
-    }
-
-    .goog-te-banner-frame {
-        display: none !important;
-    }
-
-    .goog-te-menu-value:hover {
-        text-decoration: none !important;
-    }
-
-    body {
-        top: 0 !important;
-    }
-
-    #google_translate_element2 {
-        display: none !important;
-    }
-
-    .irs-handle,
-    .irs-bar,
-    .irs-single,
-    .irs-from:before,
-    .irs-to:before,
-    .irs--flat {
-        cursor: pointer;
-        border-top-color: #336699 !important;
-    }
-
-    .irs-bar {
-        background-color: #336699 !important;
-    }
-
-    .irs-single,
-    .irs-from,
-    .irs-to {
-        background-color: #336699 !important;
-        font-size: 12px;
-    }
-
-    .irs-handle,
-    .irs--flat .irs-handle {
-        width: 15px;
-        height: 30px;
-        left: -.6em;
-    }
-
-    .irs-grid-text {
-        font-size: 12px;
-        position: absolute;
-        color: #585858 !important;
-    }
-    </style>
-    <script type="text/javascript">
-
     </script>
 </head>
 
@@ -155,12 +66,12 @@ else {
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="./configuration.php">Configuration <span
+                    <li class="active specialLine"><a href="./configuration.php">Configuration <span
                                 class="sr-only">(current)</span></a>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Visualizations<span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">Visualizations <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
@@ -179,9 +90,9 @@ else {
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
-                    <li><a href="./dashboard.php">Dashboard</a></li>
+                    <li><a class="specialLine" href="./dashboard.php">Dashboard</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Corrections <span class="caret"></span> </a>
                         <ul class="dropdown-menu">
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
@@ -236,7 +147,8 @@ else {
                         /* ]]> */
                         </script>
                     </li>
-                    <li><a href="/includes/logout.php">Logout</a></li>
+                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span>
+                            Logout</a></li>
                 </ul>
             </div>
             <!--/.nav-collapse -->
@@ -250,8 +162,12 @@ else {
                 <h4><?php   echo "Dear ";
                     print_r($_SESSION["session_username"]);
                     echo ",";?></h4>
-                <p>On this page you can adjust the filter settings of the visualizations.
-                </p>
+                <p>On this page you can adjust the filter settings of the visualizations.</p>
+                <p>In order to apply the filters or reset them for every page please find the
+                    <span id="showArrowDown">
+                        <strong><a href="#controlsSection">Controls area <span class="hideEl pullElRight">&#8681;</span></a></strong> 
+                    </span>
+                below.</p>
             </div>
             <div class="col-md-2">
                 <div id="filterInfo" class="alert alert-info" style="text-align: center" role="info">
@@ -302,16 +218,14 @@ else {
         <div class="row">
             <div class="col-md-12">
                 <h3>Product Selection</h3>
-                <p>Please select the product or products you want to visualize </p> <br />
+                <p>Please select the product or products you want to visualize.</p> <br />
                 <select name=productsList[] id="products" class="form-control" multiple="multiple" size="5">
 
                     <option value="" selected>- Select All (Default) -</option>
                     <!-- <option value='1'>Software Development</option> -->
                 </select>
-
             </div>
         </div>
-
         <div class="row" style="margin-top: 5%;">
             <div class="col-md-12">
                 <h3>Actual Date Slider</h3>
@@ -319,7 +233,9 @@ else {
                     onwards.
                 </p>
                 <br />
-                <input id="actualDateSlider" type="text" class="js-range-slider" name="my_range" value="" />
+                <div class="narrowSlider">
+                    <input id="actualDateSlider" type="text" class="js-range-slider" name="my_range" value="" />
+                </div>
             </div>
         </div>
         <div class="row" style="margin-top: 5%;">
@@ -328,26 +244,31 @@ else {
                 <p>Please select the Due Date range here: the data will be filtered until the selected time range.
                 </p>
                 <br />
-                <input id="forecastDateSlider" type="text" class="js-range-slider" name="my_range" value="" />
+                <div class="narrowSlider">
+                    <input id="forecastDateSlider" type="text" class="js-range-slider" name="my_range" value="" />
+                </div>
             </div>
         </div>
-        <div class="row" style="margin-top: 5%;">
-            <div class="col-md-2">
-                <button id="btnResetFilters" class="btn btn-secondary">Reset Filters</button>
-            </div>
-            <div class="col-md-10 pull-right">
-                <button id="btnApplyFilters" class="btn btn-primary">Apply Filters</button>
+        <div id="controlsSection" class="row" style="margin-top: 5%">
+            <div class="col-md-8 col-md-offset-2 text-center">
+                <button id="btnApplyFilters" class="btn btn-primary btn-lg btn-block">Apply Filters</button>
             </div>
         </div>
-
+        <div class="row" style="margin-top: 2%; margin-bottom: 5%">
+            <div class="col-md-6 col-md-offset-3 text-center">
+                <button id="btnResetFilters" class="btn btn-secondary btn-md btn-block">Reset Filters</button>
+            </div>
+        </div>
     </div>
 
     <script>
-    $(document).ready(function() {
+    $(document).ready(function(e) {
         if (localStorage.getItem('checkFiltersActive') === 'true') {
             $('#filterInfo').show();
+            $('#btnResetFilters').prop('disabled', false);
         } else {
             $('#filterInfo').hide();
+            d3.select('#btnResetFilters').attr('disabled', true);
         }
     });
 
@@ -374,23 +295,12 @@ else {
     let forecastDateMaxValue = 0;
     let newProductList = [];
 
-
-    $(document).ready(function() {
-        if (localStorage.getItem('checkFiltersActive') === 'true') {
-            console.log('I WANT TO RESET');
-            $('#btnResetFilters').prop('disabled', false);
-        } else {
-            d3.select('#btnResetFilters').attr('disabled', true);
-        }
-    });
-
     function dateToTS(date) {
         return date.valueOf();
     }
 
     function tsToDate(ts) {
-        var d = new Date(ts);
-
+        let d = new Date(ts);
         return d.toLocaleDateString(lang, {
             year: 'numeric',
             month: 'long',
@@ -412,7 +322,6 @@ else {
         // Get the unique names of our products
         const uniqueNames = [...new Set(data.map(i => i.Product))];
         console.log('Names array: ', uniqueNames);
-
 
         // Get min and max ActualDate
         const minADate = (data.reduce((m, v, i) => (v.ActualDate < m.ActualDate) && i ? v : m)
@@ -470,8 +379,8 @@ else {
             },
         });
 
-        var options = '';
-        for (var i = 0; i < uniqueNames.length; i++) {
+        let options = '';
+        for (let i = 0; i < uniqueNames.length; i++) {
             options += '<option value="' + uniqueNames[i] + '">' + uniqueNames[i] + '</option>';
         }
         $("#products").append(options);
@@ -532,16 +441,22 @@ else {
 
 
             productNames = [];
-            Swal.fire(
-                'Filters applied!',
-                'Your filters have been applied. Please visit the Visualizations.',
-                'success');
             localforage.setItem('viz_data', JSON.stringify(filteredByForecastDate));
 
             if (data.length === filteredByForecastDate.length) {
-                localStorage.setItem('checkFiltersActive', false);
+                localStorage.setItem('checkFiltersActive', 'false');
+                Swal.fire({
+                    icon: 'info',
+                    titleText: 'No Filters!',
+                    text: 'The whole dataset will be used as you have set no filters.',
+                });
             } else {
-                localStorage.setItem('checkFiltersActive', true);
+                localStorage.setItem('checkFiltersActive', 'true');
+                Swal.fire({
+                    icon: 'info',
+                    titleText: 'Filters applied!',
+                    text: 'Your filters have been applied. Please visit the Visualizations.',
+                });
             }
             let filteredForecastPBD = Math.max.apply(Math, filteredByForecastDate.map(function(o) {
                 return o.PeriodsBeforeDelivery;
@@ -566,10 +481,14 @@ else {
         });
 
         d3.select('#btnResetFilters').on('click', function(e) {
-            Swal.fire(
-                'Filters reset!',
-                'Your filter settings have been reset. No Filters are applied!',
-                'info');
+            localStorage.setItem('checkFiltersActive', 'false');
+            Swal.fire({
+                icon: 'info',
+                titleText: 'Filters reset!',
+                text: 'Your filter settings have been reset. No Filters are applied!',
+            }).then(() => {
+                location.reload();
+            });
             localforage.setItem('all_data', JSON.stringify(data));
             localforage.setItem('viz_data', JSON.stringify(data));
         });
