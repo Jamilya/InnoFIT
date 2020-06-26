@@ -24,7 +24,7 @@
     </style>
     <script>
         localforage.config({
-            driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+            driver: localforage.IndexedDB, // Force WebSQL; same as using setDriver()
             name: 'innoFit',
             version: 1.0,
             size: 4980736, // Size of database, in bytes. WebSQL-only for now.
@@ -82,6 +82,7 @@
             console.log("Data: ",  data);
         })
     </script>
+
 </body>
 
 </html>

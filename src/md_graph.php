@@ -23,7 +23,7 @@ else {
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css" />
     <link rel="stylesheet" href="./css/madgraph.css">
     <link rel="stylesheet" href="./css/header.css">
-    <title>Mean Absolute Deviation (MAD) Graph</title>
+    <title>Mean Deviation (MD) Graph</title>
 
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
         integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
@@ -73,9 +73,9 @@ else {
                             <li><a href="./matrixvariance.php">Delivery Plans Matrix with Percentage Error </a></li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Forecast Error Measures</li>
-                            <li class="active"><a href="./mad_graph.php">Mean Absolute Deviation (MAD) <span
+                            <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
+                            <li class="active"><a href="./md_graph.php">Mean Deviation (MD) <span
                                         class="sr-only">(current)</span></a></li>
-                            <li><a href="./md_graph.php">Mean Deviation (MD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
                             <li><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
@@ -158,7 +158,7 @@ else {
     <div class="customContainer">
         <div class="row" style="margin-bottom: -2%;">
             <div class="col-md-6">
-                <h3>Mean Absolute Deviation (MAD) Graph</h3>
+                <h3>Mean Deviation (MD) Graph</h3>
                 <small>
                     <?php
             echo "You are logged in as: ";
@@ -205,8 +205,7 @@ else {
                         class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
                     <div class="info-container">
                         <div class="row">
-                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
-                                role="danger">More
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger" role="danger">More
                                 than one product have been selected.</span>
                         </div>
                     </div>
@@ -217,13 +216,12 @@ else {
         <div class="row">
             <div class="col-md-12" style="margin-bottom: 50px;">
                 <br />
-                <p><b> Graph Description: </b>This graph shows calculation of the Mean Absolute Deviation (MAD) of
+                <p><b> Graph Description: </b>This graph shows calculation of the Mean Deviation (MD) of
                     customer
                     orders with respect to periods before delivery (PBD). The mean absolute deviation describes the
-                    absolute
                     average error between the forecasted and the final order amounts.
-                    <br>The formula of the MAD:
-                    <img src="../data/img/mad.gif" title="MAD formula" />
+                    <br>The formula of the MD:
+                    <!-- <img src="../data/img/mad.gif" title="MD formula" /> -->
                     </a>
                 </p>
                 <!-- MAD_{j} = \frac{1}{n}\sum_{i=1}^{n}{\left | x_{i,j}-x_{i,0} \right |} -->
@@ -232,7 +230,7 @@ else {
         <div class="row">
             <div class="col-md-12">
                 <div id="scatter">
-                    <a class="reset" href="javascript:MADchart.filterAll(); dc.redrawAll();"
+                    <a class="reset" href="javascript:MDchart.filterAll(); dc.redrawAll();"
                         style="display: none;">reset</a>
                     <div class="clearfix"></div>
                 </div>
@@ -312,12 +310,12 @@ else {
         var forecastlist = dc.selectMenu("#forecastlist"),
             periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
             visCount = dc.dataCount(".dc-data-count"),
-            MADchart = dc.scatterPlot("#scatter"),
+            MDchart = dc.scatterPlot("#scatter"),
             visTable = dc.dataTable(".dc-data-table"),
             productlist = dc.selectMenu("#productlist");
 
         let absDiff = function(orignalEl, finalOrder) {
-            return Math.abs(orignalEl.OrderAmount - finalOrder);
+            return orignalEl.OrderAmount - finalOrder;
         }
 
         let finalOrder = data.filter((el) => {
@@ -370,24 +368,24 @@ else {
                     ForecastPeriod: el.values[i].ForecastPeriod,
                     OrderAmount: el.values[i].OrderAmount,
                     PeriodsBeforeDelivery: el.key,
-                    MAD: meanValue
+                    MD: meanValue
                 };
             }
 
         });
-        console.log("Final MAD Array: ", bubu);
+        console.log("Final MD Array: ", bubu);
         // console.log(toCsv(pivot(bubu)));
         var exportArray = bubu.map((el) => {
             return {
                 Product: el.Product,
                 PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                MAD: el.MAD + "\n"
+                MD: el.MD + "\n"
             }
         })
         // console.log("Export array: ", exportArray);
 
         newFinalArray = bubu.filter((el) => {
-            return !isNaN(el.MAD);
+            return !isNaN(el.MD);
         })
 
         newFinalArray.forEach(function(d) {
@@ -426,7 +424,7 @@ else {
 
         /** Export script */
         $("#exportFunction").click(function() {
-            saveFile("MAD.csv", "data:attachment/csv", newCsvContent);
+            saveFile("MD.csv", "data:attachment/csv", newCsvContent);
         });
 
         /** Function to save file as csv */
@@ -454,7 +452,7 @@ else {
             return +d.ForecastPeriod;
         });
         var ndxDim = ndx.dimension(function(d) {
-            return [+d.PeriodsBeforeDelivery, +d.MAD, +d.Product];
+            return [+d.PeriodsBeforeDelivery, +d.MD, +d.Product];
         });
         var productDim = ndx.dimension(function(d) {
             return d.Product;
@@ -498,7 +496,7 @@ else {
         let periodsMax = Math.max(...periodsBD);
 
 
-        MADchart
+        MDchart
             .width(width + margin.left + margin.right)
             .height(height + margin.top + margin.bottom)
             .dimension(ndxDim)
@@ -516,19 +514,19 @@ else {
             .brushOn(false)
             .clipPadding(10)
             .xAxisLabel("Periods Before Delivery")
-            .yAxisLabel("MAD")
+            .yAxisLabel("MD")
             .renderTitle(true)
             .title(function(d) {
                 return [
                     'Periods Before Delivery: ' + d.key[0],
-                    'MAD: ' + d.key[1]
+                    'MD: ' + d.key[1]
                 ].join('\n');
             })
             .xAxis().tickFormat(d3.format('d'));
 
-        MADchart.selectAll('path.symbol')
+        MDchart.selectAll('path.symbol')
             .attr('opacity', 0.3);
-        MADchart.margins(margin);
+        MDchart.margins(margin);
 
         visCount
             .dimension(ndx)
@@ -544,7 +542,7 @@ else {
             .columns([
                 "Product",
                 "PeriodsBeforeDelivery",
-                "MAD"
+                "MD"
             ]);
         dc.renderAll();
     });

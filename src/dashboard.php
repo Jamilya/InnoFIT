@@ -69,6 +69,7 @@ else {
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
+                            <li><a href="./md_graph.php">Mean Deviation (MD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
                             <li><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
@@ -85,6 +86,7 @@ else {
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
                     </li>
+                    <li><a href="./ClusterTest.php">Clustering </a> </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -146,7 +148,7 @@ else {
     </nav>
 
     <!-- Page Features -->
-    <div class="container text-center">
+    <div class="customContainer text-center">
         <div class="row" style="margin-bottom: -2%;">
             <div class="col-md-6">
                 <h2>Forecast Error Measures - Dashboard</h2>
@@ -331,11 +333,15 @@ else {
         </div>
         <div class="col-md-5">
             <div class="card h-100">
-                <div>
+                <div class="card-img-top chartBox drop-shadow">
+                    <div id="scatter8">
+                    </div>
                 </div>
-            </div>
-            <div class="card-body">
-
+                <div class="card-body">
+                    <h4 class="card-title">Mean Deviation (MD)</h4>
+                    <p class="card-text">To view the full graph please see the graph page: <a href="./md_graph.php">Mean
+                            Deviation (MD)</a>.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -384,6 +390,7 @@ else {
             MPEchart = dc.scatterPlot("#scatter5"),
             MSEchart = dc.scatterPlot("#scatter6"),
             NRMSEchart = dc.scatterPlot("#scatter7"),
+            MDchart = dc.scatterPlot("#scatter8"),
             MADchart = dc.scatterPlot("#scatter");
 
         let width = 520;
@@ -391,6 +398,9 @@ else {
         // Define function of absolute difference of forecast and final orders (needed for MAD graph)
         let absDiff = function(orignalEl, finalOrder) {
             return Math.abs(orignalEl.OrderAmount - finalOrder);
+        }
+        let mdDiff = function(orignalEl, finalOrder) {
+            return orignalEl.OrderAmount - finalOrder;
         }
 
         // Define function of power of difference of forecast and final orders (needed for RMSE graph)
@@ -578,6 +588,7 @@ else {
         //Absolute values array (needed for MAD calculation)
         let absValuesArray = uniqueArray.map((el) => {
             let value = absDiff(el, valueMap.get(el.ForecastPeriod));
+            let value2 = mdDiff(el, valueMap.get(el.ForecastPeriod));
             return {
                 ActualDate: el.ActualDate,
                 ForecastDate: el.ForecastDate,
@@ -586,7 +597,8 @@ else {
                 OrderAmount: el.OrderAmount,
                 Product: el.Product,
                 PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                AbsoluteDiff: value
+                MAD: value,
+                MD: value2
             };
         });
         let seperatedByPeriods = d3.nest()
@@ -598,7 +610,7 @@ else {
         let bubu = seperatedByPeriods.map((el) => {
             for (i = 0; i < seperatedByPeriods.length; i++) {
                 let meanValue = d3.mean(el.values, function(d) {
-                    return d.AbsoluteDiff;
+                    return d.MAD;
                 });
                 return {
                     ActualDate: el.values[i].ActualDate,
@@ -617,6 +629,49 @@ else {
                 Product: el.Product,
                 PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
                 MAD: el.MAD + "\n"
+            }
+        })
+        let absValuesArray2 = uniqueArray.map((el) => {
+            let value2 = mdDiff(el, valueMap.get(el.ForecastPeriod));
+            return {
+                ActualDate: el.ActualDate,
+                ForecastDate: el.ForecastDate,
+                ActualPeriod: el.ActualPeriod,
+                ForecastPeriod: el.ForecastPeriod,
+                OrderAmount: el.OrderAmount,
+                Product: el.Product,
+                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                MD: value2
+            };
+        });
+        let seperatedByPeriods3 = d3.nest()
+            .key(function(d) {
+                return d.PeriodsBeforeDelivery
+            })
+            .entries(absValuesArray2);
+
+        let mdArray = seperatedByPeriods3.map((el) => {
+            for (i = 0; i < seperatedByPeriods3.length; i++) {
+                let meanValue4 = d3.mean(el.values, function(d) {
+                    return d.MD;
+                });
+                return {
+                    ActualDate: el.values[i].ActualDate,
+                    ForecastDate: el.values[i].ForecastDate,
+                    Product: el.values[i].Product,
+                    ActualPeriod: el.values[i].ActualPeriod,
+                    ForecastPeriod: el.values[i].ForecastPeriod,
+                    OrderAmount: el.values[i].OrderAmount,
+                    PeriodsBeforeDelivery: el.key,
+                    MD: meanValue4
+                };
+            }
+        });
+        var exportArray4 = mdArray.map((el) => {
+            return {
+                Product: el.Product,
+                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                MD: el.MD + "\n"
             }
         })
         //Powered difference values array (needed for RMSE & MSE calculation)
@@ -688,7 +743,8 @@ else {
             merged.push({
                 ...exportArray[i],
                 ...exportArray2[i],
-                ...exportArray3[i]
+                ...exportArray3[i],
+                ...exportArray4[i]
             });
         }
         console.log(merged);
@@ -772,7 +828,7 @@ else {
             return el.NRMSE !== Infinity;
         })
         newFinalArray7 = twoFinalArrayNRMSE.filter((el) => {
-            return  el.NRMSE !== 'Infinity';
+            return el.NRMSE !== 'Infinity';
         })
         newFinalArray7.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
@@ -798,6 +854,17 @@ else {
         });
         let periodsMax2 = Math.max(...periodsBD2);
 
+        newMDArray = mdArray.filter((el) => {
+            return !isNaN(el.MD);
+        })
+        newMDArray.forEach(function(d) {
+            d.ActualDate = new Date(d.ActualDate);
+        });
+        let mdPeriodsBD = newMDArray.map(function(d) {
+            return d.PeriodsBeforeDelivery
+        });
+        let periodsMax8 = Math.max(...mdPeriodsBD);
+
         //MAD graph crossfilter
         var ndx = crossfilter(newFinalArray);
         var all = ndx.groupAll();
@@ -811,6 +878,20 @@ else {
             return [+d.PeriodsBeforeDelivery, +d.MAD, +d.Product];
         });
         var ndxGroup = ndxDim.group();
+
+        //MD graph crossfilter
+        var ndx8 = crossfilter(newMDArray);
+        var all8 = ndx8.groupAll();
+        var productDim8 = ndx8.dimension(function(d) {
+            return d.Product;
+        });
+        var periodsBeforeDeliveryDim8 = ndx8.dimension(function(d) {
+            return +d.PeriodsBeforeDelivery;
+        });
+        var ndxDim8 = ndx8.dimension(function(d) {
+            return [+d.PeriodsBeforeDelivery, +d.MD, +d.Product];
+        });
+        var ndxGroup8 = ndxDim.group();
 
         //RMSE graph crossfilter
         var ndx2 = crossfilter(newFinalArray2);
@@ -921,6 +1002,32 @@ else {
                 return [
                     'Periods Before Delivery: ' + d.key[0],
                     'MAD: ' + d.key[1]
+                ].join('\n');
+            })
+            .xAxis().tickFormat(d3.format('d'));
+
+        MDchart
+            .width(520)
+            .height(350)
+            .dimension(ndxDim8)
+            .symbolSize(10)
+            .group(ndxGroup8)
+            .data(function(group) {
+                return group.all()
+                    .filter(function(d) {
+                        return d.key !== NaN;
+                    });
+            })
+            .x(d3.scaleLinear().domain([0, periodsMax8]))
+            .brushOn(false)
+            .clipPadding(10)
+            .xAxisLabel("Periods Before Delivery")
+            .yAxisLabel("MD")
+            .renderTitle(true)
+            .title(function(d) {
+                return [
+                    'Periods Before Delivery: ' + d.key[0],
+                    'MD: ' + d.key[1]
                 ].join('\n');
             })
             .xAxis().tickFormat(d3.format('d'));
@@ -1128,7 +1235,6 @@ else {
 
 
     });
-    </script>
     </script>
     <script src="/lib/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"

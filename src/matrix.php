@@ -57,8 +57,8 @@ else {
                 <ul class="nav navbar-nav">
                     <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown active">
-                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Visualizations <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false">Visualizations <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount</a></li>
@@ -70,6 +70,7 @@ else {
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD)</a></li>
+                            <li><a href="./md_graph.php">Mean Deviation (MD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
                             <li><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
@@ -80,12 +81,13 @@ else {
                     </li>
                     <li><a href="./dashboard.php">Dashboard</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Corrections <span class="caret"></span> </a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
                         <ul class="dropdown-menu">
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
                     </li>
+                    <li><a href="./ClusterTest.php">Clustering </a> </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -139,7 +141,8 @@ else {
                         /* ]]> */
                         </script>
                     </li>
-                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span>
+                            Logout</a></li>
 
                 </ul>
             </div>
@@ -181,7 +184,8 @@ else {
         <div class="row" style="margin-bottom: 50px;">
             <div class="col-md-12">
                 <br />
-                <p> <b>Graph Description:</b> Delivery plans matrix representation with respect to actual and forecast periods. NOTE: the periods in the matrix are sorted by date (ascending order). </p>
+                <p> <b>Graph Description:</b> Delivery plans matrix representation with respect to actual and forecast
+                    periods. NOTE: the periods in the matrix are sorted by date (ascending order). </p>
             </div>
         </div>
 
@@ -217,12 +221,12 @@ else {
         });
 
         var margin = {
-                top: 10,
-                right: 90,
-                bottom: 80,
-                left: 60
-            };
-        
+            top: 10,
+            right: 90,
+            bottom: 80,
+            left: 60
+        };
+
         const result = getPercentToPixelDimensions(70);
         let width = result.width - margin.left - margin.right;
         let height = 650 - margin.top - margin.bottom;
@@ -322,7 +326,9 @@ else {
         }
         var mousemove = function(d) {
             tooltip
-                .html("Product: " + d.Product + "<br>"+ "Order Amount: " + d.OrderAmount  + "<br>" + "Actual Period: " + d.ActualPeriod + "<br>" + "Forecast Period: " +d.ForecastPeriod + "<br>")
+                .html("Product: " + d.Product + "<br>" + "Order Amount: " + d.OrderAmount + "<br>" +
+                    "Actual Period: " + d.ActualPeriod + "<br>" + "Forecast Period: " + d.ForecastPeriod +
+                    "<br>")
                 .style("left", (d3.event.pageX + 20) + "px")
                 .style("top", (d3.event.pageY + 10) + "px")
         }
@@ -360,10 +366,10 @@ else {
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave)
 
-       // Define the base number of ticks
-       let ticksToShow = myColor.ticks(15).reverse();
-       // Always add the highest value
-       ticksToShow.unshift(orderMax);
+        // Define the base number of ticks
+        let ticksToShow = myColor.ticks(15).reverse();
+        // Always add the highest value
+        ticksToShow.unshift(orderMax);
 
         var legend = svg.selectAll(".legend")
             .data(ticksToShow)

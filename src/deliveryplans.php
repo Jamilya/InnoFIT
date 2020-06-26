@@ -33,7 +33,7 @@ else {
     <script src="../lib/js/crossfilter.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
     <script src="../lib/js/dc.js"></script>
-    <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>    
+    <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
     <script src="./js/util.js"></script>
 
     <script>
@@ -62,8 +62,8 @@ else {
                 <ul class="nav navbar-nav">
                     <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown active">
-                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Visualizations <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false">Visualizations <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
@@ -75,6 +75,7 @@ else {
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
+                            <li><a href="./md_graph.php">Mean Deviation (MD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
                             <li><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
@@ -85,12 +86,13 @@ else {
                     </li>
                     <li><a href="./dashboard.php">Dashboard</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Corrections <span class="caret"></span> </a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
                         <ul class="dropdown-menu">
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
                     </li>
+                    <li><a href="./ClusterTest.php">Clustering </a> </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -141,7 +143,8 @@ else {
                         /* ]]> */
                         </script>
                     </li>
-                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span>
+                            Logout</a></li>
                 </ul>
             </div>
             <!--/.nav-collapse -->
@@ -221,14 +224,14 @@ else {
                     <p><strong>Periods Before Delivery (PBD)<br /><small>(PBD: number of
                                 records)</small></strong></p>
                 </div>
-                <div style="clear: both"></div>        
+                <div style="clear: both"></div>
             </div>
         </div>
 
         <div class="row" style="margin: 50px 0 50px 0;">
             <div class="dc-data-count">
-                There are <span class="filter-count"></span> selected out of <span class="total-count"></span> records | <a class="badge badge-light"
-                    href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a><br />
+                There are <span class="filter-count"></span> selected out of <span class="total-count"></span> records |
+                <a class="badge badge-light" href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a><br />
                 <br />
                 <button class="btn btn-secondary" onclick="myFunction()"><strong>Show Data table</strong></button>
                 <table class="table table-hover dc-data-table" id="myTable" style="display:none">
