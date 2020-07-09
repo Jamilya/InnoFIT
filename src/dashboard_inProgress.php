@@ -670,12 +670,6 @@ else {
                     }
             })
             console.log("finalMadArray", finalBubu);
-            for (let i = 0; i < finalBubu.length; i++) {
-                bubu.push({
-                    ...finalBubu[i]
-
-                });
-            }
         });
         console.log("bubu", bubu);
         var exportArray2 = bubu.map((el) => {
