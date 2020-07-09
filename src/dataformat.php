@@ -220,13 +220,15 @@ else {
                 <div class="row">
                 <p class="class-text">
                     <br>
-                    <li><b>Chrome browser </b> is advised for better visualization quality</li><br>
-                    <li>Please upload data in CSV format (comma-separated value as a delimiter)</li><br>
+                    <li><b>Chrome and Firefox browsers </b> are advised for better visualization quality</li><br>
+                    <li>Please upload data in CSV format (comma-separated value, comma as a delimiter)</li><br>
                     <li>Please <b>do not overwrite the data </b> in the tool. Either remove the old data and upload new dataset including old and new data; or upload only data that was not uploaded before.</li><br>
                     <li>Keep data upload limit up till <b>1 MB </b>(per user)</li><br>
                     <li>No spacing is allowed, no empty cells or empty rows</li><br>
                     <li><b>No negative OrderAmount </b> values</li><br>
-                    <li>Date format: <b>YYYY-MM-DD (year-month-day) </b> and formatted as a date</li><br><br>
+                    <li>Date format: <b>YYYY-MM-DD (year-month-day) </b> and formatted as a date</li> <br>
+                    <li>Forecast horizon should not exceed 1 year </li><br>
+                    <li>No missing final order data for each forecast. No missing forecast data for each final order </li><br><br>
                     Below is the data format structure overview in a tabular form:<br>
                     <img src="/data/img/dataformat.jpg"
                     alt="Data Format Example" align="middle" height="110" width="790"><br>

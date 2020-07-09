@@ -292,7 +292,7 @@ session_start();
         });
 
         // Save the data in localforage
-        localforage.setItem('all_data', JSON.stringify(data));
+        // localforage.setItem('all_data', JSON.stringify(data));
         localforage.setItem('viz_data', JSON.stringify(data));
         localforage.setItem('finalOrder', JSON.stringify(finalOrder));
         localforage.setItem('deviation', JSON.stringify(finalArray));

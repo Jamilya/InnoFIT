@@ -24,15 +24,19 @@ else {
     <link rel="stylesheet" href="./css/clustertest.css">
     <link rel="stylesheet" href="./css/header.css">
     <script src="../lib/js/localforage.js"></script>
-    <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
-    <script src="./js/util.js"></script>
-    <script src="../lib/js/dc.js"></script>
-    <script src="http://d3js.org/d3.v4.min.js"></script> 
+    <script src="../lib/js/crossfilter.js"></script>
+    <!-- <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script> -->
+    <!-- <script src="../lib/js/dc.js"></script> -->
+    <script src="http://d3js.org/d3.v4.min.js"></script>
     <title> Clustering
         <script src="https://code.jquery.com/jquery-1.12.4.min.js"
             integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
         </script>
     </title>
+    <style>
+
+    </style>
+
     <script>
     localforage.config({
         driver: localforage.INDEXEDDB,
@@ -112,7 +116,7 @@ else {
                             src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit2">
                         </script>
 
-                        <script type="text/javascript">
+                        <!-- <script type="text/javascript">
                         /* <![CDATA[ */
                         eval(function(p, a, c, k, e, r) {
                             e = function(c) {
@@ -138,7 +142,7 @@ else {
                             "||document|var|if|length|function|GTranslateFireEvent|value|createEvent||||||true|else|doGTranslate||getElementById|google_translate_element2|innerHTML|change|try|HTMLEvents|initEvent|dispatchEvent|createEventObject|fireEvent|on|catch|return|split|getElementsByTagName|select|for|className|goog|te|combo|null|setTimeout|500"
                             .split("|"), 0, {}))
                         /* ]]> */
-                        </script>
+                        </script> -->
                     </li>
                     <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span>
                             Logout</a></li>
@@ -157,144 +161,173 @@ else {
             print_r($_SESSION["session_username"]);
             echo ".";
             ?></small>
-                <!-- <p style="margin-top: 15px;">
-                    On this page you find a overview about the available error measures this tool provides. Each error
-                    measure has a dedicated page itself with a bigger view and
-                    the possiblity to adjust some further elements or view specific items and compare them. This view is
-                    mainly for a quick comparison and has only the main filters
-                    applied from the <a href="./configuration.php"><strong>Configuration</strong></a> page. <button
-                        class="btn btn-secondary" id="exportFunction"><strong>Export Data</strong></button>
-                </p> -->
             </div>
-            <!-- <div class="col-md-2">
-                <div id="filterInfo" class="alert alert-info" style="text-align: center" role="info">
-                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
-                        class="glyphicon glyphicon-info-sign alert-info" aria-hidden="true"></span>
-                    <div class="info-container">
-                        <div class="row">
-                            <span style="font-size: 14px; vertical-align: middle;" class="alert-info"
-                                role="info">Filters are applied!</span>
-                        </div>
-                        <div class="row">
-                            <span style="font-size: 12px; vertical-align: middle;" class="alert-info" role="info">
-                                To
-                                change settings please visit <a href="./configuration.php">Configuration</a>.</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div id="filter2Info" class="alert alert-danger" style="text-align: center" role="alert">
-                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
-                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
-                    <div class="info-container">
-                        <div class="row">
-                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
-                                role="info">Filters have not been applied!</span>
-                        </div>
-                        <div class="row">
-                            <span style="font-size: 11px; vertical-align: middle;" class="alert-danger" role="alert">
-                                Please adjust the Date Filters so that Actual Date <= Forecast Date.</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div id="filter3Info" class="alert alert-danger" style="text-align: center" role="alert">
-                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
-                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
-                    <div class="info-container">
-                        <div class="row">
-                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
-                                role="danger">More
-                                than one product have been selected.</span>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
+
         </div>
     </div>
     <hr>
-    <b>IMPORT DATA</b>
+    <!-- <b>IMPORT DATA</b> -->
     <textarea id='distance' cols='1' rows='1' style='visibility:hidden'></textarea>
 
-    <input type='file' id='upload' accept='.csv' style='display: none;' onchange='showfileprops()' />
+    <!-- <input type='file' id='upload' accept='.csv' style='display: none;' onchange='showfileprops()' />
     <input type='button' value='Choose file...' onclick="document.getElementById('upload').click();"
-        style='background-color:orange;border-radius:5px;margin: 10px 10px 10px 10px' />
+        style='background-color:orange;border-radius:5px;margin: 10px 10px 10px 10px' /> -->
 
     <br>
-    <div id='fileName' class='info''></div>
-<div id=' fileLength' class='info''></div>
-<div id=' fileSize' class='info''></div>
-<div id=' fileDate' class='info''></div><br>
-<div id=' fileText' class='content''></div><br>
+    <div id='PeriodsBeforeDelivery' class='info'></div>
+    <div id='fileLength' class='info'></div>
+    <div id='productNumber' class='info'></div>
+    <div id='fileText' class='content'></div><br>
 
-<hr>
-<b>CLUSTERING PARAMETER</b>
-<br>
+    <script>
+    localforage.getItem("clustering_data", function(error, merged2) {
+        newArray = JSON.parse(merged2);
 
-<select id=' series' name='series' class='main'>
-        <option value="AVG">AVG: Average</option>
-        <option value="MAD">MAD: Mean Absolute Deviation</option>
-        <option value="MAPE">MAPE: Mean Absolute Percentage</option>
-        <option value="MD">MD: Mean Deviation</option>
+        function pivot(arr) {
+            var mp = new Map();
+
+            function setValue(a, path, val) {
+                if (Object(val) !== val) { // primitive value
+                    var pathStr = path.join('.');
+                    var i = (mp.has(pathStr) ? mp : mp.set(pathStr, mp.size)).get(pathStr);
+                    a[i] = val;
+                } else {
+                    for (var key in val) {
+                        setValue(a, key == '0' ? path : path.concat(key), val[key]);
+                    }
+                }
+                return a;
+            }
+            var result = arr.map(obj => setValue([], [], obj));
+            return [
+                [...mp.keys()], ...result
+            ];
+        }
+
+        function toCsv(arr) {
+            return arr.map(row =>
+                row.map(val => isNaN(val) ? JSON.stringify(val) : +val).join(',')
+            ).join(' \n');
+        }
+        /*****  Remove line breaks from newArray array */
+        // function remove_linebreaks_ss(str) {
+        //     for (var i = 0; i < str.length; i++)
+        //         if (!(str[i] == '\n'))
+        //         newArray += str[i];
+        //     return newArray;
+        // }
+        oneFinalArray = newArray.filter((el) => {
+            return !isNaN(el.RMSE);
+        })
+        twoFinalArray = oneFinalArray.filter((el) => {
+            return !isNaN(el.NRMSE);
+        })
+        var filtered = twoFinalArray.filter(function(el) {
+            return el.MSE != "undefined ";
+        });
+
+        let newCsvContent = toCsv(pivot(filtered));
+        console.log("oneFinalArray: ", oneFinalArray);
+
+        /**** Identify unique product names in the array */
+        const uniqueNames = [...new Set(newArray.map(i => i.Product))];
+        console.log('Product Names array: ', uniqueNames.length);
+
+
+        let countPBD = filtered.map(function(d) {
+            return d.PeriodsBeforeDelivery
+        });
+        let periodsMax = Math.max(...countPBD);
+
+
+        function insertOption() {
+            var text1 = [];
+            // for (var i = 0; i < filtered.length; i++) {
+            //     // document.getElementById('productName').innerHTML = filtered[i].Product;
+            //     // document.getElementById('productName').style.display = 'inline-block';
+            // }
+            text1 = newCsvContent;
+
+            document.getElementById('fileText').innerHTML = text1;
+            document.getElementById('fileText').style.display = 'inline-block';
+            document.getElementById('fileText').style.height = '80px';
+            document.getElementById('PeriodsBeforeDelivery').innerHTML = "Number of PBD: " + periodsMax;
+            document.getElementById('PeriodsBeforeDelivery').style.display = 'inline-block';
+            document.getElementById('productNumber').innerHTML = "Products: " + uniqueNames.length;
+            document.getElementById('productNumber').style.display = 'inline-block';
+            document.getElementById('fileLength').innerHTML = "File length:" + filtered.length;
+            document.getElementById('fileLength').style.display = 'inline-block';
+            console.log("text1: ", text1);
+        }
+
+        insertOption();
+    })
+    </script>
+    <hr>
+    <b>CLUSTERING PARAMETER</b>
+    <br>
+
+    <select id=' series' name='series' class='main'>
         <option value="MFB">MFB: Mean Forecast Bias</option>
         <option value="MPE">MPE: Mean Percentage Error</option>
+        <option value="MAPE">MAPE: Mean Absolute Percentage</option>
+        <option value="MAD">MAD: Mean Absolute Deviation</option>
         <option value="MSE">MSE: Mean Squared Error</option>
-        <option value="RMSE">RMSE: Rot Mean Squared Error</option>
-        </select>
-        <select id='method' name='method' class='main' onchange='showmethod()'>
-            <option value="kMeans">k Means</option>
-            <option value="Agglomerative">Agglomerative</option>
-            <option value="Affinity">AffinityPropagation</option>
-            <option value="DBSCAN">DBSCAN</option>
-        </select>
-        <br>
+        <option value="NRMSE">NRMSE: Normalized Root Mean Squared Error</option>
+        <option value="RMSE">RMSE: Root Mean Squared Error</option>
+        <option value="MD">MD: Mean Deviation</option>
+    </select>
+    <select id='method' name='method' class='main' onchange='showmethod()'>
+        <option value="kMeans">k Means</option>
+        <option value="Agglomerative">Agglomerative</option>
+        <option value="Affinity">AffinityPropagation</option>
+    </select>
+    <br>
 
 
 
-        <!-- PARAMETER KMEANS -->
-        <div id='km_k_text' class='text'>k =</div>
-        <input id='km_k' type='text' maxlength=1 value=3 size=1 style='width:30px'>
-        <div id='km_rs_text' class='text'>random_state =</div>
-        <input id='km_rs' type='text' maxlength=5 value=42 size=4 style='width:80px'>
-        <div id='km_init_text' class='text'>init =</div>
-        <select id='km_init' name='km_init' class='sub' style='width:100px;height:24px;'>
-            <option value='k-means++'>k-means++</option>
-            <option value="random">random</option>
-        </select>
-        <div id='km_ninit_text' class='text'>n_init =</div>
-        <input id='km_ninit' type='text' maxlength=2 value=1 size=1 style='width:40px'>
-        <div id='km_maxiter_text' class='text'>max_iter =</div>
-        <input id='km_maxiter' type='text' maxlength=3 value=1 size=1 style='width:50px'>
-        <div id='km_tol_text' class='text'>tol =</div>
-        <input id='km_tol' type='text' maxlength=5 value=0.0001 size=3 maxlength=7 style='width:80px'>
+
+    <!-- PARAMETER KMEANS -->
+    <div id='km_k_text' class='text'>k =</div>
+    <input id='km_k' type='text' maxlength=1 value=3 size=1 style='width:30px'>
+    <div id='km_rs_text' class='text'>random_state =</div>
+    <input id='km_rs' type='text' maxlength=5 value=42 size=4 style='width:80px'>
+    <div id='km_init_text' class='text'>init =</div>
+    <select id='km_init' name='km_init' class='sub' style='width:100px;height:24px;'>
+        <option value='k-means++'>k-means++</option>
+        <option value="random">random</option>
+    </select>
+    <div id='km_ninit_text' class='text'>n_init =</div>
+    <input id='km_ninit' type='text' maxlength=2 value=1 size=1 style='width:40px'>
+    <div id='km_maxiter_text' class='text'>max_iter =</div>
+    <input id='km_maxiter' type='text' maxlength=3 value=1 size=1 style='width:50px'>
+    <div id='km_tol_text' class='text'>tol =</div>
+    <input id='km_tol' type='text' maxlength=5 value=0.0001 size=3 maxlength=7 style='width:80px'>
 
 
-        <!-- PARAMETER AGGLOMERATIVE -->
-        <div id='ag_k_text' class='text' style='display:none;'>k =</div>
-        <input id='ag_k' type='text' maxlength=1 value=3 size=1 style='width:30px;display:none;'>
-        <div id='ag_linkage_test' class='text' style='display:none;'>linkage =</div>
-        <select id='ag_linkage' name='ag_linkage' class='sub' style='display:none;width:100px;height:24px;'>
-            <option value="ward">ward</option>
-            <option value="complete">complete</option>
-            <option value="average">average</option>
-            <option value="single">single</option>
-        </select>
-        <div id='ag_metric_test' class='text' style='display:none;'>metric =</div>
-        <select id='ag_metric' name='ag_metric' class='sub' style='display:none;width:100px;height:24px;'>
-            <option value="euclidean">euclidean</option>
-            <option value="l1">l1</option>
-            <option value="l2">l2</option>
-            <option value="manhattan">manhattan</option>
-            <option value="cosine">cosine</option>
-        </select>
+    <!-- PARAMETER AGGLOMERATIVE -->
+    <div id='ag_k_text' class='text' style='display:none;'>k =</div>
+    <input id='ag_k' type='text' maxlength=1 value=3 size=1 style='width:30px;display:none;'>
+    <div id='ag_linkage_test' class='text' style='display:none;'>linkage =</div>
+    <select id='ag_linkage' name='ag_linkage' class='sub' style='display:none;width:100px;height:24px;'>
+        <option value="ward">ward</option>
+        <option value="complete">complete</option>
+        <option value="average">average</option>
+        <option value="single">single</option>
+    </select>
+    <div id='ag_metric_test' class='text' style='display:none;'>metric =</div>
+    <select id='ag_metric' name='ag_metric' class='sub' style='display:none;width:100px;height:24px;'>
+        <option value="euclidean">euclidean</option>
+        <option value="l1">l1</option>
+        <option value="l2">l2</option>
+        <option value="manhattan">manhattan</option>
+        <option value="cosine">cosine</option>
+    </select>
 
-        <!-- PARAMETER AffinityPropagation -->
-        <div id='af_damping_text' class='text' style='display:none;'>damping =</div>
-        <input id='af_damping' type='text' maxlength=3 value=0.5 size=1 style='width:40px;display:none;''>
-<div id=' af_maxiter_text' class='text' style='display:none;'>max_iter =
-    </div>
+    <!-- PARAMETER AffinityPropagation -->
+    <div id='af_damping_text' class='text' style='display:none;'>damping =</div>
+    <input id='af_damping' type='text' maxlength=3 value=0.5 size=1 style='width:40px;display:none;'>
+    <div id='af_maxiter_text' class='text' style='display:none;'>max_iter =</div>
     <input id='af_maxiter' type='text' maxlength=4 value=200 size=1 style='width:40px;display:none;'>
     <div id='af_conviter_text' class='text' style='display:none;'>conv_iter =</div>
     <input id='af_conviter' type='text' maxlength=2 value=15 size=1 style='width:40px;display:none;'>
@@ -311,42 +344,90 @@ else {
     <input id='db_eps' type='text' maxlength=5 value=0.5 size=3 maxlength=4 style='width:80px'>
 
 
-
     <hr>
     <button type="button" id="startclustering">Start Clustering</button>
-    <textarea cols="70" rows="2" id="status" style="border: none"></textarea>
+    <span id="countdown"></span>
 
+    <textarea cols="40" rows="2" id="status" style="display: none"></textarea>
+
+    <nobr>
+        <button id="create">Create file</button>
+        <a download="IF-result.csv" id="downloadlink" style="display: none">Download</a>
+    </nobr>
 
     <hr>
-    <div id='results' style='display:none;'><b>RESULTS</b></div>
+    <textarea style="display: none" id="textbox">Type something here</textarea>
+    <div id='resulthead' class='reshead'></div><br>
+    <div id='clusterkpi' class='kpi'></div><br>
+
+
+    <canvas id="plotarea0" width="300" height="350"></canvas>
+    <canvas width="10" height="350"></canvas>
+    <canvas id="plotarea1" width="300" height="350"></canvas>
+    <canvas width="10" height="350"></canvas>
+    <canvas id="plotarea2" width="300" height="350"></canvas>
+    <canvas width="10" height="350"></canvas>
+    <canvas id="plotarea3" width="300" height="350"></canvas>
+    <canvas width="10" height="350"></canvas>
+    <canvas id="plotarea4" width="300" height="350"></canvas>
+    <canvas width="10" height="350"></canvas>
     <br>
-    <div id='clusterresult' class='result'></div><br>
-
-
-    <canvas id="plotarea0" width="300" height="400"></canvas>
-    <canvas width="10" height="400"></canvas>
-    <canvas id="plotarea1" width="300" height="400"></canvas>
-    <canvas width="10" height="400"></canvas>
-    <canvas id="plotarea2" width="300" height="400"></canvas>
-    <canvas width="10" height="400"></canvas>
-    <canvas id="plotarea3" width="300" height="400"></canvas>
-    <canvas width="10" height="400"></canvas>
-    <canvas id="plotarea4" width="300" height="400"></canvas>
-    <canvas width="10" height="400"></canvas>
-    <canvas id="plotarea5" width="300" height="400"></canvas>
-    <canvas width="10" height="400"></canvas>
-    <canvas id="plotarea6" width="300" height="400"></canvas>
-    <canvas width="10" height="400"></canvas>
-    <canvas id="plotarea7" width="300" height="400"></canvas>
-    <canvas width="10" height="400"></canvas>
-    <canvas id="plotarea8" width="300" height="400"></canvas>
-    <canvas width="10" height="400"></canvas>
-    <canvas id="plotarea9" width="300" height="400"></canvas>
-    <canvas width="10" height="400"></canvas>
+    <div id='c00' class='ccc'></div>
+    <div id='c01' class='ccc'></div>
+    <div id='c02' class='ccc'></div>
+    <div id='c03' class='ccc'></div>
+    <div id='c04' class='ccc'></div>
+    <br>
+    <canvas id="plotarea5" width="300" height="350"></canvas>
+    <canvas width="10" height="350"></canvas>
+    <canvas id="plotarea6" width="300" height="350"></canvas>
+    <canvas width="10" height="350"></canvas>
+    <canvas id="plotarea7" width="300" height="350"></canvas>
+    <canvas width="10" height="350"></canvas>
+    <canvas id="plotarea8" width="300" height="350"></canvas>
+    <canvas width="10" height="350"></canvas>
+    <canvas id="plotarea9" width="300" height="350"></canvas>
+    <canvas width="10" height="350"></canvas>
+    <br>
+    <div id='c05' class='ccc'></div>
+    <div id='c06' class='ccc'></div>
+    <div id='c07' class='ccc'></div>
+    <div id='c08' class='ccc'></div>
+    <div id='c09' class='ccc'></div>
 
 
     <!-- JAVASCRIPT -->
     <script type="text/javascript">
+    (function(download) {
+        var textFile = null,
+            makeTextFile = function(text) {
+                var data = new Blob([text], {
+                    type: 'text/plain'
+                });
+
+                // If we are replacing a previously generated file we need to
+                // manually revoke the object URL to avoid memory leaks.
+                if (textFile !== null) {
+                    window.URL.revokeObjectURL(textFile);
+                }
+
+                textFile = window.URL.createObjectURL(data);
+
+                return textFile;
+            };
+
+
+        var create = document.getElementById('create'),
+            textbox = document.getElementById('textbox');
+
+        create.addEventListener('click', function(download) {
+            var link = document.getElementById('downloadlink');
+            link.href = makeTextFile(textbox.value);
+            link.style.display = 'block';
+        }, false);
+    })();
+
+
     function fehlerbehandlung(errorEvent) {
         var fehler = "Fehlermeldung:\n" + errorEvent.message + "\n" + errorEvent.filename + "\n" + errorEvent.lineno;
         alert(fehler);
@@ -495,12 +576,17 @@ else {
 
 
     <!-- get Pyodide files from localhost -->
-    <!--
-<script src="pyodide_dev.js"></script>
--->
+    <!--   <script src="pyodide_dev.js"></script>  -->
 
 
     <script type="text/javascript">
+    // document.getElementById("startclustering").onclick = function() {save()};
+
+    function save() {
+
+    }
+
+
     // Start after Button Clustering!
     document.getElementById("startclustering").onclick = function() {
         checks()
@@ -508,15 +594,21 @@ else {
 
     function checks() {
 
+        var seconds = 180,
+            $seconds = document.querySelector('#countdown');
+        (function countdown() {
+            $seconds.textContent = seconds + ' second' + (seconds == 1 ? '' : 's')
+            if (seconds-- > 0) setTimeout(countdown, 1000)
+        })();
 
-        document.getElementById("clusterresult").value = 'Calculation started.'
+
+        document.getElementById('plotarea0').style.display = "inline-block";
 
 
         window.addEventListener("error", fehlerbehandlung);
-        document.getElementById('results').style.display = "none";
 
         // hide DOM results
-        document.getElementById('clusterresult').style.display = "none";
+        //document.getElementById('clusterresult').style.display = "none";
         document.getElementById('plotarea0').style.display = "none";
         document.getElementById('plotarea1').style.display = "none";
         document.getElementById('plotarea2').style.display = "none";
@@ -619,8 +711,7 @@ else {
             }
 
             alert(
-                "DBSCAN cannot be exectued with pyodide. The same code works in Jupyter Notebooks. Errormessages: .1. File sklearn/cluster/_dbscan_inner.pyx, line 38, in sklearn.cluster._dbscan_inner.dbscan_inner .2. ValueError: Buffer dtype mismatch, expected npy_intp but got long long"
-                )
+                "DBSCAN cannot be exectued with pyodide. The same code works in Jupyter Notebooks. Errormessages: .1. File sklearn/cluster/_dbscan_inner.pyx, line 38, in sklearn.cluster._dbscan_inner.dbscan_inner .2. ValueError: Buffer dtype mismatch, expected npy_intp but got long long")
             return;
         }
 
@@ -650,15 +741,17 @@ else {
                             console.log(
                                 "All libraries loaded. Pyodide started.")
 
-                            document.getElementById('results').style.display =
-                                "inline-block";
-                            document.getElementById('clusterresult').style
+                            document.getElementById('resulthead').style
+                                .display = "inline-block";
+                            document.getElementById('clusterkpi').style
                                 .display = "inline-block";
 
 
 
+                            // **********************************************************
+                            // ********************START PYTHON *************************
+                            // **********************************************************
 
-                            // START PYTHON
                             pyodide.runPython(`
 print('Start Python.')
 
@@ -678,12 +771,15 @@ from sklearn.metrics import silhouette_score
 from io import StringIO
 from js import document, alert
 
-#print('The scikit-learn version is {}.'.format(sklearn.__version__))
+
+
+#print('Scikit-learn version: {}.'.format(sklearn.__version__))
 
 def graph(ctx,x0,x1,y0,y1,week,y,cent,y_range):
-	figure_y_values(ctx,x0,x1,y0,y1,y_range)
-	week = week.astype('int32') 
+	week = week.astype('int32')
 	xmin,xmax = min(week),max(week)
+	figure_y_values(ctx,x0,x1,y0,y1,y_range)
+	figure_x_values(ctx,x0,x1,y0,xmin,xmax)
 	x = week.copy()
 	if xmax//1000 == xmin//1000:
 		xwerte = xmax-xmin+1
@@ -705,7 +801,8 @@ def graph(ctx,x0,x1,y0,y1,week,y,cent,y_range):
 	# Converting string to list
 	for j in y:
 		for i in range(len(x)):
-			xpoint, ypoint = change_ref_system(x0,x1,y0,y1,xmax,y_range,x[::-1][i], j[i])
+			#xpoint, ypoint = change_ref_system(x0,x1,y0,y1,xmax,y_range,x[::-1][i], j[i])
+			xpoint, ypoint = change_ref_system(x0,x1,y0,y1,xmax,y_range,x[i], j[i])
 			#ctx.fillRect(xpoint-5,ypoint-5,9,9)
 			if i>0:
 				draw_line(ctx, xold, yold, xpoint, ypoint, linethick = 1)
@@ -713,7 +810,8 @@ def graph(ctx,x0,x1,y0,y1,week,y,cent,y_range):
 
 	# plot centroids
 	for i in range(len(x)):
-		xpoint, ypoint = change_ref_system(x0,x1,y0,y1,xmax,y_range,x[::-1][i], cent[i])
+		#xpoint, ypoint = change_ref_system(x0,x1,y0,y1,xmax,y_range,x[::-1][i], cent[i])
+		xpoint, ypoint = change_ref_system(x0,x1,y0,y1,xmax,y_range,x[i], cent[i])
 		ctx.fillStyle = '#FF0000'
 		ctx.fillRect(xpoint-5,ypoint-5,9,9)
 
@@ -721,10 +819,10 @@ def axis(ctx,y_range,x0,x1,y0,y1,color = "black", linethick = 3):
 	#Draw of x,y axis
 	draw_line(ctx, x0, y0, x0, y1, linethick = 2.0) # y left
 	draw_line(ctx, x1, y0, x1, y1, linethick = 0.5) # y right
-	draw_line(ctx, x0, y1, x1, y1, linethick = 0.3) # x top
-	draw_line(ctx, x0, y1, x1, y1, linethick = 0.3) # x bottom
+	draw_line(ctx, x0, y1, x1, y1, linethick = 0.5) # x top
+	draw_line(ctx, x0, y1, x1, y1, linethick = 0.5) # x bottom
 
-	#y = y0 + 0.5*(y1-y0)*y_range[1]/y_range[0])
+	# Null-Achse
 	if y_range[0] == 0:
 		y = y0
 	else:
@@ -735,7 +833,7 @@ def figure_title(ctx,title,c_size,y_range):
 	#ctx.clearRect(c_size[0]/2 - 20, 0, c_size[0]/2 + 30, 18)
 	ctx.fillStyle = 'black'
 	ctx.font = "bold 16px Arial"
-	ctx.fillText(title, c_size[0]/2 - len(title)*3, 12)
+	ctx.fillText(title, c_size[0]/2 - len(title), 12)
 
 def figure_y_title(ctx,title,c_size,y_range):
 	x = 4
@@ -751,26 +849,68 @@ def figure_y_title(ctx,title,c_size,y_range):
 	ctx.fillText(title, 0, lineHeight / 2)
 	ctx.restore()
 
-def figure_y_values(ctx,x0,x1,y0,y1,y_range):
+def figure_x_title(ctx,title,x0,c_size):
+	#x = (c_size[0]-x0) /2 - len(title)/2
+	x = x0 + (c_size[0]-x0) /2
+	y = c_size[1] - 70
+	lineHeight = 15
+	ctx.save()
+	ctx.fillStyle = 'black'
+	ctx.translate(x, y)
+	ctx.textAlign = 'center'
+	ctx.font = "bold 12px Arial, sans-serif";
+	ctx.fillText('Periods Before Delivery', 0, lineHeight / 2)
+	ctx.restore()
 
+def figure_y_values(ctx,x0,x1,y0,y1,y_range):
+	# plot 6 values on y-axis
+	# decimal seperator = "."
+	# thousand separator = ","
+	# seperator change: .replace('.',',')
 	for i in range(6):
 		ctx.save()
 		ctx.font = "bold 12px Arial"
 		ctx.fillStyle = "black"
 		ctx.textAlign = 'right'
 		if y_range[1]<1:
-			y = round(y_range[1]-i*(y_range[1]-y_range[0])/5,1)
+			y = '{:.3f}'.format(y_range[1]-i*(y_range[1]-y_range[0])/5 )
+		elif y_range[1]<10:
+			y = '{:.1f}'.format(y_range[1]-i*(y_range[1]-y_range[0])/5 )
+		elif y_range[1]<10000:
+			y = '{:,.0f}'.format(y_range[1]-i*(y_range[1]-y_range[0])/5 )
+		elif y_range[1]<100000:
+			y = '{:.0f}'.format((y_range[1]-i*(y_range[1]-y_range[0])/5)/1000 ) + "T"
 		else:
-			y = y_range[1]-i*(y_range[1]-y_range[0])/5
+			y = '{:.1f}'.format((y_range[1]-i*(y_range[1]-y_range[0])/5)/1000000 ) + "M"
 		ctx.fillText(y, 50, y1+6+(y0-y1)*i/5)
 		ctx.restore()
 		draw_line(ctx, x0, y1+(y0-y1)*i/5, x1,  y1+(y0-y1)*i/5, linethick = 0.3)
+
+
+def	figure_x_values(ctx,x0,x1,y0,xmin,xmax):
+	# plot 3 values on x-axis
+	xoff = 10
+	ctx.save()
+	ctx.font = "bold 12px Arial"
+	ctx.fillStyle = "black"
+	ctx.textAlign = 'center'	
+	values = xmax//5 - xmin//5
+
+	for i in range(values):
+		#value = xmax//5 * 5 - 5*i
+		#xloc = x0 + xoff + (xmax-value)*(x1-x0-2*xoff)/(xmax-xmin)
+		value = xmin + 5*i
+		xloc = x0 + xoff + (value-xmin)*(x1-x0-2*xoff)/(xmax-xmin)
+		ctx.fillText(value, xloc, y0+20)
+		draw_line(ctx,xloc,y0,xloc,y1, linethick = 0.3)
 		
+	ctx.restore()
+
 def draw_line(ctx, x1, y1, x2, y2, linethick = 1, color = "black", dash = False):
 	ctx.beginPath()
 	ctx.lineWidth = linethick
 	ctx.moveTo(x1, y1)
-	ctx.lineTo(x2, y2)
+	ctx.lineTo(x2, y2)#
 	ctx.strokeStyle = color
 	if dash:
 		ctx.setLineDash([5, 15])
@@ -790,13 +930,19 @@ def clustercenter(X,labels,k):
 		centroids.append(np.mean(points, axis=0))
 	return centroids
 
-
 print('Start Clustering')
 
-mystring = document.getElementById('fileText').innerHTML.replace(',', '.')
-myarray = np.loadtxt(StringIO(mystring), skiprows = 1, delimiter = ';', usecols = (0,1,2,3,4,5,6,7,8,9),
-                    dtype={'names': ('PR','PBD', 'AVG', 'MSE', 'RMSE', 'MAPE', 'MPE', 'MAD', 'MD', 'MFB'),
-                           'formats': ('S3','S2','i4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4')})
+# Create headline for results
+clustermethod = document.getElementById('method').value
+timeseries    = document.getElementById('series').value
+
+
+newLine = chr(10)
+
+mystring = document.getElementById('fileText').innerHTML.replace(' "',newLine + '"')
+myarray = np.loadtxt(StringIO(mystring), skiprows = 1, delimiter = ',', usecols = (0,1,2,3,4,5,6,7,8,9),
+                    dtype={'names': ('PR','PBD', 'MFB', 'MPE', 'MAPE', 'MAD', 'MSE', 'NRMSE', 'RMSE', 'MD'),
+                           'formats': ('S30','i4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4')})
 
 myarray = np.array(myarray.tolist())
 u_pr  = np.unique(np.array(myarray[:,0]))
@@ -805,35 +951,21 @@ u_pbd = np.array(sorted(list(set(myarray[:,1])),key=int))
 
 #print('Creating lookup dictionary')
 
-#colnr=2
-if document.getElementById('series').value == 'AVG':
-	colnr=2
-if document.getElementById('series').value == 'MAD':
-	colnr=7
-if document.getElementById('series').value == 'MAPE':
-	colnr=5
-if document.getElementById('series').value == 'MD':
-	colnr=8
-if document.getElementById('series').value == 'MFB':
-	colnr=9
-if document.getElementById('series').value == 'MPE':
-	colnr=6
-if document.getElementById('series').value == 'MSE':
-	colnr=3
-if document.getElementById('series').value == 'RMSE':
-	colnr=4
-#if colnr == 2:
-#	document.getElementById('series').value = 'AVG'
-
+if document.getElementById('series').value == 'MFB':	colnr=2
+if document.getElementById('series').value == 'MPE':	colnr=3
+if document.getElementById('series').value == 'MAPE':	colnr=4
+if document.getElementById('series').value == 'MAD':	colnr=5
+if document.getElementById('series').value == 'MSE':	colnr=6
+if document.getElementById('series').value == 'NRMSE':	colnr=7
+if document.getElementById('series').value == 'RMSE':	colnr=8
+if document.getElementById('series').value == 'MD':		colnr=9
 
 D = dict(zip(map(tuple, myarray[:,[0,1]]), myarray[:,[colnr]].ravel().tolist()))
 
 X = np.array(list(map(D.get, itertools.product(u_pr, u_pbd)))).reshape(len(u_pr),len(u_pbd))
 X = X.astype(np.float)
 
-
-print('Pivot Table created.')
-
+#print('Pivot Table created.')
 print('Method selected',document.getElementById('method').value)
 
 # K MEANS
@@ -848,6 +980,7 @@ if document.getElementById('method').value == 'kMeans':
 	model = KMeans(n_clusters=n_clusters, init=init,n_init=n_init, max_iter= max_iter, tol= tol, random_state=random_state)
 	y_model = model.fit_predict(X)
 	clustercenters = model.cluster_centers_
+	parameters = 'n_clusters= ' + str(n_clusters) + ',init= ' + str(init) + ',n_init= ' + str(n_init) + ',max_iter= ' + str(max_iter) + ',tol= ' + str(tol)
 	print('k Means Clustering finished.')
 
 # AGGLOMERATIVE
@@ -864,6 +997,7 @@ if document.getElementById('method').value == 'Agglomerative':
 	#model = AgglomerativeClustering(n_clusters=n_clusters,linkage="average", affinity='cosine')
 	print('Agglomerative Clustering finished.')
 	y_model = model.fit_predict(X)
+	parameters = 'n_clusters= ' + str(n_clusters) + ',linkage= ' + str(linkage) + ',metric= ' + str(metric)
 	clustercenters = clustercenter(X,y_model,n_clusters)
 	
 # AFFINITY PROPAGATION
@@ -878,6 +1012,7 @@ if document.getElementById('method').value == 'Affinity':
 	y_model = af.labels_
 	n_clusters = len(af.cluster_centers_indices_)
 	print('AffinityPropagation Clustering finished.')
+	parameters = 'damping= ' + str(damping) + ',max_iter= ' + str(max_iter) + ',conv_iter= ' + str(conv_iter)
 	clustercenters = []
 	for i in af.cluster_centers_indices_:
 		clustercenters.append(X[i])
@@ -915,13 +1050,9 @@ if document.getElementById('method').value == 'DBSCAN':
 	# Number of clusters in labels, ignoring noise if present.
 	n_clusters = len(set(y_model))
 	#n_noise_ = list(labels).count(-1)
-	#dbs = davies_bouldin_score(X,y_model)
-	#sil = silhouette_score(X,y_model)
 	dbs=0
 	sil=0
 	clustercenters = clustercenter(X,y_model,n_clusters)
-
-
 
 if (n_clusters > 1) and (n_clusters < len(u_pr)):
 	dbs = davies_bouldin_score(X,y_model)
@@ -940,48 +1071,76 @@ else:
 	my_string = ''
 
 
-# CALCULATE KPIs
+# CALCULATE KPI AS STRING
 if (n_clusters > 1) and (n_clusters != len(u_pr)):
-	# '\\r\\n'
-	my_string = my_string + 'Davies-Bouldin Score: ' + str(dbs)[0:6] + '<br>'
-	my_string = my_string + 'Silhouette-Score:     ' + str(sil)[0:6] + '<br>'
+	dbs_str, sil_str = str(dbs)[0:6], str(sil)[0:6]
 elif n_clusters == 1:
-	my_string = my_string + 'Davies-Bouldin Score: n.a. for 1 cluster <br>'
-	my_string = my_string + 'Silhouette-Score:     n.a. for 1 cluster <br>'
+	dbs_str, sil_str = 'n.a. for 1 cluster', 'n.a. for 1 cluster'
 else:
-	my_string = my_string + 'Davies-Bouldin Score: n.a. for all items in different clusters<br>'
-	my_string = my_string + 'Silhouette-Score:     n.a. for for all items in different clusters<br>'
+	dbs_str, sil_str = 'n.a. for for all items in different clusters', 'n.a. for for all items in different clusters'
+
+my_string += 'Davies-Bouldin Score: ' + dbs_str + '<br>'
+my_string += 'Silhouette-Score:     ' + sil_str + '<br>'
+
+document.getElementById("clusterkpi").innerHTML = my_string
+document.getElementById("resulthead").innerHTML = 'Results: ' + clustermethod + ' and ' + timeseries
 
 
-# SHOW RESULTS
+# SHOW CLUSTERS
 if n_clusters >0:
-	c_string = ['']*n_clusters
+	c_string  = ['']*n_clusters
+	c_string2 = ['']*n_clusters
 	i = 0
 	for j in y_model:
-		#c_string[j] += products[i].decode("utf-8") + ' '
-		c_string[j] += u_pr[i].decode("utf-8") + ' '
+		c_string[j] += u_pr[i].decode("utf-8") + chr(10)
+		c_string2[j] += u_pr[i].decode("utf-8") + '<br>'		
 		i += 1
 	for i in range(n_clusters):
-		#my_string += "Cluster " + str(i) + ": " + c_string[i] + '\\r\\n'
 		my_string += "Cluster " + str(i) + ": " + c_string[i] + '<br>'
 else:
 	my_string = 'ConvergenceWarning: Affinity propagation did not converge, this model will not have any cluster centers.'
 
-document.getElementById("clusterresult").innerHTML = my_string
+
+
+for i in range(n_clusters):
+	document.getElementById("c0" + str(i)).style.display = "inline-block"
+	document.getElementById("c0" + str(i)).innerHTML = c_string2[i].replace('"','')
+
+
+
+
+
+from datetime import datetime
+filecontent = ''
+filecontent += 'Time Stamp'           + ';' + str(datetime.now()) + chr(10)
+filecontent += 'Clustering Method'    + ';' + clustermethod       + chr(10)
+filecontent += 'Parameter'            + ';' + parameters          + chr(10)
+filecontent += 'Number Clusters'      + ';' + str(n_clusters)     + chr(10)
+filecontent += 'Davies-Bouldin Score' + ';' + dbs_str.replace('.',',') + chr(10)
+filecontent += 'Silhouette-Score'     + ';' + sil_str.replace('.',',') + chr(10)
+filecontent += chr(10)
+filecontent += 'Cluster'              + ';' + 'Product'           + chr(10)
+i = 0
+for j in y_model:
+	filecontent += str(j)              + ';' + u_pr[i].decode("utf-8").replace('"','') +  chr(10)
+	i += 1
+
+document.getElementById("textbox").innerHTML = filecontent
 
 
 # CREATE PLOTS
 y_max = np.amax(X)
 y_min = np.amin(X)
 
+# CALCULATE y1: UPPER VALUE PLOT
 x = len(str(int(y_max)))-1
 if int(y_max) == 0:
 	y1 = round(y_max*10/(10**x)+0.5,0)*10**x/10
 if (y_max < 0.5):
 	y1 = round(y_max+0.1,1)
-if (y_max >1) and (y_max<=2):
+if (y_max >1) and (y_max<=1000):
 	y1 = round(y_max/(10**x)+0.05,1)*10**x
-if (y_max > 2):
+if (y_max > 1000):
 	y1 = round(y_max/(10**x)+0.5,0)*10**x
 
 y_min = min(0,y_min)
@@ -993,8 +1152,7 @@ else:
 
 y_range = [round(min(y0,0),3), y1]
 
-c_size = [300,400] # canvas width, height
-
+c_size = [300,350] # canvas width, height
 
 # CLEAR ALL PLOTS
 for cnr in range(10):
@@ -1009,16 +1167,19 @@ for cnr in range(min(n_clusters,10)):
 	ctx = canvas.getContext("2d")
 
 	# Axes
-	x0, y0 = 65         , c_size[1]-100
+	x0, y0 = 65, c_size[1]-100
 	x1, y1 = c_size[0]-5, 30
+
 	axis(ctx,y_range,x0,x1,y0,y1,color = "black", linethick = '3')
 
 	#title = 	my_string = document.getElementById('series').value
-	title = document.getElementById('method').value + ': Cluster ' + str(cnr)
+	#title = document.getElementById('method').value + ': Cluster ' + str(cnr)
+	title = 'Cluster ' + str(cnr)
 	figure_title(ctx, title, c_size, y_range)
 	
 	#figure_y_title(ctx,doc['errortype'].value, c_size, y_range)
 	figure_y_title(ctx,document.getElementById('series').value, c_size, y_range)
+	figure_x_title(ctx, 'Time',x0,c_size)
 
 	week = []
 	for i in range(14):
@@ -1031,6 +1192,8 @@ for cnr in range(min(n_clusters,10)):
 document.getElementById("status").textcontent = 'Loaded: pyodide, joblib, numpy, scipy, scikit-learn, Python Code.\\nDone.'
 
 
+
+
 print('Finished Python.')
 `);
 
@@ -1041,10 +1204,13 @@ print('Finished Python.')
         });
     } // end myfunction
     </script>
-    <script src="/lib/js/bootstrap.bundle.min.js"></script>
+
+    <!-- <script src="/lib/js/bootstrap.bundle.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
     </script>
+
+
 </body>
 
 </html>

@@ -485,7 +485,7 @@ else {
             });
 
             let meanFinalOrders = sumFinalOrders / noFinalOrders;
-            // console.log('MEAN', meanFinalOrders, ' for PBD: ', el.values[0].PeriodsBeforeDelivery);
+            // console.log('MEAN', forecastItems);
             let sumOfDifferences = difference.reduce((a, b) => +a + +b, 0);
             let MPEsumOfDifferences = MPEdifference.reduce((a, b) => +a + +b, 0);
 
@@ -611,39 +611,70 @@ else {
             })
             .entries(absValuesArray);
 
-        let seperatedByPeriods = d3.nest()
+        let seperatedByProducts = d3.nest()
             .key(function(d) {
-                return d.PeriodsBeforeDelivery
+                return d.Product
             })
             .entries(absValuesArray);
 
         let periodsMAD = absValuesArray.map(function(d) {
             return d.PeriodsBeforeDelivery
         });
-        let periodsMaxMad = Math.max(...periodsMAD);
-        let periodsMinMad = Math.min(...periodsMAD);
-        // console.log(periodsMAD, periodsMinMad, periodsMaxMad);
-        let productCount = [...new Set(uniqueArray.map(i => i.Product))];
 
-        let bubu = seperatedByPeriods.map((el) => {
-            for (i = 0; i < seperatedByPeriods.length; i++) {
-                let meanValue = d3.mean(el.values, function(d) {
+        let productsPeriods = new Map();
+        newSeparatedByPBD.map(e => {
+            productsPeriods.set(e.key, e.values);
+        });
+        let bubu = newSeparatedByPBD.map((el) => {
+            let products = el.values;
+            let productList = products.map(e => e.key);
+            let productValuesMAD = new Map();
+            products.map(e => {
+                productValuesMAD.set(e.key, e.values.MAD);
+            });
+            // let productMAD = products.map(e => e.values);
+            // productList.forEach(e => {
+            //     if (productsPeriods.get(e) !== undefined) {
+            //         MadArray.push(productValuesMAD.get(e));
+            //         console.log("productValuesMAD.get(e)", productValuesMAD.get(e));
+            //         MdArray.push(productValuesMD.get(e));
+            //     }
+            // });
+            let calcFinal = products.map(e => {
+                for (var i = 0; i < products.length; i++)
+                    return {
+                        ForecastPeriod: e.values[i].ForecastPeriod,
+                        ActualPeriod: e.values[i].ActualPeriod,
+                        PeriodsBeforeDelivery: e.values[i].PeriodsBeforeDelivery,
+                        Product: e.key,
+                        MAD: e.values[i].MAD,
+                        MD: e.values[i].MD,
+
+                    }
+            });
+            let finalBubu = calcFinal.map(el => {
+                let meanValue = d3.mean(calcFinal, function(d) {
                     return d.MAD;
                 });
-                meanValue5 = d3.mean(el.values, function(d) {
+                let meanValue5 = d3.mean(calcFinal, function(d) {
                     return d.MD;
                 });
-                return {
-                    ActualDate: el.values[i].ActualDate,
-                    ForecastDate: el.values[i].ForecastDate,
-                    Product: el.values[i].Product,
-                    ActualPeriod: el.values[i].ActualPeriod,
-                    ForecastPeriod: el.values[i].ForecastPeriod,
-                    OrderAmount: el.values[i].OrderAmount,
-                    PeriodsBeforeDelivery: el.key,
-                    MAD: meanValue,
-                    MD: meanValue5
-                }
+                for (var i = 0; i < calcFinal.length; i++)
+                    return {
+                        ForecastPeriod: calcFinal[i].ForecastPeriod,
+                        ActualPeriod: calcFinal[i].ActualPeriod,
+                        Product: calcFinal[i].Product,
+                        PeriodsBeforeDelivery: calcFinal[i].PeriodsBeforeDelivery,
+                        MAD: meanValue,
+                        MD: meanValue5
+                    }
+            })
+            console.log("finalMadArray", finalBubu);
+            for (let i = 0; i < finalBubu.length; i++) {
+                bubu.push({
+                    ...finalBubu[i]
+
+                });
             }
         });
         console.log("bubu", bubu);
@@ -652,7 +683,7 @@ else {
                 Product: el.Product,
                 PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
                 MD: el.MD,
-                MAD: el.MAD + "\n"
+                MAD: el.MAD + ' \n'
             }
         })
         let absValuesArray2 = uniqueArray.map((el) => {
@@ -734,8 +765,8 @@ else {
             })
             .entries(squaredAbsValuesArray2);
 
-        let bubu2 = seperatedByPeriods2.map((el) => {
-            for (i = 0; i < seperatedByPeriods2.length; i++) {
+        let bubu2 = newSeparatedByPBD2.map((el) => {
+            for (i = 0; i < newSeparatedByPBD2.length; i++) {
                 let meanValue2 = Math.sqrt(d3.mean(el.values, function(d) {
                     return d.SquaredAbsoluteDiff;
                 }), 2);
@@ -744,16 +775,16 @@ else {
                 });
                 let normRMSE = meanValue2 / el.values[i].MeanFinalOrders;
                 return {
-                    ActualDate: el.values[i].ActualDate,
-                    ForecastDate: el.values[i].ForecastDate,
-                    Product: el.values[i].Product,
-                    ActualPeriod: el.values[i].ActualPeriod,
-                    ForecastPeriod: el.values[i].ForecastPeriod,
-                    OrderAmount: el.values[i].OrderAmount,
+                    ActualDate: el.values[i].values[i].ActualDate,
+                    ForecastDate: el.values[i].values[i].ForecastDate,
+                    Product: el.values[i].values[i].Product,
+                    ActualPeriod: el.values[i].values[i].ActualPeriod,
+                    ForecastPeriod: el.values[i].values[i].ForecastPeriod,
+                    OrderAmount: el.values[i].values[i].OrderAmount,
                     PeriodsBeforeDelivery: el.key,
                     MSE: meanValue3,
                     NRMSE: normRMSE,
-                    RMSE: meanValue2.toFixed(3)
+                    RMSE: meanValue2
                 };
             }
         });
@@ -762,9 +793,9 @@ else {
             return {
                 Product: el.Product,
                 PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                MSE: el.MSE,
+                RMSE: el.RMSE,
                 NRMSE: el.NRMSE,
-                RMSE: el.RMSE + "\n"
+                MSE: el.MSE
             }
         })
 

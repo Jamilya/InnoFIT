@@ -347,13 +347,12 @@ else {
             };
         });
 
-        // console.log("Abs values array: ", absValuesArray);
-
         let seperatedByPeriods = d3.nest()
             .key(function(d) {
                 return d.PeriodsBeforeDelivery
             })
             .entries(absValuesArray);
+            console.log("seperatedByPeriods: ", seperatedByPeriods);
 
         let bubu = seperatedByPeriods.map((el) => {
             for (i = 0; i < seperatedByPeriods.length; i++) {
