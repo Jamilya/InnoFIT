@@ -585,17 +585,16 @@ else {
             let valueString = val.OrderAmount;
             valueMap.set(keyString, valueString);
         });
-        console.log("valueMap", valueMap);
         //Absolute values array (needed for MAD calculation)
         let absValuesArray = uniqueArray.map((el) => {
             let value = absDiff(el, valueMap.get(el.ForecastPeriod));
             let value2 = mdDiff(el, valueMap.get(el.ForecastPeriod));
             return {
-                ActualDate: el.ActualDate,
-                ForecastDate: el.ForecastDate,
+                // ActualDate: el.ActualDate,
+                // ForecastDate: el.ForecastDate,
                 ActualPeriod: el.ActualPeriod,
                 ForecastPeriod: el.ForecastPeriod,
-                OrderAmount: el.OrderAmount,
+                // OrderAmount: el.OrderAmount,
                 Product: el.Product,
                 PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
                 MAD: value,
@@ -617,61 +616,100 @@ else {
             })
             .entries(absValuesArray);
 
-        let periodsMAD = absValuesArray.map(function(d) {
-            return d.PeriodsBeforeDelivery
-        });
+        // let productValuesMAD = new Map();
+        // newSeparatedByPBD.map(e => {
+        //     for (var i = 0; i < newSeparatedByPBD.length; i++) {
+        //         productValuesMAD.set(e.values[i].values, e.values[i].key);
+        //     }
+        // });
 
-        let productsPeriods = new Map();
-        newSeparatedByPBD.map(e => {
-            productsPeriods.set(e.key, e.values);
-        });
+        console.log("newSeparatedByPBD", newSeparatedByPBD);
         let bubu = newSeparatedByPBD.map((el) => {
-            let products = el.values;
-            let productList = products.map(e => e.key);
-            let productValuesMAD = new Map();
-            products.map(e => {
-                productValuesMAD.set(e.key, e.values.MAD);
-            });
-            // let productMAD = products.map(e => e.values);
-            // productList.forEach(e => {
-            //     if (productsPeriods.get(e) !== undefined) {
-            //         MadArray.push(productValuesMAD.get(e));
-            //         console.log("productValuesMAD.get(e)", productValuesMAD.get(e));
-            //         MdArray.push(productValuesMD.get(e));
+            const productList = [...new Set(el.values.map(i => i.key))];
+            const productValues = [...new Set(el.values.map(i => i.values))];
+            for (var i = 0; i < newSeparatedByPBD.length; i++) {
+                var length1 = el.values[i];
+                // console.log("el.values.length ", el.values.length);
+                // console.log("productValues ", productValues, productValues[2][1].Product);
+                for (var j = 0; j < productList[i].length; j++) {
+                    console.log("productList[i].length ", productList[i].length);
+                    for (var k = 0; k < productValues[j].length; k++) {
+                        console.log("productValues[j].length ", productValues[j].length);
+                        var length2 = length1.values[j + i];
+                        // let meanValue = d3.mean(length1.values, function(d) {
+                        //     return d.MAD;
+                        // });
+                        // let meanValue5 = d3.mean(length1.values, function(d) {
+                        //     return d.MD;
+                        // });
+                        let meanValue = d3.mean(productValues[k], function(d) {
+                            return d.MAD;
+                        });
+                        let meanValue5 = d3.mean(productValues[k], function(d) {
+                            return d.MD;
+                        });
+                        let products = el.values.filter(e => {
+                            return {
+                                PeriodsBeforeDelivery: e.key,
+                                values: e.values[i][j]
+                            }
+                        });
+                        return {
+                            Product: productValues[i][j].Product,
+                            // Products: productList[j][i],
+                            PeriodsBeforeDelivery: productValues[j][k].PeriodsBeforeDelivery,
+                            ForecastPeriod: productValues[j][k].ForecastPeriod,
+                            // ActualPeriod: length1.values[i].ActualPeriod,
+                            MAD: meanValue,
+                            MD: meanValue5
+                        }
+                    }
+                }
+            }
+
+            // let calcFinal = products.map(e => {
+            //     for (var i = 0; i < products.length; i++)
+            //         return {
+            //             PeriodsBeforeDelivery: e.values[i].PeriodsBeforeDelivery,
+            //             Product: e.key,
+            //             MAD: e.values[i].MAD,
+            //             MD: e.values[i].MD
+            //         }
+            // });
+            // let finalBubu = calcFinal.map(el => {
+            //     let meanValue = d3.mean(calcFinal, function(d) {
+            //         return d.MAD;
+            //     });
+            //     let meanValue5 = d3.mean(calcFinal, function(d) {
+            //         return d.MD;
+            //     });
+            //     for (var i = 0; i < calcFinal.length; i++)
+            //         return {
+            //             Product: calcFinal[i].Product,
+            //             PeriodsBeforeDelivery: calcFinal[i].PeriodsBeforeDelivery,
+            //             MAD: meanValue,
+            //             MD: meanValue5
+            //         }
+            // })
+
+            let MdCalc = [];
+            let MadCalc = [];
+            let MdCalc1 = 0;
+            // finalBubu.forEach(e => {
+            //     if (productList.get(e) !== undefined) {
+            //         MdCalc1 += parseInt(productList.get(e), 0);
+            //         forecastSum += parseInt(productList.get(e), 0);
+            //         MdCalc.push(Math.abs(productList.get(e) -
+            //             productList.get(e)));
+            //         MadCalc.push(productList.get(e) -
+            //             finalOrdersForecastPeriods.get(e));
             //     }
             // });
-            let calcFinal = products.map(e => {
-                for (var i = 0; i < products.length; i++)
-                    return {
-                        ForecastPeriod: e.values[i].ForecastPeriod,
-                        ActualPeriod: e.values[i].ActualPeriod,
-                        PeriodsBeforeDelivery: e.values[i].PeriodsBeforeDelivery,
-                        Product: e.key,
-                        MAD: e.values[i].MAD,
-                        MD: e.values[i].MD,
 
-                    }
-            });
-            let finalBubu = calcFinal.map(el => {
-                let meanValue = d3.mean(calcFinal, function(d) {
-                    return d.MAD;
-                });
-                let meanValue5 = d3.mean(calcFinal, function(d) {
-                    return d.MD;
-                });
-                for (var i = 0; i < calcFinal.length; i++)
-                    return {
-                        ForecastPeriod: calcFinal[i].ForecastPeriod,
-                        ActualPeriod: calcFinal[i].ActualPeriod,
-                        Product: calcFinal[i].Product,
-                        PeriodsBeforeDelivery: calcFinal[i].PeriodsBeforeDelivery,
-                        MAD: meanValue,
-                        MD: meanValue5
-                    }
-            })
-            console.log("finalMadArray", finalBubu);
+
         });
         console.log("bubu", bubu);
+
         var exportArray2 = bubu.map((el) => {
             return {
                 Product: el.Product,
