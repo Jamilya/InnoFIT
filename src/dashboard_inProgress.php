@@ -623,46 +623,38 @@ else {
         //     }
         // });
 
-        console.log("newSeparatedByPBD", newSeparatedByPBD);
+        console.log("newSeparatedByPBD", newSeparatedByPBD, newSeparatedByPBD.length);
         let bubu = newSeparatedByPBD.map((el) => {
             const productList = [...new Set(el.values.map(i => i.key))];
             const productValues = [...new Set(el.values.map(i => i.values))];
-            for (var i = 0; i < newSeparatedByPBD.length; i++) {
-                var length1 = el.values[i];
-                // console.log("el.values.length ", el.values.length);
-                // console.log("productValues ", productValues, productValues[2][1].Product);
-                for (var j = 0; j < productList[i].length; j++) {
-                    console.log("productList[i].length ", productList[i].length);
-                    for (var k = 0; k < productValues[j].length; k++) {
-                        console.log("productValues[j].length ", productValues[j].length);
-                        var length2 = length1.values[j + i];
-                        // let meanValue = d3.mean(length1.values, function(d) {
-                        //     return d.MAD;
-                        // });
-                        // let meanValue5 = d3.mean(length1.values, function(d) {
-                        //     return d.MD;
-                        // });
-                        let meanValue = d3.mean(productValues[k], function(d) {
-                            return d.MAD;
+
+            for (var i = 0; i < newSeparatedByPBD.length; i++) { //length 29
+                var length1 = el.values;
+                var length2 = el.values[i];
+                for (var j = 0; j < el.values.length; j++) { //length 15
+                    for (var k = 0; k < length2.values.length-1; k++) { //length 76
+                        let length3 = length1[j].values;
+                        console.log("length3 ", length3);
+                        // console.log(i, j, k, length1.length, length1[i].values.length, length2.values[
+                        //     i]);
+                        length3.forEach(function(item, j) {
+                            let meanValue = d3.mean(length1.values, function(d) {
+                                return d.MAD;
+                            });
+                            let meanValue5 = d3.mean(length1.values, function(d) {
+                                return d.MD;
+                            });
+                            // console.log(length1[i].values);
+                            // d.ActualPeriod = d.ActualPeriod;
+                            // return {
+                            //     Product: length3[j].key,
+                            //     // PeriodsBeforeDelivery: d.PeriodsBeforeDelivery,
+                            //     // ForecastPeriod: length1[i].values.ForecastPeriod,
+                            //     // ActualPeriod: length1[i].values.ActualPeriod,
+                            //     MAD: meanValue,
+                            //     MD: meanValue5
+                            // }
                         });
-                        let meanValue5 = d3.mean(productValues[k], function(d) {
-                            return d.MD;
-                        });
-                        let products = el.values.filter(e => {
-                            return {
-                                PeriodsBeforeDelivery: e.key,
-                                values: e.values[i][j]
-                            }
-                        });
-                        return {
-                            Product: productValues[i][j].Product,
-                            // Products: productList[j][i],
-                            PeriodsBeforeDelivery: productValues[j][k].PeriodsBeforeDelivery,
-                            ForecastPeriod: productValues[j][k].ForecastPeriod,
-                            // ActualPeriod: length1.values[i].ActualPeriod,
-                            MAD: meanValue,
-                            MD: meanValue5
-                        }
                     }
                 }
             }
