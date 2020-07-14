@@ -626,35 +626,39 @@ else {
         console.log("newSeparatedByPBD", newSeparatedByPBD, newSeparatedByPBD.length);
         let bubu = newSeparatedByPBD.map((el) => {
             const productList = [...new Set(el.values.map(i => i.key))];
+            // let products = el.values.filter(e => {
+            //                 return {
+            //                     PeriodsBeforeDelivery: e.key,
+            //                     values: e.values[i][j]
+            //                 }
             const productValues = [...new Set(el.values.map(i => i.values))];
-
-            for (var i = 0; i < newSeparatedByPBD.length; i++) { //length 29
+            for (var i = 0; i < newSeparatedByPBD.length; i++) { //length 29   47
+                var keys = [];
                 var length1 = el.values;
                 var length2 = el.values[i];
-                for (var j = 0; j < el.values.length; j++) { //length 15
-                    for (var k = 0; k < length2.values.length-1; k++) { //length 76
-                        let length3 = length1[j].values;
-                        console.log("length3 ", length3);
-                        // console.log(i, j, k, length1.length, length1[i].values.length, length2.values[
-                        //     i]);
-                        length3.forEach(function(item, j) {
-                            let meanValue = d3.mean(length1.values, function(d) {
-                                return d.MAD;
-                            });
-                            let meanValue5 = d3.mean(length1.values, function(d) {
-                                return d.MD;
-                            });
-                            // console.log(length1[i].values);
-                            // d.ActualPeriod = d.ActualPeriod;
-                            // return {
-                            //     Product: length3[j].key,
-                            //     // PeriodsBeforeDelivery: d.PeriodsBeforeDelivery,
-                            //     // ForecastPeriod: length1[i].values.ForecastPeriod,
-                            //     // ActualPeriod: length1[i].values.ActualPeriod,
-                            //     MAD: meanValue,
-                            //     MD: meanValue5
-                            // }
+                for (var j = 0; j < el.values.length; j++) { //length 15   4
+                    var index = newSeparatedByPBD[i].values.length;
+                    keys.push(j);
+                    for (var k = 0; k < length1[j].values.length - 1; k++) { //length 76    19
+                        // for (var k = 0; k < length2.values.length; k++) {
+                        // console.log(i, j, k);
+                        // console.log(length1.length, length2.values[k]);
+                        let meanValue = d3.mean(length1.values, function(d) {
+                            return d.MAD;
                         });
+                        let meanValue5 = d3.mean(length1.values, function(d) {
+                            return d.MD;
+                        });
+                        // console.log(length1[j].values[k], i, j, k);
+                        return {
+                            Index: index,
+                            Product: el.values[k].key
+                            // PeriodsBeforeDelivery: length2.values[k].PeriodsBeforeDelivery,
+                            // ForecastPeriod: length2.values[k].ForecastPeriod,
+                            // ActualPeriod: length2.values[k].ActualPeriod,
+                            // MAD: meanValue,
+                            // MD: meanValue5
+                        }
                     }
                 }
             }
@@ -683,22 +687,6 @@ else {
             //             MD: meanValue5
             //         }
             // })
-
-            let MdCalc = [];
-            let MadCalc = [];
-            let MdCalc1 = 0;
-            // finalBubu.forEach(e => {
-            //     if (productList.get(e) !== undefined) {
-            //         MdCalc1 += parseInt(productList.get(e), 0);
-            //         forecastSum += parseInt(productList.get(e), 0);
-            //         MdCalc.push(Math.abs(productList.get(e) -
-            //             productList.get(e)));
-            //         MadCalc.push(productList.get(e) -
-            //             finalOrdersForecastPeriods.get(e));
-            //     }
-            // });
-
-
         });
         console.log("bubu", bubu);
 
@@ -1350,4 +1338,4 @@ else {
     </script>
 </body>
 
-</html>
+</html> 
