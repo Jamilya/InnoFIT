@@ -601,6 +601,9 @@ else {
                 MD: value2
             };
         });
+        let newAbsValuesArray = absValuesArray.filter((el) => {
+            return !isNaN(el.MAD);
+        });
         var newSeparatedByPBD = d3.nest()
             .key(function(d) {
                 return d.PeriodsBeforeDelivery;
@@ -608,7 +611,7 @@ else {
             .key(function(d) {
                 return d.Product;
             })
-            .entries(absValuesArray);
+            .entries(newAbsValuesArray);
 
         let seperatedByProducts = d3.nest()
             .key(function(d) {
@@ -623,74 +626,47 @@ else {
         //     }
         // });
 
-        console.log("newSeparatedByPBD", newSeparatedByPBD, newSeparatedByPBD.length);
-        let bubu = newSeparatedByPBD.map((el) => {
+        console.log("newSeparatedByPBD", newSeparatedByPBD);
+
+        let MADarray = newSeparatedByPBD.map((el) => {
             const productList = [...new Set(el.values.map(i => i.key))];
-            // let products = el.values.filter(e => {
-            //                 return {
-            //                     PeriodsBeforeDelivery: e.key,
-            //                     values: e.values[i][j]
-            //                 }
-            const productValues = [...new Set(el.values.map(i => i.values))];
+            let calcMAD = [];
             for (var i = 0; i < newSeparatedByPBD.length; i++) { //length 29   47
-                var keys = [];
                 var length1 = el.values;
                 var length2 = el.values[i];
                 for (var j = 0; j < el.values.length; j++) { //length 15   4
-                    var index = newSeparatedByPBD[i].values.length;
-                    keys.push(j);
+                    // var index = newSeparatedByPBD[i].values.length;
                     for (var k = 0; k < length1[j].values.length - 1; k++) { //length 76    19
                         // for (var k = 0; k < length2.values.length; k++) {
                         // console.log(i, j, k);
-                        // console.log(length1.length, length2.values[k]);
-                        let meanValue = d3.mean(length1.values, function(d) {
+                        let meanValue = d3.mean(length1[j].values, function(d) {
                             return d.MAD;
                         });
-                        let meanValue5 = d3.mean(length1.values, function(d) {
+                        let meanValue5 = d3.mean(length1[j].values, function(d) {
                             return d.MD;
                         });
-                        // console.log(length1[j].values[k], i, j, k);
-                        return {
-                            Index: index,
-                            Product: el.values[k].key
-                            // PeriodsBeforeDelivery: length2.values[k].PeriodsBeforeDelivery,
-                            // ForecastPeriod: length2.values[k].ForecastPeriod,
-                            // ActualPeriod: length2.values[k].ActualPeriod,
-                            // MAD: meanValue,
-                            // MD: meanValue5
-                        }
+                        calcMAD.push({
+                            PeriodsBeforeDelivery: el.key,
+                            Product: length1[j].values[k].Product,
+                            MAD: meanValue,
+                            MD: meanValue5
+                        })
                     }
                 }
             }
-
-            // let calcFinal = products.map(e => {
-            //     for (var i = 0; i < products.length; i++)
-            //         return {
-            //             PeriodsBeforeDelivery: e.values[i].PeriodsBeforeDelivery,
-            //             Product: e.key,
-            //             MAD: e.values[i].MAD,
-            //             MD: e.values[i].MD
-            //         }
-            // });
-            // let finalBubu = calcFinal.map(el => {
-            //     let meanValue = d3.mean(calcFinal, function(d) {
-            //         return d.MAD;
-            //     });
-            //     let meanValue5 = d3.mean(calcFinal, function(d) {
-            //         return d.MD;
-            //     });
-            //     for (var i = 0; i < calcFinal.length; i++)
-            //         return {
-            //             Product: calcFinal[i].Product,
-            //             PeriodsBeforeDelivery: calcFinal[i].PeriodsBeforeDelivery,
-            //             MAD: meanValue,
-            //             MD: meanValue5
-            //         }
-            // })
+            const filteredArr = calcMAD.reduce((acc, current) => {
+                const x = acc.find(item => item.id === current.id);
+                if (!x) {
+                    return acc.concat([current]);
+                } else {
+                    return acc;
+                }
+            }, []);
+            console.log(filteredArr);
         });
-        console.log("bubu", bubu);
+        console.log("MAD+MD array", MADarray);
 
-        var exportArray2 = bubu.map((el) => {
+        var exportArray2 = MADarray.map((el) => {
             return {
                 Product: el.Product,
                 PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
@@ -853,8 +829,8 @@ else {
         }
         oneFinalArray = merged.filter((el) => {
             return !isNaN(el.MAPE);
-        })
-        var merged2 = oneFinalArray.filter(function(el) {
+        });
+        merged2 = oneFinalArray.filter(function(el) {
             return el != "undefined";
         });
 
@@ -898,14 +874,14 @@ else {
 
         newFinalArray2 = bubu2.filter((el) => {
             return !isNaN(el.RMSE);
-        })
+        });
         newFinalArray2.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
         });
 
         newFinalArray6 = bubu2.filter((el) => {
             return !isNaN(el.MSE);
-        })
+        });
         newFinalArray6.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
         });
@@ -916,13 +892,13 @@ else {
 
         oneFinalArrayNRMSE = bubu2.filter((el) => {
             return !isNaN(el.NRMSE);
-        })
+        });
         twoFinalArrayNRMSE = oneFinalArrayNRMSE.filter((el) => {
             return el.NRMSE !== Infinity;
-        })
+        });
         newFinalArray7 = twoFinalArrayNRMSE.filter((el) => {
             return el.NRMSE !== 'Infinity';
-        })
+        });
         newFinalArray7.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
         });
@@ -933,7 +909,7 @@ else {
 
         newFinalArray = bubu.filter((el) => {
             return !isNaN(el.MAD);
-        })
+        });
         newFinalArray.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
         });
@@ -949,7 +925,7 @@ else {
 
         newMDArray = bubu.filter((el) => {
             return !isNaN(el.MD);
-        })
+        });
         newMDArray.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
         });
@@ -1338,4 +1314,4 @@ else {
     </script>
 </body>
 
-</html> 
+</html>
