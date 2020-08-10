@@ -16,14 +16,6 @@ else {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Configuration</title>
 
-    <!-- Stylesheets CDNs and Loading Local -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <link rel="stylesheet" href="../lib/css/ion.rangeSlider.css">
-    <link rel="icon" href="../data/ico/innofit.ico">
-    <link rel="stylesheet" href="./css/header.css">
-    <link rel="stylesheet" href="./css/configuration.css">
-
     <!-- CDNs loading -->
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
         integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
@@ -37,6 +29,13 @@ else {
     <script src="http://d3js.org/d3.v4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
+    <!-- Stylesheets CDNs and Loading Local -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="../lib/css/ion.rangeSlider.css">
+    <link rel="icon" href="../data/ico/innofit.ico">
+    <link rel="stylesheet" href="./css/header.css">
+    <link rel="stylesheet" href="./css/configuration.css">
     <!-- Loading Local -->
     <script src="../lib/js/localforage.js"></script>
     <script src="../lib/js/bootstrap.bundle.min.js"></script>
@@ -70,8 +69,8 @@ else {
                                 class="sr-only">(current)</span></a>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Visualizations <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false">Visualizations <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
@@ -93,8 +92,8 @@ else {
                     </li>
                     <li><a class="specialLine" href="./dashboard.php">Dashboard</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Corrections <span class="caret"></span> </a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
                         <ul class="dropdown-menu">
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
@@ -167,9 +166,10 @@ else {
                 <p>On this page you can adjust the filter settings of the visualizations.</p>
                 <p>In order to apply the filters or reset them for every page please find the
                     <span id="showArrowDown">
-                        <strong><a href="#controlsSection">Controls area <span class="hideEl pullElRight">&#8681;</span></a></strong> 
+                        <strong><a href="#controlsSection">Controls area <span
+                                    class="hideEl pullElRight">&#8681;</span></a></strong>
                     </span>
-                below.</p>
+                    below.</p>
             </div>
             <div class="col-md-2">
                 <div id="filterInfo" class="alert alert-info" style="text-align: center" role="info">
@@ -471,9 +471,10 @@ else {
                 localStorage.setItem('check2FiltersActive', true);
             }
 
-            if (!productNames || productNames.length == 1 + "" || productNames.length == "" + 1 || productNames.length ==  "1") {
+            if (!productNames || productNames.length == 1 + "" || productNames.length == "" + 1 ||
+                productNames.length == "1") {
                 localStorage.setItem('check3FiltersActive', false);
-            } 
+            }
             // else if (productNames.length === 1 || productNames.length == '1' ) {
             //     localStorage.setItem('check3FiltersActive', false);
             // }

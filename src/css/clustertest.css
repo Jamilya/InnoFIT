@@ -1,3 +1,7 @@
+body {
+    margin: 0px;
+    top: 0 !important;
+}
 
 div {
     padding-right: 10px;
@@ -46,7 +50,7 @@ a.gflag:hover {
     display: none !important;
 }
 
-.list-group.inner li{
+.list-group.inner li {
     border: none !important;
 }
 
@@ -75,45 +79,73 @@ a.gflag:hover {
     font-weight: 700;
 }
 
-.chartBox {
-    width: 550px;
-    height: 350px;
-    border: 1px dashed darkgray;
+/* countup seconds */
+
+label {
+    display: none;
+    font-weight: normal;
 }
 
-.drop-shadow {
-    -webkit-box-shadow: 0 0 5px 2px rgba(63, 62, 62, 0.5);
-    box-shadow: 0 0 5px 2px rgba(63, 62, 62, 0.5);
+/* box with products per cluster */
+
+.ccc {
+    /* float: left;  */
+    width: 270px;
+    margin-left: 50px;
+    margin-right: 0px;
+    padding: 5px;
+    box-sizing: border-box;
+    font-weight: normal;
+    font-size: 12px;
+    display: none;
 }
+
 /* Information Files */
+
 div.info {
     display: inline-block;
     border: grey 0.5px solid;
-    font-weight:bold;
+    font-weight: normal;
     font-size: 12px;
     padding: 0px 10px 0px 10px;
     border-radius: 5px;
     margin: 0px 10px 0px 10px;
     background-color: lightgrey;
     display: none;
-    }
+}
 
-    /* Content File */
-    div.content {
+/* Content File */
+
+div.content {
     display: inline-block;
     border: grey 0.5px solid;
+    height: 80px;
     font-size: 12px;
     padding: 0px 10px 0px 10px;
     border-radius: 5px;
-    margin: 0px 10px 0px 10px;
+    margin: 0px 20px 0px 20px;
     background-color: lightgrey;
     display: none;
     overflow-y: scroll;
-    overflow-x: hidden;
-    }
+}
 
-    /* Clusterresult */
-    div.result {
+/* document.getElementById('fileText').style.height = '80px'; */
+
+/* Result headline */
+
+div.reshead {
+    /* display: inline-block; */
+    font-size: 16px;
+    font-weight: normal;
+    padding: 0px 10px 0px 10px;
+    border-radius: 5px;
+    margin: 0px 10px 20px 10px;
+    display: none;
+}
+
+/* KPI */
+
+div.kpi {
     display: inline-block;
     border: grey 0.5px solid;
     font-size: 12px;
@@ -122,38 +154,37 @@ div.info {
     margin: 0px 10px 20px 10px;
     background-color: lightyellow;
     display: none;
-    overflow-y: hidden;
-    overflow-x: hidden;
-    }
+}
 
+/* Parameter text */
 
-    /* Standard text */
-    div.text {
+div.text {
     display: inline-block;
-    font-weight:bold;
-    }
-    
-    body {
+    font-weight: normal;
+}
+
+/* Headlines in HTML */
+
+body {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 15px;
-    padding: 0px;
-    line-height: 1.6; 
-    margin: 0px;
-    top: 0 !important; }
+    font-weight: normal;
+    line-height: 1.6;
+}
 
-    button {
-    font-weight:bold;
+button {
+    font-weight: normal;
     cursor: pointer;
     display: inline;
     background: orange;
-    color: black;
+    /* color: black; */
     border-radius: 5px;
     border: 2px solid black;
     margin: 10px 10px 10px 10px;
     padding: 10px 10px 10px 10px;
-    }
+}
 
-    select.main {
+select.main {
     margin-right: 10px;
     font-family: Arial, Helvetica, sans-serif;
     height: 30px;
@@ -161,33 +192,34 @@ div.info {
     font-size: 14px;
     border: 2px solid black;
     background-color: lightblue;
-    font-weight:bold;
+    font-weight: normal;
     border-radius: 5px;
+    font-weight: normal;
     margin: 10px 10px 10px 10px;
-    }
+}
 
-    select.sub {
-    font-size: 13px;
+select.sub {
+    font-size: 16px;
     margin-right: 10px;
     background-color: lightyellow;
-    font-weight: bold;
+    font-weight: normal;
     border: 1px solid black;
     height: 4px;
-    padding: 0px 0px 0px 0px;
+    padding: 0px 5px 0px 5px;
+    font-weight: normal;
     border-radius: 5px;
-    }
+}
 
-    input {
+input {
     font-size: 13px;
     margin-right: 10px;
     background-color: lightyellow;
     border: 1px solid;
     padding-left: 10px;
-    font-weight: bold; }
+    font-weight: normal;
+}
 
-    canvas {
+canvas {
     margin: 0;
     padding: 0;
-    }
-
-    
+}

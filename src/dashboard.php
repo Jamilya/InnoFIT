@@ -19,6 +19,7 @@ else {
     <link rel="icon" href="/data/ico/innofit.ico">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
         integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css" />
     <link rel="stylesheet" href="./css/dashboard.css">
     <link rel="stylesheet" href="./css/header.css">
     <script src="../lib/js/localforage.js"></script>
@@ -229,7 +230,7 @@ else {
                 <div class="card-body">
                     <h4 class="card-title">Mean Forecast Bias (MFB)</h4>
                     <p class="card-text">To view the full graph please see the graph page: <a
-                            href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a>.</p>
+                            href="./meanforecastbias.php">MFB</a>.</p>
                 </div>
             </div>
         </div>
@@ -241,8 +242,7 @@ else {
                 </div>
                 <div class="card-body">
                     <h4 class="card-title">Mean Percentage Error (MPE)</h4>
-                    <p class="card-text">To view the full graph please see the graph page: <a href="./mpe.php">Mean
-                            Percentage Error (MPE)</a>.</p>
+                    <p class="card-text">To view the full graph please see the graph page: <a href="./mpe.php">MPE</a>.</p>
                 </div>
             </div>
         </div>
@@ -261,7 +261,7 @@ else {
                 <div class="card-body">
                     <h4 class="card-title">Root Mean Square Error (RMSE)</h4>
                     <p class="card-text">To view the full graph please see the graph page: <a
-                            href="./rmse_graph.php">Root Mean Square Error (RMSE)</a>.</p>
+                            href="./rmse_graph.php">RMSE</a>.</p>
                 </div>
             </div>
         </div>
@@ -275,7 +275,7 @@ else {
                 <div class="card-body">
                     <h4 class="card-title">Mean Square Error (MSE)</h4>
                     <p class="card-text">To view the full graph please see the graph page: <a
-                            href="./mse_graph.php">Mean Square Error (MSE)</a>.</p>
+                            href="./mse_graph.php">MSE</a>.</p>
                 </div>
             </div>
         </div>
@@ -293,8 +293,7 @@ else {
                 </div>
                 <div class="card-body">
                     <h4 class="card-title">Mean Absolute Percentage Error (MAPE)</h4>
-                    <p class="card-text">To view the full graph please see the graph page: <a href="./mape.php">Mean
-                            Absolute Percentage Error (MAPE)</a>.</p>
+                    <p class="card-text">To view the full graph please see the graph page: <a href="./mape.php">MAPE</a>.</p>
                 </div>
             </div>
         </div>
@@ -308,7 +307,7 @@ else {
                 <div class="card-body">
                     <h4 class="card-title">Mean Absolute Deviation (MAD)</h4>
                     <p class="card-text">To view the full graph please see the graph page: <a
-                            href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>.</p>
+                            href="./mad_graph.php">MAD</a>.</p>
                 </div>
             </div>
         </div>
@@ -327,7 +326,7 @@ else {
                 <div class="card-body">
                     <h4 class="card-title">Normalized Root Mean Square Error (RMSE*)</h4>
                     <p class="card-text">To view the full graph please see the graph page: <a
-                            href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*/NRMSE)</a>.</p>
+                            href="./normalized_rmse.php">RMSE*/NRMSE</a>.</p>
                 </div>
             </div>
         </div>
@@ -339,8 +338,7 @@ else {
                 </div>
                 <div class="card-body">
                     <h4 class="card-title">Mean Deviation (MD)</h4>
-                    <p class="card-text">To view the full graph please see the graph page: <a href="./md_graph.php">Mean
-                            Deviation (MD)</a>.</p>
+                    <p class="card-text">To view the full graph please see the graph page: <a href="./md_graph.php">MD</a>.</p>
                 </div>
             </div>
         </div>
@@ -381,6 +379,12 @@ else {
             $('#filter3Info').hide();
         }
     });
+    const margin = {
+        top: 10,
+        right: 10,
+        bottom: 45,
+        left: 55
+    };
     localforage.getItem("viz_data", function(error, data) {
         data = JSON.parse(data);
 
@@ -555,6 +559,7 @@ else {
             return d.PeriodsBeforeDelivery
         });
         let periodsMax4 = Math.max(...periodsBD4);
+        // console.log(periodsMax4, periodsBD4);
 
         oneFinalArrayMPE = calculationsOrderByPBD.filter((el) => {
             return !isNaN(el.MFB);
@@ -573,11 +578,12 @@ else {
         });
         let periodsMax5 = Math.max(...periodsBD5);
 
-        //Define mean value of Order Amount, i.e. Avg. Order Amount -- For MAPE calculation
+        //Define mean value of Order Amount, i.e. Avg. Order Amount -- For MFB calculation
         var dataMean = d3.mean(newFinalArray4, function(
             d) {
-            return d.MAPE;
+            return d.MFB;
         });
+        console.log("dataMean", dataMean);
 
         let valueMap = new Map();
         finalOrder.forEach((val) => {
@@ -752,8 +758,8 @@ else {
                     OrderAmount: el.values[i].OrderAmount,
                     PeriodsBeforeDelivery: el.key,
                     MSE: meanValue3,
-                    NRMSE: normRMSE,
-                    RMSE: meanValue2.toFixed(3)
+                    NRMSE: normRMSE.toFixed(2),
+                    RMSE: meanValue2.toFixed(2)
                 };
             }
         });
@@ -815,12 +821,6 @@ else {
             return el != "undefined";
         });
 
-        // function remove_linebreaks_ss(str) {
-        //     for (var i = 0; i < str.length; i++)
-        //         if (!(str[i] == '\n' || str[i] == '\r'))
-        //             filtered += str[i];
-        //     return merged2;
-        // }
         let newCsvContent = toCsv(pivot(merged2));
         // console.log("newCsvContent array: ", newCsvContent);
         /****     Saving data to localforage: JS object array and CSV export array     * */
@@ -1055,6 +1055,7 @@ else {
                 ].join('\n');
             })
             .xAxis().tickFormat(d3.format('d'));
+        MADchart.margins(margin);
 
         MDchart
             .width(520)
@@ -1069,9 +1070,6 @@ else {
                     });
             })
             .x(d3.scaleLinear().domain([0, periodsMax8]))
-            // .x(d3.scaleLinear().domain(d3.extent(mdPeriodsBD, function(d) {
-            //     return d.PeriodsBeforeDelivery
-            // })))
             .brushOn(false)
             .clipPadding(10)
             .xAxisLabel("Periods Before Delivery")
@@ -1084,6 +1082,7 @@ else {
                 ].join('\n');
             })
             .xAxis().tickFormat(d3.format('d'));
+        MDchart.margins(margin);
 
         RMSEchart
             .width(520)
@@ -1111,6 +1110,7 @@ else {
                 ].join('\n');
             })
             .xAxis().tickFormat(d3.format('d'));
+        RMSEchart.margins(margin);
 
         MAPEchart
             .width(520)
@@ -1137,9 +1137,10 @@ else {
                 ].join('\n');
             })
             .xAxis().tickFormat(d3.format('d'));
+        MAPEchart.margins(margin);
 
         MFBchart
-            .width(520)
+            .width(width)
             .height(350)
             .dimension(ndxDim4)
             .symbolSize(10)
@@ -1152,7 +1153,9 @@ else {
             })
             .excludedSize(2)
             .excludedOpacity(0.5)
-            .x(d3.scaleLinear().domain([0, periodsMax4]))
+            .x(d3.scaleLinear().domain([0, d3.max(periodsBD4, function(d) {
+                return d;
+            })]))
             .brushOn(false)
             .clipPadding(10)
             .xAxisLabel("Periods Before Delivery")
@@ -1167,7 +1170,7 @@ else {
             .on('renderlet', function(MFBchart) {
                 var x_vert = width;
                 var extra_data = [{
-                        x: 47,
+                        x: 54,
                         y: MFBchart.y()(dataMean)
                     },
                     {
@@ -1197,8 +1200,10 @@ else {
                 path.attr('d', line);
             })
             .xAxis().tickFormat(d3.format('d'));
-
+        // .xAxis().tickFormat(d3.timeFormat("%d %b"));
         MFBchart.symbol(d3.symbolCircle);
+        MFBchart.margins(margin);
+
 
         MPEchart
             .width(520)
@@ -1225,6 +1230,7 @@ else {
                 ].join('\n');
             })
             .xAxis().tickFormat(d3.format('d'));
+        MPEchart.margins(margin);
 
         MSEchart
             .width(520)
@@ -1256,6 +1262,7 @@ else {
             .xAxis().tickFormat(d3.format('d'));
 
         MSEchart.yAxis().tickFormat(d3.format(".2s"));
+        MSEchart.margins(margin);
 
         NRMSEchart
             .width(520)
@@ -1283,6 +1290,7 @@ else {
                 ].join('\n');
             })
             .xAxis().tickFormat(d3.format('d'));
+        NRMSEchart.margins(margin);
 
         dc.renderAll();
 

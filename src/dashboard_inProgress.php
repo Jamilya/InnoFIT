@@ -585,23 +585,77 @@ else {
             let valueString = val.OrderAmount;
             valueMap.set(keyString, valueString);
         });
-        //Absolute values array (needed for MAD calculation)
+        console.log("valueMap: ", valueMap);
+        var valueMap2 = d3.nest()
+            .key(function(d) {
+                return d.Product;
+            })
+            .key(function(d) {
+                return d.ActualPeriod;
+            })
+            .entries(finalOrder);
+        console.log("valueMap2: ", valueMap2);
+
+        let dataByProducts2 = d3.nest()
+            .key(function(d) {
+                return d.Product;
+            })
+            .key(function(d) {
+                return d.ForecastPeriod;
+            })
+            .entries(uniqueArray);
+
+        let madDifferenceCalc = [];
+        let differenceCalc = valueMap2.map((el) => {
+            let differenceCalc2 = dataByProducts2.map((elem) => {
+                for (var i = 0; i < valueMap2.length; i++) {
+                    // console.log("i: ", valueMap2.length); 
+                    var length1 = el.values; //11
+                    // console.log("length1: ", length1.length); 
+                    var length2 = elem.values; //11
+                    // console.log("length2: ", length2.length);
+                    for (var j = 0; j < el.values.length; j++) {
+                        // console.log("j: ", el.values.length);
+                        for (var k = 0; k < length1[j].values.length; k++) {
+                            // console.log("k values: ", length1[j].values[k].OrderAmount);
+                            let MADdifference = Math.abs(length2[j].values[k].OrderAmount -
+                                length1[j].values[k].OrderAmount);
+                            let MDdifference = length2[j].values[k].OrderAmount - length1[j]
+                                .values[k].OrderAmount;
+                            madDifferenceCalc.push({
+                                PeriodsBeforeDelivery: el.key,
+                                Product: length1[j].values[k].Product,
+                                MAD: MADdifference,
+                                MD: MDdifference
+                            })
+                        }
+                    }
+                }
+            });
+        });
+        console.log("madDifferenceCalc: ", madDifferenceCalc);
+
+
+        let absValues = [];
         let absValuesArray = uniqueArray.map((el) => {
+            // console.log("el: ", el);
             let value = absDiff(el, valueMap.get(el.ForecastPeriod));
             let value2 = mdDiff(el, valueMap.get(el.ForecastPeriod));
             return {
-                // ActualDate: el.ActualDate,
-                // ForecastDate: el.ForecastDate,
+                ActualDate: el.ActualDate,
+                ForecastDate: el.ForecastDate,
                 ActualPeriod: el.ActualPeriod,
                 ForecastPeriod: el.ForecastPeriod,
-                // OrderAmount: el.OrderAmount,
+                OrderAmount: el.OrderAmount,
                 Product: el.Product,
                 PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
                 MAD: value,
                 MD: value2
             };
         });
-        let newAbsValuesArray = absValuesArray.filter((el) => {
+
+
+        let newAbsValuesArray = madDifferenceCalc.filter((el) => {
             return !isNaN(el.MAD);
         });
         var newSeparatedByPBD = d3.nest()
@@ -613,39 +667,21 @@ else {
             })
             .entries(newAbsValuesArray);
 
-        let seperatedByProducts = d3.nest()
-            .key(function(d) {
-                return d.Product
-            })
-            .entries(absValuesArray);
+        // console.log("newSeparatedByPBD", newSeparatedByPBD);
+        let MADarray = [];
 
-        // let productValuesMAD = new Map();
-        // newSeparatedByPBD.map(e => {
-        //     for (var i = 0; i < newSeparatedByPBD.length; i++) {
-        //         productValuesMAD.set(e.values[i].values, e.values[i].key);
-        //     }
-        // });
-
-        console.log("newSeparatedByPBD", newSeparatedByPBD);
-
-        let MADarray = newSeparatedByPBD.map((el) => {
-            const productList = [...new Set(el.values.map(i => i.key))];
-            let calcMAD = [];
+        let MADcalc = newSeparatedByPBD.map((el) => {
             for (var i = 0; i < newSeparatedByPBD.length; i++) { //length 29   47
                 var length1 = el.values;
-                var length2 = el.values[i];
                 for (var j = 0; j < el.values.length; j++) { //length 15   4
-                    // var index = newSeparatedByPBD[i].values.length;
                     for (var k = 0; k < length1[j].values.length - 1; k++) { //length 76    19
-                        // for (var k = 0; k < length2.values.length; k++) {
-                        // console.log(i, j, k);
                         let meanValue = d3.mean(length1[j].values, function(d) {
                             return d.MAD;
                         });
                         let meanValue5 = d3.mean(length1[j].values, function(d) {
                             return d.MD;
                         });
-                        calcMAD.push({
+                        MADarray.push({
                             PeriodsBeforeDelivery: el.key,
                             Product: length1[j].values[k].Product,
                             MAD: meanValue,
@@ -654,17 +690,12 @@ else {
                     }
                 }
             }
-            const filteredArr = calcMAD.reduce((acc, current) => {
-                const x = acc.find(item => item.id === current.id);
-                if (!x) {
-                    return acc.concat([current]);
-                } else {
-                    return acc;
-                }
-            }, []);
-            console.log(filteredArr);
         });
-        console.log("MAD+MD array", MADarray);
+
+        /**** Remove duplicates from the MAD array */
+        let myNewarray = MADarray;
+        MADarray = Array.from(new Set(myNewarray.map(JSON.stringify))).map(JSON.parse);
+        // console.log("unique array", MADarray);
 
         var exportArray2 = MADarray.map((el) => {
             return {
@@ -674,49 +705,7 @@ else {
                 MAD: el.MAD + ' \n'
             }
         })
-        let absValuesArray2 = uniqueArray.map((el) => {
-            let value2 = mdDiff(el, valueMap.get(el.ForecastPeriod));
-            return {
-                ActualDate: el.ActualDate,
-                ForecastDate: el.ForecastDate,
-                ActualPeriod: el.ActualPeriod,
-                ForecastPeriod: el.ForecastPeriod,
-                OrderAmount: el.OrderAmount,
-                Product: el.Product,
-                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                MD: value2
-            };
-        });
-        let seperatedByPeriods3 = d3.nest()
-            .key(function(d) {
-                return d.PeriodsBeforeDelivery
-            })
-            .entries(absValuesArray2);
 
-        let mdArray = seperatedByPeriods3.map((el) => {
-            for (i = 0; i < seperatedByPeriods3.length; i++) {
-                let meanValue4 = d3.mean(el.values, function(d) {
-                    return d.MD;
-                });
-                return {
-                    ActualDate: el.values[i].ActualDate,
-                    ForecastDate: el.values[i].ForecastDate,
-                    Product: el.values[i].Product,
-                    ActualPeriod: el.values[i].ActualPeriod,
-                    ForecastPeriod: el.values[i].ForecastPeriod,
-                    OrderAmount: el.values[i].OrderAmount,
-                    PeriodsBeforeDelivery: el.key,
-                    MD: meanValue4
-                };
-            }
-        });
-        var exportArray4 = mdArray.map((el) => {
-            return {
-                Product: el.Product,
-                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                MD: el.MD + ' \n'
-            }
-        })
         //Powered difference values array (needed for RMSE & MSE calculation)
         let squaredAbsValuesArray = uniqueArray.map((el) => {
             let value = powerDiff(el, valueMap.get(el.ForecastPeriod));
@@ -787,16 +776,14 @@ else {
             }
         })
 
-        /**Combine three export Arrays */
-        // let arr3 = exportArray.map((item, i) => Object.assign({}, item, exportArray2[i]));
-
+        /**Combine four export Arrays */
         let merged = [];
-        for (let i = 0; i < exportArray.length; i++) {
+        for (let i = 0; i < exportArray2.length; i++) {
             merged.push({
-                ...exportArray[i],
-                ...exportArray2[i],
-                ...exportArray3[i],
-                ...exportArray4[i]
+                // ...exportArray[i],
+                ...exportArray2[i]
+                // ...exportArray3[i],
+                // ...exportArray4[i]
             });
         }
 
@@ -841,16 +828,16 @@ else {
         //     return merged2;
         // }
         let newCsvContent = toCsv(pivot(merged2));
-        // console.log("newCsvContent array: ", newCsvContent);
+        let newCsvContent2 = toCsv(pivot(MADarray));
+
         /****     Saving data to localforage: JS object array and CSV export array     * */
 
-        localforage.setItem('clustering_data', JSON.stringify(merged2));
+        localforage.setItem('clustering_data', JSON.stringify(MADarray));
         // localforage.setItem('export_data', JSON.stringify(newCsvContent));
-        // console.log('SAVING: ', newCsvContent);
 
         /** Export script */
         $("#exportFunction").click(function() {
-            saveFile("All_errorMeasures.csv", "data:attachment/csv", newCsvContent);
+            saveFile("All_errorMeasures.csv", "data:attachment/csv", newCsvContent2);
         });
 
         /** Function to save file as csv */
@@ -907,7 +894,7 @@ else {
         });
         let periodsMax7 = Math.max(...periodsBD7);
 
-        newFinalArray = bubu.filter((el) => {
+        newFinalArray = MADarray.filter((el) => {
             return !isNaN(el.MAD);
         });
         newFinalArray.forEach(function(d) {
@@ -923,7 +910,7 @@ else {
         });
         let periodsMax2 = Math.max(...periodsBD2);
 
-        newMDArray = bubu.filter((el) => {
+        newMDArray = MADarray.filter((el) => {
             return !isNaN(el.MD);
         });
         newMDArray.forEach(function(d) {

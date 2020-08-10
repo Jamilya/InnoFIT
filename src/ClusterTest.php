@@ -17,8 +17,11 @@ else {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="data/ico/innofit.ico">
-    <title>Forecast Quality Visualization</title>
+    <link rel="icon" href="../data/ico/innofit.ico">
+    <title>Forecast Quality Visualization - Clustering</title>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+            integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
+        </script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
         integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel="stylesheet" href="./css/clustertest.css">
@@ -28,11 +31,6 @@ else {
     <!-- <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script> -->
     <!-- <script src="../lib/js/dc.js"></script> -->
     <script src="http://d3js.org/d3.v4.min.js"></script>
-    <title> Clustering
-        <script src="https://code.jquery.com/jquery-1.12.4.min.js"
-            integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
-        </script>
-    </title>
     <style>
 
     </style>
@@ -97,7 +95,7 @@ else {
                 <ul class="nav navbar-nav navbar-right">
                     <li>
                         <!-- GTranslate: https://gtranslate.io/ -->
-                        <a href="#" onclick="doGTranslate(" en|en");return false;" title="English" class="gflag nturl"
+                        <!-- <a href="#" onclick="doGTranslate(" en|en");return false;" title="English" class="gflag nturl"
                             style="background-position:-0px -0px;"><img src="//gtranslate.net/flags/blank.png"
                                 height="12" width="12" alt="English" /></a><a href="#" onclick="doGTranslate("
                             en|de");return false;" title="German" class="gflag nturl"
@@ -115,8 +113,7 @@ else {
                         <script type="text/javascript"
                             src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit2">
                         </script>
-
-                        <!-- <script type="text/javascript">
+                        <script type="text/javascript">
                         /* <![CDATA[ */
                         eval(function(p, a, c, k, e, r) {
                             e = function(c) {
@@ -174,14 +171,16 @@ else {
         style='background-color:orange;border-radius:5px;margin: 10px 10px 10px 10px' /> -->
 
     <br>
+    <div id='PBDmin' class='info'></div>
     <div id='PeriodsBeforeDelivery' class='info'></div>
-    <div id='fileLength' class='info'></div>
     <div id='productNumber' class='info'></div>
+    <div id='fileLength' class='info'></div>
     <div id='fileText' class='content'></div><br>
 
+
     <script>
-    localforage.getItem("clustering_data", function(error, merged2) {
-        newArray = JSON.parse(merged2);
+    localforage.getItem("viz_data", function(error, data) {
+        data = JSON.parse(data);
 
         function pivot(arr) {
             var mp = new Map();
@@ -209,6 +208,89 @@ else {
                 row.map(val => isNaN(val) ? JSON.stringify(val) : +val).join(',')
             ).join(' \n');
         }
+        /** Calculation of MAD and MD*/
+        // Define function of absolute difference of forecast and final orders (needed for MAD graph)
+        let absDiff = function(orignalEl, finalOrder) {
+            return Math.abs(orignalEl.OrderAmount - finalOrder);
+        }
+        let mdDiff = function(orignalEl, finalOrder) {
+            return orignalEl.OrderAmount - finalOrder;
+        }
+        // Define final orders: PBD = 0 means Final Orders
+        let finalOrder = data.filter((el) => {
+            return el.PeriodsBeforeDelivery == 0;
+        });
+        // Define forecast orders (which are not final orders)
+        let uniqueArray = data.filter(function(obj) {
+            return finalOrder.indexOf(obj) == -1;
+        });
+        let valueMap = new Map();
+        finalOrder.forEach((val) => {
+            let keyString = val.ActualPeriod;
+            let valueString = val.OrderAmount;
+            valueMap.set(keyString, valueString);
+        });
+        //Absolute values array (needed for MAD calculation)
+        let absValuesArray = uniqueArray.map((el) => {
+            let value = absDiff(el, valueMap.get(el.ForecastPeriod));
+            let value2 = mdDiff(el, valueMap.get(el.ForecastPeriod));
+            return {
+                ActualPeriod: el.ActualPeriod,
+                ForecastPeriod: el.ForecastPeriod,
+                Product: el.Product,
+                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                MAD: value,
+                MD: value2
+            };
+        });
+        let newAbsValuesArray = absValuesArray.filter((el) => {
+            return !isNaN(el.MAD);
+        });
+        var newSeparatedByPBD = d3.nest()
+            .key(function(d) {
+                return d.PeriodsBeforeDelivery;
+            })
+            .key(function(d) {
+                return d.Product;
+            })
+            .entries(newAbsValuesArray);
+
+        let MADarray = [];
+
+        let MADcalc = newSeparatedByPBD.map((el) => {
+            for (var i = 0; i < newSeparatedByPBD.length; i++) { //length 29   47
+                var length1 = el.values;
+                for (var j = 0; j < el.values.length; j++) { //length 15   4
+                    for (var k = 0; k < length1[j].values.length - 1; k++) { //length 76    19
+                        let meanValue = d3.mean(length1[j].values, function(d) {
+                            return d.MAD;
+                        });
+                        let meanValue5 = d3.mean(length1[j].values, function(d) {
+                            return d.MD;
+                        });
+                        MADarray.push({
+                            Product: length1[j].values[k].Product,
+                            PeriodsBeforeDelivery: el.key,
+                            MAD: meanValue,
+                            MD: meanValue5,
+                            MFB: 0,
+                            MPE: 0,
+                            MAPE: 0,
+                            MSE: 0,
+                            NRMSE: 0,
+                            RMSE: 0
+                        })
+                    }
+                }
+            }
+        });
+
+        /**** Remove duplicates from the MAD array */
+        let myNewarray = MADarray;
+        MADarray = Array.from(new Set(myNewarray.map(JSON.stringify))).map(JSON.parse);
+        console.log("unique array", MADarray);
+        let newCsvContent2 = toCsv(pivot(MADarray));
+
         /*****  Remove line breaks from newArray array */
         // function remove_linebreaks_ss(str) {
         //     for (var i = 0; i < str.length; i++)
@@ -216,46 +298,45 @@ else {
         //         newArray += str[i];
         //     return newArray;
         // }
-        oneFinalArray = newArray.filter((el) => {
-            return !isNaN(el.RMSE);
-        })
-        twoFinalArray = oneFinalArray.filter((el) => {
-            return !isNaN(el.NRMSE);
-        })
-        var filtered = twoFinalArray.filter(function(el) {
-            return el.MSE != "undefined ";
-        });
+        // oneFinalArray = newArray.filter((el) => {
+        //     return !isNaN(el.RMSE);
+        // })
+        // twoFinalArray = oneFinalArray.filter((el) => {
+        //     return !isNaN(el.NRMSE);
+        // })
+        // var filtered = twoFinalArray.filter(function(el) {
+        //     return el.MSE != "undefined ";
+        // });
 
-        let newCsvContent = toCsv(pivot(filtered));
-        console.log("oneFinalArray: ", oneFinalArray);
+        // let newCsvContent = toCsv(pivot(filtered));
+        // console.log("oneFinalArray: ", oneFinalArray);
 
         /**** Identify unique product names in the array */
-        const uniqueNames = [...new Set(newArray.map(i => i.Product))];
-        console.log('Product Names array: ', uniqueNames.length);
+        const uniqueNames = [...new Set(MADarray.map(i => i.Product))];
+        console.log('File length: ', MADarray.length);
 
 
-        let countPBD = filtered.map(function(d) {
+        let countPBD = MADarray.map(function(d) {
             return d.PeriodsBeforeDelivery
         });
         let periodsMax = Math.max(...countPBD);
+        let periodsMin = Math.min(...countPBD);
 
 
         function insertOption() {
             var text1 = [];
-            // for (var i = 0; i < filtered.length; i++) {
-            //     // document.getElementById('productName').innerHTML = filtered[i].Product;
-            //     // document.getElementById('productName').style.display = 'inline-block';
-            // }
-            text1 = newCsvContent;
+            text1 = newCsvContent2;
 
             document.getElementById('fileText').innerHTML = text1;
             document.getElementById('fileText').style.display = 'inline-block';
             document.getElementById('fileText').style.height = '80px';
-            document.getElementById('PeriodsBeforeDelivery').innerHTML = "Number of PBD: " + periodsMax;
+            document.getElementById('PBDmin').innerHTML = "Min PBD: " + periodsMin;
+            document.getElementById('PBDmin').style.display = 'inline-block';
+            document.getElementById('PeriodsBeforeDelivery').innerHTML = "Max PBD: " + periodsMax;
             document.getElementById('PeriodsBeforeDelivery').style.display = 'inline-block';
-            document.getElementById('productNumber').innerHTML = "Products: " + uniqueNames.length;
+            document.getElementById('productNumber').innerHTML = "Products Number: " + uniqueNames.length;
             document.getElementById('productNumber').style.display = 'inline-block';
-            document.getElementById('fileLength').innerHTML = "File length:" + filtered.length;
+            document.getElementById('fileLength').innerHTML = "File length: " + MADarray.length + " lines (data points)";
             document.getElementById('fileLength').style.display = 'inline-block';
             console.log("text1: ", text1);
         }
@@ -263,139 +344,197 @@ else {
         insertOption();
     })
     </script>
-    <hr>
-    <b>CLUSTERING PARAMETER</b>
-    <br>
+    <div class="customContainer text-center">
+        <div class="row" style="margin-bottom: -2%;">
+            <div class="col-md-6">
+                <hr>
+                <b style="margin-top: 15px;"> PARAMETER</b>
+                <br>
 
-    <select id=' series' name='series' class='main'>
-        <option value="MFB">MFB: Mean Forecast Bias</option>
-        <option value="MPE">MPE: Mean Percentage Error</option>
-        <option value="MAPE">MAPE: Mean Absolute Percentage</option>
-        <option value="MAD">MAD: Mean Absolute Deviation</option>
-        <option value="MSE">MSE: Mean Squared Error</option>
-        <option value="NRMSE">NRMSE: Normalized Root Mean Squared Error</option>
-        <option value="RMSE">RMSE: Root Mean Squared Error</option>
-        <option value="MD">MD: Mean Deviation</option>
-    </select>
-    <select id='method' name='method' class='main' onchange='showmethod()'>
-        <option value="kMeans">k Means</option>
-        <option value="Agglomerative">Agglomerative</option>
-        <option value="Affinity">AffinityPropagation</option>
-    </select>
-    <br>
+                <select id='series' name='series' class='main'>
+                    <option value="2 MAD: Mean Absolute Deviation">MAD: Mean Absolute Deviation</option>
+                    <option value="3 MD: Mean Deviation">MD: Mean Deviation</option>
+                    <option value="4 MFB: Mean Forecast Bias">MFB: Mean Forecast Bias</option>
+                    <option value="5 MPE: Mean Percentage Error">MPE: Mean Percentage Error</option>
+                    <option value="6 MAPE: Mean Absolute Percentage">MAPE: Mean Absolute Percentage</option>
+                    <option value="7 MSE: Mean Squared Error">MSE: Mean Squared Error</option>
+                    <option value="8 NRMSE: N Rot Mean Squared Error">NRMSE: Normalized Root Mean Squared Error</option>
+                    <option value="9 RMSE: Rot Mean Squared Error">RMSE: Root Mean Squared Error</option>
+                </select>
 
-
-
-
-    <!-- PARAMETER KMEANS -->
-    <div id='km_k_text' class='text'>k =</div>
-    <input id='km_k' type='text' maxlength=1 value=3 size=1 style='width:30px'>
-    <div id='km_rs_text' class='text'>random_state =</div>
-    <input id='km_rs' type='text' maxlength=5 value=42 size=4 style='width:80px'>
-    <div id='km_init_text' class='text'>init =</div>
-    <select id='km_init' name='km_init' class='sub' style='width:100px;height:24px;'>
-        <option value='k-means++'>k-means++</option>
-        <option value="random">random</option>
-    </select>
-    <div id='km_ninit_text' class='text'>n_init =</div>
-    <input id='km_ninit' type='text' maxlength=2 value=1 size=1 style='width:40px'>
-    <div id='km_maxiter_text' class='text'>max_iter =</div>
-    <input id='km_maxiter' type='text' maxlength=3 value=1 size=1 style='width:50px'>
-    <div id='km_tol_text' class='text'>tol =</div>
-    <input id='km_tol' type='text' maxlength=5 value=0.0001 size=3 maxlength=7 style='width:80px'>
+                <select id='method' name='method' class='main' onchange='showmethod()'>
+                    <option value="kMeans">k Means</option>
+                    <option value="Agglomerative">Agglomerative</option>
+                    <option value="Affinity">AffinityPropagation</option>
+                </select>
+                <br>
 
 
-    <!-- PARAMETER AGGLOMERATIVE -->
-    <div id='ag_k_text' class='text' style='display:none;'>k =</div>
-    <input id='ag_k' type='text' maxlength=1 value=3 size=1 style='width:30px;display:none;'>
-    <div id='ag_linkage_test' class='text' style='display:none;'>linkage =</div>
-    <select id='ag_linkage' name='ag_linkage' class='sub' style='display:none;width:100px;height:24px;'>
-        <option value="ward">ward</option>
-        <option value="complete">complete</option>
-        <option value="average">average</option>
-        <option value="single">single</option>
-    </select>
-    <div id='ag_metric_test' class='text' style='display:none;'>metric =</div>
-    <select id='ag_metric' name='ag_metric' class='sub' style='display:none;width:100px;height:24px;'>
-        <option value="euclidean">euclidean</option>
-        <option value="l1">l1</option>
-        <option value="l2">l2</option>
-        <option value="manhattan">manhattan</option>
-        <option value="cosine">cosine</option>
-    </select>
-
-    <!-- PARAMETER AffinityPropagation -->
-    <div id='af_damping_text' class='text' style='display:none;'>damping =</div>
-    <input id='af_damping' type='text' maxlength=3 value=0.5 size=1 style='width:40px;display:none;'>
-    <div id='af_maxiter_text' class='text' style='display:none;'>max_iter =</div>
-    <input id='af_maxiter' type='text' maxlength=4 value=200 size=1 style='width:40px;display:none;'>
-    <div id='af_conviter_text' class='text' style='display:none;'>conv_iter =</div>
-    <input id='af_conviter' type='text' maxlength=2 value=15 size=1 style='width:40px;display:none;'>
-
-    <!-- PARAMETER MEANSHIFT -->
-    <div id='ms_bin_text' class='text' style='display:none;'>conv_iter =</div>
-    <select id='ms_bin' name='ms_bin' class='sub' style='display:none;width:100px;height:24px;'>
-        <option value="False">False</option>
-        <option value="True">True</option>
-    </select>
-
-    <!-- PARAMETER DBSCAN -->
-    <div id='db_eps_text' class='text'>eps =</div>
-    <input id='db_eps' type='text' maxlength=5 value=0.5 size=3 maxlength=4 style='width:80px'>
 
 
-    <hr>
-    <button type="button" id="startclustering">Start Clustering</button>
-    <span id="countdown"></span>
-
-    <textarea cols="40" rows="2" id="status" style="display: none"></textarea>
-
-    <nobr>
-        <button id="create">Create file</button>
-        <a download="IF-result.csv" id="downloadlink" style="display: none">Download</a>
-    </nobr>
-
-    <hr>
-    <textarea style="display: none" id="textbox">Type something here</textarea>
-    <div id='resulthead' class='reshead'></div><br>
-    <div id='clusterkpi' class='kpi'></div><br>
-
-
-    <canvas id="plotarea0" width="300" height="350"></canvas>
-    <canvas width="10" height="350"></canvas>
-    <canvas id="plotarea1" width="300" height="350"></canvas>
-    <canvas width="10" height="350"></canvas>
-    <canvas id="plotarea2" width="300" height="350"></canvas>
-    <canvas width="10" height="350"></canvas>
-    <canvas id="plotarea3" width="300" height="350"></canvas>
-    <canvas width="10" height="350"></canvas>
-    <canvas id="plotarea4" width="300" height="350"></canvas>
-    <canvas width="10" height="350"></canvas>
-    <br>
-    <div id='c00' class='ccc'></div>
-    <div id='c01' class='ccc'></div>
-    <div id='c02' class='ccc'></div>
-    <div id='c03' class='ccc'></div>
-    <div id='c04' class='ccc'></div>
-    <br>
-    <canvas id="plotarea5" width="300" height="350"></canvas>
-    <canvas width="10" height="350"></canvas>
-    <canvas id="plotarea6" width="300" height="350"></canvas>
-    <canvas width="10" height="350"></canvas>
-    <canvas id="plotarea7" width="300" height="350"></canvas>
-    <canvas width="10" height="350"></canvas>
-    <canvas id="plotarea8" width="300" height="350"></canvas>
-    <canvas width="10" height="350"></canvas>
-    <canvas id="plotarea9" width="300" height="350"></canvas>
-    <canvas width="10" height="350"></canvas>
-    <br>
-    <div id='c05' class='ccc'></div>
-    <div id='c06' class='ccc'></div>
-    <div id='c07' class='ccc'></div>
-    <div id='c08' class='ccc'></div>
-    <div id='c09' class='ccc'></div>
+                <!-- PARAMETER KMEANS -->
+                <div id='km_k_text' class='text'>Number Clusters =</div>
+                <!--  <input  id='km_k' type='text' maxlength=1 value=3 size=1 style='width:30px'>
+<input type="number" id="km_k" name="km_k" min="1" max="10" step="1" value="3" style='width:50px;height:25px'>
+-->
+                <select id='km_k' name='km_k' class='sub' style='width:60px;height:24px;'>
+                    <option value="1"> 1</option>
+                    <option value="2">2</option>
+                    <!-- <option value="3" selected>3</option> -->
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+                <div id='km_rs_text' class='text' style='display:none;'>random_state =</div>
+                <input id='km_rs' type='text' maxlength=5 value=42 size=4 style='width:80px;display:none;'>
+                <div id='km_init_text' class='text' style='display:none;'>init =</div>
+                <select id='km_init' name='km_init' class='sub' style='width:100px;height:24px;display:none;'>
+                    <option value='k-means++'>k-means++</option>
+                    <option value="random">random</option>
+                </select>
+                <div id='km_ninit_text' class='text' style='display:none;'>n_init =</div>
+                <input id='km_ninit' type='text' maxlength=2 value=1 size=1 style='width:40px;display:none;'>
+                <div id='km_maxiter_text' class='text' style='display:none;'>max_iter =</div>
+                <input id='km_maxiter' type='text' maxlength=3 value=1 size=1 style='width:50px;display:none;'>
+                <div id='km_tol_text' class='text' style='display:none;'>tol =</div>
+                <input id='km_tol' type='text' maxlength=5 value=0.0001 size=3 maxlength=7
+                    style='width:80px;display:none;'>
 
 
+                <!-- PARAMETER AGGLOMERATIVE -->
+                <div id='ag_k_text' class='text' style='display:none;'>Number Clusters =</div>
+                <!-- <input  id='ag_k' type='test' maxlength=1 value=3 size=1 style='width:30px;display:none;'>
+<input  id='ag_k' type='number' min="1" max="10" step="1" value="3" style='width:50px;height:25px;display:none;'>
+-->
+                <select id='ag_k' name='ag_k' class='sub' style='width:60px;height:24px;display:none;'>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <!-- <option value="3" selected>3</option> -->
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+
+                <div id='ag_linkage_test' class='text' style='display:none;'>linkage =</div>
+                <select id='ag_linkage' name='ag_linkage' class='sub' style='display:none;width:100px;height:24px;'>
+                    <option value="ward">ward</option>
+                    <option value="complete">complete</option>
+                    <option value="average">average</option>
+                    <option value="single">single</option>
+                </select>
+                <div id='ag_metric_test' class='text' style='display:none;'>metric =</div>
+                <select id='ag_metric' name='ag_metric' class='sub' style='display:none;width:100px;height:24px;'>
+                    <option value="euclidean">euclidean</option>
+                    <option value="l1">l1</option>
+                    <option value="l2">l2</option>
+                    <option value="manhattan">manhattan</option>
+                    <option value="cosine">cosine</option>
+                </select>
+
+                <!-- PARAMETER AffinityPropagation -->
+                <div id='af_damping_text' class='text' style='display:none;'>damping =</div>
+                <input id='af_damping' type='text' maxlength=3 value=0.5 size=1 style='width:40px;display:none;'>
+                <div id='af_maxiter_text' class='text' style='display:none;'>max_iter =</div>
+                <input id='af_maxiter' type='text' maxlength=4 value=200 size=1 style='width:40px;display:none;'>
+                <div id='af_conviter_text' class='text' style='display:none;'>conv_iter =</div>
+                <input id='af_conviter' type='text' maxlength=2 value=15 size=1 style='width:40px;display:none;'>
+
+                <!-- PARAMETER MEANSHIFT -->
+                <div id='ms_bin_text' class='text' style='display:none;'>conv_iter =</div>
+                <select id='ms_bin' name='ms_bin' class='sub' style='display:none;width:100px;height:24px;'>
+                    <option value="False">False</option>
+                    <option value="True">True</option>
+                </select>
+
+                <hr>
+                <button type="button" id="startclustering">Start Clustering</button>
+
+                <label id="minsectext">Loading Python:</label>
+                <label id="min">00</label><label id="minsec">:</label><label id="sec">00</label>
+
+                <nobr>
+                    <button id="create">Create file</button>
+                    <a download="IF-result.csv" id="downloadlink" style="display: none">Download</a>
+                </nobr>
+
+                <hr>
+                <textarea style="display: none" width="50" height="10" id="textbox">Type something here</textarea>
+
+                <div id='resulthead' class='reshead'></div><br>
+                <div id='clusterkpi' class='kpi'></div><br>
+
+                <table>
+                    <tr>
+                        <td><canvas id="plotarea0" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea1" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea2" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea3" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea4" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                    </tr>
+                    <tr>
+                        <td valign=top colspan="2">
+                            <div id='c00' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c01' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c02' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c03' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c04' class='ccc'></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><canvas id="plotarea5" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea6" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea7" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea8" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea9" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                    </tr>
+                    <tr>
+                        <td valign=top colspan="2">
+                            <div id='c05' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c06' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c07' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c08' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c09' class='ccc'></div>
+                        </td>
+                </table>
+            </div>
+        </div>
+    </div>
     <!-- JAVASCRIPT -->
     <script type="text/javascript">
     (function(download) {
@@ -404,18 +543,14 @@ else {
                 var data = new Blob([text], {
                     type: 'text/plain'
                 });
-
                 // If we are replacing a previously generated file we need to
                 // manually revoke the object URL to avoid memory leaks.
                 if (textFile !== null) {
                     window.URL.revokeObjectURL(textFile);
                 }
-
                 textFile = window.URL.createObjectURL(data);
-
                 return textFile;
             };
-
 
         var create = document.getElementById('create'),
             textbox = document.getElementById('textbox');
@@ -423,13 +558,13 @@ else {
         create.addEventListener('click', function(download) {
             var link = document.getElementById('downloadlink');
             link.href = makeTextFile(textbox.value);
-            link.style.display = 'block';
+            link.style.display = 'inline';
         }, false);
     })();
 
-
     function fehlerbehandlung(errorEvent) {
-        var fehler = "Fehlermeldung:\n" + errorEvent.message + "\n" + errorEvent.filename + "\n" + errorEvent.lineno;
+        var fehler = "Fehlermeldung:\n" + errorEvent.message + "\n" + errorEvent.filename + "\n" + errorEvent
+            .lineno;
         alert(fehler);
         errorEvent.preventDefault();
     }
@@ -440,20 +575,22 @@ else {
         var reader = new FileReader();
         reader.readAsText(selectedFile, "UTF-8");
         reader.onload = function(evt) {
-            document.getElementById('fileText').style.height = '80px';
             document.getElementById("fileText").innerHTML = evt.target.result;
             document.getElementById('fileText').style.display = 'inline-block';
 
-            document.getElementById("fileLength").innerHTML = (evt.target.result.split(/\r\n|\r|\n/).length - 2)
-                .toString().concat(' Items');
+            document.getElementById("fileLength").innerHTML = (evt.target.result.split(/\r\n|\r|\n/)
+                    .length - 2)
+                .toString().concat('Items');
             document.getElementById('fileLength').style.display = 'inline-block';
             document.getElementById('fileName').innerHTML = selectedFile.name;
             document.getElementById('fileName').style.display = 'inline-block';
-            document.getElementById('fileDate').innerHTML = selectedFile.lastModifiedDate.toString().substring(0,
-                25);
+            document.getElementById('fileDate').innerHTML = selectedFile.lastModifiedDate.toString()
+                .substring(0,
+                    25);
             document.getElementById('fileDate').style.display = 'inline-block';
-            document.getElementById('fileSize').innerHTML = Math.round(selectedFile.size / 1024).toString().concat(
-                ' kB');
+            document.getElementById('fileSize').innerHTML = Math.round(selectedFile.size / 1024).toString()
+                .concat(
+                    'kB');
             document.getElementById('fileSize').style.display = 'inline-block';
         }
     }
@@ -489,15 +626,6 @@ else {
 
         document.getElementById('ms_bin_text').style.display = "none";
         document.getElementById('ms_bin').style.display = "none";
-
-        document.getElementById('db_eps_text').style.display = "none";
-        document.getElementById('db_eps').style.display = "none";
-    }
-
-    // show DOMs with parameters DBSCAN
-    function show_db() {
-        document.getElementById('db_eps_text').style.display = "inline-block";
-        document.getElementById('db_eps').style.display = "inline-block";
     }
 
     // show DOMs with parameters meanshift
@@ -510,10 +638,10 @@ else {
     function show_af() {
         document.getElementById('af_damping_text').style.display = "inline-block";
         document.getElementById('af_damping').style.display = "inline-block";
-        document.getElementById('af_maxiter_text').style.display = "inline-block";
-        document.getElementById('af_maxiter').style.display = "inline-block";
-        document.getElementById('af_conviter_text').style.display = "inline-block";
-        document.getElementById('af_conviter').style.display = "inline-block";
+        //  document.getElementById('af_maxiter_text').style.display = "inline-block";
+        //  document.getElementById('af_maxiter').style.display = "inline-block";
+        //  document.getElementById('af_conviter_text').style.display = "inline-block";
+        //  document.getElementById('af_conviter').style.display = "inline-block";
     }
 
     // show DOMs with parameters agglomerative
@@ -530,24 +658,22 @@ else {
     function show_km() {
         document.getElementById('km_k_text').style.display = "inline-block";
         document.getElementById('km_k').style.display = "inline-block";
-        document.getElementById('km_rs_text').style.display = "inline-block";
-        document.getElementById('km_rs').style.display = "inline-block";
-        document.getElementById('km_init_text').style.display = "inline-block";
-        document.getElementById('km_init').style.display = "inline-block";
-        document.getElementById('km_ninit_text').style.display = "inline-block";
-        document.getElementById('km_ninit').style.display = "inline-block";
-        document.getElementById('km_maxiter_text').style.display = "inline-block";
-        document.getElementById('km_maxiter').style.display = "inline-block";
-        document.getElementById('km_tol_text').style.display = "inline-block";
-        document.getElementById('km_tol').style.display = "inline-block";
+        //  document.getElementById('km_rs_text').style.display = "inline-block";
+        //  document.getElementById('km_rs').style.display = "inline-block";
+        //  document.getElementById('km_init_text').style.display = "inline-block";
+        //  document.getElementById('km_init').style.display = "inline-block";
+        //  document.getElementById('km_ninit_text').style.display = "inline-block";
+        //  document.getElementById('km_ninit').style.display = "inline-block";
+        //  document.getElementById('km_maxiter_text').style.display = "inline-block";
+        //  document.getElementById('km_maxiter').style.display = "inline-block";
+        //  document.getElementById('km_tol_text').style.display = "inline-block";
+        //  document.getElementById('km_tol').style.display = "inline-block";
     }
 
     // show DOMs with parameters
     function showmethod() {
         var e = document.getElementById("method");
-        var value = e.options[e.selectedIndex].value;
         var text = e.options[e.selectedIndex].text;
-        console.log(text);
 
         hide_all()
 
@@ -560,12 +686,8 @@ else {
         if (text == "AffinityPropagation") {
             show_af()
         };
-        if (text == "DBSCAN") {
-            show_db()
-        };
     }
     </script>
-
 
     <!-- get Pyodide files from internet -->
 
@@ -578,37 +700,53 @@ else {
     <!-- get Pyodide files from localhost -->
     <!--   <script src="pyodide_dev.js"></script>  -->
 
-
     <script type="text/javascript">
-    // document.getElementById("startclustering").onclick = function() {save()};
-
-    function save() {
-
-    }
-
-
     // Start after Button Clustering!
     document.getElementById("startclustering").onclick = function() {
         checks()
     };
 
     function checks() {
+        document.getElementById('downloadlink').style.display = 'none';
+        document.getElementById('c00').style.display = "none";
+        document.getElementById('c01').style.display = "none";
+        document.getElementById('c02').style.display = "none";
+        document.getElementById('c03').style.display = "none";
+        document.getElementById('c04').style.display = "none";
+        document.getElementById('c05').style.display = "none";
+        document.getElementById('c06').style.display = "none";
+        document.getElementById('c07').style.display = "none";
+        document.getElementById('c08').style.display = "none";
+        document.getElementById('c09').style.display = "none";
+        document.getElementById('textbox').innerHTML = '';
 
-        var seconds = 180,
-            $seconds = document.querySelector('#countdown');
-        (function countdown() {
-            $seconds.textContent = seconds + ' second' + (seconds == 1 ? '' : 's')
-            if (seconds-- > 0) setTimeout(countdown, 1000)
-        })();
+        var totalSeconds = 0;
+        setInterval(setTime, 1000);
 
+        document.getElementById('minsectext').style.display = "inline-block";
+        document.getElementById('min').style.display = "inline-block";
+        document.getElementById('minsec').style.display = "inline-block";
+        document.getElementById('sec').style.display = "inline-block";
 
-        document.getElementById('plotarea0').style.display = "inline-block";
+        function setTime() {
+            ++totalSeconds;
+            document.getElementById('sec').innerHTML = pad(totalSeconds % 60);
+            document.getElementById('min').innerHTML = pad(parseInt(totalSeconds / 60));
+        }
+
+        function pad(val) {
+            var valString = val + "";
+            if (valString.length < 2) {
+                return "0" + valString;
+            } else {
+                return valString;
+            }
+        }
 
 
         window.addEventListener("error", fehlerbehandlung);
 
         // hide DOM results
-        //document.getElementById('clusterresult').style.display = "none";
         document.getElementById('plotarea0').style.display = "none";
         document.getElementById('plotarea1').style.display = "none";
         document.getElementById('plotarea2').style.display = "none";
@@ -700,53 +838,36 @@ else {
             }
         }
 
-        // CHECK PARAMETER DBSCAN
-        if (document.getElementById('method').value == 'DBSCAN') {
-            console.log('check para DBSCAN.')
-
-            var temp = document.getElementById('db_eps').value
-            if (isNaN(temp) || parseFloat(temp) <= 0) {
-                alert('Use a float >=0 for eps.')
-                return;
-            }
-
-            alert(
-                "DBSCAN cannot be exectued with pyodide. The same code works in Jupyter Notebooks. Errormessages: .1. File sklearn/cluster/_dbscan_inner.pyx, line 38, in sklearn.cluster._dbscan_inner.dbscan_inner .2. ValueError: Buffer dtype mismatch, expected npy_intp but got long long")
-            return;
-        }
-
         // PARAMETER ARE OK
         clustering()
 
     }
 
     function clustering() {
-        document.getElementById("status").value = 'Loaded:\nLoading: pyodide'
         languagePluginLoader.then(() => {
-
-            document.getElementById("status").value = 'Loaded: pyodide.\nLoading: joblib......';
             pyodide.loadPackage(['joblib']).then(() => {
-                document.getElementById("status").value =
-                    "Loaded: pyodide, joblib.\nLoading numpy......";
                 pyodide.loadPackage(['numpy']).then(() => {
-                    document.getElementById("status").value =
-                        "Loaded: pyodide, joblib, numpy.\nLoading: scipy......";
                     pyodide.loadPackage(['scipy']).then(() => {
-                        document.getElementById("status").value =
-                            "Loaded: pyodide, joblib, numpy, scipy.\nLoading scikit-learn......";
                         pyodide.loadPackage(['scikit-learn']).then(() => {
-                            document.getElementById("status").value =
-                                "Loaded: pyodide, joblib, numpy, scipy, scikit-learn.\nLoading Python code."
-
                             console.log(
-                                "All libraries loaded. Pyodide started.")
+                                "All libraries loaded. Pyodide started."
+                            )
 
+                            document.getElementById('minsectext').style
+                                .display = "none";
+                            document.getElementById('min').style
+                                .display =
+                                "none";
+                            document.getElementById('minsec').style
+                                .display =
+                                "none";
+                            document.getElementById('sec').style
+                                .display =
+                                "none";
                             document.getElementById('resulthead').style
                                 .display = "inline-block";
                             document.getElementById('clusterkpi').style
                                 .display = "inline-block";
-
-
 
                             // **********************************************************
                             // ********************START PYTHON *************************
@@ -755,32 +876,27 @@ else {
                             pyodide.runPython(`
 print('Start Python.')
 
-
-import numpy as np
-import itertools
-import sklearn
+import numpy as np, itertools, sklearn
 from sklearn.cluster import KMeans
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.cluster import AffinityPropagation
 from sklearn.cluster import MeanShift, estimate_bandwidth
-from sklearn.cluster import DBSCAN
 
-from sklearn.metrics import davies_bouldin_score
-from sklearn.metrics import silhouette_score
+from sklearn.metrics import davies_bouldin_score, silhouette_score
 
 from io import StringIO
 from js import document, alert
 
-
-
 #print('Scikit-learn version: {}.'.format(sklearn.__version__))
 
+# ******************** CREATE GRAPH *************************
 def graph(ctx,x0,x1,y0,y1,week,y,cent,y_range):
 	week = week.astype('int32')
-	xmin,xmax = min(week),max(week)
+	xmin,xmax = 0,max(week)
 	figure_y_values(ctx,x0,x1,y0,y1,y_range)
 	figure_x_values(ctx,x0,x1,y0,xmin,xmax)
 	x = week.copy()
+
 	if xmax//1000 == xmin//1000:
 		xwerte = xmax-xmin+1
 		for i in range(len(week)):
@@ -798,25 +914,23 @@ def graph(ctx,x0,x1,y0,y1,week,y,cent,y_range):
 
 	xmin,xmax = min(x),max(x)
 
-	# Converting string to list
+	# plot line
 	for j in y:
 		for i in range(len(x)):
-			#xpoint, ypoint = change_ref_system(x0,x1,y0,y1,xmax,y_range,x[::-1][i], j[i])
 			xpoint, ypoint = change_ref_system(x0,x1,y0,y1,xmax,y_range,x[i], j[i])
 			#ctx.fillRect(xpoint-5,ypoint-5,9,9)
-			if i>0:
-				draw_line(ctx, xold, yold, xpoint, ypoint, linethick = 1)
+			if i>0:  draw_line(ctx, xold, yold, xpoint, ypoint, linethick = 1)
 			xold, yold = xpoint, ypoint
 
 	# plot centroids
 	for i in range(len(x)):
-		#xpoint, ypoint = change_ref_system(x0,x1,y0,y1,xmax,y_range,x[::-1][i], cent[i])
 		xpoint, ypoint = change_ref_system(x0,x1,y0,y1,xmax,y_range,x[i], cent[i])
 		ctx.fillStyle = '#FF0000'
 		ctx.fillRect(xpoint-5,ypoint-5,9,9)
 
+# ******************** PLOT x,y AXIS *************************
 def axis(ctx,y_range,x0,x1,y0,y1,color = "black", linethick = 3):
-	#Draw of x,y axis
+
 	draw_line(ctx, x0, y0, x0, y1, linethick = 2.0) # y left
 	draw_line(ctx, x1, y0, x1, y1, linethick = 0.5) # y right
 	draw_line(ctx, x0, y1, x1, y1, linethick = 0.5) # x top
@@ -827,32 +941,33 @@ def axis(ctx,y_range,x0,x1,y0,y1,color = "black", linethick = 3):
 		y = y0
 	else:
 		y = (y1 - y0*y_range[1]/y_range[0]) / (1-y_range[1]/y_range[0])
-	draw_line(ctx, x0, y, x1, y, linethick = 2.0) # x Null		
+	draw_line(ctx, x0, y, x1, y, linethick = 2.0)
 
+# ******************** PLOT TITLE *************************
 def figure_title(ctx,title,c_size,y_range):
-	#ctx.clearRect(c_size[0]/2 - 20, 0, c_size[0]/2 + 30, 18)
 	ctx.fillStyle = 'black'
 	ctx.font = "bold 16px Arial"
-	ctx.fillText(title, c_size[0]/2 - len(title), 12)
+	ctx.fillText(title, c_size[0]/2 - len(title)/2, 12)
 
+# ******************** PLOT TITLE Y AXIS ********************
 def figure_y_title(ctx,title,c_size,y_range):
 	x = 4
-	y = c_size[1]/2 - 50
+	y = c_size[1]/2 - len(title)*1.1
 	lineHeight = 15
 	ctx.save()
 	ctx.fillStyle = 'black'
 	ctx.translate(x, y)
 	ctx.rotate(-3.14142 / 2)
 	ctx.textAlign = 'center'
-	#ctx.font = "bold 14px verdana, sans-serif";
 	ctx.font = "bold 16px Arial, sans-serif";
 	ctx.fillText(title, 0, lineHeight / 2)
 	ctx.restore()
 
+# ******************** PLOT TITLE X AXIS ********************
 def figure_x_title(ctx,title,x0,c_size):
 	#x = (c_size[0]-x0) /2 - len(title)/2
 	x = x0 + (c_size[0]-x0) /2
-	y = c_size[1] - 70
+	y = c_size[1] - 25
 	lineHeight = 15
 	ctx.save()
 	ctx.fillStyle = 'black'
@@ -862,33 +977,32 @@ def figure_x_title(ctx,title,x0,c_size):
 	ctx.fillText('Periods Before Delivery', 0, lineHeight / 2)
 	ctx.restore()
 
+# ******************** VALUES Y AXIS ********************
 def figure_y_values(ctx,x0,x1,y0,y1,y_range):
-	# plot 6 values on y-axis
-	# decimal seperator = "."
-	# thousand separator = ","
-	# seperator change: .replace('.',',')
 	for i in range(6):
 		ctx.save()
 		ctx.font = "bold 12px Arial"
 		ctx.fillStyle = "black"
 		ctx.textAlign = 'right'
-		if y_range[1]<1:
+		
+		yrange = abs(y_range[1]-y_range[0])
+		
+		if yrange <1:
 			y = '{:.3f}'.format(y_range[1]-i*(y_range[1]-y_range[0])/5 )
-		elif y_range[1]<10:
-			y = '{:.1f}'.format(y_range[1]-i*(y_range[1]-y_range[0])/5 )
-		elif y_range[1]<10000:
+		elif yrange <10:
+			y = '{:.2f}'.format(y_range[1]-i*(y_range[1]-y_range[0])/5 )
+		elif yrange <10000:
 			y = '{:,.0f}'.format(y_range[1]-i*(y_range[1]-y_range[0])/5 )
-		elif y_range[1]<100000:
+		elif yrange <100000:
 			y = '{:.0f}'.format((y_range[1]-i*(y_range[1]-y_range[0])/5)/1000 ) + "T"
 		else:
 			y = '{:.1f}'.format((y_range[1]-i*(y_range[1]-y_range[0])/5)/1000000 ) + "M"
 		ctx.fillText(y, 50, y1+6+(y0-y1)*i/5)
 		ctx.restore()
 		draw_line(ctx, x0, y1+(y0-y1)*i/5, x1,  y1+(y0-y1)*i/5, linethick = 0.3)
-
-
+	
+# ******************** VALUES X AXIS ********************
 def	figure_x_values(ctx,x0,x1,y0,xmin,xmax):
-	# plot 3 values on x-axis
 	xoff = 10
 	ctx.save()
 	ctx.font = "bold 12px Arial"
@@ -906,6 +1020,7 @@ def	figure_x_values(ctx,x0,x1,y0,xmin,xmax):
 		
 	ctx.restore()
 
+# ******************** DRAW ONE LINE ********************
 def draw_line(ctx, x1, y1, x2, y2, linethick = 1, color = "black", dash = False):
 	ctx.beginPath()
 	ctx.lineWidth = linethick
@@ -918,11 +1033,13 @@ def draw_line(ctx, x1, y1, x2, y2, linethick = 1, color = "black", dash = False)
 		ctx.setLineDash([])
 	ctx.stroke()
 
+# ******************** MAP x,y to COORDINATES ********************
 def change_ref_system(x0,x1,y0,y1,xmax,y_range,x, y):
 	xoff = 10
 	return (x0+xoff + x/xmax *(x1-x0-2*xoff),
 			y0 - (y-y_range[0]) * (y0-y1) / (y_range[1]-y_range[0])  )
 
+# ******************** CALCULATE CENTROIDS ************************
 def clustercenter(X,labels,k):
 	centroids = []
 	for i in range(k):
@@ -930,61 +1047,70 @@ def clustercenter(X,labels,k):
 		centroids.append(np.mean(points, axis=0))
 	return centroids
 
+# *****************************************************************
+# ******************** MAIN PROGRAM PYTHON ************************
+# *****************************************************************
+
 print('Start Clustering')
 
-# Create headline for results
 clustermethod = document.getElementById('method').value
-timeseries    = document.getElementById('series').value
+timeseries    = document.getElementById('series').value[2:100]
+colnr         = int(document.getElementById('series').value[0])
 
-
+# Add line break
 newLine = chr(10)
-
 mystring = document.getElementById('fileText').innerHTML.replace(' "',newLine + '"')
+
 myarray = np.loadtxt(StringIO(mystring), skiprows = 1, delimiter = ',', usecols = (0,1,2,3,4,5,6,7,8,9),
-                    dtype={'names': ('PR','PBD', 'MFB', 'MPE', 'MAPE', 'MAD', 'MSE', 'NRMSE', 'RMSE', 'MD'),
-                           'formats': ('S30','i4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4')})
+          dtype={'names': ('PR','PBD', 'MAD', 'MD', 'MFB', 'MPE', 'MAPE', 'MSE', 'NRMSE', 'RMSE'),
+                 'formats': ('S30','i4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4')})
 
 myarray = np.array(myarray.tolist())
+
 u_pr  = np.unique(np.array(myarray[:,0]))
+print('u_pr',u_pr)
+
+# add final order amount
+for p in u_pr:
+	add = np.array([p,0,0,0,1,0,0,0,0,0])
+	myarray = np.append(myarray,[add],axis=0)
+
 # pbd: strings must be sorted as numbers
 u_pbd = np.array(sorted(list(set(myarray[:,1])),key=int))
+print('u_pbd',u_pbd)
 
-#print('Creating lookup dictionary')
-
-if document.getElementById('series').value == 'MFB':	colnr=2
-if document.getElementById('series').value == 'MPE':	colnr=3
-if document.getElementById('series').value == 'MAPE':	colnr=4
-if document.getElementById('series').value == 'MAD':	colnr=5
-if document.getElementById('series').value == 'MSE':	colnr=6
-if document.getElementById('series').value == 'NRMSE':	colnr=7
-if document.getElementById('series').value == 'RMSE':	colnr=8
-if document.getElementById('series').value == 'MD':		colnr=9
-
+# create pivot table - data for clustering
 D = dict(zip(map(tuple, myarray[:,[0,1]]), myarray[:,[colnr]].ravel().tolist()))
-
 X = np.array(list(map(D.get, itertools.product(u_pr, u_pbd)))).reshape(len(u_pr),len(u_pbd))
 X = X.astype(np.float)
-
-#print('Pivot Table created.')
-print('Method selected',document.getElementById('method').value)
+print('X',X)
 
 # K MEANS
-if document.getElementById('method').value == 'kMeans':
+if clustermethod == 'kMeans':
 	print('k Means Clustering started.')
 	n_clusters   = int(document.getElementById("km_k").value)
+	print('aaa')
 	init         = document.getElementById("km_init").value	
+	print('bbb')
 	n_init       = int(document.getElementById("km_ninit").value)
+	print('ccc')
 	max_iter     = int(document.getElementById("km_maxiter").value)
+	print('dddd')
 	tol          = float(document.getElementById("km_tol").value)
+	print('eee')
 	random_state = int(document.getElementById("km_rs").value)
+	print('fff')
 	model = KMeans(n_clusters=n_clusters, init=init,n_init=n_init, max_iter= max_iter, tol= tol, random_state=random_state)
+	print('ggg')
 	y_model = model.fit_predict(X)
+	print('hhh')
 	clustercenters = model.cluster_centers_
-	parameters = 'n_clusters= ' + str(n_clusters) + ',init= ' + str(init) + ',n_init= ' + str(n_init) + ',max_iter= ' + str(max_iter) + ',tol= ' + str(tol)
+	print('iii')
+	parameters = 'n_clusters= ' + str(n_clusters) + ';init= ' + str(init) + ';n_init= ' + str(n_init) + ';max_iter= ' + str(max_iter) + ';tol= ' + str(tol)
 	print('k Means Clustering finished.')
 
 # AGGLOMERATIVE
-if document.getElementById('method').value == 'Agglomerative':
+if clustermethod == 'Agglomerative':
 	print('Agglomerative Clustering started.')
 	n_clusters   = int(document.getElementById('ag_k').value)
 	linkage      = document.getElementById('ag_linkage').value	
@@ -992,67 +1118,45 @@ if document.getElementById('method').value == 'Agglomerative':
 		metric = 'euclidean'
 		document.getElementById('ag_metric').value = 'euclidean'
 	metric = document.getElementById('ag_metric').value
-	print(n_clusters,linkage,metric)
 	model = AgglomerativeClustering(n_clusters=n_clusters,linkage= linkage, affinity=metric)
-	#model = AgglomerativeClustering(n_clusters=n_clusters,linkage="average", affinity='cosine')
 	print('Agglomerative Clustering finished.')
 	y_model = model.fit_predict(X)
-	parameters = 'n_clusters= ' + str(n_clusters) + ',linkage= ' + str(linkage) + ',metric= ' + str(metric)
+	parameters = 'n_clusters= ' + str(n_clusters) + ';linkage= ' + str(linkage) + ';metric= ' + str(metric)
 	clustercenters = clustercenter(X,y_model,n_clusters)
-	
+
 # AFFINITY PROPAGATION
-if document.getElementById('method').value == 'Affinity':
+if clustermethod == 'Affinity':
 	print('AffinityPropagation Clustering started.')
-	#print(float(document.getElementById('damping').value))
 	damping   = float(document.getElementById('af_damping').value)
 	max_iter  = int(document.getElementById("af_maxiter").value)
 	conv_iter = int(document.getElementById("af_conviter").value)
-	af = AffinityPropagation().fit(X)
 	af = AffinityPropagation(damping=damping, max_iter= max_iter, convergence_iter = conv_iter).fit(X)
 	y_model = af.labels_
 	n_clusters = len(af.cluster_centers_indices_)
 	print('AffinityPropagation Clustering finished.')
-	parameters = 'damping= ' + str(damping) + ',max_iter= ' + str(max_iter) + ',conv_iter= ' + str(conv_iter)
+	parameters = 'damping= ' + str(damping) + ';max_iter= ' + str(max_iter) + ';conv_iter= ' + str(conv_iter)
 	clustercenters = []
 	for i in af.cluster_centers_indices_:
 		clustercenters.append(X[i])
 
 # MEANSHIFT
-if document.getElementById('method').value == 'MeanShift':
+if clustermethod == 'MeanShift':
 	print('MeanShift started.')
 	binseed = document.getElementById('binseed').value
 	# The following bandwidth can be automatically detected using
 	bandwidth = estimate_bandwidth(X, quantile=0.2, n_samples=10)
-	print(binseed)
 	#ms = MeanShift(bandwidth=2,bin_seeding=binseed).fit(X)
 	ms = MeanShift().fit(X)
-	print('aaa')
 	y_model = ms.labels_
-	print('aaa')
 	clustercenters = ms.cluster_centers_
-	print('aaa')
 	n_clusters = len(np.unique(ms.labels_))
-	print('aaa')
 	dbs = davies_bouldin_score(X,y_model)
-	print('aaa')
-	sil = silhouette_score(X,y_model)
 	print('MeanShift finshed.')
 
-# DBSCAN
-if document.getElementById('method').value == 'DBSCAN':
-	print('DBSCAN started.')
-	eps = float(document.getElementById('db_eps').value)
-	db = DBSCAN(eps=eps).fit(X)
-	#core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
-	#core_samples_mask[db.core_sample_indices_] = True
-	y_model = db.labels_
-	print('y_model DBSCAN',y_model)
-	# Number of clusters in labels, ignoring noise if present.
-	n_clusters = len(set(y_model))
-	#n_noise_ = list(labels).count(-1)
-	dbs=0
-	sil=0
-	clustercenters = clustercenter(X,y_model,n_clusters)
+# column values identical => possibly less clusters than expected
+n_clusters = len(np.unique(y_model))
+
+print('jjj')
 
 if (n_clusters > 1) and (n_clusters < len(u_pr)):
 	dbs = davies_bouldin_score(X,y_model)
@@ -1060,31 +1164,37 @@ if (n_clusters > 1) and (n_clusters < len(u_pr)):
 else:
 	dbs, sil = 0, 0
 
-print('Clustering labels created.')
+print('kkk')
 
 # number of clusters is partly a result
-if document.getElementById('method').value == 'Affinity':
+if clustermethod == 'Affinity':
 	my_string = 'Number Clusters: ' + str(n_clusters) + '<br>'
 elif document.getElementById('method').value == 'MeanShift':
 	my_string = 'Number Clusters: ' + str(n_clusters) + '<br>'
 else:
 	my_string = ''
 
+print('lll')
 
 # CALCULATE KPI AS STRING
 if (n_clusters > 1) and (n_clusters != len(u_pr)):
-	dbs_str, sil_str = str(dbs)[0:6], str(sil)[0:6]
+	dbs_str, sil_str = str(dbs)[0:6].replace('.',','), str(sil)[0:6].replace('.',',')
 elif n_clusters == 1:
 	dbs_str, sil_str = 'n.a. for 1 cluster', 'n.a. for 1 cluster'
 else:
 	dbs_str, sil_str = 'n.a. for for all items in different clusters', 'n.a. for for all items in different clusters'
 
+print('mmm')
+
 my_string += 'Davies-Bouldin Score: ' + dbs_str + '<br>'
-my_string += 'Silhouette-Score:     ' + sil_str + '<br>'
+my_string += 'Silhouette-Score: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ' + sil_str
+
+print('nnn')
 
 document.getElementById("clusterkpi").innerHTML = my_string
-document.getElementById("resulthead").innerHTML = 'Results: ' + clustermethod + ' and ' + timeseries
+document.getElementById("resulthead").innerHTML = 'RESULTS: ' + timeseries + ' and ' + clustermethod
 
+print('ooo')
 
 # SHOW CLUSTERS
 if n_clusters >0:
@@ -1100,48 +1210,51 @@ if n_clusters >0:
 else:
 	my_string = 'ConvergenceWarning: Affinity propagation did not converge, this model will not have any cluster centers.'
 
-
+print('ppp')
 
 for i in range(n_clusters):
 	document.getElementById("c0" + str(i)).style.display = "inline-block"
+	document.getElementById("c0" + str(i)).style.background = '#eee'
 	document.getElementById("c0" + str(i)).innerHTML = c_string2[i].replace('"','')
 
+print('qqq')
 
-
-
-
+# create file export
 from datetime import datetime
+timestamp = str(datetime.now().isoformat(' ', 'seconds'))
 filecontent = ''
-filecontent += 'Time Stamp'           + ';' + str(datetime.now()) + chr(10)
-filecontent += 'Clustering Method'    + ';' + clustermethod       + chr(10)
-filecontent += 'Parameter'            + ';' + parameters          + chr(10)
-filecontent += 'Number Clusters'      + ';' + str(n_clusters)     + chr(10)
-filecontent += 'Davies-Bouldin Score' + ';' + dbs_str.replace('.',',') + chr(10)
-filecontent += 'Silhouette-Score'     + ';' + sil_str.replace('.',',') + chr(10)
-filecontent += chr(10)
-filecontent += 'Cluster'              + ';' + 'Product'           + chr(10)
-i = 0
+filecontent += 'Time Stamp'           + ';' + timestamp        + chr(10)
+filecontent += 'Error Measure'        + ';' + timeseries       + chr(10)
+filecontent += 'Clustering Method'    + ';' + clustermethod    + chr(10)
+filecontent += 'Parameter'            + ';' + parameters       + chr(10)
+filecontent += 'Number Clusters'      + ';' + str(n_clusters)  + chr(10)
+filecontent += 'Davies-Bouldin Score' + ';' + dbs_str          + chr(10)
+filecontent += 'Silhouette-Score'     + ';' + sil_str          + chr(10) + chr(10)
+filecontent += 'Cluster'              + ';' + 'Product / Periods before delivery'        + ';'
+
+for i in range(len(u_pbd)):  filecontent += str(u_pbd[i].decode("utf-8")) + ';'
+filecontent	+= chr(10)
+
+# clusternumber + product
+i = 0 # 1.product
 for j in y_model:
-	filecontent += str(j)              + ';' + u_pr[i].decode("utf-8").replace('"','') +  chr(10)
+
+	filecontent += str(j) + ';' + u_pr[i].decode("utf-8").replace('"','') + ';'
+	for k in range(len(u_pbd)): filecontent += str('{:.4f}'.format(X[i][k])).replace('.',',') + ';'
+	filecontent += chr(10)
 	i += 1
 
 document.getElementById("textbox").innerHTML = filecontent
 
-
-# CREATE PLOTS
-y_max = np.amax(X)
-y_min = np.amin(X)
-
 # CALCULATE y1: UPPER VALUE PLOT
+y_max, y_min = np.amax(X), np.amin(X)
 x = len(str(int(y_max)))-1
 if int(y_max) == 0:
 	y1 = round(y_max*10/(10**x)+0.5,0)*10**x/10
-if (y_max < 0.5):
+elif (y_max < 0.5):
 	y1 = round(y_max+0.1,1)
-if (y_max >1) and (y_max<=1000):
-	y1 = round(y_max/(10**x)+0.05,1)*10**x
-if (y_max > 1000):
-	y1 = round(y_max/(10**x)+0.5,0)*10**x
+if (y_max >1) and (y_max<=1000):   y1 = round(y_max/(10**x)+0.05,1)*10**x
+if (y_max > 1000):                 y1 = round(y_max/(10**x)+0.5,0)*10**x
 
 y_min = min(0,y_min)
 if y_min == 0:
@@ -1167,32 +1280,20 @@ for cnr in range(min(n_clusters,10)):
 	ctx = canvas.getContext("2d")
 
 	# Axes
-	x0, y0 = 65, c_size[1]-100
-	x1, y1 = c_size[0]-5, 30
+	x0, y0 = 65, c_size[1]-50
+	x1, y1 = c_size[0]-5, 25
 
 	axis(ctx,y_range,x0,x1,y0,y1,color = "black", linethick = '3')
 
-	#title = 	my_string = document.getElementById('series').value
-	#title = document.getElementById('method').value + ': Cluster ' + str(cnr)
 	title = 'Cluster ' + str(cnr)
 	figure_title(ctx, title, c_size, y_range)
 	
-	#figure_y_title(ctx,doc['errortype'].value, c_size, y_range)
-	figure_y_title(ctx,document.getElementById('series').value, c_size, y_range)
+	if cnr in [0,5]: figure_y_title(ctx,timeseries, c_size, y_range)
 	figure_x_title(ctx, 'Time',x0,c_size)
-
-	week = []
-	for i in range(14):
-		week.append(i)
 
 	cluster = X[y_model == cnr]
 
 	graph(ctx,x0,x1,y0,y1,u_pbd,cluster,clustercenters[cnr],y_range)
-
-document.getElementById("status").textcontent = 'Loaded: pyodide, joblib, numpy, scipy, scikit-learn, Python Code.\\nDone.'
-
-
-
 
 print('Finished Python.')
 `);
@@ -1205,7 +1306,7 @@ print('Finished Python.')
     } // end myfunction
     </script>
 
-    <!-- <script src="/lib/js/bootstrap.bundle.min.js"></script> -->
+    <script src="/lib/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
     </script>
