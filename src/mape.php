@@ -60,8 +60,11 @@ else {
                     <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
-                            aria-haspopup="true" aria-expanded="false">Visualizations <span class="caret"></span></a>
+                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz  <span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                        <li class="dropdown-header">Dashboard</li>
+                        <li><a href="./dashboard.php">Dashboard</a></li>
+                        <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
@@ -81,7 +84,7 @@ else {
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
-                    <li><a href="./dashboard.php">Dashboard</a></li>
+                    <!-- <li><a href="./dashboard.php">Dashboard</a></li> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
                             aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
@@ -288,9 +291,9 @@ else {
     });
     $(document).ready(function() {
         if (localStorage.getItem('check3FiltersActive') === 'true') {
-            $('#filter3Info').show();
-        } else {
             $('#filter3Info').hide();
+        } else {
+            $('#filter3Info').show();
         }
     });
     var forecastlist = dc.selectMenu("#forecastlist"),

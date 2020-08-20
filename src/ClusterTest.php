@@ -43,6 +43,7 @@ else {
         size: 4980736, // Size of database, in bytes. WebSQL-only for now.
     });
     </script>
+    <script src="./js/calculateErrorMeasures.js"></script>
 </head>
 
 <body>
@@ -62,8 +63,10 @@ else {
                     <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
-                            aria-haspopup="true" aria-expanded="false">Visualizations <span class="caret"></span></a>
+                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz <span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                        <li class="dropdown-header">Dashboard</li>
+                        <li><a href="./dashboard.php">Dashboard</a></li>
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
@@ -81,7 +84,7 @@ else {
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
-                    <li><a href="./dashboard.php">Dashboard</a></li>
+                    <!-- <li><a href="./dashboard.php">Dashboard</a></li> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
                             aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
@@ -176,6 +179,7 @@ else {
     <div id='productNumber' class='info'></div>
     <div id='fileLength' class='info'></div>
     <div id='fileText' class='content'></div><br>
+    <div id='showdata'   class='content'></div><br>
 
 
     <script>
@@ -210,113 +214,134 @@ else {
         }
         /** Calculation of MAD and MD*/
         // Define function of absolute difference of forecast and final orders (needed for MAD graph)
-        let absDiff = function(orignalEl, finalOrder) {
-            return Math.abs(orignalEl.OrderAmount - finalOrder);
-        }
-        let mdDiff = function(orignalEl, finalOrder) {
-            return orignalEl.OrderAmount - finalOrder;
-        }
-        // Define final orders: PBD = 0 means Final Orders
-        let finalOrder = data.filter((el) => {
-            return el.PeriodsBeforeDelivery == 0;
-        });
-        // Define forecast orders (which are not final orders)
-        let uniqueArray = data.filter(function(obj) {
-            return finalOrder.indexOf(obj) == -1;
-        });
-        let valueMap = new Map();
-        finalOrder.forEach((val) => {
-            let keyString = val.ActualPeriod;
-            let valueString = val.OrderAmount;
-            valueMap.set(keyString, valueString);
-        });
-        //Absolute values array (needed for MAD calculation)
-        let absValuesArray = uniqueArray.map((el) => {
-            let value = absDiff(el, valueMap.get(el.ForecastPeriod));
-            let value2 = mdDiff(el, valueMap.get(el.ForecastPeriod));
-            return {
-                ActualPeriod: el.ActualPeriod,
-                ForecastPeriod: el.ForecastPeriod,
-                Product: el.Product,
-                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                MAD: value,
-                MD: value2
-            };
-        });
-        let newAbsValuesArray = absValuesArray.filter((el) => {
-            return !isNaN(el.MAD);
-        });
-        var newSeparatedByPBD = d3.nest()
-            .key(function(d) {
-                return d.PeriodsBeforeDelivery;
-            })
-            .key(function(d) {
-                return d.Product;
-            })
-            .entries(newAbsValuesArray);
-
-        let MADarray = [];
-
-        let MADcalc = newSeparatedByPBD.map((el) => {
-            for (var i = 0; i < newSeparatedByPBD.length; i++) { //length 29   47
-                var length1 = el.values;
-                for (var j = 0; j < el.values.length; j++) { //length 15   4
-                    for (var k = 0; k < length1[j].values.length - 1; k++) { //length 76    19
-                        let meanValue = d3.mean(length1[j].values, function(d) {
-                            return d.MAD;
-                        });
-                        let meanValue5 = d3.mean(length1[j].values, function(d) {
-                            return d.MD;
-                        });
-                        MADarray.push({
-                            Product: length1[j].values[k].Product,
-                            PeriodsBeforeDelivery: el.key,
-                            MAD: meanValue,
-                            MD: meanValue5,
-                            MFB: 0,
-                            MPE: 0,
-                            MAPE: 0,
-                            MSE: 0,
-                            NRMSE: 0,
-                            RMSE: 0
-                        })
-                    }
-                }
-            }
-        });
-
-        /**** Remove duplicates from the MAD array */
-        let myNewarray = MADarray;
-        MADarray = Array.from(new Set(myNewarray.map(JSON.stringify))).map(JSON.parse);
-        console.log("unique array", MADarray);
-        let newCsvContent2 = toCsv(pivot(MADarray));
-
-        /*****  Remove line breaks from newArray array */
-        // function remove_linebreaks_ss(str) {
-        //     for (var i = 0; i < str.length; i++)
-        //         if (!(str[i] == '\n'))
-        //         newArray += str[i];
-        //     return newArray;
+        // let absDiff = function(orignalEl, finalOrder) {
+        //     return Math.abs(orignalEl.OrderAmount - finalOrder);
         // }
-        // oneFinalArray = newArray.filter((el) => {
-        //     return !isNaN(el.RMSE);
-        // })
-        // twoFinalArray = oneFinalArray.filter((el) => {
-        //     return !isNaN(el.NRMSE);
-        // })
-        // var filtered = twoFinalArray.filter(function(el) {
-        //     return el.MSE != "undefined ";
+        // let mdDiff = function(orignalEl, finalOrder) {
+        //     return orignalEl.OrderAmount - finalOrder;
+        // }
+        // // Define final orders: PBD = 0 means Final Orders
+        // let finalOrder = data.filter((el) => {
+        //     return el.PeriodsBeforeDelivery == 0;
+        // });
+        // // Define forecast orders (which are not final orders)
+        // let uniqueArray = data.filter(function(obj) {
+        //     return finalOrder.indexOf(obj) == -1;
+        // });
+        // let valueMap = new Map();
+        // finalOrder.forEach((val) => {
+        //     let keyString = val.ActualPeriod;
+        //     let valueString = val.OrderAmount;
+        //     valueMap.set(keyString, valueString);
+        // });
+        // //Absolute values array (needed for MAD calculation)
+        // let absValuesArray = uniqueArray.map((el) => {
+        //     let value = absDiff(el, valueMap.get(el.ForecastPeriod));
+        //     let value2 = mdDiff(el, valueMap.get(el.ForecastPeriod));
+        //     return {
+        //         ActualPeriod: el.ActualPeriod,
+        //         ForecastPeriod: el.ForecastPeriod,
+        //         Product: el.Product,
+        //         PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+        //         MAD: value,
+        //         MD: value2
+        //     };
+        // });
+        // let newAbsValuesArray = absValuesArray.filter((el) => {
+        //     return !isNaN(el.MAD);
+        // });
+        // var newSeparatedByPBD = d3.nest()
+        //     .key(function(d) {
+        //         return d.PeriodsBeforeDelivery;
+        //     })
+        //     .key(function(d) {
+        //         return d.Product;
+        //     })
+        //     .entries(newAbsValuesArray);
+
+        // let MADarray = [];
+
+        // let MADcalc = newSeparatedByPBD.map((el) => {
+        //     for (var i = 0; i < newSeparatedByPBD.length; i++) { //length 29   47
+        //         var length1 = el.values;
+        //         for (var j = 0; j < el.values.length; j++) { //length 15   4
+        //             for (var k = 0; k < length1[j].values.length - 1; k++) { //length 76    19
+        //                 let meanValue = d3.mean(length1[j].values, function(d) {
+        //                     return d.MAD;
+        //                 });
+        //                 let meanValue5 = d3.mean(length1[j].values, function(d) {
+        //                     return d.MD;
+        //                 });
+        //                 MADarray.push({
+        //                     Product: length1[j].values[k].Product,
+        //                     PeriodsBeforeDelivery: el.key,
+        //                     MAD: meanValue,
+        //                     MD: meanValue5,
+        //                     MFB: 0,
+        //                     MPE: 0,
+        //                     MAPE: 0,
+        //                     MSE: 0,
+        //                     NRMSE: 0,
+        //                     RMSE: 0
+        //                 })
+        //             }
+        //         }
+        //     }
         // });
 
-        // let newCsvContent = toCsv(pivot(filtered));
-        // console.log("oneFinalArray: ", oneFinalArray);
+        // /**** Remove duplicates from the MAD array */
+        // let myNewarray = MADarray;
+        // MADarray = Array.from(new Set(myNewarray.map(JSON.stringify))).map(JSON.parse);
+        // console.log("unique array", MADarray);
+        let nested = d3.nest().key(function(d) {
+                return d.Product
+            })
+            .entries(data);
+
+        console.log(nested);
+
+        const calculationErrorMeasures = [];
+
+        for (let i = 0; i < nested.length; i++) {
+            // for (let j = 0; j < nested[i].values.length; j++) {
+            const currentData = nested[i].values;
+            const currentProduct = nested[i].key;
+            // const currentPBD = nested[i].values[j].PeriodsBeforeDelivery;
+
+            let mapeResult = calculateMape(currentData);
+            let madResult = calculateMAD(currentData);
+            let mdResult = calculateMD(currentData);
+            let mseResult = calculateMSE(currentData);
+            let rmseResult = calculateRMSE(currentData);
+            let norm_rmseResult = calculateNormRMSE(currentData);
+            let mpeResult = calculateMPE(currentData);
+            let mfbResult = calculateMFB(currentData);
+
+            for (let j = 0; j < mfbResult.length; j++) {
+                const currentPBD = mfbResult[j].PeriodsBeforeDelivery;
+                calculationErrorMeasures.push({
+                    Product: currentProduct,
+                    PeriodsBeforeDelivery: mfbResult[j].PeriodsBeforeDelivery,
+                    MAD: madResult[j].MAD,
+                    MD: mdResult[j].MD,
+                    MFB: mfbResult[j].MFB,
+                    MPE: mpeResult[j].MPE,
+                    MAPE: mapeResult[j].MAPE,
+                    MSE: mseResult[j].MSE,
+                    NRMSE: norm_rmseResult[j].NRMSE,
+                    RMSE: rmseResult[j].RMSE,
+                });
+            }
+        }
+        console.log('final error measures:', calculationErrorMeasures);
+        let newCsvContent2 = toCsv(pivot(calculationErrorMeasures));
 
         /**** Identify unique product names in the array */
-        const uniqueNames = [...new Set(MADarray.map(i => i.Product))];
-        console.log('File length: ', MADarray.length);
+        const uniqueNames = [...new Set(calculationErrorMeasures.map(i => i.Product))];
+        // console.log('File length: ', calculationErrorMeasures.length);
 
 
-        let countPBD = MADarray.map(function(d) {
+        let countPBD = calculationErrorMeasures.map(function(d) {
             return d.PeriodsBeforeDelivery
         });
         let periodsMax = Math.max(...countPBD);
@@ -336,9 +361,9 @@ else {
             document.getElementById('PeriodsBeforeDelivery').style.display = 'inline-block';
             document.getElementById('productNumber').innerHTML = "Products Number: " + uniqueNames.length;
             document.getElementById('productNumber').style.display = 'inline-block';
-            document.getElementById('fileLength').innerHTML = "File length: " + MADarray.length + " lines (data points)";
+            document.getElementById('fileLength').innerHTML = "File length: " + calculationErrorMeasures.length + " lines (data points)";
             document.getElementById('fileLength').style.display = 'inline-block';
-            console.log("text1: ", text1);
+            // console.log("text1: ", text1);
         }
 
         insertOption();
@@ -358,8 +383,8 @@ else {
                     <option value="5 MPE: Mean Percentage Error">MPE: Mean Percentage Error</option>
                     <option value="6 MAPE: Mean Absolute Percentage">MAPE: Mean Absolute Percentage</option>
                     <option value="7 MSE: Mean Squared Error">MSE: Mean Squared Error</option>
-                    <option value="8 NRMSE: N Rot Mean Squared Error">NRMSE: Normalized Root Mean Squared Error</option>
-                    <option value="9 RMSE: Rot Mean Squared Error">RMSE: Root Mean Squared Error</option>
+                    <option value="8 NRMSE: Norm Root Mean Squared Error">NRMSE: Normalized Root Mean Squared Error</option>
+                    <option value="9 RMSE: Root Mean Squared Error">RMSE: Root Mean Squared Error</option>
                 </select>
 
                 <select id='method' name='method' class='main' onchange='showmethod()'>
@@ -868,6 +893,7 @@ else {
                                 .display = "inline-block";
                             document.getElementById('clusterkpi').style
                                 .display = "inline-block";
+                            document.getElementById('showdata').style.display = "inline-block";
 
                             // **********************************************************
                             // ********************START PYTHON *************************
@@ -965,7 +991,6 @@ def figure_y_title(ctx,title,c_size,y_range):
 
 # ******************** PLOT TITLE X AXIS ********************
 def figure_x_title(ctx,title,x0,c_size):
-	#x = (c_size[0]-x0) /2 - len(title)/2
 	x = x0 + (c_size[0]-x0) /2
 	y = c_size[1] - 25
 	lineHeight = 15
@@ -1003,17 +1028,16 @@ def figure_y_values(ctx,x0,x1,y0,y1,y_range):
 	
 # ******************** VALUES X AXIS ********************
 def	figure_x_values(ctx,x0,x1,y0,xmin,xmax):
-	xoff = 10
+	xoff = 10     # x=0 starts xoff points right from y-axis
+	interval = 1  # distance between two x-values
 	ctx.save()
 	ctx.font = "bold 12px Arial"
 	ctx.fillStyle = "black"
 	ctx.textAlign = 'center'	
-	values = xmax//5 - xmin//5
+	values = xmax//interval - xmin//interval + 1
 
 	for i in range(values):
-		#value = xmax//5 * 5 - 5*i
-		#xloc = x0 + xoff + (xmax-value)*(x1-x0-2*xoff)/(xmax-xmin)
-		value = xmin + 5*i
+		value = xmin + interval*i
 		xloc = x0 + xoff + (value-xmin)*(x1-x0-2*xoff)/(xmax-xmin)
 		ctx.fillText(value, xloc, y0+20)
 		draw_line(ctx,xloc,y0,xloc,y1, linethick = 0.3)
@@ -1184,17 +1208,39 @@ elif n_clusters == 1:
 else:
 	dbs_str, sil_str = 'n.a. for for all items in different clusters', 'n.a. for for all items in different clusters'
 
-print('mmm')
+
 
 my_string += 'Davies-Bouldin Score: ' + dbs_str + '<br>'
 my_string += 'Silhouette-Score: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ' + sil_str
 
-print('nnn')
+
 
 document.getElementById("clusterkpi").innerHTML = my_string
 document.getElementById("resulthead").innerHTML = 'RESULTS: ' + timeseries + ' and ' + clustermethod
 
-print('ooo')
+myarray = myarray[myarray[:,1].argsort()] # First sort doesn't need to be stable.
+myarray = myarray[myarray[:,0].argsort(kind='mergesort')]
+
+mystring  = '<table border=0><tr><th> Product </th><th style="text-align: center"> PBD </th>'
+mystring += '<th style="text-align: center"> MAD </th><th style="text-align: center"> MD </th><th style="text-align: center"> MFB  </th><th style="text-align: center">  MPE  </th><th style="text-align: center"> MAPE </th>'
+mystring += '<th style="text-align: center"> MSE </th><th style="text-align: center"> NRMSE </th><th style="text-align: center"> RMSE </th></tr>'
+
+for line in myarray:
+	mystring += '<tr>'
+	mystring += '<td>' + str(line[0].decode('UTF-8').replace('"','')) + '</td>'
+	mystring += '<td style="text-align:center">' + str(line[1].decode('UTF-8')) + '</td>'
+	mystring += '<td style="text-align:right">' + format(float(line[2].decode().strip('"')),'.2f') + '</td>'
+	mystring += '<td style="text-align:right">' + format(float(line[3].decode().strip('"')),'.2f') + '</td>'
+	mystring += '<td style="text-align:right">' + format(float(line[4].decode().strip('"')),'.2f') + '</td>'
+	mystring += '<td style="text-align:right">' + format(float(line[5].decode().strip('"')),'.2f') + '</td>'
+	mystring += '<td style="text-align:right">' + format(float(line[6].decode().strip('"')),'.2f') + '</td>'
+	mystring += '<td style="text-align:right">' + format(float(line[7].decode().strip('"')),'.2f') + '</td>'
+	mystring += '<td style="text-align:right">' + format(float(line[8].decode().strip('"')),'.2f') + '</td>'
+	mystring += '<td style="text-align:right">' + format(float(line[9].decode().strip('"')),'.2f') + '</td>'	
+	mystring += '</tr>'
+mystring += '</table>'
+
+document.getElementById("showdata").innerHTML = mystring
 
 # SHOW CLUSTERS
 if n_clusters >0:

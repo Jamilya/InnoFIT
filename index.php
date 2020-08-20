@@ -90,8 +90,11 @@ session_start();
                     <li><a class="specialLine" href="src/configuration.php">Configuration</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
-                            aria-haspopup="true" aria-expanded="false">Visualizations <span class="caret"></span></a>
+                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz <span
+                                class="caret"></span></a>
                         <ul class="dropdown-menu">
+                            <li class="dropdown-header">Dashboard</li>
+                            <li><a href="src/dashboard.php">Dashboard</a></li>
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="src/finalorder.php">Final Order Amount </a></li>
                             <li><a href="src/deliveryplans.php">Delivery Plans </a></li>
@@ -110,7 +113,7 @@ session_start();
                             <li><a href="src/meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
-                    <li><a href="src/dashboard.php">Dashboard</a></li>
+                    <!-- <li><a href="src/dashboard.php">Dashboard</a></li> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
                             aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
@@ -239,7 +242,7 @@ session_start();
     d3.json("/includes/getdata.php", function(error, data) {
         if (error) throw error;
         console.log('Read Data: ', data);
-        
+
 
         var stringData = JSON.stringify(data);
         var newData = Number(data);
@@ -294,9 +297,6 @@ session_start();
         // Save the data in localforage
         localforage.setItem('all_data', JSON.stringify(data));
         localforage.setItem('viz_data', JSON.stringify(data));
-        // localforage.setItem('finalOrder', JSON.stringify(finalOrder));
-        // localforage.setItem('deviation', JSON.stringify(finalArray));
-        console.log('SAVING: ', data, finalOrder, finalArray);
     });
     </script>
 

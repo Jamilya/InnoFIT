@@ -70,8 +70,10 @@ else {
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
-                            aria-haspopup="true" aria-expanded="false">Visualizations <span class="caret"></span></a>
+                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz <span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                        <li class="dropdown-header">Dashboard</li>
+                        <li><a href="./dashboard.php">Dashboard</a></li>
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
@@ -90,7 +92,7 @@ else {
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
-                    <li><a class="specialLine" href="./dashboard.php">Dashboard</a></li>
+                    <!-- <li><a class="specialLine" href="./dashboard.php">Dashboard</a></li> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
                             aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
@@ -284,9 +286,9 @@ else {
 
     $(document).ready(function() {
         if (localStorage.getItem('check3FiltersActive') === 'true') {
-            $('#filter3Info').show();
-        } else {
             $('#filter3Info').hide();
+        } else {
+            $('#filter3Info').show();
         }
     });
 
@@ -399,7 +401,7 @@ else {
                 return actualDateInt <= forecastDateInt;
             }
         });
-        console.log('Checked data for forecast horizon: ', forecastHorizonCheck);
+        // console.log('Checked data for forecast horizon: ', forecastHorizonCheck);
 
         let minActualPeriod = Math.min.apply(Math, data.map(function(o) {
             return new Date(o.ActualPeriod);
@@ -411,21 +413,14 @@ else {
                 return option.value;
             });
 
-            // console.log('FILTERING STARTS HERE');
-            // console.log('Filter Parameters: ');
-            // console.log('actual Min Date: ', actualDateMinValue);
-            // console.log('actual Max Date: ', actualDateMaxValue);
-            // console.log('forecast Min Date: ', forecastDateMinValue);
-            // console.log('forecast Max Date: ', forecastDateMaxValue);
-
             // 1. Filter by Product Name
             let filteredByProduct = data;
             if (productNames.length > 0 && productNames[0] !== "") {
                 filteredByProduct = data.filter(item => productNames.includes(item
                     .Product));
                 // console.log('Product: ', filteredByProduct);
-                console.log('Product Names: ', productNames.length);
             }
+            console.log('Product Names: ', productNames);
             // 2. Filter by Actual Date based on filtered product
             let filteredByActualDate = filteredByProduct.filter((item) => {
                 const actualDateInt = new Date(item.ActualDate.slice(0, -9)).getTime();
