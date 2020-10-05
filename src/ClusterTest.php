@@ -1202,7 +1202,7 @@ print('lll')
 
 # CALCULATE KPI AS STRING
 if (n_clusters > 1) and (n_clusters != len(u_pr)):
-	dbs_str, sil_str = str(dbs)[0:6].replace('.',','), str(sil)[0:6].replace('.',',')
+	dbs_str, sil_str = str(dbs)[0:6], str(sil)[0:6]
 elif n_clusters == 1:
 	dbs_str, sil_str = 'n.a. for 1 cluster', 'n.a. for 1 cluster'
 else:
@@ -1269,24 +1269,24 @@ print('qqq')
 from datetime import datetime
 timestamp = str(datetime.now().isoformat(' ', 'seconds'))
 filecontent = ''
-filecontent += 'Time Stamp'           + ';' + timestamp        + chr(10)
-filecontent += 'Error Measure'        + ';' + timeseries       + chr(10)
-filecontent += 'Clustering Method'    + ';' + clustermethod    + chr(10)
-filecontent += 'Parameter'            + ';' + parameters       + chr(10)
-filecontent += 'Number Clusters'      + ';' + str(n_clusters)  + chr(10)
-filecontent += 'Davies-Bouldin Score' + ';' + dbs_str          + chr(10)
-filecontent += 'Silhouette-Score'     + ';' + sil_str          + chr(10) + chr(10)
-filecontent += 'Cluster'              + ';' + 'Product / Periods before delivery'        + ';'
+filecontent += 'Time Stamp'           + ',' + timestamp        + chr(10)
+filecontent += 'Error Measure'        + ',' + timeseries       + chr(10)
+filecontent += 'Clustering Method'    + ',' + clustermethod    + chr(10)
+filecontent += 'Parameter'            + ',' + parameters       + chr(10)
+filecontent += 'Number Clusters'      + ',' + str(n_clusters)  + chr(10)
+filecontent += 'Davies-Bouldin Score' + ',' + dbs_str          + chr(10)
+filecontent += 'Silhouette-Score'     + ',' + sil_str          + chr(10) + chr(10)
+filecontent += 'Cluster'              + ',' + 'Product / Periods before delivery'        + ','
 
-for i in range(len(u_pbd)):  filecontent += str(u_pbd[i].decode("utf-8")) + ';'
+for i in range(len(u_pbd)):  filecontent += str(u_pbd[i].decode("utf-8")) + ','
 filecontent	+= chr(10)
 
 # clusternumber + product
 i = 0 # 1.product
 for j in y_model:
 
-	filecontent += str(j) + ';' + u_pr[i].decode("utf-8").replace('"','') + ';'
-	for k in range(len(u_pbd)): filecontent += str('{:.4f}'.format(X[i][k])).replace('.',',') + ';'
+	filecontent += str(j) + ',' + u_pr[i].decode("utf-8").replace('"','') + ','
+	for k in range(len(u_pbd)): filecontent += str('{:.4f}'.format(X[i][k])).replace('.','.') + ','
 	filecontent += chr(10)
 	i += 1
 

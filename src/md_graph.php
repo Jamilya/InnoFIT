@@ -526,7 +526,8 @@ else {
                     'MD: ' + d.key[1]
                 ].join('\n');
             })
-            .xAxis().tickFormat(d3.format('d'));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
+            // .xAxis().tickFormat(d3.format('d'));
 
         MDchart.selectAll('path.symbol')
             .attr('opacity', 0.3);

@@ -580,7 +580,8 @@ else {
                         .merge(path);
                     path.attr('d', line);
                 })
-                .xAxis().tickFormat(d3.format('d'));
+                .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
+                // .xAxis().tickFormat(d3.format('d'));
 
             MFBchart.symbol(d3.symbolCircle);
             MFBchart.margins(margin);

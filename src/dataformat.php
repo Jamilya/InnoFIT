@@ -230,8 +230,8 @@ else {
                     <li><b>No negative OrderAmount </b> values</li><br>
                     <li>Date format: <b>YYYY-MM-DD (year-month-day) </b> and formatted as a date</li> <br>
                     <li>Forecast horizon should not exceed 1 year </li><br>
-                    <li>Every "Product" & "ForecastDate" combination must have a final order defined, e.g. data with PBD = 0 (ActualDate = ForecastDate) </li><br>
-                    <li>Each "Product" & "ForecastDate" combination should have all data of equal number of PBDs (e.g. PBD <= 7) and no missing data for each PBD (e.g. Periods before delivery, PBD = ForecastPeriod - ActualPeriod) </li><br><br>
+                    <li><u><b>Required for clustering: </b></u> Every "Product" & "ForecastDate" combination must have a final order defined, e.g. data with PBD = 0 (ActualDate = ForecastDate) </li><br>
+                    <li><u><b>Required for clustering: </b></u> Each "Product" & "ForecastDate" combination should have all data of equal number of PBDs (e.g. PBD <= 7) and no missing data for each PBD (e.g. Periods before delivery, PBD = ForecastPeriod - ActualPeriod) </li><br><br>
                     Below is the data format structure overview in a tabular form:<br>
                     <img src="/data/img/dataformat.jpg"
                     alt="Data Format Example" align="middle" height="110" width="790"><br>

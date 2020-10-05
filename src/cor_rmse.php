@@ -578,7 +578,8 @@ else {
                     .colors(['blue'])
                     .dashStyle([2, 2])
                 ])
-                .xAxis().tickFormat(d3.format('d'));
+                .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
+                // .xAxis().tickFormat(d3.format('d'));
             composite.title(function(d) {
                 return ndx.dimension(dc.pluck('ActualDate')) + ' ' + key + '' + value;
             });

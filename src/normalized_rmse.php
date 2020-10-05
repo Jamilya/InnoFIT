@@ -616,7 +616,8 @@ else {
                         'NRMSE: ' + d.key[1],
                     ].join('\n');
                 })
-                .xAxis().tickFormat(d3.format('d'));
+                .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
+                // .xAxis().tickFormat(d3.format('d'));
 
             NRMSEchart.selectAll('path.symbol')
                 .attr('opacity', 0.3);

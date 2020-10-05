@@ -383,6 +383,10 @@ else {
                 .numberVisible(15);
             var plotColorMap = d3.scaleOrdinal(d3.schemeCategory10)
                 .domain(d3.extent(isfinitearray, function (d){ return d.ForecastPeriod}));
+            let mdPeriodsBD = isfinitearray.map(function(d) {
+                return d.PeriodsBeforeDelivery
+            });
+            let periodsMax = Math.max(...mdPeriodsBD);
 
             forecastErrorChart
                 .width(768 + margin.left + margin.right)
@@ -424,7 +428,8 @@ else {
                         'Actual Period: ' + d.key[2]
                     ].join('\n');
                 })
-                .xAxis().tickFormat(d3.format('d'));
+                .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
+                // .xAxis().tickFormat(d3.format('d'));
 
             forecastErrorChart.yAxis().tickFormat(d3.format('.0%'));
 

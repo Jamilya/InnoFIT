@@ -1057,7 +1057,7 @@ else {
                     'MAD: ' + d.key[1]
                 ].join('\n');
             })
-            .xAxis().tickFormat(d3.format('d'));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
         MADchart.margins(margin);
 
         MDchart
@@ -1084,7 +1084,7 @@ else {
                     'MD: ' + d.key[1]
                 ].join('\n');
             })
-            .xAxis().tickFormat(d3.format('d'));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
         MDchart.margins(margin);
 
         RMSEchart
@@ -1112,7 +1112,7 @@ else {
                     'RMSE: ' + d.key[1],
                 ].join('\n');
             })
-            .xAxis().tickFormat(d3.format('d'));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
         RMSEchart.margins(margin);
 
         MAPEchart
@@ -1139,7 +1139,7 @@ else {
                     'MAPE: ' + d.key[1]
                 ].join('\n');
             })
-            .xAxis().tickFormat(d3.format('d'));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
         MAPEchart.margins(margin);
 
         MFBchart
@@ -1202,8 +1202,7 @@ else {
                     .merge(path);
                 path.attr('d', line);
             })
-            .xAxis().tickFormat(d3.format('d'));
-        // .xAxis().tickFormat(d3.timeFormat("%d %b"));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
         MFBchart.symbol(d3.symbolCircle);
         MFBchart.margins(margin);
 
@@ -1232,7 +1231,7 @@ else {
                     'MPE: ' + d.key[1]
                 ].join('\n');
             })
-            .xAxis().tickFormat(d3.format('d'));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
         MPEchart.margins(margin);
 
         MSEchart
@@ -1262,7 +1261,7 @@ else {
                     'MSE: ' + d.key[1]
                 ].join('\n');
             })
-            .xAxis().tickFormat(d3.format('d'));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
 
         MSEchart.yAxis().tickFormat(d3.format(".2s"));
         MSEchart.margins(margin);
@@ -1292,7 +1291,8 @@ else {
                     'NRMSE: ' + d.key[1],
                 ].join('\n');
             })
-            .xAxis().tickFormat(d3.format('d'));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
+            // .xAxis().tickFormat(d3.format('d'));
         NRMSEchart.margins(margin);
 
         dc.renderAll();

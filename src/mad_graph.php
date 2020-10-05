@@ -514,11 +514,11 @@ else {
                         return d.key !== NaN;
                     });
             })
-            .excludedSize(2)
+            // .excludedSize(2)
             .excludedOpacity(0.5)
             .x(d3.scaleLinear().domain([0, periodsMax]))
             .brushOn(false)
-            .clipPadding(10)
+            .clipPadding(7)
             .xAxisLabel("Periods Before Delivery")
             .yAxisLabel("MAD")
             .renderTitle(true)
@@ -528,7 +528,8 @@ else {
                     'MAD: ' + d.key[1]
                 ].join('\n');
             })
-            .xAxis().tickFormat(d3.format('d'));
+            // .xAxis().tickFormat(d3.timeFormat("%b %d"));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
 
         MADchart.selectAll('path.symbol')
             .attr('opacity', 0.3);
@@ -562,4 +563,4 @@ else {
 
 </body>
 
-</html>
+</html> 

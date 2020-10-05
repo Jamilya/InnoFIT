@@ -569,8 +569,8 @@ else {
                         'MPE: ' + d.key[1]
                     ].join('\n');
                 })
-                .xAxis().tickFormat(d3.format('d'));
-            // console.log('ndxgroup data:', ndxDim);
+                .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
+                // .xAxis().tickFormat(d3.format('d'));
 
             MPEchart.selectAll('path.symbol')
                 .attr('opacity', 0.3);
