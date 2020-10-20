@@ -272,14 +272,14 @@ else {
             let filterValues = data.filter((el) => {
                 return el.PeriodsBeforeDelivery == 0;
             });
-            console.log("Final Orders: ", filterValues);
+            // console.log("Final Orders: ", filterValues);
             let valueMap = new Map();
             filterValues.forEach((val) => {
                 let keyString = val.ActualPeriod;
                 let valueString = val.OrderAmount;
                 valueMap.set(keyString, valueString);
             });
-            console.log("Mapped final order array: ", valueMap);
+            // console.log("Mapped final order array: ", valueMap);
 
             let finalArray = data.map((el) => {
                 let deviation = calcDeviation(el, valueMap.get(el.ForecastPeriod))
@@ -295,14 +295,14 @@ else {
                     Deviation: deviation.toFixed(2)
                 };
             })
-            console.log("FINAL Array with deviation: ", finalArray);
+            // console.log("FINAL Array with deviation: ", finalArray);
             newFinalArray = finalArray.filter((el) => {
                 return !isNaN(el.Deviation);
             })
             isfinitearray = newFinalArray.filter((el) => {
                 return isFinite(el.Deviation) == true;
             })
-            console.log("isfinitearray: ", isfinitearray);
+            // console.log("isfinitearray: ", isfinitearray);
             let deviationCalc = d3.values(isfinitearray, function(d) {
                 return d.Deviation;
             })
@@ -361,7 +361,7 @@ else {
             });
             var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
             var dateGroup = dateDim.group();
-            console.log("ndxDim: ", ndxGroup.top(Infinity));
+            // console.log("ndxDim: ", ndxGroup.top(Infinity));
 
 
             forecastlist

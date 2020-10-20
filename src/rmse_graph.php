@@ -325,7 +325,7 @@ else {
             let uniqueArray = data.filter(function(obj) {
                 return finalOrder.indexOf(obj) == -1;
             });
-            console.log("Unique array: ", uniqueArray);
+            // console.log("Unique array: ", uniqueArray);
 
             let valueMap = new Map();
             finalOrder.forEach((val) => {
@@ -347,7 +347,7 @@ else {
                     SquaredAbsoluteDiff: value
                 };
             });
-            console.log("FINAL: ", squaredAbsValuesArray);
+            // console.log("FINAL: ", squaredAbsValuesArray);
 
             let seperatedByPeriods = d3.nest()
                 .key(function(d) {
@@ -411,7 +411,7 @@ else {
                 ).join('\n');
             }
             let newCsvContent = toCsv(pivot(exportArray));
-            console.log("newCsvContent array: ", newCsvContent);
+            // console.log("newCsvContent array: ", newCsvContent);
 
             /** Export script */
             $("#exportFunction").click(function() {
@@ -492,7 +492,7 @@ else {
                 .multiple(true)
                 .numberVisible(15);
 
-            console.log("ndxDim: ", ndxGroup.top(Infinity));
+            // console.log("ndxDim: ", ndxGroup.top(Infinity));
 
             RMSEchart
                 .width(width + margin.left + margin.right)

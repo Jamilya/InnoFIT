@@ -357,7 +357,7 @@ else {
                 return d.PeriodsBeforeDelivery
             })
             .entries(absValuesArray);
-            console.log("seperatedByPeriods: ", seperatedByPeriods);
+            // console.log("seperatedByPeriods: ", seperatedByPeriods);
 
         let bubu = seperatedByPeriods.map((el) => {
             for (i = 0; i < seperatedByPeriods.length; i++) {
@@ -377,7 +377,7 @@ else {
             }
 
         });
-        console.log("Final MD Array: ", bubu);
+        // console.log("Final MD Array: ", bubu);
         // console.log(toCsv(pivot(bubu)));
         var exportArray = bubu.map((el) => {
             return {
@@ -424,7 +424,7 @@ else {
             ).join('\n');
         }
         let newCsvContent = toCsv(pivot(exportArray));
-        console.log("newCsvContent array: ", newCsvContent);
+        // console.log("newCsvContent array: ", newCsvContent);
 
         /** Export script */
         $("#exportFunction").click(function() {

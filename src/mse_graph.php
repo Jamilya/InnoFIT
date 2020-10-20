@@ -326,12 +326,12 @@ else {
             return Math.pow((orignalEl.OrderAmount - finalOrder), 2);
         }
 
-        console.log("FINAL ORDERS: ", finalOrder);
+        // console.log("FINAL ORDERS: ", finalOrder);
 
         let uniqueArray = data.filter(function(obj) {
             return finalOrder.indexOf(obj) == -1;
         });
-        console.log("Unique array: ", uniqueArray);
+        // console.log("Unique array: ", uniqueArray);
 
         let valueMap = new Map();
         finalOrder.forEach((val) => {
@@ -339,7 +339,7 @@ else {
             let valueString = val.OrderAmount;
             valueMap.set(keyString, valueString);
         });
-        console.log("valueMap: ", valueMap);
+        // console.log("valueMap: ", valueMap);
 
         let absValuesArray = uniqueArray.map((el) => {
             let value = absDiff(el, valueMap.get(el.ForecastPeriod));
@@ -354,14 +354,14 @@ else {
                 AbsoluteDiff: value
             };
         });
-        console.log("Absolute values: ", absValuesArray);
+        // console.log("Absolute values: ", absValuesArray);
 
         let seperatedByPeriods = d3.nest()
             .key(function(d) {
                 return d.PeriodsBeforeDelivery
             })
             .entries(absValuesArray);
-        console.log("seperatedByPeriods: ", seperatedByPeriods);
+        // console.log("seperatedByPeriods: ", seperatedByPeriods);
 
         let bubu = seperatedByPeriods.map((el) => {
             for (i = 0; i < seperatedByPeriods.length; i++) {
@@ -416,7 +416,7 @@ else {
             ).join('\n');
         }
         let newCsvContent = toCsv(pivot(exportArray));
-        console.log("newCsvContent array: ", newCsvContent);
+        // console.log("newCsvContent array: ", newCsvContent);
 
         /** Export script */
         $("#exportFunction").click(function() {

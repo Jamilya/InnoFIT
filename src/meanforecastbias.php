@@ -325,7 +325,7 @@ else {
                 finalOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
             });
 
-            console.log('FINAL ORDER MAP: ', finalOrdersForecastPeriods);
+            // console.log('FINAL ORDER MAP: ', finalOrdersForecastPeriods);
 
             //Order All data by PBD
             // Order the Final Orders
@@ -338,7 +338,7 @@ else {
             let maxActualPeriod = Math.max.apply(Math, finalOrder.map(function(o) {
                 return o.ActualPeriod;
             }))
-            console.log('maxActualPeriod: ', maxActualPeriod);
+            // console.log('maxActualPeriod: ', maxActualPeriod);
 
             // Order the Products by PBD in order to calculate sum of Forecasts and FinalOrders
             let orderByPBD = d3.nest()
@@ -373,7 +373,7 @@ else {
                         forecastSum += parseInt(forecastOrdersForecastPeriods.get(e), 0);
                     }
                 });
-                console.log('forecastSum: ', forecastSum);
+                // console.log('forecastSum: ', forecastSum);
 
                 // MFB
                 let mfbValue = forecastSum / sumFinalOrders;
@@ -389,7 +389,7 @@ else {
                     MFB: mfbValue.toFixed(3)
                 }
             });
-            console.log('Forecast, FinalOrders, MFB all orderByPBD: ', calculationsOrderByPBD);
+            // console.log('Forecast, FinalOrders, MFB all orderByPBD: ', calculationsOrderByPBD);
 
             var exportArray = calculationsOrderByPBD.map((el) => {
                 return {
@@ -427,7 +427,7 @@ else {
                 ).join('\n');
             }
             let newCsvContent = toCsv(pivot(exportArray));
-            console.log("newCsvContent array: ", newCsvContent);
+            // console.log("newCsvContent array: ", newCsvContent);
 
             /** Export script */
             $("#exportFunction").click(function() {
@@ -476,7 +476,7 @@ else {
                 d) {
                 return d.MFB;
             });
-            console.log("Mean Value: ", dataMean);
+            // console.log("Mean Value: ", dataMean);
 
             var ndx = crossfilter(newFinalArray);
             var all = ndx.groupAll();

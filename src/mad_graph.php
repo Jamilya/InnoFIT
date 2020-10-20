@@ -379,7 +379,7 @@ else {
             }
 
         });
-        console.log("Final MAD Array: ", bubu);
+        // console.log("Final MAD Array: ", bubu);
         // console.log(toCsv(pivot(bubu)));
         var exportArray = bubu.map((el) => {
             return {
@@ -426,7 +426,7 @@ else {
             ).join('\n');
         }
         let newCsvContent = toCsv(pivot(exportArray));
-        console.log("newCsvContent array: ", newCsvContent);
+        // console.log("newCsvContent array: ", newCsvContent);
 
         /** Export script */
         $("#exportFunction").click(function() {

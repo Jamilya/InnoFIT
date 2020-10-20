@@ -180,6 +180,7 @@ else {
     <div id='fileLength' class='info'></div>
     <div id='fileText' class='content'></div><br>
     <div id='showdata'   class='content'></div><br>
+    <button class="btn btn-secondary" id="exportFunction"><strong>Export Data</strong></button>
 
 
     <script>
@@ -333,8 +334,32 @@ else {
                 });
             }
         }
-        console.log('final error measures:', calculationErrorMeasures);
+        // console.log('final error measures:', calculationErrorMeasures);
         let newCsvContent2 = toCsv(pivot(calculationErrorMeasures));
+
+         /** Export script */
+         $("#exportFunction").click(function() {
+            saveFile("Export_data.csv", "data:attachment/csv", newCsvContent2);
+        });
+
+        /** Function to save file as csv */
+        function saveFile(name, type, data) {
+            if (data != null && navigator.msSaveBlob)
+                return navigator.msSaveBlob(new Blob([data], {
+                    type: type
+                }), name);
+            var a = $("<a style='display: none;'/>");
+            var url = window.URL.createObjectURL(new Blob([data], {
+                type: type
+            }));
+            a.attr("href", url);
+            a.attr("download", name);
+            $("body").append(a);
+            a[0].click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+        }
+        /** End of export function */
 
         /**** Identify unique product names in the array */
         const uniqueNames = [...new Set(calculationErrorMeasures.map(i => i.Product))];

@@ -342,7 +342,7 @@ else {
                 d) {
                 return +d.OrderAmount;
             });
-            console.log("Mean Value: ", dataMean);
+            // console.log("Mean Value: ", dataMean);
 
             var dataMedian = d3.median(finalOrderCalc, function(
                 d) {
@@ -413,8 +413,8 @@ else {
                 d.ActualDate = new Date(d.ActualDate),
                     d.ForecastDate = new Date(d.ForecastDate)
             });
-            console.log("finalOrder: ", finalOrder);
-            console.log("weeksArray: ", weeksArray);
+            // console.log("finalOrder: ", finalOrder);
+            // console.log("weeksArray: ", weeksArray);
 
 
             var ndx = crossfilter(finalOrder);
@@ -467,7 +467,7 @@ else {
                 .group(productGroup)
                 .multiple(true);
 
-            console.log("ndxDim: ", ndxGroup.top(Infinity));
+            // console.log("ndxDim: ", ndxGroup.top(Infinity));
 
             FinalOrderChart
                 .width(width + margin.left + margin.right)

@@ -329,7 +329,7 @@ else {
             finalOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
         });
 
-        console.log('FINAL ORDER MAP: ', finalOrdersForecastPeriods);
+        // console.log('FINAL ORDER MAP: ', finalOrdersForecastPeriods);
 
         //Order All data by PBD
         // Order the Final Orders
@@ -347,7 +347,7 @@ else {
         let maxActualPeriod = Math.max.apply(Math, finalOrder.map(function(o) {
             return o.ActualPeriod;
         }))
-        console.log('maxActualPeriod: ', maxActualPeriod);
+        // console.log('maxActualPeriod: ', maxActualPeriod);
 
         // Order the Products by PBD in order to calculate sum of Forecasts and FinalOrders
         let orderByPBD = d3.nest()
@@ -362,7 +362,7 @@ else {
 
             // Forecast Sums
             let validForecasts = el.values.filter(e => e.ForecastPeriod <= maxActualPeriod);
-            console.log('validForecasts: ', validForecasts);
+            // console.log('validForecasts: ', validForecasts);
 
             let forecastOrdersForecastPeriods = new Map();
             validForecasts.map(e => {
@@ -407,7 +407,7 @@ else {
                 MAPE: mapeValue.toFixed(3)
             }
         });
-        console.log('Forecast, FinalOrders, MAPE all orderByPBD: ', calculationsOrderByPBD);
+        // console.log('Forecast, FinalOrders, MAPE all orderByPBD: ', calculationsOrderByPBD);
 
         var exportArray = calculationsOrderByPBD.map((el) => {
             return {
@@ -445,7 +445,7 @@ else {
             ).join('\n');
         }
         let newCsvContent = toCsv(pivot(exportArray));
-        console.log("newCsvContent array: ", newCsvContent);
+        // console.log("newCsvContent array: ", newCsvContent);
 
         /** Export script */
         $("#exportFunction").click(function() {

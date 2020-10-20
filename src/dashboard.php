@@ -1154,11 +1154,12 @@ else {
                         return d.key !== Infinity;
                     });
             })
-            .excludedSize(2)
-            .excludedOpacity(0.5)
-            .x(d3.scaleLinear().domain([0, d3.max(periodsBD4, function(d) {
-                return d;
-            })]))
+            // .excludedSize(2)
+            // .excludedOpacity(0.5)
+            // .x(d3.scaleLinear().domain([0, d3.max(periodsBD4, function(d) {
+            //     return d;
+            // })]))
+            .x(d3.scaleLinear().domain([0, periodsMax4]))
             .brushOn(false)
             .clipPadding(10)
             .xAxisLabel("Periods Before Delivery")
@@ -1203,7 +1204,7 @@ else {
                 path.attr('d', line);
             })
             .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
-        MFBchart.symbol(d3.symbolCircle);
+        // MFBchart.symbol(d3.symbolCircle);
         MFBchart.margins(margin);
 
 

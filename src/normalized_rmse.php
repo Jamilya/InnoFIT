@@ -367,8 +367,8 @@ else {
                     }
                 });
                 let meanFinalOrders = sumFinalOrders / noFinalOrders;
-                console.log('MEAN', meanFinalOrders, ' for PBD: ', elem.values[0]
-                    .PeriodsBeforeDelivery);
+                // console.log('MEAN', meanFinalOrders, ' for PBD: ', elem.values[0]
+                //     .PeriodsBeforeDelivery);
 
                 return {
                     PeriodsBeforeDelivery: elem.key,
@@ -381,7 +381,7 @@ else {
                     MeanFinalOrders: meanFinalOrders
                 }
             });
-            console.log("Mean Final Orders By PBD: ", calculationsOrderByPBD);
+            // console.log("Mean Final Orders By PBD: ", calculationsOrderByPBD);
 
             let squaredAbsValuesArray = uniqueArray.map((el) => {
                 let value = powerDiff(el, valueMap.get(el.ForecastPeriod));
@@ -419,7 +419,7 @@ else {
                 return arr;
             }, [])
 
-            console.log("new squaredAbsValuesArray", squaredAbsValuesArray2);
+            // console.log("new squaredAbsValuesArray", squaredAbsValuesArray2);
 
 
             let finalOrderCalc = d3.values(finalOrder, function(d) {
@@ -490,7 +490,7 @@ else {
                 ).join('\n');
             }
             let newCsvContent = toCsv(pivot(exportArray));
-            console.log("newCsvContent array: ", newCsvContent);
+            // console.log("newCsvContent array: ", newCsvContent);
 
             /** Export script */
             $("#exportFunction").click(function() {
@@ -586,7 +586,7 @@ else {
                 .multiple(true)
                 .numberVisible(15);
 
-            console.log("ndxDim: ", ndxGroup.top(Infinity));
+            // console.log("ndxDim: ", ndxGroup.top(Infinity));
 
             NRMSEchart
                 .width(768 + margin.left + margin.right)

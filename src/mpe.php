@@ -388,10 +388,10 @@ else {
                             finalOrdersForecastPeriods.get(e));
                     }
                 });
-                console.log('items: ', items);
-                console.log('difference: ', difference);
+                // console.log('items: ', items);
+                // console.log('difference: ', difference);
                 let sumOfDifferences = difference.reduce((a, b) => +a + +b, 0);
-                console.log('sumOfDifferences: ', sumOfDifferences);
+                // console.log('sumOfDifferences: ', sumOfDifferences);
 
                 // MFB & MPE
                 let mfbValue = sumOfForecasts / sumFinalOrders;
@@ -446,7 +446,7 @@ else {
                 ).join('\n');
             }
             let newCsvContent = toCsv(pivot(exportArray));
-            console.log("newCsvContent array: ", newCsvContent);
+            // console.log("newCsvContent array: ", newCsvContent);
 
             /** Export script */
             $("#exportFunction").click(function() {
