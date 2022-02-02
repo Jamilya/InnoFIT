@@ -56,7 +56,7 @@ else {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/index.php">Home</a>
+                <a class="navbar-brand" href="/about.php">Home</a>
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
@@ -299,7 +299,7 @@ else {
             })
             .entries(data);
 
-        console.log(nested);
+        // console.log(nested);
 
         const calculationErrorMeasures = [];
 
@@ -926,20 +926,15 @@ else {
 
                             pyodide.runPython(`
 print('Start Python.')
-
 import numpy as np, itertools, sklearn
 from sklearn.cluster import KMeans
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.cluster import AffinityPropagation
 from sklearn.cluster import MeanShift, estimate_bandwidth
-
 from sklearn.metrics import davies_bouldin_score, silhouette_score
-
 from io import StringIO
 from js import document, alert
-
 #print('Scikit-learn version: {}.'.format(sklearn.__version__))
-
 # ******************** CREATE GRAPH *************************
 def graph(ctx,x0,x1,y0,y1,week,y,cent,y_range):
 	week = week.astype('int32')
@@ -947,7 +942,6 @@ def graph(ctx,x0,x1,y0,y1,week,y,cent,y_range):
 	figure_y_values(ctx,x0,x1,y0,y1,y_range)
 	figure_x_values(ctx,x0,x1,y0,xmin,xmax)
 	x = week.copy()
-
 	if xmax//1000 == xmin//1000:
 		xwerte = xmax-xmin+1
 		for i in range(len(week)):
@@ -962,9 +956,7 @@ def graph(ctx,x0,x1,y0,y1,week,y,cent,y_range):
 					x[i] = week[i] - xmin
 				else:
 					x[i] = week[i] - xmin - 50
-
 	xmin,xmax = min(x),max(x)
-
 	# plot line
 	for j in y:
 		for i in range(len(x)):
@@ -972,34 +964,28 @@ def graph(ctx,x0,x1,y0,y1,week,y,cent,y_range):
 			#ctx.fillRect(xpoint-5,ypoint-5,9,9)
 			if i>0:  draw_line(ctx, xold, yold, xpoint, ypoint, linethick = 1)
 			xold, yold = xpoint, ypoint
-
 	# plot centroids
 	for i in range(len(x)):
 		xpoint, ypoint = change_ref_system(x0,x1,y0,y1,xmax,y_range,x[i], cent[i])
 		ctx.fillStyle = '#FF0000'
 		ctx.fillRect(xpoint-5,ypoint-5,9,9)
-
 # ******************** PLOT x,y AXIS *************************
 def axis(ctx,y_range,x0,x1,y0,y1,color = "black", linethick = 3):
-
 	draw_line(ctx, x0, y0, x0, y1, linethick = 2.0) # y left
 	draw_line(ctx, x1, y0, x1, y1, linethick = 0.5) # y right
 	draw_line(ctx, x0, y1, x1, y1, linethick = 0.5) # x top
 	draw_line(ctx, x0, y1, x1, y1, linethick = 0.5) # x bottom
-
 	# Null-Achse
 	if y_range[0] == 0:
 		y = y0
 	else:
 		y = (y1 - y0*y_range[1]/y_range[0]) / (1-y_range[1]/y_range[0])
 	draw_line(ctx, x0, y, x1, y, linethick = 2.0)
-
 # ******************** PLOT TITLE *************************
 def figure_title(ctx,title,c_size,y_range):
 	ctx.fillStyle = 'black'
 	ctx.font = "bold 16px Arial"
 	ctx.fillText(title, c_size[0]/2 - len(title)/2, 12)
-
 # ******************** PLOT TITLE Y AXIS ********************
 def figure_y_title(ctx,title,c_size,y_range):
 	x = 4
@@ -1013,7 +999,6 @@ def figure_y_title(ctx,title,c_size,y_range):
 	ctx.font = "bold 16px Arial, sans-serif";
 	ctx.fillText(title, 0, lineHeight / 2)
 	ctx.restore()
-
 # ******************** PLOT TITLE X AXIS ********************
 def figure_x_title(ctx,title,x0,c_size):
 	x = x0 + (c_size[0]-x0) /2
@@ -1026,7 +1011,6 @@ def figure_x_title(ctx,title,x0,c_size):
 	ctx.font = "bold 12px Arial, sans-serif";
 	ctx.fillText('Periods Before Delivery', 0, lineHeight / 2)
 	ctx.restore()
-
 # ******************** VALUES Y AXIS ********************
 def figure_y_values(ctx,x0,x1,y0,y1,y_range):
 	for i in range(6):
@@ -1060,7 +1044,6 @@ def	figure_x_values(ctx,x0,x1,y0,xmin,xmax):
 	ctx.fillStyle = "black"
 	ctx.textAlign = 'center'	
 	values = xmax//interval - xmin//interval + 1
-
 	for i in range(values):
 		value = xmin + interval*i
 		xloc = x0 + xoff + (value-xmin)*(x1-x0-2*xoff)/(xmax-xmin)
@@ -1068,7 +1051,6 @@ def	figure_x_values(ctx,x0,x1,y0,xmin,xmax):
 		draw_line(ctx,xloc,y0,xloc,y1, linethick = 0.3)
 		
 	ctx.restore()
-
 # ******************** DRAW ONE LINE ********************
 def draw_line(ctx, x1, y1, x2, y2, linethick = 1, color = "black", dash = False):
 	ctx.beginPath()
@@ -1081,13 +1063,11 @@ def draw_line(ctx, x1, y1, x2, y2, linethick = 1, color = "black", dash = False)
 	else:
 		ctx.setLineDash([])
 	ctx.stroke()
-
 # ******************** MAP x,y to COORDINATES ********************
 def change_ref_system(x0,x1,y0,y1,xmax,y_range,x, y):
 	xoff = 10
 	return (x0+xoff + x/xmax *(x1-x0-2*xoff),
 			y0 - (y-y_range[0]) * (y0-y1) / (y_range[1]-y_range[0])  )
-
 # ******************** CALCULATE CENTROIDS ************************
 def clustercenter(X,labels,k):
 	centroids = []
@@ -1095,45 +1075,34 @@ def clustercenter(X,labels,k):
 		points = [X[j] for j in range(len(X)) if labels[j] == i]
 		centroids.append(np.mean(points, axis=0))
 	return centroids
-
 # *****************************************************************
 # ******************** MAIN PROGRAM PYTHON ************************
 # *****************************************************************
-
 print('Start Clustering')
-
 clustermethod = document.getElementById('method').value
 timeseries    = document.getElementById('series').value[2:100]
 colnr         = int(document.getElementById('series').value[0])
-
 # Add line break
 newLine = chr(10)
 mystring = document.getElementById('fileText').innerHTML.replace(' "',newLine + '"')
-
 myarray = np.loadtxt(StringIO(mystring), skiprows = 1, delimiter = ',', usecols = (0,1,2,3,4,5,6,7,8,9),
           dtype={'names': ('PR','PBD', 'MAD', 'MD', 'MFB', 'MPE', 'MAPE', 'MSE', 'NRMSE', 'RMSE'),
                  'formats': ('S30','i4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4')})
-
 myarray = np.array(myarray.tolist())
-
 u_pr  = np.unique(np.array(myarray[:,0]))
 print('u_pr',u_pr)
-
 # add final order amount
 for p in u_pr:
 	add = np.array([p,0,0,0,1,0,0,0,0,0])
 	myarray = np.append(myarray,[add],axis=0)
-
 # pbd: strings must be sorted as numbers
 u_pbd = np.array(sorted(list(set(myarray[:,1])),key=int))
 print('u_pbd',u_pbd)
-
 # create pivot table - data for clustering
 D = dict(zip(map(tuple, myarray[:,[0,1]]), myarray[:,[colnr]].ravel().tolist()))
 X = np.array(list(map(D.get, itertools.product(u_pr, u_pbd)))).reshape(len(u_pr),len(u_pbd))
 X = X.astype(np.float)
 print('X',X)
-
 # K MEANS
 if clustermethod == 'kMeans':
 	print('k Means Clustering started.')
@@ -1157,7 +1126,6 @@ if clustermethod == 'kMeans':
 	print('iii')
 	parameters = 'n_clusters= ' + str(n_clusters) + ';init= ' + str(init) + ';n_init= ' + str(n_init) + ';max_iter= ' + str(max_iter) + ';tol= ' + str(tol)
 	print('k Means Clustering finished.')
-
 # AGGLOMERATIVE
 if clustermethod == 'Agglomerative':
 	print('Agglomerative Clustering started.')
@@ -1172,7 +1140,6 @@ if clustermethod == 'Agglomerative':
 	y_model = model.fit_predict(X)
 	parameters = 'n_clusters= ' + str(n_clusters) + ';linkage= ' + str(linkage) + ';metric= ' + str(metric)
 	clustercenters = clustercenter(X,y_model,n_clusters)
-
 # AFFINITY PROPAGATION
 if clustermethod == 'Affinity':
 	print('AffinityPropagation Clustering started.')
@@ -1187,7 +1154,6 @@ if clustermethod == 'Affinity':
 	clustercenters = []
 	for i in af.cluster_centers_indices_:
 		clustercenters.append(X[i])
-
 # MEANSHIFT
 if clustermethod == 'MeanShift':
 	print('MeanShift started.')
@@ -1201,20 +1167,15 @@ if clustermethod == 'MeanShift':
 	n_clusters = len(np.unique(ms.labels_))
 	dbs = davies_bouldin_score(X,y_model)
 	print('MeanShift finshed.')
-
 # column values identical => possibly less clusters than expected
 n_clusters = len(np.unique(y_model))
-
 print('jjj')
-
 if (n_clusters > 1) and (n_clusters < len(u_pr)):
 	dbs = davies_bouldin_score(X,y_model)
 	sil = silhouette_score(X,y_model)
 else:
 	dbs, sil = 0, 0
-
 print('kkk')
-
 # number of clusters is partly a result
 if clustermethod == 'Affinity':
 	my_string = 'Number Clusters: ' + str(n_clusters) + '<br>'
@@ -1222,9 +1183,7 @@ elif document.getElementById('method').value == 'MeanShift':
 	my_string = 'Number Clusters: ' + str(n_clusters) + '<br>'
 else:
 	my_string = ''
-
 print('lll')
-
 # CALCULATE KPI AS STRING
 if (n_clusters > 1) and (n_clusters != len(u_pr)):
 	dbs_str, sil_str = str(dbs)[0:6], str(sil)[0:6]
@@ -1232,24 +1191,15 @@ elif n_clusters == 1:
 	dbs_str, sil_str = 'n.a. for 1 cluster', 'n.a. for 1 cluster'
 else:
 	dbs_str, sil_str = 'n.a. for for all items in different clusters', 'n.a. for for all items in different clusters'
-
-
-
 my_string += 'Davies-Bouldin Score: ' + dbs_str + '<br>'
 my_string += 'Silhouette-Score: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ' + sil_str
-
-
-
 document.getElementById("clusterkpi").innerHTML = my_string
 document.getElementById("resulthead").innerHTML = 'RESULTS: ' + timeseries + ' and ' + clustermethod
-
 myarray = myarray[myarray[:,1].argsort()] # First sort doesn't need to be stable.
 myarray = myarray[myarray[:,0].argsort(kind='mergesort')]
-
 mystring  = '<table border=0><tr><th> Product </th><th style="text-align: center"> PBD </th>'
 mystring += '<th style="text-align: center"> MAD </th><th style="text-align: center"> MD </th><th style="text-align: center"> MFB  </th><th style="text-align: center">  MPE  </th><th style="text-align: center"> MAPE </th>'
 mystring += '<th style="text-align: center"> MSE </th><th style="text-align: center"> NRMSE </th><th style="text-align: center"> RMSE </th></tr>'
-
 for line in myarray:
 	mystring += '<tr>'
 	mystring += '<td>' + str(line[0].decode('UTF-8').replace('"','')) + '</td>'
@@ -1264,9 +1214,7 @@ for line in myarray:
 	mystring += '<td style="text-align:right">' + format(float(line[9].decode().strip('"')),'.2f') + '</td>'	
 	mystring += '</tr>'
 mystring += '</table>'
-
 document.getElementById("showdata").innerHTML = mystring
-
 # SHOW CLUSTERS
 if n_clusters >0:
 	c_string  = ['']*n_clusters
@@ -1280,16 +1228,12 @@ if n_clusters >0:
 		my_string += "Cluster " + str(i) + ": " + c_string[i] + '<br>'
 else:
 	my_string = 'ConvergenceWarning: Affinity propagation did not converge, this model will not have any cluster centers.'
-
 print('ppp')
-
 for i in range(n_clusters):
 	document.getElementById("c0" + str(i)).style.display = "inline-block"
 	document.getElementById("c0" + str(i)).style.background = '#eee'
 	document.getElementById("c0" + str(i)).innerHTML = c_string2[i].replace('"','')
-
 print('qqq')
-
 # create file export
 from datetime import datetime
 timestamp = str(datetime.now().isoformat(' ', 'seconds'))
@@ -1302,21 +1246,16 @@ filecontent += 'Number Clusters'      + ',' + str(n_clusters)  + chr(10)
 filecontent += 'Davies-Bouldin Score' + ',' + dbs_str          + chr(10)
 filecontent += 'Silhouette-Score'     + ',' + sil_str          + chr(10) + chr(10)
 filecontent += 'Cluster'              + ',' + 'Product / Periods before delivery'        + ','
-
 for i in range(len(u_pbd)):  filecontent += str(u_pbd[i].decode("utf-8")) + ','
 filecontent	+= chr(10)
-
 # clusternumber + product
 i = 0 # 1.product
 for j in y_model:
-
 	filecontent += str(j) + ',' + u_pr[i].decode("utf-8").replace('"','') + ','
 	for k in range(len(u_pbd)): filecontent += str('{:.4f}'.format(X[i][k])).replace('.','.') + ','
 	filecontent += chr(10)
 	i += 1
-
 document.getElementById("textbox").innerHTML = filecontent
-
 # CALCULATE y1: UPPER VALUE PLOT
 y_max, y_min = np.amax(X), np.amin(X)
 x = len(str(int(y_max)))-1
@@ -1326,46 +1265,35 @@ elif (y_max < 0.5):
 	y1 = round(y_max+0.1,1)
 if (y_max >1) and (y_max<=1000):   y1 = round(y_max/(10**x)+0.05,1)*10**x
 if (y_max > 1000):                 y1 = round(y_max/(10**x)+0.5,0)*10**x
-
 y_min = min(0,y_min)
 if y_min == 0:
 	y0 = 0
 else:
 	x = len(str(int(y_min)))-2
 	y0 = round(y_min/(10**x)-0.5,0)*10**x
-
 y_range = [round(min(y0,0),3), y1]
-
 c_size = [300,350] # canvas width, height
-
 # CLEAR ALL PLOTS
 for cnr in range(10):
 	canvas = document.getElementById('plotarea' + str(cnr))
 	ctx = canvas.getContext("2d")
 	ctx.clearRect(0, -10, c_size[0], c_size[1]-10)
-
 # PLOT FOR ALL CLUSTERS
 for cnr in range(min(n_clusters,10)):
 	document.getElementById('plotarea' + str(cnr)).style.display = "inline-block"
 	canvas = document.getElementById('plotarea' + str(cnr))
 	ctx = canvas.getContext("2d")
-
 	# Axes
 	x0, y0 = 65, c_size[1]-50
 	x1, y1 = c_size[0]-5, 25
-
 	axis(ctx,y_range,x0,x1,y0,y1,color = "black", linethick = '3')
-
 	title = 'Cluster ' + str(cnr)
 	figure_title(ctx, title, c_size, y_range)
 	
 	if cnr in [0,5]: figure_y_title(ctx,timeseries, c_size, y_range)
 	figure_x_title(ctx, 'Time',x0,c_size)
-
 	cluster = X[y_model == cnr]
-
 	graph(ctx,x0,x1,y0,y1,u_pbd,cluster,clustercenters[cnr],y_range)
-
 print('Finished Python.')
 `);
 

@@ -54,7 +54,7 @@ else {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/index.php">Home</a>
+                <a class="navbar-brand" href="/about.php">Home</a>
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
@@ -322,15 +322,13 @@ else {
 
             let finalOrdersForecastPeriods = new Map();
             finalOrder.map(e => {
-                finalOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
+                finalOrdersForecastPeriods.set(e.ForecastDate, e.OrderAmount); //changed from ForecastPeriod to ForecastDate
             });
-
-            // console.log('FINAL ORDER MAP: ', finalOrdersForecastPeriods);
 
             //Order All data by PBD
             // Order the Final Orders
 
-            // PBD != 0 means all Others or Forecast Orders
+            // PBD != 0 means all forecast (not final) orders
             let uniqueArray = data.filter(function(obj) {
                 return finalOrder.indexOf(obj) == -1;
             });
@@ -358,13 +356,13 @@ else {
                 });
                 let forecastOrdersForecastPeriods = new Map();
                 validForecasts.map(e => {
-                    forecastOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
+                    forecastOrdersForecastPeriods.set(e.ForecastDate, e.OrderAmount); //changed from ForecastPeriod to ForecastDate
                 });
                 let sumOfForecasts = validForecasts.reduce((a, b) => +a + +b.OrderAmount, 0);
 
                 // FinalOrder Sums
                 let items = el.values;
-                items = items.map(el => el.ForecastPeriod);
+                items = items.map(el => el.ForecastDate);  //changed from ForecastPeriod to ForecastDate
                 let sumFinalOrders = 0;
                 let forecastSum = 0;
                 items.forEach(e => {
@@ -373,7 +371,9 @@ else {
                         forecastSum += parseInt(forecastOrdersForecastPeriods.get(e), 0);
                     }
                 });
-                // console.log('forecastSum: ', forecastSum);
+                console.log('forecastSum, sumFinalOrders: ', forecastSum, sumFinalOrders);
+                console.log('finalOrdersForecastPeriods: ', finalOrdersForecastPeriods);
+                console.log('items: ', items);
 
                 // MFB
                 let mfbValue = forecastSum / sumFinalOrders;

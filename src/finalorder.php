@@ -55,7 +55,7 @@ else {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/index.php">Home</a>
+                <a class="navbar-brand" href="/about.php">Home</a>
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
@@ -342,7 +342,8 @@ else {
                 d) {
                 return +d.OrderAmount;
             });
-            // console.log("Mean Value: ", dataMean);
+            var totalSumOfFinalOrders = finalOrderCalc.reduce((a, b) => +a + +b.OrderAmount, 0);
+            console.log("totalSumOfFinalOrders: ", totalSumOfFinalOrders);
 
             var dataMedian = d3.median(finalOrderCalc, function(
                 d) {
@@ -373,16 +374,18 @@ else {
             var varKo = standardDev / dataMean;
             var roundVarKo = varKo.toFixed(2);
 
-            valuesToPrint.push(generateDescObject('Mean Value: ', dataMean.toFixed(2) + " "));
-            valuesToPrint.push(generateDescObject('Median Value: ', dataMedian + " "));
-            valuesToPrint.push(generateDescObject('Min Value: ', dataMin + "      "));
-            valuesToPrint.push(generateDescObject('Max Value: ', dataMax + "      "));
-            valuesToPrint.push(generateDescObject('99% Quantile: ', dataQuantile1.toFixed(2) + '  '));
-            valuesToPrint.push(generateDescObject('95% Quantile: ', dataQuantile2.toFixed(2) + '  '));
-            valuesToPrint.push(generateDescObject('75% Quantile: ', dataQuantile3.toFixed(2) + '  '));
-            valuesToPrint.push(generateDescObject('Max Period', dataMaxPer + " "));
-            valuesToPrint.push(generateDescObject('Var. Ko.:: ', roundVarKo + " "));
-            valuesToPrint.push(generateDescObject('St. Dev.: ', standardDev.toFixed(2), 1));
+            valuesToPrint.push(generateDescObject(' Mean Value: ', dataMean.toFixed(2) + " "));
+            valuesToPrint.push(generateDescObject(' Median Value: ', dataMedian + " "));
+            valuesToPrint.push(generateDescObject(' Min Value: ', dataMin + "      "));
+            valuesToPrint.push(generateDescObject(' Max Value: ', dataMax + "      "));
+            valuesToPrint.push(generateDescObject(' 99% Quantile: ', dataQuantile1.toFixed(2) + '  '));
+            valuesToPrint.push(generateDescObject(' 95% Quantile: ', dataQuantile2.toFixed(2) + '  '));
+            valuesToPrint.push(generateDescObject(' 75% Quantile: ', dataQuantile3.toFixed(2) + '  '));
+            valuesToPrint.push(generateDescObject(' Max Period', dataMaxPer + " "));
+            valuesToPrint.push(generateDescObject(' Var. Ko.: ', roundVarKo + " "));
+            valuesToPrint.push(generateDescObject(' St. Dev.: ', standardDev.toFixed(2), 1));
+            valuesToPrint.push(generateDescObject(' Total Sum of Final Orders: ', totalSumOfFinalOrders + " "));
+            
             var forecastlist = dc.selectMenu("#forecastlist"),
                 visCount = dc.dataCount(".dc-data-count"),
                 FinalOrderChart = dc.scatterPlot("#scatter"),
@@ -573,19 +576,6 @@ else {
                 ]);
 
             dc.renderAll();
-
-            // Create Legend
-            // var svg = d3.select("#d3Legend").append('svg').attr('width', 300).attr('height', 35)
-            // svg.append("path").attr('d', d3.symbol().size(100).type(d3.symbolCircle)).style("fill", "#1f77b4")
-            //     .attr("transform", "translate(75,14)")
-            // svg.append("path").attr("d", d3.symbol().size(100).type(d3.symbolCircle)).style("fill",
-            //         "#9467bd")
-            //     .attr("transform", "translate(185,14)")
-            // svg.append("text").attr("x", 90).attr("y", 15).text("Product ID1").style("font-size", "15px")
-            //     .attr("alignment-baseline", "middle")
-            // svg.append("text").attr("x", 200).attr("y", 15).text("Product ID2").style("font-size",
-            //         "15px")
-            //     .attr("alignment-baseline", "middle")
 
             tabulate(valuesToPrint, ['Description', 'Value']);
 

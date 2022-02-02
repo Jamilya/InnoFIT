@@ -28,7 +28,7 @@ if (isset($_POST['login'])){
         {
         $_SESSION['session_username']=$username;
         /* Redirect browser */
-         header ("Location: /index.php");
+         header ("Location: /about.php");
         } } else {
          $message =  "Invalid username or password!";
         }

@@ -59,7 +59,7 @@ const calculateMape = (data) => {
             return {
                 Product: uniqueNames[i],
                 PeriodsBeforeDelivery: el.key,
-                MAPE: mapeValue.toFixed(3)
+                MAPE: mapeValue
             }
         }
     });
@@ -116,7 +116,7 @@ const calculateMAD = (data) => {
             return {
                 Product: el.values[i].Product,
                 PeriodsBeforeDelivery: el.key,
-                MAD: meanValue.toFixed(3)
+                MAD: meanValue
             };
         }
     });
@@ -172,7 +172,7 @@ const calculateMD = (data) => {
             return {
                 Product: el.values[i].Product,
                 PeriodsBeforeDelivery: el.key,
-                MD: meanValue.toFixed(3)
+                MD: meanValue
             };
         }
     });
@@ -227,7 +227,7 @@ const calculateMSE = (data) => {
             return {
                 Product: el.values[i].Product,
                 PeriodsBeforeDelivery: el.key,
-                MSE: meanValue.toFixed(3)
+                MSE: meanValue
             };
         }
     });
@@ -282,7 +282,7 @@ const calculateRMSE = (data) => {
             return {
                 Product: el.values[i].Product,
                 PeriodsBeforeDelivery: el.key,
-                RMSE: meanValue.toFixed(3)
+                RMSE: meanValue
             };
         }
     });
@@ -381,7 +381,7 @@ const calculateNormRMSE = (data) => {
                 Product: el.values[i].Product,
                 PeriodsBeforeDelivery: el.key,
                 // RMSE: meanValue,
-                NRMSE: normRMSE.toFixed(3)
+                NRMSE: normRMSE
             };
         }
     });
@@ -451,7 +451,7 @@ const calculateMPE = (data) => {
                 Product: uniqueNames[i],
                 PeriodsBeforeDelivery: el.key,
                 // MFB: mfbValue.toFixed(3),
-                MPE: mpeValue.toFixed(3)
+                MPE: mpeValue
             }
         }
     });
@@ -512,7 +512,7 @@ const calculateMFB = (data) => {
             return {
                 Product: uniqueNames[i],
                 PeriodsBeforeDelivery: el.key,
-                MFB: mfbValue.toFixed(3)
+                MFB: mfbValue
             }
         }
     });
