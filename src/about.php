@@ -43,8 +43,10 @@ else {
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
-                            aria-haspopup="true" aria-expanded="false">Visualizations <span class="caret"></span></a>
+                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz <span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                        <li class="dropdown-header">Dashboard</li>
+                        <li><a href="./dashboard.php">Dashboard</a></li>
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
@@ -54,6 +56,7 @@ else {
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
+                            <li><a href="./md_graph.php">Mean Deviation (MD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
                             <li><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
@@ -62,6 +65,7 @@ else {
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
+                    <!-- <li><a href="./dashboard.php">Dashboard</a></li> -->
                     <!-- </ul> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
@@ -70,6 +74,7 @@ else {
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
                     </li>
+                    <li><a href="./ClusterTest.php">Clustering </a> </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -224,7 +229,7 @@ else {
         <div class="row" style="margin-top: 40px;">
             <div class="col-md-12">
                 <h4><strong>Download section</strong></h4>
-                <strong><i>InnoFit Project Poser:</i></strong>
+                <strong><i>InnoFIT Project Poster:</i></strong>
                 <br />
                 Office 365 access: <a
                     href="https://fhstp.sharepoint.com/sites/InnoFIT/Freigegebene%20Dokumente/General/Posters/InnoFIT_one%20version.pdf"

@@ -78,8 +78,10 @@ else {
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Visualizations<span class="caret"></span></a>
+                            aria-expanded="false"> Dashboard and Viz <span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                        <li class="dropdown-header">Dashboard</li>
+                        <li><a href="./dashboard.php">Dashboard</a></li>
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
@@ -89,6 +91,7 @@ else {
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
+                            <li><a href="./md_graph.php">Mean Deviation (MD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
                             <li><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
@@ -98,6 +101,7 @@ else {
                         </ul>
                     </li>
                     <!-- </ul> -->
+                    <!-- <li><a href="./dashboard.php">Dashboard</a></li> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Corrections <span class="caret"></span> </a>
@@ -105,6 +109,7 @@ else {
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
                     </li>
+                    <li><a href="./ClusterTest.php">Clustering </a> </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -217,13 +222,16 @@ else {
                 <div class="row">
                 <p class="class-text">
                     <br>
-                    <li><b>Chrome browser </b> is advised for better visualization quality</li><br>
-                    <li>Please upload data in CSV format (comma-separated value as a delimiter)</li><br>
-                    <li>Please <b>do not overwrite the data </b> in the tool. Either remove the old data and upload new dataset including old and new data; or upload only data that was not uploaded before.</li><br>
+                    <li><b>Chrome and Firefox browsers </b> are advised for better visualization quality</li><br>
+                    <li>Please upload data in CSV format (comma-separated value, comma as a delimiter)</li><br>
+                    <li>Please <b>do not overwrite data </b> in the tool. Either remove the old data and upload new dataset including old and new data; or upload only data that was not uploaded before.</li><br>
                     <li>Keep data upload limit up till <b>1 MB </b>(per user)</li><br>
                     <li>No spacing is allowed, no empty cells or empty rows</li><br>
                     <li><b>No negative OrderAmount </b> values</li><br>
-                    <li>Date format: <b>YYYY-MM-DD (year-month-day) </b> and formatted as a date</li><br><br>
+                    <li>Date format: <b>YYYY-MM-DD (year-month-day) </b> and formatted as a date</li> <br>
+                    <li>Forecast horizon should not exceed 1 year </li><br>
+                    <li><u><b>Required for clustering: </b></u> Every "Product" & "ForecastDate" combination must have a final order defined, e.g. data with PBD = 0 (ActualDate = ForecastDate) </li><br>
+                    <li><u><b>Required for clustering: </b></u> Each "Product" & "ForecastDate" combination should have all data of equal number of PBDs (e.g. PBD <= 7) and no missing data for each PBD (e.g. Periods before delivery, PBD = ForecastPeriod - ActualPeriod) </li><br><br>
                     Below is the data format structure overview in a tabular form:<br>
                     <img src="/data/img/dataformat.jpg"
                     alt="Data Format Example" align="middle" height="110" width="790"><br>

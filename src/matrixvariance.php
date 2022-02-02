@@ -31,7 +31,7 @@ else {
 
     <script>
     localforage.config({
-        driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+        driver: localforage.INDEXEDDB,
         name: 'innoFit',
         version: 1.0,
         size: 4980736, // Size of database, in bytes. WebSQL-only for now.
@@ -55,9 +55,12 @@ else {
                 <ul class="nav navbar-nav">
                     <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown active">
-                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Visualizations <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz  <span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                        <li class="dropdown-header">Dashboard</li>
+                        <li><a href="./dashboard.php">Dashboard</a></li>
+                        <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
@@ -68,6 +71,7 @@ else {
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
+                            <li><a href="./md_graph.php">Mean Deviation (MD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
                             <li><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
@@ -76,13 +80,15 @@ else {
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
+                    <!-- <li><a href="./dashboard.php">Dashboard</a></li> -->
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Corrections <span class="caret"></span> </a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
                         <ul class="dropdown-menu">
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
                     </li>
+                    <li><a href="./ClusterTest.php">Clustering </a> </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -135,7 +141,8 @@ else {
                         /* ]]> */
                         </script>
                     </li>
-                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span>
+                            Logout</a></li>
 
                 </ul>
             </div>
@@ -250,11 +257,11 @@ else {
 
 
         var margin = {
-                top: 10,
-                right: 90,
-                bottom: 80,
-                left: 60
-            };
+            top: 10,
+            right: 90,
+            bottom: 80,
+            left: 60
+        };
 
         const result = getPercentToPixelDimensions(70);
         let width = result.width - margin.left - margin.right;
@@ -263,6 +270,7 @@ else {
         // append the svg object to the body of the page
         var svg = d3.select("#my_dataviz")
             .append("svg")
+            .style('overflow', 'visible')
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
@@ -271,15 +279,14 @@ else {
 
         // Labels of row and columns
         var myColumns = d3.map(newFinalArray, function(d) {
-            return d.ActualPeriod;
+            return +d.ActualPeriod;
         }).keys();
         var myRows = d3.map(newFinalArray, function(d) {
-            return d.ForecastPeriod;
+            return +d.ForecastPeriod;
         }).keys();
 
-
         var extent = d3.extent(newFinalArray.map(function(d) {
-            return d.Deviation;
+            return parseFloat(d.Deviation);
         }).filter(function(d) {
             return d;
         }));
@@ -289,6 +296,7 @@ else {
             .range([0, width])
             .domain(myColumns)
             .padding(0.05);
+
         svg.append("g")
             .style("font-size", 12)
             .attr("dy", ".32em")
@@ -297,17 +305,14 @@ else {
             .call(d3.axisBottom(x).tickSize(0))
             .select(".domain").remove()
 
-
         // Build Y scales and axis:
         var y = d3.scaleBand()
             .range([height, 0])
             .domain(myRows)
             .padding(0.05);
 
-
         var LIKERT_NEUTRAL = Math.floor(1 / 7);
         var LIKERT_POS = Math.round(3 / 7);
-
 
         svg.append("g")
             .style("font-size", 12)
@@ -317,31 +322,17 @@ else {
             .select(".domain").remove()
 
         // Build color scale
-        var myColor = d3.scaleSequential();
-        myColor.interpolator(d3.interpolateRdBu);
+        // var myColor = d3.scaleSequential();
+        // myColor.interpolator(d3.interpolateRdBu);
+        // myColor.domain([parseFloat(extent[0]), parseFloat(extent[1])]);
 
-        // myColor.domain([d3.min(newFinalArray, function(d) {
-        //     return d.Deviation;
-        // }), d3.max(newFinalArray, function(d) {
-        //     return d.Deviation;
-        // })]);
+        var myColor = d3.scaleLinear();
+        myColor.domain([extent[0], 0.0, extent[1]]);
+        myColor.range(['crimson', 'lightgrey', 'cornflowerblue']);
 
-        myColor.domain([d3.min(newFinalArray, function(d) {
-            return d.Deviation;
-        }), d3.max(newFinalArray, function(d) {
-            return d.Deviation;
-        })]);
-        var myOrders = newFinalArray.map(function(d) {
-            return (d.Deviation);
-        });
-
-        var myColor2 = d3.scaleSequential()
-            .interpolator(d3.interpolateBlues)
-            .domain([d3.min(newFinalArray, function(d) {
-                return d.Deviation
-            }), d3.max(newFinalArray, function(d) {
-                return d.Deviation
-            })]);
+        // var myOrders = newFinalArray.map(function(d) {
+        //     return (d.Deviation);
+        // });
 
         var tooltip = d3.select("#my_dataviz")
             .append("div")
@@ -354,18 +345,19 @@ else {
             .style("padding", "2px")
 
         var mouseover = function(d) {
-            tooltip
-                .style("opacity", 1)
             d3.select(this)
                 .style("stroke", "black")
                 .style("opacity", 1)
-        }
-        var mousemove = function(d) {
+
             tooltip
-            .html("Product: " + d.Product + "<br>"+ "Percentage error: " + d.Deviation  + "<br>" + "Actual Period: " + d.ActualPeriod + "<br>" + "Forecast Period: " +d.ForecastPeriod + "<br>")
+                .html("Product: " + d.Product + "<br>" + "Percentage error: " + d.Deviation + "<br>" +
+                    "Actual Period: " + d.ActualPeriod + "<br>" + "Forecast Period: " + d.ForecastPeriod +
+                    "<br>")
                 .style("left", (d3.event.pageX + 20) + "px")
                 .style("top", (d3.event.pageY + 10) + "px")
+                .style("opacity", 1);
         }
+
         var mouseleave = function(d) {
             tooltip
                 .style("opacity", 0)
@@ -374,6 +366,8 @@ else {
                 .style("opacity", 0.8)
         }
 
+        console.log('DATA WE USE THIS: ', newFinalArray);
+        console.log(d3.nest().key(d => d.Deviation).entries(newFinalArray));
 
         svg.selectAll()
             .data(newFinalArray, function(d) {
@@ -391,30 +385,21 @@ else {
             .attr("ry", 4)
             .attr("width", x.bandwidth())
             .attr("height", y.bandwidth())
-            // .style("fill", function(d) {
-            //     return myColor(d.Deviation)
-            // })
             .style("fill", function(d) {
-                if (d.Deviation >= 0) {
-                    return myColor2(d.Deviation);
-                } else {
-                    return myColor(d.Deviation);
-                }
+                return myColor(d.Deviation);
             })
             .style("stroke-width", 4)
             .style("stroke", "none")
             .style("opacity", 0.8)
             .on("mouseover", mouseover)
-            .on("mousemove", mousemove)
-            .on("mouseleave", mouseleave)
+            .on("mouseleave", mouseleave);
 
         // Create the legend data
         let legendData = myColor.ticks(15).slice(1).reverse();
         // Add min
-        const dataMin = d3.min(newFinalArray, function(d) {
-            return d.Deviation;
-        });
-        legendData.push(dataMin);
+        legendData.push(parseFloat(extent[0]));
+        // Add max
+        legendData.unshift(parseFloat(extent[1]));
 
         var legend = svg.selectAll(".legend")
             .data(legendData)
@@ -441,10 +426,11 @@ else {
 
         svg.append("text")
             .attr("class", "label")
-            .attr("x", width - 10)
+            .attr("x", width + 53)
             .attr("y", 10)
+            .attr("text-anchor", "middle")
             .attr("dy", ".35em")
-            .text("");
+            .text("Percentage Error");
 
         svg.append("text")
             .attr("x", 345)
@@ -462,25 +448,6 @@ else {
             .style("fill", "#000")
             .attr("transform", "rotate(-90)")
             .text("Forecast Period");
-
-        svg.append("text")
-            .attr("x", 0)
-            .attr("y", -20)
-            .attr("text-anchor", "left")
-            .style("font-size", "12px sans-serif")
-            .style("fill", "#000")
-            .style("max-width", 400);
-
-        svg.selectAll(".tile")
-            .style("fill", function(d) {
-                return myColor(d.Deviation);
-            });
-
-        svg.selectAll(".legend rect")
-            .style("fill", function(d) {
-                return myColor(d);
-            });
-
     });
     </script>
 

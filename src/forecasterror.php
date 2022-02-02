@@ -38,7 +38,7 @@ else {
 
     <script>
     localforage.config({
-        driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+        driver: localforage.INDEXEDDB,
         name: 'innoFit',
         version: 1.0,
         size: 4980736, // Size of database, in bytes. WebSQL-only for now.
@@ -63,8 +63,11 @@ else {
                     <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
-                            aria-haspopup="true" aria-expanded="false">Visualizations <span class="caret"></span></a>
+                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz  <span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                        <li class="dropdown-header">Dashboard</li>
+                        <li><a href="./dashboard.php">Dashboard</a></li>
+                        <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
@@ -75,6 +78,7 @@ else {
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
+                            <li><a href="./md_graph.php">Mean Deviation (MD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
                             <li><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
@@ -83,6 +87,7 @@ else {
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
+                    <!-- <li><a href="./dashboard.php">Dashboard</a></li> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
                             aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
@@ -90,6 +95,7 @@ else {
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
                     </li>
+                    <li><a href="./ClusterTest.php">Clustering </a> </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -187,8 +193,8 @@ else {
                     comparing the forecasted order amounts to the final order amounts with respect to periods before
                     delivery.<br>
                     The formula of the Percentage Error:
-                    <img src="https://latex.codecogs.com/gif.latex?e_{i,j} = \frac{ x_{i,j} - x_{i,0} }{x_{i,0}}"
-                        title="Percentage (forecast) Error formula" />.
+                        <img src="../data/img/forecast.png" title="Percentage Error formula" height="56" width="105"/>
+                    . </p>
                 </p>
             </div>
         </div>
@@ -266,14 +272,14 @@ else {
             let filterValues = data.filter((el) => {
                 return el.PeriodsBeforeDelivery == 0;
             });
-            console.log("Final Orders: ", filterValues);
+            // console.log("Final Orders: ", filterValues);
             let valueMap = new Map();
             filterValues.forEach((val) => {
                 let keyString = val.ActualPeriod;
                 let valueString = val.OrderAmount;
                 valueMap.set(keyString, valueString);
             });
-            console.log("Mapped final order array: ", valueMap);
+            // console.log("Mapped final order array: ", valueMap);
 
             let finalArray = data.map((el) => {
                 let deviation = calcDeviation(el, valueMap.get(el.ForecastPeriod))
@@ -289,14 +295,14 @@ else {
                     Deviation: deviation.toFixed(2)
                 };
             })
-            console.log("FINAL Array with deviation: ", finalArray);
+            // console.log("FINAL Array with deviation: ", finalArray);
             newFinalArray = finalArray.filter((el) => {
                 return !isNaN(el.Deviation);
             })
             isfinitearray = newFinalArray.filter((el) => {
                 return isFinite(el.Deviation) == true;
             })
-            console.log("isfinitearrayt: ", isfinitearray);
+            // console.log("isfinitearray: ", isfinitearray);
             let deviationCalc = d3.values(isfinitearray, function(d) {
                 return d.Deviation;
             })
@@ -355,7 +361,7 @@ else {
             });
             var periodsBeforeDeliveryGroup = periodsBeforeDeliveryDim.group();
             var dateGroup = dateDim.group();
-            console.log("ndxDim: ", ndxGroup.top(Infinity));
+            // console.log("ndxDim: ", ndxGroup.top(Infinity));
 
 
             forecastlist
@@ -375,7 +381,12 @@ else {
                 .group(periodsBeforeDeliveryGroup)
                 .multiple(true)
                 .numberVisible(15);
-            var plotColorMap = d3.scaleOrdinal(d3.schemeCategory10);
+            var plotColorMap = d3.scaleOrdinal(d3.schemeCategory10)
+                .domain(d3.extent(isfinitearray, function (d){ return d.ForecastPeriod}));
+            let mdPeriodsBD = isfinitearray.map(function(d) {
+                return d.PeriodsBeforeDelivery
+            });
+            let periodsMax = Math.max(...mdPeriodsBD);
 
             forecastErrorChart
                 .width(768 + margin.left + margin.right)
@@ -392,9 +403,9 @@ else {
                 .colorAccessor(function(d) {
                     return d.key[2];
                 })
-                .colors(function(colorKey) {
-                    return plotColorMap(colorKey);
-                })
+                // .colors(function(d) {
+                //     return plotColorMap(d);
+                // })
                 .keyAccessor(function(d) {
                     return d.key[0];
                 })
@@ -417,13 +428,14 @@ else {
                         'Actual Period: ' + d.key[2]
                     ].join('\n');
                 })
-                .xAxis().tickFormat(d3.format('d'));
+                .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
+                // .xAxis().tickFormat(d3.format('d'));
 
             forecastErrorChart.yAxis().tickFormat(d3.format('.0%'));
 
             forecastErrorChart.symbol(d3.symbolCircle);
             forecastErrorChart.margins(margin);
-            forecastErrorChart.legend(dc.legend().legendText("Actual Period"));
+            forecastErrorChart.legend(dc.legend().legendText("Actual Period").x(770).y(45));
 
             visCount
                 .dimension(ndx)

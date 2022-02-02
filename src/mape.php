@@ -35,7 +35,7 @@ else {
     <script src="./js/util.js"></script>
     <script>
     localforage.config({
-        driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+        driver: localforage.INDEXEDDB,
         name: 'innoFit',
         version: 1.0,
         size: 4980736, // Size of database, in bytes. WebSQL-only for now.
@@ -60,8 +60,11 @@ else {
                     <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
-                            aria-haspopup="true" aria-expanded="false">Visualizations <span class="caret"></span></a>
+                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz  <span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                        <li class="dropdown-header">Dashboard</li>
+                        <li><a href="./dashboard.php">Dashboard</a></li>
+                        <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
@@ -71,6 +74,7 @@ else {
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
+                            <li><a href="./md_graph.php">Mean Deviation (MD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
                             <li><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
@@ -80,6 +84,7 @@ else {
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
+                    <!-- <li><a href="./dashboard.php">Dashboard</a></li> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
                             aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
@@ -87,6 +92,7 @@ else {
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
                     </li>
+                    <li><a href="./ClusterTest.php">Clustering </a> </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -150,7 +156,7 @@ else {
     </nav>
     <div class="customContainer">
         <div class="row" style="margin-bottom: -2%;">
-            <div class="col-md-10">
+            <div class="col-md-6">
                 <h3>Mean Absolute Percentage Error (MAPE) Graph</h3>
                 <small>
                     <?php
@@ -176,6 +182,35 @@ else {
                     </div>
                 </div>
             </div>
+            <div class="col-md-2">
+                <div id="filter2Info" class="alert alert-danger" style="text-align: center" role="alert">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                role="info">Filters have not been applied!</span>
+                        </div>
+                        <div class="row">
+                            <span style="font-size: 11px; vertical-align: middle;" class="alert-danger" role="alert">
+                                Please adjust the Date Filters so that Actual Date <= Forecast Date.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div id="filter3Info" class="alert alert-danger" style="text-align: center" role="alert">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                role="danger">More
+                                than one product have been selected.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-md-12" style="margin-bottom: 50px;">
@@ -188,8 +223,9 @@ else {
                     customer orders. The result is divided by a number of
                     periods with respect to periods before delivery (PBD).
                     <br>The formula of the MAPE is the following:
-                    <img src="https://latex.codecogs.com/gif.latex?MAPE_{j} = \frac {\sum_{i=1}^{n}|x_{i,j}-x_{i,0}|}{\sum_{i=1}^{n}x_{i,0}}"
-                        title="MAPE formula" />
+                    <!-- <img src="https://latex.codecogs.com/gif.latex?MAPE_{j} = \frac {\sum_{i=1}^{n}|x_{i,j}-x_{i,0}|}{\sum_{i=1}^{n}x_{i,0}}"
+                        title="MAPE formula" /> -->
+                    <img src="../data/img/mape.gif" title="MAPE formula" />
                 </p>
             </div>
         </div>
@@ -218,6 +254,7 @@ else {
                     </a><br />
                     <br />
                     <button class="btn btn-secondary" onclick="myFunction()"><strong>Show Data table</strong></button>
+                    <button class="btn btn-secondary" id="exportFunction"><strong>Export Data</strong></button>
                     <table class="table table-hover dc-data-table" id="myTable" style="display:none">
                     </table>
                     <br />
@@ -245,6 +282,20 @@ else {
         }
     });
 
+    $(document).ready(function() {
+        if (localStorage.getItem('check2FiltersActive') === 'true') {
+            $('#filter2Info').show();
+        } else {
+            $('#filter2Info').hide();
+        }
+    });
+    $(document).ready(function() {
+        if (localStorage.getItem('check3FiltersActive') === 'true') {
+            $('#filter3Info').hide();
+        } else {
+            $('#filter3Info').show();
+        }
+    });
     var forecastlist = dc.selectMenu("#forecastlist"),
         // productChart = dc.pieChart("#product"),
         periodsBeforeDeliveryChart = dc.selectMenu("#pbd"),
@@ -278,7 +329,7 @@ else {
             finalOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
         });
 
-        console.log('FINAL ORDER MAP: ', finalOrdersForecastPeriods);
+        // console.log('FINAL ORDER MAP: ', finalOrdersForecastPeriods);
 
         //Order All data by PBD
         // Order the Final Orders
@@ -296,7 +347,7 @@ else {
         let maxActualPeriod = Math.max.apply(Math, finalOrder.map(function(o) {
             return o.ActualPeriod;
         }))
-        console.log('maxActualPeriod: ', maxActualPeriod);
+        // console.log('maxActualPeriod: ', maxActualPeriod);
 
         // Order the Products by PBD in order to calculate sum of Forecasts and FinalOrders
         let orderByPBD = d3.nest()
@@ -311,7 +362,7 @@ else {
 
             // Forecast Sums
             let validForecasts = el.values.filter(e => e.ForecastPeriod <= maxActualPeriod);
-            console.log('validForecasts: ', validForecasts);
+            // console.log('validForecasts: ', validForecasts);
 
             let forecastOrdersForecastPeriods = new Map();
             validForecasts.map(e => {
@@ -335,10 +386,10 @@ else {
                         forecastOrdersForecastPeriods.get(e)));
                 }
             });
-            console.log('items: ', items);
-            console.log('difference: ', difference);
+            // console.log('items: ', items);
+            // console.log('difference: ', difference);
             let sumOfDifferences = difference.reduce((a, b) => +a + +b, 0);
-            console.log('sumOfDifferences: ', sumOfDifferences);
+            // console.log('sumOfDifferences: ', sumOfDifferences);
 
             // MFB & MAPE
             let mfbValue = sumOfForecasts / sumFinalOrders;
@@ -356,27 +407,96 @@ else {
                 MAPE: mapeValue.toFixed(3)
             }
         });
-        console.log('Forecast, FinalOrders, MAPE all orderByPBD: ', calculationsOrderByPBD);
+        // console.log('Forecast, FinalOrders, MAPE all orderByPBD: ', calculationsOrderByPBD);
+
+        var exportArray = calculationsOrderByPBD.map((el) => {
+            return {
+                Product: el.Product,
+                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                MAPE: el.MAPE + "\n"
+            }
+        })
+
+        /**   Convert array to csv function           */
+        function pivot(arr) {
+            var mp = new Map();
+
+            function setValue(a, path, val) {
+                if (Object(val) !== val) { // primitive value
+                    var pathStr = path.join('.');
+                    var i = (mp.has(pathStr) ? mp : mp.set(pathStr, mp.size)).get(pathStr);
+                    a[i] = val;
+                } else {
+                    for (var key in val) {
+                        setValue(a, key == '0' ? path : path.concat(key), val[key]);
+                    }
+                }
+                return a;
+            }
+            var result = arr.map(obj => setValue([], [], obj));
+            return [
+                [...mp.keys()], ...result
+            ];
+        }
+
+        function toCsv(arr) {
+            return arr.map(row =>
+                row.map(val => isNaN(val) ? JSON.stringify(val) : +val).join(',')
+            ).join('\n');
+        }
+        let newCsvContent = toCsv(pivot(exportArray));
+        // console.log("newCsvContent array: ", newCsvContent);
+
+        /** Export script */
+        $("#exportFunction").click(function() {
+            saveFile("MAPE.csv", "data:attachment/csv", newCsvContent);
+        });
+
+        /** Function to save file as csv */
+        function saveFile(name, type, data) {
+            if (data != null && navigator.msSaveBlob)
+                return navigator.msSaveBlob(new Blob([data], {
+                    type: type
+                }), name);
+            var a = $("<a style='display: none;'/>");
+            var url = window.URL.createObjectURL(new Blob([data], {
+                type: type
+            }));
+            a.attr("href", url);
+            a.attr("download", name);
+            $("body").append(a);
+            a[0].click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+        }
+        /** End of export function */
+
         newFinalArray = calculationsOrderByPBD.filter((el) => {
             return !isNaN(el.MAPE);
         })
+        oneFinalArray = newFinalArray.filter((el) => {
+                return el.MAPE !== Infinity;
+            })
+        twoFinalArray = oneFinalArray.filter((el) => {
+            return el.MAPE !== 'Infinity';
+        })
 
-        newFinalArray.forEach(function(d) {
+        twoFinalArray.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
         });
 
-        let periodsBD = newFinalArray.map(function(d) {
+        let periodsBD = twoFinalArray.map(function(d) {
             return d.PeriodsBeforeDelivery
         });
         let periodsMax = Math.max(...periodsBD);
         //Define mean value of Order Amount, i.e. Avg. Order Amount
-        var dataMean = d3.mean(newFinalArray, function(
+        var dataMean = d3.mean(twoFinalArray, function(
             d) {
             return d.MAPE;
         });
         console.log("Mean Value: ", dataMean);
 
-        var ndx = crossfilter(newFinalArray);
+        var ndx = crossfilter(twoFinalArray);
         var all = ndx.groupAll();
         var forecastPeriodDim = ndx.dimension(function(d) {
             return +d.ForecastPeriod;
@@ -444,7 +564,8 @@ else {
                     'MAPE: ' + d.key[1]
                 ].join('\n');
             })
-            .xAxis().tickFormat(d3.format('d'));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
+            // .xAxis().tickFormat(d3.format('d'));
 
         MAPEchart.selectAll('path.symbol')
             .attr('opacity', 0.3);

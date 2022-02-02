@@ -37,7 +37,7 @@ else {
     <script src="./js/util.js"></script>
     <script>
     localforage.config({
-        driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+        driver: localforage.INDEXEDDB,
         name: 'innoFit',
         version: 1.0,
         size: 4980736, // Size of database, in bytes. WebSQL-only for now.
@@ -62,8 +62,11 @@ else {
                     <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Visualizations <span class="caret"></span></a>
+                            aria-expanded="false"> Dashboard and Viz <span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                        <li class="dropdown-header">Dashboard</li>
+                        <li><a href="./dashboard.php">Dashboard</a></li>
+                        <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li class="active"><a href="./finalorder.php">Final Order Amount <span
                                         class="sr-only">(current)</span></a></li>
@@ -74,14 +77,15 @@ else {
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
+                            <li><a href="./md_graph.php">Mean Deviation (MD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
-                            <li><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
                             <li><a href="./mpe.php">Mean Percentage Error (MPE) </a></li>
                             <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
+                    <!-- <li><a href="./dashboard.php">Dashboard</a></li> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">Corrections <span class="caret"></span> </a>
@@ -89,6 +93,7 @@ else {
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
                     </li>
+                    <li><a href="./ClusterTest.php">Clustering </a> </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -252,7 +257,7 @@ else {
             </div>
         </div>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div id="forecastlist">
                     <br />
                     <p style="text-align:left;"><strong>Due Date <br /><small>(due date: no. of
@@ -260,7 +265,7 @@ else {
                     <div class="clearfix"></div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div id="forecastWeek">
                     <br />
                     <p style="text-align:left;"><strong>Due date (forecast period) <br /><small>(due date: no. of
@@ -268,7 +273,7 @@ else {
                     <div class="clearfix"></div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div id="select1"><br />
                     <p style="text-align:left;"><strong>Product<br /><small>(product ID: no. of
                                 records)</small></strong></p>
@@ -337,7 +342,7 @@ else {
                 d) {
                 return +d.OrderAmount;
             });
-            console.log("Mean Value: ", dataMean);
+            // console.log("Mean Value: ", dataMean);
 
             var dataMedian = d3.median(finalOrderCalc, function(
                 d) {
@@ -408,8 +413,8 @@ else {
                 d.ActualDate = new Date(d.ActualDate),
                     d.ForecastDate = new Date(d.ForecastDate)
             });
-            console.log("finalOrder: ", finalOrder);
-            console.log("weeksArray: ", weeksArray);
+            // console.log("finalOrder: ", finalOrder);
+            // console.log("weeksArray: ", weeksArray);
 
 
             var ndx = crossfilter(finalOrder);
@@ -462,7 +467,7 @@ else {
                 .group(productGroup)
                 .multiple(true);
 
-            console.log("ndxDim: ", ndxGroup.top(Infinity));
+            // console.log("ndxDim: ", ndxGroup.top(Infinity));
 
             FinalOrderChart
                 .width(width + margin.left + margin.right)

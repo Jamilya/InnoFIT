@@ -42,7 +42,7 @@ session_start();
 
     <script type="text/javascript">
     localforage.config({
-        driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+        driver: localforage.INDEXEDDB, // Force WebSQL; same as using setDriver()
         name: 'innoFit',
         version: 1.0,
         size: 4980736, // Size of database, in bytes. WebSQL-only for now.
@@ -90,8 +90,11 @@ session_start();
                     <li><a class="specialLine" href="src/configuration.php">Configuration</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
-                            aria-haspopup="true" aria-expanded="false">Visualizations <span class="caret"></span></a>
+                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz <span
+                                class="caret"></span></a>
                         <ul class="dropdown-menu">
+                            <li class="dropdown-header">Dashboard</li>
+                            <li><a href="src/dashboard.php">Dashboard</a></li>
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="src/finalorder.php">Final Order Amount </a></li>
                             <li><a href="src/deliveryplans.php">Delivery Plans </a></li>
@@ -101,6 +104,7 @@ session_start();
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="src/mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
+                            <li><a href="src/md_graph.php">Mean Deviation (MD) </a></li>
                             <li> <a href="src/mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="src/rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
                             <li><a href="src/normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
@@ -109,6 +113,7 @@ session_start();
                             <li><a href="src/meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
+                    <!-- <li><a href="src/dashboard.php">Dashboard</a></li> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
                             aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
@@ -116,6 +121,7 @@ session_start();
                             <li><a href="src/cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
                     </li>
+                    <li><a href="src/ClusterTest.php">Clustering </a> </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -168,7 +174,8 @@ session_start();
                         /* ]]> */
                         </script>
                     </li>
-                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span>
+                            Logout</a></li>
                 </ul>
             </div>
             <!--/.nav-collapse -->
@@ -189,12 +196,35 @@ session_start();
                 </div>
         </header>
         <div class="container text-center">
-            <h4 class="font-weight-light"><?php   echo "Dear ";
+            <div class="row" style="margin-bottom: -2%;">
+                <div class="col-md-10">
+                    <h4 class="font-weight-light"><?php   echo "Dear ";
                     print_r($_SESSION["session_username"]);
                     echo ",";?></h2>
-                <p>Welcome to the Forecast Quality Visualization tool - InnoFitVis.</p>
-                <p>Below you can find some quick tips in order to get you started with the tool</p>
-                <p>Happy exploring!</p>
+                        <p>Welcome to the Forecast Quality Visualization tool - InnoFitVis.</p>
+                        <p>Below you can find some quick tips in order to get you started with the tool</p>
+                        <p>Happy exploring!</p>
+                </div>
+
+                <div class="col-md-2">
+                    <div id="filter2Info" class="alert alert-danger" style="text-align: center" role="alert">
+                        <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                            class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
+                        <div class="info-container">
+                            <div class="row">
+                                <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                    role="info">Filters
+                                    have not been applied!</span>
+                            </div>
+                            <div class="row">
+                                <span style="font-size: 11px; vertical-align: middle;" class="alert-danger"
+                                    role="alert">
+                                    Please adjust the Date Filters so that Actual Date <= Forecast Date.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -202,9 +232,17 @@ session_start();
     <br />
 
     <script>
+    $(document).ready(function() {
+        if (localStorage.getItem('check2FiltersActive') === 'true') {
+            $('#filter2Info').show();
+        } else {
+            $('#filter2Info').hide();
+        }
+    });
     d3.json("/includes/getdata.php", function(error, data) {
         if (error) throw error;
         console.log('Read Data: ', data);
+
 
         var stringData = JSON.stringify(data);
         var newData = Number(data);
@@ -216,7 +254,27 @@ session_start();
             return el.PeriodsBeforeDelivery == "0";
         });
 
+        console.log('Final Order Data: ', finalOrder);
+
         let valueMap = new Map();
+        // Check data that forecast horizon does not exceed one year and actual date <= forecast date
+        let forecastHorizonCheck = data.filter((item) => {
+            let actualDate = new Date(item.ActualDate);
+            let forecastDate = new Date(item.ForecastDate);
+            let actualYear = actualDate.getFullYear();
+            let forecastYear = forecastDate.getFullYear();
+            const actualDateInt = new Date(item.ActualDate.slice(0, -9)).getTime();
+            const forecastDateInt = new Date(item.ForecastDate.slice(0, -9)).getTime();
+            if (actualYear <= forecastYear && item.PeriodsBeforeDelivery <= 53) {
+                return actualDateInt <= forecastDateInt;
+            }
+        });
+        console.log('Checked data for forecast horizon: ', forecastHorizonCheck);
+        if (data.length === forecastHorizonCheck.length) {
+            localStorage.setItem('check2FiltersActive', false);
+        } else {
+            localStorage.setItem('check2FiltersActive', true);
+        }
 
         finalOrder.forEach((val) => {
             let keyString = val.ActualPeriod;
@@ -239,9 +297,6 @@ session_start();
         // Save the data in localforage
         localforage.setItem('all_data', JSON.stringify(data));
         localforage.setItem('viz_data', JSON.stringify(data));
-        localforage.setItem('finalOrder', JSON.stringify(finalOrder));
-        localforage.setItem('deviation', JSON.stringify(finalArray));
-        console.log('SAVING: ', data, finalOrder, finalArray);
     });
     </script>
 
@@ -322,31 +377,31 @@ if (isset($_POST["import"])) {
                     </div>
                 </form> -->
                 <div style="margin-top: 80px;">
-                <form id="fileUploadForm" action="" method="post" name="frmCSVImport" id="frmCSVImport"
-                    enctype="multipart/form-data">
-                    <fieldset>
-                        <div class="form-horizontal">
-                            <div class="form-group">
-                                <div class="row">
-                                    <label class="control-label col-md-2 text-right" for="filename"><span>Choose CSV
-                                            File</span></label>
-                                    <div class="col-md-10">
-                                        <div class="input-group">
-                                            <input type="hidden" id="filename" name="filename" value="">
-                                            <input type="file" name="file" id="file" accept=".csv"
-                                                class="form-control form-control-sm">
-                                            <div class="input-group-btn">
-                                                <input type="submit" id="submit" name="import" value="Import"
-                                                    class="rounded-0 btn btn-primary"
-                                                    style="min-width: 140px; font-weight: bolder;">
+                    <form id="fileUploadForm" action="" method="post" name="frmCSVImport" id="frmCSVImport"
+                        enctype="multipart/form-data">
+                        <fieldset>
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="control-label col-md-2 text-right" for="filename"><span>Choose CSV
+                                                File</span></label>
+                                        <div class="col-md-10">
+                                            <div class="input-group">
+                                                <input type="hidden" id="filename" name="filename" value="">
+                                                <input type="file" name="file" id="file" accept=".csv"
+                                                    class="form-control form-control-sm">
+                                                <div class="input-group-btn">
+                                                    <input type="submit" id="submit" name="import" value="Import"
+                                                        class="rounded-0 btn btn-primary"
+                                                        style="min-width: 140px; font-weight: bolder;">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </fieldset>
-                </form>
+                        </fieldset>
+                    </form>
                 </div>
             </div>
         </div>
@@ -399,7 +454,7 @@ if (isset($_POST["import"])) {
                     alt="Data Format Example" align="middle" height="175" width="360"><br></p>
             <br>
         </div>
-        <hr/>
+        <hr />
         <div class="row" style="margin-bottom: 5%">
             <div class="col-md-12">
                 <h3>Intepret Error Measures:</h3>

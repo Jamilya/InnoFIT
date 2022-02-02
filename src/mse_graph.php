@@ -38,7 +38,7 @@ else {
 
     <script>
     localforage.config({
-        driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+        driver: localforage.INDEXEDDB,
         name: 'innoFit',
         version: 1.0,
         size: 4980736, // Size of database, in bytes. WebSQL-only for now.
@@ -63,8 +63,11 @@ else {
                     <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
-                            aria-haspopup="true" aria-expanded="false">Visualizations <span class="caret"></span></a>
+                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz  <span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                        <li class="dropdown-header">Dashboard</li>
+                        <li><a href="./dashboard.php">Dashboard</a></li>
+                        <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
@@ -74,6 +77,7 @@ else {
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
+                            <li><a href="./md_graph.php">Mean Deviation (MD) </a></li>
                             <li class="active"> <a href="./mse_graph.php">Mean Square Error (MSE) <span
                                         class="sr-only">(current)</span></a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE) </a></li>
@@ -83,6 +87,7 @@ else {
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
+                    <!-- <li><a href="./dashboard.php">Dashboard</a></li> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
                             aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
@@ -90,6 +95,7 @@ else {
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
                     </li>
+                    <li><a href="./ClusterTest.php">Clustering </a> </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -151,7 +157,7 @@ else {
 
     <div class="customContainer">
         <div class="row" style="margin-bottom: -2%;">
-            <div class="col-md-10">
+            <div class="col-md-6">
                 <h3>Mean Squared Error (MSE) Graph</h3>
                 <small>
                     <?php
@@ -178,6 +184,35 @@ else {
                     </div>
                 </div>
             </div>
+            <div class="col-md-2">
+                <div id="filter2Info" class="alert alert-danger" style="text-align: center" role="alert">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                role="info">Filters have not been applied!</span>
+                        </div>
+                        <div class="row">
+                            <span style="font-size: 11px; vertical-align: middle;" class="alert-danger" role="alert">
+                                Please adjust the Date Filters so that Actual Date <= Forecast Date.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div id="filter3Info" class="alert alert-danger" style="text-align: center" role="alert">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                role="danger">More
+                                than one product have been selected.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-md-12" style="margin-bottom: 50px;">
@@ -189,8 +224,10 @@ else {
                     estimation (zero
                     meaning perfect accuracy). <br>
                     The Formula of the Mean Squared Error (MSE) is:
-                    <img src="https://latex.codecogs.com/gif.latex?MSE_{j} = \frac{1}{n}\sum_{i=1}^{n}(x_{i,j}-x_{i,0})^{2}"
-                        title="MSE formula" />. Note MSE values: M = millions, K = thousands </p>
+                    <!-- <img src="https://latex.codecogs.com/gif.latex?MSE_{j} = \frac{1}{n}\sum_{i=1}^{n}(x_{i,j}-x_{i,0})^{2}"
+                        title="MSE formula" /> -->
+                    <img src="../data/img/mse.gif" title="MSE formula" />
+                    . Note MSE values: M = millions, K = thousands </p>
             </div>
         </div>
 
@@ -212,11 +249,12 @@ else {
             </div>
         </div>
         <div class="row" style="margin: 50px 0 50px 0;">
-        <div class="dc-data-count">
-                There are <span class="filter-count"></span> selected out of <span class="total-count"></span> records | <a class="badge badge-light"
-                    href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a><br />
+            <div class="dc-data-count">
+                There are <span class="filter-count"></span> selected out of <span class="total-count"></span> records |
+                <a class="badge badge-light" href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a><br />
                 <br />
                 <button class="btn btn-secondary" onclick="myFunction()"><strong>Show Data table</strong></button>
+                <button class="btn btn-secondary" id="exportFunction"><strong>Export Data</strong></button>
                 <table class="table table-hover dc-data-table" id="myTable" style="display:none">
                 </table>
                 <br />
@@ -243,6 +281,20 @@ else {
         }
     });
 
+    $(document).ready(function() {
+        if (localStorage.getItem('check2FiltersActive') === 'true') {
+            $('#filter2Info').show();
+        } else {
+            $('#filter2Info').hide();
+        }
+    });
+    $(document).ready(function() {
+        if (localStorage.getItem('check3FiltersActive') === 'true') {
+            $('#filter3Info').hide();
+        } else {
+            $('#filter3Info').show();
+        }
+    });
     const margin = {
         top: 10,
         right: 10,
@@ -256,6 +308,7 @@ else {
 
     localforage.getItem("viz_data", function(error, data) {
         data = JSON.parse(data);
+        const uniqueNames = [...new Set(data.map(i => i.Product))];
 
         let finalOrder = data.filter((el) => {
             return el.PeriodsBeforeDelivery == 0;
@@ -273,12 +326,12 @@ else {
             return Math.pow((orignalEl.OrderAmount - finalOrder), 2);
         }
 
-        console.log("FINAL ORDERS: ", finalOrder);
+        // console.log("FINAL ORDERS: ", finalOrder);
 
         let uniqueArray = data.filter(function(obj) {
             return finalOrder.indexOf(obj) == -1;
         });
-        console.log("Unique array: ", uniqueArray);
+        // console.log("Unique array: ", uniqueArray);
 
         let valueMap = new Map();
         finalOrder.forEach((val) => {
@@ -286,7 +339,7 @@ else {
             let valueString = val.OrderAmount;
             valueMap.set(keyString, valueString);
         });
-        console.log("valueMap: ", valueMap);
+        // console.log("valueMap: ", valueMap);
 
         let absValuesArray = uniqueArray.map((el) => {
             let value = absDiff(el, valueMap.get(el.ForecastPeriod));
@@ -301,14 +354,14 @@ else {
                 AbsoluteDiff: value
             };
         });
-        console.log("Absolute values: ", absValuesArray);
+        // console.log("Absolute values: ", absValuesArray);
 
         let seperatedByPeriods = d3.nest()
             .key(function(d) {
                 return d.PeriodsBeforeDelivery
             })
             .entries(absValuesArray);
-        console.log("seperatedByPeriods: ", seperatedByPeriods);
+        // console.log("seperatedByPeriods: ", seperatedByPeriods);
 
         let bubu = seperatedByPeriods.map((el) => {
             for (i = 0; i < seperatedByPeriods.length; i++) {
@@ -318,7 +371,7 @@ else {
                 return {
                     ActualDate: el.values[i].ActualDate,
                     ForecastDate: el.values[i].ForecastDate,
-                    Product: el.values[i].Product,
+                    Product: uniqueNames,
                     ActualPeriod: el.values[i].ActualPeriod,
                     ForecastPeriod: el.values[i].ForecastPeriod,
                     OrderAmount: el.values[i].OrderAmount,
@@ -327,6 +380,68 @@ else {
                 };
             }
         });
+        var exportArray = bubu.map((el) => {
+            return {
+                Product: el.Product,
+                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                MSE: el.MSE + "\n"
+            }
+        })
+
+        /**   Convert array to csv function           */
+        function pivot(arr) {
+            var mp = new Map();
+
+            function setValue(a, path, val) {
+                if (Object(val) !== val) { // primitive value
+                    var pathStr = path.join('.');
+                    var i = (mp.has(pathStr) ? mp : mp.set(pathStr, mp.size)).get(pathStr);
+                    a[i] = val;
+                } else {
+                    for (var key in val) {
+                        setValue(a, key == '0' ? path : path.concat(key), val[key]);
+                    }
+                }
+                return a;
+            }
+            var result = arr.map(obj => setValue([], [], obj));
+            return [
+                [...mp.keys()], ...result
+            ];
+        }
+
+        function toCsv(arr) {
+            return arr.map(row =>
+                row.map(val => isNaN(val) ? JSON.stringify(val) : +val).join(',')
+            ).join('\n');
+        }
+        let newCsvContent = toCsv(pivot(exportArray));
+        // console.log("newCsvContent array: ", newCsvContent);
+
+        /** Export script */
+        $("#exportFunction").click(function() {
+            saveFile("MSE.csv", "data:attachment/csv", newCsvContent);
+        });
+
+        /** Function to save file as csv */
+        function saveFile(name, type, data) {
+            if (data != null && navigator.msSaveBlob)
+                return navigator.msSaveBlob(new Blob([data], {
+                    type: type
+                }), name);
+            var a = $("<a style='display: none;'/>");
+            var url = window.URL.createObjectURL(new Blob([data], {
+                type: type
+            }));
+            a.attr("href", url);
+            a.attr("download", name);
+            $("body").append(a);
+            a[0].click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+        }
+        /** End of export function */
+
         newFinalArray = bubu.filter((el) => {
             return !isNaN(el.MSE);
         })
@@ -411,7 +526,8 @@ else {
                     'MSE: ' + d.key[1]
                 ].join('\n');
             })
-            .xAxis().tickFormat(d3.format('d'));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
+            // .xAxis().tickFormat(d3.format('d'));
 
         MSEchart.yAxis().tickFormat(d3.format(".2s"));
         // console.log('ndxgroup data:', ndxDim);

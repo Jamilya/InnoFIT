@@ -9,6 +9,7 @@ else {
 <!DOCTYPE html>
 <html lang="en">
 <meta charset="utf-8">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-compatible" content="IE=edge">
@@ -18,6 +19,7 @@ else {
     <link rel="icon" href="/data/ico/innofit.ico">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
         integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css" />
     <link rel="stylesheet" href="./css/dashboard.css">
     <link rel="stylesheet" href="./css/header.css">
     <script src="../lib/js/localforage.js"></script>
@@ -27,7 +29,7 @@ else {
     <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
     <script>
     localforage.config({
-        driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+        driver: localforage.INDEXEDDB,
         name: 'innoFit',
         version: 1.0,
         size: 4980736, // Size of database, in bytes. WebSQL-only for now.
@@ -56,11 +58,14 @@ else {
                     <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
-                            aria-haspopup="true" aria-expanded="false">Visualizations <span class="caret"></span></a>
+                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz  <span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                        <li class="dropdown-header">Dashboard</li>
+                        <li class="active"><a href="./dashboard.php">Dashboard</a></li>
+                        <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Basic Order Analysis</li>
-                            <li class="active"><a href="./finalorder.php">Final Order Amount <span
-                                        class="sr-only">(current)</span></a></li>
+                            <li><a href="./finalorder.php">Final Order Amount <span class="sr-only">(current)</span></a>
+                            </li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
                             <li><a href="./matrix.php">Delivery Plans Matrix</a></li>
                             <li><a href="./forecasterror.php">Percentage Error</a></li>
@@ -68,6 +73,7 @@ else {
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
+                            <li><a href="./md_graph.php">Mean Deviation (MD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
                             <li><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
@@ -76,6 +82,7 @@ else {
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
+                    <!-- <li class="active"><a href="./dashboard.php">Dashboard</a></li> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
                             aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
@@ -83,6 +90,7 @@ else {
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
                     </li>
+                    <li><a href="./ClusterTest.php">Clustering </a> </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -143,155 +151,201 @@ else {
         <!--/.container-fluid -->
     </nav>
 
-    <div class="customContainer">
-        <!-- Page Features -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="text-center">
-                    <h2>Forecast Error Measures - Dashboard</h2>
-                    <small>
-                        <?php
+    <!-- Page Features -->
+    <div class="customContainer text-center">
+        <div class="row" style="margin-bottom: -2%;">
+            <div class="col-md-6">
+                <h2>Forecast Error Measures - Dashboard</h2>
+                <small>
+                    <?php
             echo "You are logged in as: ";
             print_r($_SESSION["session_username"]);
             echo ".";
             ?></small>
-                </div>
                 <p style="margin-top: 15px;">
                     On this page you find a overview about the available error measures this tool provides. Each error
                     measure has a dedicated page itself with a bigger view and
                     the possiblity to adjust some further elements or view specific items and compare them. This view is
                     mainly for a quick comparison and has only the main filters
-                    applied from the <a href="./configuration.php"><strong>Configuration</strong></a> page.
+                    applied from the <a href="./configuration.php"><strong>Configuration</strong></a> page. <button
+                        class="btn btn-secondary" id="exportFunction"><strong>Export Data</strong></button>
                 </p>
             </div>
-        </div>
-
-        <div class="row text-center" style="margin-top: 4%;">
-            <div class="col-md-1">
-                &nbsp;
-            </div>
-            <div class="col-md-5">
-                <div class="card h-100">
-                    <div class="card-img-top chartBox drop-shadow">
-                        <div id="scatter4">
+            <div class="col-md-2">
+                <div id="filterInfo" class="alert alert-info" style="text-align: center" role="info">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-info" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-info"
+                                role="info">Filters are applied!</span>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Mean Forecast Bias (MFB)</h4>
-                        <p class="card-text">To view the full graph please see the graph page: <a
-                                href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a>.</p>
+                        <div class="row">
+                            <span style="font-size: 12px; vertical-align: middle;" class="alert-info" role="info">
+                                To
+                                change settings please visit <a href="./configuration.php">Configuration</a>.</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-5">
-                <div class="card h-100">
-                    <div class="card-img-top chartBox drop-shadow">
-                        <div id="scatter5">
+            <div class="col-md-2">
+                <div id="filter2Info" class="alert alert-danger" style="text-align: center" role="alert">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                role="info">Filters have not been applied!</span>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Mean Percentage Error (MPE)</h4>
-                        <p class="card-text">To view the full graph please see the graph page: <a href="./mpe.php">Mean
-                                Percentage Error (MPE)</a>.</p>
-
+                        <div class="row">
+                            <span style="font-size: 11px; vertical-align: middle;" class="alert-danger" role="alert">
+                                Please adjust the Date Filters so that Actual Date <= Forecast Date.</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="row text-center" style="margin-top: 4%;">
-            <div class="col-md-1">
-                &nbsp;
-            </div>
-            <div class="col-md-5">
-                <div class="card h-100">
-                    <div class="card-img-top chartBox drop-shadow">
-                        <div id="scatter2">
+            <div class="col-md-2">
+                <div id="filter3Info" class="alert alert-danger" style="text-align: center" role="alert">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                role="danger">More
+                                than one product have been selected.</span>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Root Mean Square Error (RMSE)</h4>
-                        <p class="card-text">To view the full graph please see the graph page: <a
-                                href="./rmse_graph.php">Root Mean Square Error (RMSE)</a>.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-5">
-                <div class="card h-100">
-                    <div class="card-img-top chartBox drop-shadow">
-                        <div id="scatter6">
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Mean Square Error (MSE)</h4>
-                        <p class="card-text">To view the full graph please see the graph page: <a
-                                href="./mse_graph.php">Mean Square Error (MSE)</a>.</p>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="row text-center" style="margin-top: 4%;">
-            <div class="col-md-1">
-                &nbsp;
-            </div>
-            <div class="col-md-5">
-                <div class="card h-100">
-                    <div class="card-img-top chartBox drop-shadow">
-                        <div id="scatter3">
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Mean Absolute Percentage Error (MAPE)</h4>
-                        <p class="card-text">To view the full graph please see the graph page: <a href="./mape.php">Mean
-                                Absolute Percentage Error (MAPE)</a>.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-5">
-                <div class="card h-100">
-                    <div class="card-img-top chartBox drop-shadow">
-                        <div id="scatter">
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Mean Absolute Deviation (MAD)</h4>
-                        <p class="card-text">To view the full graph please see the graph page: <a
-                                href="./mad_graph.php">Mean Absolute Deviation (MAD)</a>.</p>
-                    </div>
-                </div>
-            </div>
+    <div class="row text-center" style="margin-top: 4%;">
+        <div class="col-md-1">
+            &nbsp;
         </div>
-
-        <div class="row text-center" style="margin-top: 4%;">
-            <div class="col-md-1">
-                &nbsp;
-            </div>
-            <div class="col-md-5">
-                <div class="card h-100">
-                    <div class="card-img-top chartBox drop-shadow">
-                        <div id="scatter7">
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Normalized Root Mean Square Error (RMSE*)</h4>
-                        <p class="card-text">To view the full graph please see the graph page: <a
-                                href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*/NRMSE)</a>.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-5">
-                <div class="card h-100">
-                    <div>
+        <div class="col-md-5">
+            <div class="card h-100">
+                <div class="card-img-top chartBox drop-shadow">
+                    <div id="scatter4">
                     </div>
                 </div>
                 <div class="card-body">
-
+                    <h4 class="card-title">Mean Forecast Bias (MFB)</h4>
+                    <p class="card-text">To view the full graph please see the graph page: <a
+                            href="./meanforecastbias.php">MFB</a>.</p>
                 </div>
             </div>
         </div>
+        <div class="col-md-5">
+            <div class="card h-100">
+                <div class="card-img-top chartBox drop-shadow">
+                    <div id="scatter5">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Mean Percentage Error (MPE)</h4>
+                    <p class="card-text">To view the full graph please see the graph page: <a href="./mpe.php">MPE</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row text-center" style="margin-top: 4%;">
+        <div class="col-md-1">
+            &nbsp;
+        </div>
+        <div class="col-md-5">
+            <div class="card h-100">
+                <div class="card-img-top chartBox drop-shadow">
+                    <div id="scatter2">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Root Mean Square Error (RMSE)</h4>
+                    <p class="card-text">To view the full graph please see the graph page: <a
+                            href="./rmse_graph.php">RMSE</a>.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card h-100">
+                <div class="card-img-top chartBox drop-shadow">
+                    <div id="scatter6">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Mean Square Error (MSE)</h4>
+                    <p class="card-text">To view the full graph please see the graph page: <a
+                            href="./mse_graph.php">MSE</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row text-center" style="margin-top: 4%;">
+        <div class="col-md-1">
+            &nbsp;
+        </div>
+        <div class="col-md-5">
+            <div class="card h-100">
+                <div class="card-img-top chartBox drop-shadow">
+                    <div id="scatter3">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Mean Absolute Percentage Error (MAPE)</h4>
+                    <p class="card-text">To view the full graph please see the graph page: <a href="./mape.php">MAPE</a>.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card h-100">
+                <div class="card-img-top chartBox drop-shadow">
+                    <div id="scatter">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Mean Absolute Deviation (MAD)</h4>
+                    <p class="card-text">To view the full graph please see the graph page: <a
+                            href="./mad_graph.php">MAD</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row text-center" style="margin-top: 4%;">
+        <div class="col-md-1">
+            &nbsp;
+        </div>
+        <div class="col-md-5">
+            <div class="card h-100">
+                <div class="card-img-top chartBox drop-shadow">
+                    <div id="scatter7">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Normalized Root Mean Square Error (RMSE*)</h4>
+                    <p class="card-text">To view the full graph please see the graph page: <a
+                            href="./normalized_rmse.php">RMSE*/NRMSE</a>.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card h-100">
+                <div class="card-img-top chartBox drop-shadow">
+                    <div id="scatter8">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Mean Deviation (MD)</h4>
+                    <p class="card-text">To view the full graph please see the graph page: <a href="./md_graph.php">MD</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
 
 
@@ -313,13 +367,27 @@ else {
             $('#filterInfo').hide();
         }
     });
-    // const margin = {
-    //     top: 5,
-    //     right: 5,
-    //     bottom: 5,
-    //     left: 5
-    // };
 
+    $(document).ready(function() {
+        if (localStorage.getItem('check2FiltersActive') === 'true') {
+            $('#filter2Info').show();
+        } else {
+            $('#filter2Info').hide();
+        }
+    });
+    $(document).ready(function() {
+        if (localStorage.getItem('check3FiltersActive') === 'true') {
+            $('#filter3Info').hide();
+        } else {
+            $('#filter3Info').show();
+        }
+    });
+    const margin = {
+        top: 10,
+        right: 10,
+        bottom: 45,
+        left: 55
+    };
     localforage.getItem("viz_data", function(error, data) {
         data = JSON.parse(data);
 
@@ -329,6 +397,7 @@ else {
             MPEchart = dc.scatterPlot("#scatter5"),
             MSEchart = dc.scatterPlot("#scatter6"),
             NRMSEchart = dc.scatterPlot("#scatter7"),
+            MDchart = dc.scatterPlot("#scatter8"),
             MADchart = dc.scatterPlot("#scatter");
 
         let width = 520;
@@ -336,6 +405,9 @@ else {
         // Define function of absolute difference of forecast and final orders (needed for MAD graph)
         let absDiff = function(orignalEl, finalOrder) {
             return Math.abs(orignalEl.OrderAmount - finalOrder);
+        }
+        let mdDiff = function(orignalEl, finalOrder) {
+            return orignalEl.OrderAmount - finalOrder;
         }
 
         // Define function of power of difference of forecast and final orders (needed for RMSE graph)
@@ -405,11 +477,13 @@ else {
             let items = el.values;
             let forecastItems = items.map(el => el.ForecastPeriod);
             let sumFinalOrders = 0;
+            let forecastSum = 0;
             let difference = [];
             let MPEdifference = [];
             forecastItems.forEach(e => {
                 if (finalOrdersForecastPeriods.get(e) !== undefined) {
                     sumFinalOrders += parseInt(finalOrdersForecastPeriods.get(e), 0);
+                    forecastSum += parseInt(forecastOrdersForecastPeriods.get(e), 0);
                     difference.push(Math.abs(finalOrdersForecastPeriods.get(e) -
                         forecastOrdersForecastPeriods.get(e)));
                     MPEdifference.push(forecastOrdersForecastPeriods.get(e) -
@@ -418,13 +492,12 @@ else {
             });
 
             let meanFinalOrders = sumFinalOrders / noFinalOrders;
-            console.log('MEAN', meanFinalOrders, ' for PBD: ', el.values[0]
-                .PeriodsBeforeDelivery);
+            // console.log('MEAN', meanFinalOrders, ' for PBD: ', el.values[0].PeriodsBeforeDelivery);
             let sumOfDifferences = difference.reduce((a, b) => +a + +b, 0);
             let MPEsumOfDifferences = MPEdifference.reduce((a, b) => +a + +b, 0);
 
             // MFB & MAPE
-            let mfbValue = sumOfForecasts / sumFinalOrders;
+            let mfbValue = forecastSum / sumFinalOrders;
             let mapeValue = sumOfDifferences / sumFinalOrders;
             let mpeValue = MPEsumOfDifferences / sumFinalOrders;
 
@@ -443,16 +516,39 @@ else {
                 MAPE: mapeValue.toFixed(3)
             }
         });
-        newFinalArray3 = calculationsOrderByPBD.filter((el) => {
+
+        var exportArray = calculationsOrderByPBD.map((el) => {
+            return {
+                Product: el.Product,
+                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                MFB: el.MFB,
+                MPE: el.MPE,
+                MAPE: el.MAPE + ' \n'
+            }
+        })
+
+        oneFinalArray = calculationsOrderByPBD.filter((el) => {
             return !isNaN(el.MAPE);
+        })
+        twoFinalArray = oneFinalArray.filter((el) => {
+            return el.MAPE !== Infinity;
+        })
+        newFinalArray3 = twoFinalArray.filter((el) => {
+            return el.MAPE !== 'Infinity';
         })
 
         newFinalArray3.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
         });
 
-        newFinalArray4 = calculationsOrderByPBD.filter((el) => {
+        oneFinalArrayMFB = calculationsOrderByPBD.filter((el) => {
             return !isNaN(el.MFB);
+        })
+        twoFinalArrayMFB = oneFinalArrayMFB.filter((el) => {
+            return el.MFB !== Infinity;
+        })
+        newFinalArray4 = twoFinalArrayMFB.filter((el) => {
+            return el.MFB !== 'Infinity';
         })
         let periodsBD3 = newFinalArray3.map(function(d) {
             return d.PeriodsBeforeDelivery
@@ -466,9 +562,16 @@ else {
             return d.PeriodsBeforeDelivery
         });
         let periodsMax4 = Math.max(...periodsBD4);
+        // console.log(periodsMax4, periodsBD4);
 
-        newFinalArray5 = calculationsOrderByPBD.filter((el) => {
-            return !isNaN(el.MPE);
+        oneFinalArrayMPE = calculationsOrderByPBD.filter((el) => {
+            return !isNaN(el.MFB);
+        })
+        twoFinalArrayMPE = oneFinalArrayMPE.filter((el) => {
+            return el.MFB !== Infinity;
+        })
+        newFinalArray5 = twoFinalArrayMPE.filter((el) => {
+            return el.MPE !== 'Infinity';
         })
         newFinalArray5.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
@@ -478,11 +581,12 @@ else {
         });
         let periodsMax5 = Math.max(...periodsBD5);
 
-        //Define mean value of Order Amount, i.e. Avg. Order Amount -- For MAPE calculation
+        //Define mean value of Order Amount, i.e. Avg. Order Amount -- For MFB calculation
         var dataMean = d3.mean(newFinalArray4, function(
             d) {
-            return d.MAPE;
+            return d.MFB;
         });
+        console.log("dataMean", dataMean);
 
         let valueMap = new Map();
         finalOrder.forEach((val) => {
@@ -490,9 +594,11 @@ else {
             let valueString = val.OrderAmount;
             valueMap.set(keyString, valueString);
         });
+        console.log("valueMap", valueMap);
         //Absolute values array (needed for MAD calculation)
         let absValuesArray = uniqueArray.map((el) => {
             let value = absDiff(el, valueMap.get(el.ForecastPeriod));
+            let value2 = mdDiff(el, valueMap.get(el.ForecastPeriod));
             return {
                 ActualDate: el.ActualDate,
                 ForecastDate: el.ForecastDate,
@@ -501,19 +607,40 @@ else {
                 OrderAmount: el.OrderAmount,
                 Product: el.Product,
                 PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-                AbsoluteDiff: value
+                MAD: value,
+                MD: value2
             };
         });
+        var newSeparatedByPBD = d3.nest()
+            .key(function(d) {
+                return d.PeriodsBeforeDelivery;
+            })
+            .key(function(d) {
+                return d.Product;
+            })
+            .entries(absValuesArray);
+
         let seperatedByPeriods = d3.nest()
             .key(function(d) {
                 return d.PeriodsBeforeDelivery
             })
             .entries(absValuesArray);
 
+        let periodsMAD = absValuesArray.map(function(d) {
+            return d.PeriodsBeforeDelivery
+        });
+        let periodsMaxMad = Math.max(...periodsMAD);
+        let periodsMinMad = Math.min(...periodsMAD);
+        // console.log(periodsMAD, periodsMinMad, periodsMaxMad);
+        let productCount = [...new Set(uniqueArray.map(i => i.Product))];
+
         let bubu = seperatedByPeriods.map((el) => {
             for (i = 0; i < seperatedByPeriods.length; i++) {
                 let meanValue = d3.mean(el.values, function(d) {
-                    return d.AbsoluteDiff;
+                    return d.MAD;
+                });
+                meanValue5 = d3.mean(el.values, function(d) {
+                    return d.MD;
                 });
                 return {
                     ActualDate: el.values[i].ActualDate,
@@ -523,10 +650,63 @@ else {
                     ForecastPeriod: el.values[i].ForecastPeriod,
                     OrderAmount: el.values[i].OrderAmount,
                     PeriodsBeforeDelivery: el.key,
-                    MAD: meanValue
+                    MAD: meanValue,
+                    MD: meanValue5
+                }
+            }
+        });
+        console.log("bubu", bubu);
+        var exportArray2 = bubu.map((el) => {
+            return {
+                Product: el.Product,
+                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                MD: el.MD,
+                MAD: el.MAD + "\n"
+            }
+        })
+        let absValuesArray2 = uniqueArray.map((el) => {
+            let value2 = mdDiff(el, valueMap.get(el.ForecastPeriod));
+            return {
+                ActualDate: el.ActualDate,
+                ForecastDate: el.ForecastDate,
+                ActualPeriod: el.ActualPeriod,
+                ForecastPeriod: el.ForecastPeriod,
+                OrderAmount: el.OrderAmount,
+                Product: el.Product,
+                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                MD: value2
+            };
+        });
+        let seperatedByPeriods3 = d3.nest()
+            .key(function(d) {
+                return d.PeriodsBeforeDelivery
+            })
+            .entries(absValuesArray2);
+
+        let mdArray = seperatedByPeriods3.map((el) => {
+            for (i = 0; i < seperatedByPeriods3.length; i++) {
+                let meanValue4 = d3.mean(el.values, function(d) {
+                    return d.MD;
+                });
+                return {
+                    ActualDate: el.values[i].ActualDate,
+                    ForecastDate: el.values[i].ForecastDate,
+                    Product: el.values[i].Product,
+                    ActualPeriod: el.values[i].ActualPeriod,
+                    ForecastPeriod: el.values[i].ForecastPeriod,
+                    OrderAmount: el.values[i].OrderAmount,
+                    PeriodsBeforeDelivery: el.key,
+                    MD: meanValue4
                 };
             }
         });
+        var exportArray4 = mdArray.map((el) => {
+            return {
+                Product: el.Product,
+                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                MD: el.MD + ' \n'
+            }
+        })
         //Powered difference values array (needed for RMSE & MSE calculation)
         let squaredAbsValuesArray = uniqueArray.map((el) => {
             let value = powerDiff(el, valueMap.get(el.ForecastPeriod));
@@ -554,6 +734,15 @@ else {
             })
             .entries(squaredAbsValuesArray2);
 
+        var newSeparatedByPBD2 = d3.nest()
+            .key(function(d) {
+                return d.PeriodsBeforeDelivery;
+            })
+            .key(function(d) {
+                return d.Product;
+            })
+            .entries(squaredAbsValuesArray2);
+
         let bubu2 = seperatedByPeriods2.map((el) => {
             for (i = 0; i < seperatedByPeriods2.length; i++) {
                 let meanValue2 = Math.sqrt(d3.mean(el.values, function(d) {
@@ -572,11 +761,101 @@ else {
                     OrderAmount: el.values[i].OrderAmount,
                     PeriodsBeforeDelivery: el.key,
                     MSE: meanValue3,
-                    NRMSE: normRMSE,
-                    RMSE: meanValue2.toFixed(3)
+                    NRMSE: normRMSE.toFixed(2),
+                    RMSE: meanValue2.toFixed(2)
                 };
             }
         });
+
+        var exportArray3 = bubu2.map((el) => {
+            return {
+                Product: el.Product,
+                PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                MSE: el.MSE,
+                NRMSE: el.NRMSE,
+                RMSE: el.RMSE + "\n"
+            }
+        })
+
+        /**Combine three export Arrays */
+        // let arr3 = exportArray.map((item, i) => Object.assign({}, item, exportArray2[i]));
+
+        let merged = [];
+        for (let i = 0; i < exportArray.length; i++) {
+            merged.push({
+                ...exportArray[i],
+                ...exportArray2[i],
+                ...exportArray3[i],
+                ...exportArray4[i]
+            });
+        }
+
+        /**   Convert array to csv function           */
+        function pivot(arr) {
+            var mp = new Map();
+
+            function setValue(a, path, val) {
+                if (Object(val) !== val) { // primitive value
+                    var pathStr = path.join('.');
+                    var i = (mp.has(pathStr) ? mp : mp.set(pathStr, mp.size)).get(pathStr);
+                    a[i] = val;
+                } else {
+                    for (var key in val) {
+                        setValue(a, key == '0' ? path : path.concat(key), val[key]);
+                    }
+                }
+                return a;
+            }
+            var result = arr.map(obj => setValue([], [], obj));
+            return [
+                [...mp.keys()], ...result
+            ];
+        }
+
+        function toCsv(arr) {
+            return arr.map(row =>
+                row.map(val => isNaN(val) ? JSON.stringify(val) : +val).join(',')
+            ).join("\n");
+        }
+        oneFinalArray = merged.filter((el) => {
+            return !isNaN(el.MAPE);
+        })
+        var merged2 = oneFinalArray.filter(function(el) {
+            return el != "undefined";
+        });
+
+        let newCsvContent = toCsv(pivot(merged2));
+        // console.log("newCsvContent array: ", newCsvContent);
+        /****     Saving data to localforage: JS object array and CSV export array     * */
+
+        localforage.setItem('clustering_data', JSON.stringify(merged2));
+        // localforage.setItem('export_data', JSON.stringify(newCsvContent));
+        // console.log('SAVING: ', newCsvContent);
+
+        /** Export script */
+        $("#exportFunction").click(function() {
+            saveFile("All_errorMeasures.csv", "data:attachment/csv", newCsvContent);
+        });
+
+        /** Function to save file as csv */
+        function saveFile(name, type, data) {
+            if (data != null && navigator.msSaveBlob)
+                return navigator.msSaveBlob(new Blob([data], {
+                    type: type
+                }), name);
+            var a = $("<a style='display: none;'/>");
+            var url = window.URL.createObjectURL(new Blob([data], {
+                type: type
+            }));
+            a.attr("href", url);
+            a.attr("download", name);
+            $("body").append(a);
+            a[0].click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+        }
+        /** End of export function */
+
         newFinalArray2 = bubu2.filter((el) => {
             return !isNaN(el.RMSE);
         })
@@ -594,8 +873,15 @@ else {
             return d.PeriodsBeforeDelivery
         });
         let periodsMax6 = Math.max(...periodsBD6);
-        newFinalArray7 = bubu2.filter((el) => {
+
+        oneFinalArrayNRMSE = bubu2.filter((el) => {
             return !isNaN(el.NRMSE);
+        })
+        twoFinalArrayNRMSE = oneFinalArrayNRMSE.filter((el) => {
+            return el.NRMSE !== Infinity;
+        })
+        newFinalArray7 = twoFinalArrayNRMSE.filter((el) => {
+            return el.NRMSE !== 'Infinity';
         })
         newFinalArray7.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
@@ -621,6 +907,17 @@ else {
         });
         let periodsMax2 = Math.max(...periodsBD2);
 
+        newMDArray = bubu.filter((el) => {
+            return !isNaN(el.MD);
+        })
+        newMDArray.forEach(function(d) {
+            d.ActualDate = new Date(d.ActualDate);
+        });
+        let mdPeriodsBD = newMDArray.map(function(d) {
+            return d.PeriodsBeforeDelivery
+        });
+        let periodsMax8 = Math.max(...mdPeriodsBD);
+
         //MAD graph crossfilter
         var ndx = crossfilter(newFinalArray);
         var all = ndx.groupAll();
@@ -635,6 +932,20 @@ else {
         });
         var ndxGroup = ndxDim.group();
 
+        //MD graph crossfilter
+        var ndx8 = crossfilter(newMDArray);
+        var all8 = ndx8.groupAll();
+        var productDim8 = ndx8.dimension(function(d) {
+            return d.Product;
+        });
+        var periodsBeforeDeliveryDim8 = ndx8.dimension(function(d) {
+            return +d.PeriodsBeforeDelivery;
+        });
+        var ndxDim8 = ndx8.dimension(function(d) {
+            return [+d.PeriodsBeforeDelivery, +d.MD, +d.Product];
+        });
+        var ndxGroup8 = ndxDim8.group();
+
         //RMSE graph crossfilter
         var ndx2 = crossfilter(newFinalArray2);
         var all2 = ndx2.groupAll();
@@ -648,7 +959,7 @@ else {
             return +d.PeriodsBeforeDelivery;
         });
         var ndxGroup2 = ndxDim2.group();
-        console.log("ndxDim2: ", ndxGroup2.top(Infinity));
+        // console.log("ndxDim2: ", ndxGroup2.top(Infinity));
 
         //MAPE graph crossfilter
         var ndx3 = crossfilter(newFinalArray3);
@@ -746,7 +1057,35 @@ else {
                     'MAD: ' + d.key[1]
                 ].join('\n');
             })
-            .xAxis().tickFormat(d3.format('d'));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
+        MADchart.margins(margin);
+
+        MDchart
+            .width(520)
+            .height(350)
+            .dimension(ndxDim8)
+            .symbolSize(10)
+            .group(ndxGroup8)
+            .data(function(group) {
+                return group.all()
+                    .filter(function(d) {
+                        return d.key !== NaN;
+                    });
+            })
+            .x(d3.scaleLinear().domain([0, periodsMax8]))
+            .brushOn(false)
+            .clipPadding(10)
+            .xAxisLabel("Periods Before Delivery")
+            .yAxisLabel("MD")
+            .renderTitle(true)
+            .title(function(d) {
+                return [
+                    'Periods Before Delivery: ' + d.key[0],
+                    'MD: ' + d.key[1]
+                ].join('\n');
+            })
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
+        MDchart.margins(margin);
 
         RMSEchart
             .width(520)
@@ -773,7 +1112,8 @@ else {
                     'RMSE: ' + d.key[1],
                 ].join('\n');
             })
-            .xAxis().tickFormat(d3.format('d'));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
+        RMSEchart.margins(margin);
 
         MAPEchart
             .width(520)
@@ -799,10 +1139,11 @@ else {
                     'MAPE: ' + d.key[1]
                 ].join('\n');
             })
-            .xAxis().tickFormat(d3.format('d'));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
+        MAPEchart.margins(margin);
 
         MFBchart
-            .width(520)
+            .width(width)
             .height(350)
             .dimension(ndxDim4)
             .symbolSize(10)
@@ -813,8 +1154,11 @@ else {
                         return d.key !== Infinity;
                     });
             })
-            .excludedSize(2)
-            .excludedOpacity(0.5)
+            // .excludedSize(2)
+            // .excludedOpacity(0.5)
+            // .x(d3.scaleLinear().domain([0, d3.max(periodsBD4, function(d) {
+            //     return d;
+            // })]))
             .x(d3.scaleLinear().domain([0, periodsMax4]))
             .brushOn(false)
             .clipPadding(10)
@@ -830,7 +1174,7 @@ else {
             .on('renderlet', function(MFBchart) {
                 var x_vert = width;
                 var extra_data = [{
-                        x: 47,
+                        x: 54,
                         y: MFBchart.y()(dataMean)
                     },
                     {
@@ -859,9 +1203,10 @@ else {
                     .merge(path);
                 path.attr('d', line);
             })
-            .xAxis().tickFormat(d3.format('d'));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
+        // MFBchart.symbol(d3.symbolCircle);
+        MFBchart.margins(margin);
 
-        MFBchart.symbol(d3.symbolCircle);
 
         MPEchart
             .width(520)
@@ -887,7 +1232,8 @@ else {
                     'MPE: ' + d.key[1]
                 ].join('\n');
             })
-            .xAxis().tickFormat(d3.format('d'));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
+        MPEchart.margins(margin);
 
         MSEchart
             .width(520)
@@ -916,9 +1262,10 @@ else {
                     'MSE: ' + d.key[1]
                 ].join('\n');
             })
-            .xAxis().tickFormat(d3.format('d'));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
 
         MSEchart.yAxis().tickFormat(d3.format(".2s"));
+        MSEchart.margins(margin);
 
         NRMSEchart
             .width(520)
@@ -945,13 +1292,14 @@ else {
                     'NRMSE: ' + d.key[1],
                 ].join('\n');
             })
-            .xAxis().tickFormat(d3.format('d'));
+            .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
+            // .xAxis().tickFormat(d3.format('d'));
+        NRMSEchart.margins(margin);
 
         dc.renderAll();
 
 
     });
-    </script>
     </script>
     <script src="/lib/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"

@@ -8,15 +8,20 @@ else {
 };?>
 <!DOCTYPE html>
 <html lang="en">
-<meta charset="utf-8">
 
 <head>
+    <meta charset="utf-8">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/data//ico/innofit.ico">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css" />
+    <link rel="stylesheet" href="./css/nor_rsmegraph.css">
+    <link rel="stylesheet" href="./css/header.css">
     <title>Normalized Root Mean Square Error (RMSE*) Graph</title>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
         integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
@@ -27,121 +32,15 @@ else {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
     <script src="../lib/js/dc.js"></script>
     <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
+    <script src="./js/util.js"></script>
     <script>
     localforage.config({
-        driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+        driver: localforage.INDEXEDDB,
         name: 'innoFit',
         version: 1.0,
         size: 4980736, // Size of database, in bytes. WebSQL-only for now.
     });
     </script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css" />
-
-    <style>
-    body {
-        margin: 0px;
-    }
-
-    .dc-chart .axis text {
-        font: 12px sans-serif;
-    }
-
-    .dc-chart .brush rect.selection {
-        fill: #4682b4;
-        fill-opacity: .125;
-    }
-
-    .dc-chart .symbol {
-        stroke: #000;
-        stroke-width: 0.5px;
-    }
-
-    .domain {
-        /* display: none; */
-        stroke: #635F5D;
-        stroke-width: 1;
-    }
-
-    .tick text,
-    .legendCells text {
-        fill: #635F5D;
-        font-size: 12px;
-        font-family: sans-serif;
-    }
-
-    .axis-label,
-    .legend-label {
-        fill: #635F5D;
-        font-size: 12px;
-        font-family: sans-serif;
-    }
-
-    /*  .axis path, */
-    .axis line {
-        fill: none;
-        stroke: grey;
-        stroke-width: 1;
-        shape-rendering: crispEdges;
-    }
-
-    .tick line {
-        stroke: #C0C0BB;
-    }
-
-    div {
-        padding-right: 10px;
-        padding-left: 10px;
-    }
-
-    .info-container {
-        display: inline-block;
-        width: calc(100% + -50px);
-        vertical-align: middle;
-    }
-
-    .customContainer {
-        padding: 0 3% 0 3%;
-    }
-
-    a.gflag {
-        vertical-align: middle;
-        font-size: 16px;
-        padding: 1px 0;
-        background-repeat: no-repeat;
-        background-image: url(//gtranslate.net/flags/16.png);
-    }
-
-    a.gflag img {
-        border: 0;
-    }
-
-    a.gflag:hover {
-        background-image: url(//gtranslate.net/flags/16a.png);
-    }
-
-    #goog-gt-tt {
-        display: none !important;
-    }
-
-    .goog-te-banner-frame {
-        display: none !important;
-    }
-
-    .goog-te-menu-value:hover {
-        text-decoration: none !important;
-    }
-
-    body {
-        top: 0 !important;
-    }
-
-    #google_translate_element2 {
-        display: none !important;
-    }
-    </style>
-
 </head>
 
 <body>
@@ -159,11 +58,14 @@ else {
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
-                    <li><a href="./configuration.php">Configuration</a></li>
+                    <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown active">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Visualizations<span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz  <span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                        <li class="dropdown-header">Dashboard</li>
+                        <li><a href="./dashboard.php">Dashboard</a></li>
+                        <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
@@ -173,23 +75,25 @@ else {
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD) </a></li>
+                            <li><a href="./md_graph.php">Mean Deviation (MD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
-                            <li class="active"><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)
-                                    <span class="sr-only">(current)</span></a></li>
+                            <li class="active"><a href="./normalized_rmse.php">Normalized Root Mean Square Error
+                                    (RMSE*)<span class="sr-only">(current)</span></a></li>
                             <li><a href="./mpe.php">Mean Percentage Error (MPE) </a></li>
-                            <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE)</a></li>
+                            <li><a href="./mape.php">Mean Absolute Percentage Error (MAPE) </a></li>
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
-                    <!-- </ul> -->
+                    <!-- <li><a href="./dashboard.php">Dashboard</a></li> -->
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Corrections <span class="caret"></span> </a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
                         <ul class="dropdown-menu">
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
                     </li>
+                    <li><a href="./ClusterTest.php">Clustering </a> </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -242,7 +146,8 @@ else {
                         /* ]]> */
                         </script>
                     </li>
-                    <li><a href="/includes/logout.php">Logout</a></li>
+                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span>
+                            Logout</a></li>
 
                 </ul>
             </div>
@@ -251,10 +156,9 @@ else {
         <!--/.container-fluid -->
     </nav>
 
-
     <div class="customContainer">
         <div class="row" style="margin-bottom: -2%;">
-            <div class="col-md-10">
+            <div class="col-md-6">
                 <h3>Normalized Root Mean Square Error (RMSE*)</h3>
                 <small>
                     <?php
@@ -280,8 +184,38 @@ else {
                     </div>
                 </div>
             </div>
+            <div class="col-md-2">
+                <div id="filter2Info" class="alert alert-danger" style="text-align: center" role="alert">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                role="info">Filters have not been applied!</span>
+                        </div>
+                        <div class="row">
+                            <span style="font-size: 11px; vertical-align: middle;" class="alert-danger" role="alert">
+                                Please adjust the Date Filters so that Actual Date <= Forecast Date.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div id="filter3Info" class="alert alert-danger" style="text-align: center" role="alert">
+                    <span style="font-size: 25px; vertical-align: middle; padding:0px 10px 0px 0px;"
+                        class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
+                    <div class="info-container">
+                        <div class="row">
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                role="danger">More
+                                than one product have been selected.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-12" style="margin-bottom: 50px;">
                     <br />
                     <p> <b>Graph Description:</b> This graph shows the Normalized Root Mean Square Error (RMSE*) graph
                         with respect to periods before
@@ -290,35 +224,48 @@ else {
                         <br> Root Mean Square Error like the Mean Squared error, also measures
                         accuracy (zero meaning perfect score). The Formula of the Normalized Root Mean Square Error
                         (RMSE*) is:
-                        <img src="https://latex.codecogs.com/gif.latex?RMSE*_{j} = \frac{\sqrt{\frac{1}{n}\sum_{i=1}^{n} ( x_{i,j} - x_{i,0})^{2}}}{\frac{1}{n}\sum_{i=1}^{n} x_{i,0}}"
-                            title="NRMSE formula" />. </p>
-                    <!-- \sqrt{\frac{1}{n}\sum_{i=1}^{n} ( x_{i,j} - x_{i,0})^{2}} -->
+                        <!-- <img src="https://latex.codecogs.com/gif.latex?RMSE*_{j} = \frac{\sqrt{\frac{1}{n}\sum_{i=1}^{n} ( x_{i,j} - x_{i,0})^{2}}}{\frac{1}{n}\sum_{i=1}^{n} x_{i,0}}"
+                            title="NRMSE formula" /> -->
+                        <img src="../data/img/nor_rmse.gif" title="NMSE formula" />. </p>
                 </div>
             </div>
 
             <div class="row">
-                <div id="scatter">
-                    <div class="clearfix"></div>
+                <div class="col-md-12">
+                    <div id="scatter">
+                        <div class="clearfix"></div>
+                    </div>
                 </div>
+            </div>
 
-                <div id="pbd">
-                    <p style="text-align:center;"><strong>Periods Before Delivery (PBD)<br /><small>(PBD: number of
-                                records)</small></strong></p>
+            <div class="row">
+                <div class="col-md-3">
+                    <div id="pbd">
+                        <p style="text-align:center;"><strong>Periods Before Delivery (PBD)<br /><small>(PBD: number
+                                    of
+                                    records)</small></strong></p>
+                    </div>
+                    <div style="clear: both"></div>
                 </div>
-                <div style="clear: both"></div>
+            </div>
 
 
-                <div>
-                    <div class="dc-data-count">
-                        <span class="filter-count"></span> selected out of <span class="total-count"></span>records | <a
-                            href="javascript:dc.filterAll(); dc.renderAll();"> Reset all </a>
-                    </div><br /><br />
-                    <button onclick="myFunction()">Data table display</button>
+            <div class="row" style="margin: 50px 0 50px 0;">
+                <div class="dc-data-count">
+                    There are <span class="filter-count"></span> selected out of <span class="total-count"></span>
+                    records | <a class="badge badge-light" href="javascript:dc.filterAll(); dc.renderAll();"> Reset
+                        all
+                    </a><br />
+                    <br />
+                    <button class="btn btn-secondary" onclick="myFunction()"><strong>Show Data table</strong></button>
+                    <button class="btn btn-secondary" id="exportFunction"><strong>Export Data</strong></button>
                     <table class="table table-hover dc-data-table" id="myTable" style="display:none">
                     </table>
+                    <br />
                 </div>
             </div>
         </div>
+
         <script>
         function myFunction() {
             var x = document.getElementById("myTable");
@@ -338,6 +285,21 @@ else {
                 $('#filterInfo').hide();
             }
         });
+
+        $(document).ready(function() {
+            if (localStorage.getItem('check2FiltersActive') === 'true') {
+                $('#filter2Info').show();
+            } else {
+                $('#filter2Info').hide();
+            }
+        });
+        $(document).ready(function() {
+            if (localStorage.getItem('check3FiltersActive') === 'true') {
+                $('#filter3Info').hide();
+            } else {
+                $('#filter3Info').show();
+            }
+        });
         const margin = {
             top: 10,
             right: 10,
@@ -346,6 +308,7 @@ else {
         };
         localforage.getItem("viz_data", function(error, data) {
             data = JSON.parse(data);
+            const uniqueNames = [...new Set(data.map(i => i.Product))];
 
             let finalOrder = data.filter((el) => {
                 return el.PeriodsBeforeDelivery == 0;
@@ -404,8 +367,8 @@ else {
                     }
                 });
                 let meanFinalOrders = sumFinalOrders / noFinalOrders;
-                console.log('MEAN', meanFinalOrders, ' for PBD: ', elem.values[0]
-                    .PeriodsBeforeDelivery);
+                // console.log('MEAN', meanFinalOrders, ' for PBD: ', elem.values[0]
+                //     .PeriodsBeforeDelivery);
 
                 return {
                     PeriodsBeforeDelivery: elem.key,
@@ -418,7 +381,7 @@ else {
                     MeanFinalOrders: meanFinalOrders
                 }
             });
-            console.log("Mean Final Orders By PBD: ", calculationsOrderByPBD);
+            // console.log("Mean Final Orders By PBD: ", calculationsOrderByPBD);
 
             let squaredAbsValuesArray = uniqueArray.map((el) => {
                 let value = powerDiff(el, valueMap.get(el.ForecastPeriod));
@@ -449,30 +412,15 @@ else {
                     SquaredAbsoluteDiff: value
                 };
             });
-            // console.log('squaredAbsValuesArray: ', squaredAbsValuesArray);
 
             var squaredAbsValuesArray2 = squaredAbsValuesArray.reduce((arr, e) => {
-                arr.push(Object.assign({}, e, calculationsOrderByPBD.find(a => a.PeriodsBeforeDelivery == e.PeriodsBeforeDelivery)))
+                arr.push(Object.assign({}, e, calculationsOrderByPBD.find(a => a
+                    .PeriodsBeforeDelivery == e.PeriodsBeforeDelivery)))
                 return arr;
             }, [])
 
-            console.log("new squaredAbsValuesArray", squaredAbsValuesArray2);
+            // console.log("new squaredAbsValuesArray", squaredAbsValuesArray2);
 
-
-            // let meanFinalOrdersArray = squaredAbsValuesArray.map((el) => {
-            //     let temp = calculationsOrderByPBD.find(element => element.PeriodsBeforeDelivery === el.PeriodsBeforeDelivery)
-            //     return {
-            //         ActualDate: el.ActualDate,
-            //         ForecastDate: el.ForecastDate,
-            //         ActualPeriod: el.ActualPeriod,
-            //         ForecastPeriod: el.ForecastPeriod,
-            //         OrderAmount: el.OrderAmount,
-            //         Product: el.Product,
-            //         PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-            //         MeanFinalOrders: el.MeanFinalOrders,
-            //         SquaredAbsoluteDiff: value
-            //     };
-            // })
 
             let finalOrderCalc = d3.values(finalOrder, function(d) {
                 return d.OrderAmount;
@@ -493,7 +441,7 @@ else {
                     return {
                         ActualDate: el.values[i].ActualDate,
                         ForecastDate: el.values[i].ForecastDate,
-                        Product: el.values[i].Product,
+                        Product: uniqueNames,
                         ActualPeriod: el.values[i].ActualPeriod,
                         ForecastPeriod: el.values[i].ForecastPeriod,
                         OrderAmount: el.values[i].OrderAmount,
@@ -504,7 +452,69 @@ else {
                 }
 
             });
-            console.log("final NRMSE array: ", bubu);
+            // console.log("final NRMSE array: ", bubu);
+
+            var exportArray = bubu.map((el) => {
+                return {
+                    Product: el.Product,
+                    PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
+                    NRMSE: el.NRMSE + "\n"
+                }
+            })
+
+            /**   Convert array to csv function           */
+            function pivot(arr) {
+                var mp = new Map();
+
+                function setValue(a, path, val) {
+                    if (Object(val) !== val) { // primitive value
+                        var pathStr = path.join('.');
+                        var i = (mp.has(pathStr) ? mp : mp.set(pathStr, mp.size)).get(pathStr);
+                        a[i] = val;
+                    } else {
+                        for (var key in val) {
+                            setValue(a, key == '0' ? path : path.concat(key), val[key]);
+                        }
+                    }
+                    return a;
+                }
+                var result = arr.map(obj => setValue([], [], obj));
+                return [
+                    [...mp.keys()], ...result
+                ];
+            }
+
+            function toCsv(arr) {
+                return arr.map(row =>
+                    row.map(val => isNaN(val) ? JSON.stringify(val) : +val).join(',')
+                ).join('\n');
+            }
+            let newCsvContent = toCsv(pivot(exportArray));
+            // console.log("newCsvContent array: ", newCsvContent);
+
+            /** Export script */
+            $("#exportFunction").click(function() {
+                saveFile("NRMSE.csv", "data:attachment/csv", newCsvContent);
+            });
+
+            /** Function to save file as csv */
+            function saveFile(name, type, data) {
+                if (data != null && navigator.msSaveBlob)
+                    return navigator.msSaveBlob(new Blob([data], {
+                        type: type
+                    }), name);
+                var a = $("<a style='display: none;'/>");
+                var url = window.URL.createObjectURL(new Blob([data], {
+                    type: type
+                }));
+                a.attr("href", url);
+                a.attr("download", name);
+                $("body").append(a);
+                a[0].click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+            }
+            /** End of export function */
 
 
             oneFinalArray = bubu.filter((el) => {
@@ -576,7 +586,7 @@ else {
                 .multiple(true)
                 .numberVisible(15);
 
-            console.log("ndxDim: ", ndxGroup.top(Infinity));
+            // console.log("ndxDim: ", ndxGroup.top(Infinity));
 
             NRMSEchart
                 .width(768 + margin.left + margin.right)
@@ -606,7 +616,8 @@ else {
                         'NRMSE: ' + d.key[1],
                     ].join('\n');
                 })
-                .xAxis().tickFormat(d3.format('d'));
+                .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
+                // .xAxis().tickFormat(d3.format('d'));
 
             NRMSEchart.selectAll('path.symbol')
                 .attr('opacity', 0.3);

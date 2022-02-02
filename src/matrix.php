@@ -33,7 +33,7 @@ else {
 
     <script>
     localforage.config({
-        driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+        driver: localforage.INDEXEDDB,
         name: 'innoFit',
         version: 1.0,
         size: 4980736, // Size of database, in bytes. WebSQL-only for now.
@@ -57,9 +57,12 @@ else {
                 <ul class="nav navbar-nav">
                     <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown active">
-                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Visualizations <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz <span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                        <li class="dropdown-header">Dashboard</li>
+                        <li><a href="./dashboard.php">Dashboard</a></li>
+                        <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount</a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans</a></li>
@@ -70,6 +73,7 @@ else {
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Forecast Error Measures</li>
                             <li><a href="./mad_graph.php">Mean Absolute Deviation (MAD)</a></li>
+                            <li><a href="./md_graph.php">Mean Deviation (MD) </a></li>
                             <li> <a href="./mse_graph.php">Mean Square Error (MSE)</a></li>
                             <li><a href="./rmse_graph.php">Root Mean Square Error (RMSE)</a></li>
                             <li><a href="./normalized_rmse.php">Normalized Root Mean Square Error (RMSE*)</a></li>
@@ -78,13 +82,15 @@ else {
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
+                    <!-- <li><a href="./dashboard.php">Dashboard</a></li> -->
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Corrections <span class="caret"></span> </a>
+                        <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
                         <ul class="dropdown-menu">
                             <li><a href="./cor_rmse.php">Corrected Root Mean Square Error (CRMSE) </a></li>
                         </ul>
                     </li>
+                    <li><a href="./ClusterTest.php">Clustering </a> </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -138,7 +144,8 @@ else {
                         /* ]]> */
                         </script>
                     </li>
-                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                    <li><a id="btnLogout" href="/includes/logout.php"><span class="glyphicon glyphicon-log-out"></span>
+                            Logout</a></li>
 
                 </ul>
             </div>
@@ -180,7 +187,8 @@ else {
         <div class="row" style="margin-bottom: 50px;">
             <div class="col-md-12">
                 <br />
-                <p> <b>Graph Description:</b> Delivery plans matrix representation with respect to actual and forecast periods. NOTE: the periods in the matrix are sorted by date (ascending order). </p>
+                <p> <b>Graph Description:</b> Delivery plans matrix representation with respect to actual and forecast
+                    periods. NOTE: the periods in the matrix are sorted by date (ascending order). </p>
             </div>
         </div>
 
@@ -216,12 +224,12 @@ else {
         });
 
         var margin = {
-                top: 10,
-                right: 90,
-                bottom: 80,
-                left: 60
-            };
-        
+            top: 10,
+            right: 90,
+            bottom: 80,
+            left: 60
+        };
+
         const result = getPercentToPixelDimensions(70);
         let width = result.width - margin.left - margin.right;
         let height = 650 - margin.top - margin.bottom;
@@ -285,11 +293,16 @@ else {
             .select(".domain").remove()
 
         // Build color scale
-        var myColor = d3.scaleSequential();
-        myColor.domain([0, d3.max(data, function(d) {
-            return d.OrderAmount;
-        })]);
-        myColor.interpolator(d3.interpolatePurples);
+        // var myColor = d3.scaleSequential();
+        // myColor.domain([0, d3.max(data, function(d) {
+        //     return d.OrderAmount;
+        // })]);
+        // myColor.interpolator(d3.interpolatePurples);
+        const myColor = d3.scaleSequential()
+            .domain([0, d3.max(data, function(d) {
+                return d.OrderAmount;
+            })])
+            .interpolator(d3.interpolateHcl('#f0f0f0', '#756bb1'));
 
         var myOrders = data.map(function(d) {
             return (d.OrderAmount);
@@ -316,7 +329,9 @@ else {
         }
         var mousemove = function(d) {
             tooltip
-                .html("Product: " + d.Product + "<br>"+ "Order Amount: " + d.OrderAmount  + "<br>" + "Actual Period: " + d.ActualPeriod + "<br>" + "Forecast Period: " +d.ForecastPeriod + "<br>")
+                .html("Product: " + d.Product + "<br>" + "Order Amount: " + d.OrderAmount + "<br>" +
+                    "Actual Period: " + d.ActualPeriod + "<br>" + "Forecast Period: " + d.ForecastPeriod +
+                    "<br>")
                 .style("left", (d3.event.pageX + 20) + "px")
                 .style("top", (d3.event.pageY + 10) + "px")
         }
@@ -354,8 +369,13 @@ else {
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave)
 
+        // Define the base number of ticks
+        let ticksToShow = myColor.ticks(15).reverse();
+        // Always add the highest value
+        ticksToShow.unshift(orderMax);
+
         var legend = svg.selectAll(".legend")
-            .data(myColor.ticks(15).slice(1).reverse())
+            .data(ticksToShow)
             .enter().append("g")
             .attr("class", "legend")
             .attr("transform", function(d, i) {
@@ -377,10 +397,11 @@ else {
 
         svg.append("text")
             .attr("class", "label")
-            .attr("x", width - 10)
+            .attr("x", width + 53)
             .attr("y", 10)
+            .attr("text-anchor", "middle")
             .attr("dy", ".35em")
-            .text("");
+            .text("Order Amount");
 
         svg.append("text")
             .attr("x", 345)
@@ -398,15 +419,6 @@ else {
             .style("fill", "#000")
             .attr("transform", "rotate(-90)")
             .text("Forecast Period");
-
-        svg.selectAll(".tile")
-            .style("fill", function(d) {
-                return myColor(d.OrderAmount);
-            });
-
-        svg.selectAll(".legend rect")
-            .style("fill", myColor);
-
     });
     </script>
 
