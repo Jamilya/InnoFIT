@@ -56,7 +56,7 @@ else {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/index.php">Home</a>
+                <a class="navbar-brand" href="/about.php">Home</a>
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
@@ -427,7 +427,7 @@ else {
                         'Forecast Date: ' + new Date(d.key[0]).toDateString()
                     ].join('\n');
                 })
-                .xAxis().tickFormat(d3.timeFormat("%V"));
+                .xAxis().tickFormat(d3.timeFormat("%U"));
             // .xAxis().tickFormat(d3.format('d'));
             DeliveryPlansChart.margins(margin);
             DeliveryPlansChart.symbol(function(d) {

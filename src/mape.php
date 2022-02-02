@@ -53,7 +53,7 @@ else {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/index.php">Home</a>
+                <a class="navbar-brand" href="/about.php">Home</a>
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
@@ -326,7 +326,7 @@ else {
 
         let finalOrdersForecastPeriods = new Map();
         finalOrder.map(e => {
-            finalOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
+            finalOrdersForecastPeriods.set(e.ForecastDate, e.OrderAmount); //changed to Forecast Date
         });
 
         // console.log('FINAL ORDER MAP: ', finalOrdersForecastPeriods);
@@ -335,7 +335,7 @@ else {
         // Order the Final Orders
         let dataByPBD = d3.nest()
             .key(function(d) {
-                return d.ActualPeriod;
+                return d.ActualDate;  //actual period changed to actualdate
             })
             .entries(data);
 
@@ -366,7 +366,7 @@ else {
 
             let forecastOrdersForecastPeriods = new Map();
             validForecasts.map(e => {
-                forecastOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
+                forecastOrdersForecastPeriods.set(e.ForecastDate, e.OrderAmount);
             });
 
             let invalidForecasts = el.values.filter(function(obj) {
@@ -376,7 +376,7 @@ else {
 
             // FinalOrder Sums
             let items = el.values;
-            let forecastItems = items.map(el => el.ForecastPeriod);
+            let forecastItems = items.map(el => el.ForecastDate);
             let sumFinalOrders = 0;
             let difference = [];
             forecastItems.forEach(e => {

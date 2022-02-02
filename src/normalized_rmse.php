@@ -54,7 +54,7 @@ else {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/index.php">Home</a>
+                <a class="navbar-brand" href="/about.php">Home</a>
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
@@ -313,11 +313,11 @@ else {
             let finalOrder = data.filter((el) => {
                 return el.PeriodsBeforeDelivery == 0;
             });
-            let finalOrderForecastPeriods = finalOrder.map(e => e.ForecastPeriod);
+            let finalOrderForecastPeriods = finalOrder.map(e => e.ForecastDate); ///change to forecastDate
 
             let finalOrdersForecastPeriods = new Map();
             finalOrder.map(e => {
-                finalOrdersForecastPeriods.set(e.ForecastPeriod, e.OrderAmount);
+                finalOrdersForecastPeriods.set(e.ForecastDate, e.OrderAmount); //changed to forecastDate
             });
 
             var forecastlist = dc.selectMenu("#forecastlist"),
@@ -337,7 +337,7 @@ else {
 
             let valueMap = new Map();
             finalOrder.forEach((val) => {
-                let keyString = val.ActualPeriod;
+                let keyString = val.ActualDate; //actual period changed to actual date
                 let valueString = val.OrderAmount;
                 valueMap.set(keyString, valueString);
             });
@@ -353,7 +353,7 @@ else {
                 .entries(uniqueArray);
 
             let calculationsOrderByPBD = orderByPBD.map((elem) => {
-                let pbdForecasts = elem.values.map(e => e.ForecastPeriod);
+                let pbdForecasts = elem.values.map(e => e.ForecastDate); //changed to forecast date
                 // ALL valid Forecast Periods for each Period before delivery
                 let validForecasts = finalOrderForecastPeriods.filter(value => -1 !== pbdForecasts
                     .indexOf(value));
@@ -384,7 +384,7 @@ else {
             // console.log("Mean Final Orders By PBD: ", calculationsOrderByPBD);
 
             let squaredAbsValuesArray = uniqueArray.map((el) => {
-                let value = powerDiff(el, valueMap.get(el.ForecastPeriod));
+                let value = powerDiff(el, valueMap.get(el.ForecastDate)); // forecast period changed to forecast date
                 // let finalOrderSum = 0;
                 // finalOrderSum += parseInt(valueMap.get(el.ForecastPeriod));
                 // let items = valueMap.get(el.ForecastPeriod);

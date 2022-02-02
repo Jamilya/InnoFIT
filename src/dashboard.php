@@ -51,7 +51,7 @@ else {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/index.php">Home</a>
+                <a class="navbar-brand" href="/about.php">Home</a>
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
@@ -352,7 +352,7 @@ else {
     <div id="footer" class="text-center" style="margin-top: 20px;">
         <!-- Copyright -->
         <br>
-        <p> Copyright © 2020 St. Pölten University of Applied Sciences <u>
+        <p> Copyright © 2021 St. Pölten University of Applied Sciences <u>
                 <ul><a href="https://projekte.ffg.at/projekt/3042801">InnoFIT Research Project </a></ul>
             </u></p>
         <!-- Copyright -->

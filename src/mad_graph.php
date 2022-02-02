@@ -56,7 +56,7 @@ else {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/index.php">Home</a>
+                <a class="navbar-brand" href="/about.php">Home</a>
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
@@ -334,13 +334,13 @@ else {
 
         let valueMap = new Map();
         finalOrder.forEach((val) => {
-            let keyString = val.ActualPeriod;
+            let keyString = val.ActualDate;
             let valueString = val.OrderAmount;
             valueMap.set(keyString, valueString);
         });
 
         let absValuesArray = uniqueArray.map((el) => {
-            let value = absDiff(el, valueMap.get(el.ForecastPeriod));
+            let value = absDiff(el, valueMap.get(el.ForecastDate));
             return {
                 ActualDate: el.ActualDate,
                 ForecastDate: el.ForecastDate,
@@ -374,12 +374,13 @@ else {
                     ForecastPeriod: el.values[i].ForecastPeriod,
                     OrderAmount: el.values[i].OrderAmount,
                     PeriodsBeforeDelivery: el.key,
+                    // AbsoluteDiff: el.values.AbsoluteDiff,
                     MAD: meanValue
                 };
             }
 
         });
-        // console.log("Final MAD Array: ", bubu);
+        console.log("seperatedByPeriods: ", seperatedByPeriods);
         // console.log(toCsv(pivot(bubu)));
         var exportArray = bubu.map((el) => {
             return {

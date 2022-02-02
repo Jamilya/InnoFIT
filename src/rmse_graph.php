@@ -54,7 +54,7 @@ else {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/index.php">Home</a>
+                <a class="navbar-brand" href="/about.php">Home</a>
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
@@ -329,13 +329,13 @@ else {
 
             let valueMap = new Map();
             finalOrder.forEach((val) => {
-                let keyString = val.ActualPeriod;
+                let keyString = val.ActualDate; //actualperiod changed to actualdate
                 let valueString = val.OrderAmount;
                 valueMap.set(keyString, valueString);
             });
 
             let squaredAbsValuesArray = uniqueArray.map((el) => {
-                let value = powerDiff(el, valueMap.get(el.ForecastPeriod));
+                let value = powerDiff(el, valueMap.get(el.ForecastDate)); //forecast period changed to forecast date
                 return {
                     ActualDate: el.ActualDate,
                     ForecastDate: el.ForecastDate,
