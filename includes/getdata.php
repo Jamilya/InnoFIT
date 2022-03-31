@@ -9,10 +9,13 @@ else {
 
 <?php
     // phpinfo();
+    
     $DB_USERNAME = "jnurgazina"; 
     $DB_PASSWORD = "fuSdebNbZDX+";   
     $DB_SERVER = "mysql5";
     $DB_NAME="db_jnurgazina_1";
+    
+    global $mysqli_connect, $server, $data, $connection, $query, $myquery;
     
     $server = mysqli_connect($DB_SERVER, $DB_USERNAME, $DB_PASSWORD);
     // $server = mysqli_connect("mysql5","jnurgazina","fuSdebNbZDX");

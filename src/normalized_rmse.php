@@ -404,7 +404,9 @@ else {
                     ActualDate: el.ActualDate,
                     ForecastDate: el.ForecastDate,
                     ActualPeriod: el.ActualPeriod,
+                    ActualYear: el.ActualYear,
                     ForecastPeriod: el.ForecastPeriod,
+                    ForecastYear: el.ForecastYear,
                     OrderAmount: el.OrderAmount,
                     Product: el.Product,
                     PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
@@ -419,7 +421,7 @@ else {
                 return arr;
             }, [])
 
-            // console.log("new squaredAbsValuesArray", squaredAbsValuesArray2);
+            console.log("new squaredAbsValuesArray", squaredAbsValuesArray2);
 
 
             let finalOrderCalc = d3.values(finalOrder, function(d) {
@@ -443,7 +445,9 @@ else {
                         ForecastDate: el.values[i].ForecastDate,
                         Product: uniqueNames,
                         ActualPeriod: el.values[i].ActualPeriod,
+                        ActualYear: el.values[i].ActualYear,
                         ForecastPeriod: el.values[i].ForecastPeriod,
+                        ForecastYear: el.values[i].ForecastYear,
                         OrderAmount: el.values[i].OrderAmount,
                         PeriodsBeforeDelivery: el.key,
                         RMSE: meanValue,
@@ -452,9 +456,19 @@ else {
                 }
 
             });
-            // console.log("final NRMSE array: ", bubu);
+            console.log("final NRMSE array: ", bubu);
 
-            var exportArray = bubu.map((el) => {
+            oneFinalArray = bubu.filter((el) => {
+                return !isNaN(el.NRMSE);
+            })
+            twoFinalArray = oneFinalArray.filter((el) => {
+                return el.NRMSE !== Infinity;
+            })
+            newFinalArray = twoFinalArray.filter((el) => {
+                return el.NRMSE !== 'Infinity';
+            })
+
+            var exportArray = newFinalArray.map((el) => {
                 return {
                     Product: el.Product,
                     PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
@@ -517,27 +531,10 @@ else {
             /** End of export function */
 
 
-            oneFinalArray = bubu.filter((el) => {
-                return !isNaN(el.NRMSE);
-            })
-            twoFinalArray = oneFinalArray.filter((el) => {
-                return el.NRMSE !== Infinity;
-            })
-            newFinalArray = twoFinalArray.filter((el) => {
-                return el.NRMSE !== 'Infinity';
-            })
-
             newFinalArray.forEach(function(d) {
                 d.ActualDate = new Date(d.ActualDate);
             });
 
-            // newFinalArray = bubu.filter((el) => {
-            //     return !isNaN(el.NRMSE);
-            // })
-
-            // newFinalArray.forEach(function(d) {
-            //     d.ActualDate = new Date(d.ActualDate);
-            // });
             let periodsBD = newFinalArray.map(function(d) {
                 return d.PeriodsBeforeDelivery
             });

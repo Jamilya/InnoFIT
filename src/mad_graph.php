@@ -63,11 +63,12 @@ else {
                     <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
-                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz  <span class="caret"></span></a>
+                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz <span
+                                class="caret"></span></a>
                         <ul class="dropdown-menu">
-                        <li class="dropdown-header">Dashboard</li>
-                        <li><a href="./dashboard.php">Dashboard</a></li>
-                        <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">Dashboard</li>
+                            <li><a href="./dashboard.php">Dashboard</a></li>
+                            <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
@@ -380,25 +381,27 @@ else {
             }
 
         });
-        console.log("seperatedByPeriods: ", seperatedByPeriods);
+        // console.log("seperatedByPeriods: ", seperatedByPeriods);
         // console.log(toCsv(pivot(bubu)));
-        var exportArray = bubu.map((el) => {
+
+        firstFinalArray = bubu.filter((el) => {
+            return !isNaN(el.MAD);
+        })
+        twoFinalArrayMAD = firstFinalArray.filter((el) => {
+            return el.MAD !== Infinity;
+        })
+        newFinalArray = twoFinalArrayMAD.filter((el) => {
+            return el.MAD !== 'Infinity';
+        })
+        var exportArray = newFinalArray.map((el) => {
             return {
                 Product: el.Product,
                 PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
                 MAD: el.MAD + "\n"
             }
         })
+
         // console.log("Export array: ", exportArray);
-
-        newFinalArray = bubu.filter((el) => {
-            return !isNaN(el.MAD);
-        })
-
-        newFinalArray.forEach(function(d) {
-            d.ActualDate = new Date(d.ActualDate);
-        });
-
         /**   Convert array to csv function           */
         function pivot(arr) {
             var mp = new Map();
@@ -451,7 +454,11 @@ else {
             window.URL.revokeObjectURL(url);
             a.remove();
         }
+        /*********                    End of export function                 ****** */
 
+        newFinalArray.forEach(function(d) {
+            d.ActualDate = new Date(d.ActualDate);
+        });
 
         var ndx = crossfilter(newFinalArray);
         var all = ndx.groupAll();
@@ -564,4 +571,4 @@ else {
 
 </body>
 
-</html> 
+</html>

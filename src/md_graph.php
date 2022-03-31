@@ -63,11 +63,12 @@ else {
                     <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
-                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz  <span class="caret"></span></a>
+                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz <span
+                                class="caret"></span></a>
                         <ul class="dropdown-menu">
-                        <li class="dropdown-header">Dashboard</li>
-                        <li><a href="./dashboard.php">Dashboard</a></li>
-                        <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">Dashboard</li>
+                            <li><a href="./dashboard.php">Dashboard</a></li>
+                            <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
@@ -208,7 +209,8 @@ else {
                         class="glyphicon glyphicon-info-sign alert-danger" aria-hidden="true"></span>
                     <div class="info-container">
                         <div class="row">
-                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger" role="danger">More
+                            <span style="font-size: 14px; vertical-align: middle;" class="alert-danger"
+                                role="danger">More
                                 than one product have been selected.</span>
                         </div>
                     </div>
@@ -357,7 +359,7 @@ else {
                 return d.PeriodsBeforeDelivery
             })
             .entries(absValuesArray);
-            // console.log("seperatedByPeriods: ", seperatedByPeriods);
+        // console.log("seperatedByPeriods: ", seperatedByPeriods);
 
         let bubu = seperatedByPeriods.map((el) => {
             for (i = 0; i < seperatedByPeriods.length; i++) {
@@ -379,7 +381,17 @@ else {
         });
         // console.log("Final MD Array: ", bubu);
         // console.log(toCsv(pivot(bubu)));
-        var exportArray = bubu.map((el) => {
+        firstFinalArray = bubu.filter((el) => {
+            return !isNaN(el.MD);
+        })
+        twoFinalArrayMD = firstFinalArray.filter((el) => {
+            return el.MD !== Infinity;
+        })
+        newFinalArray = twoFinalArrayMD.filter((el) => {
+            return el.MD !== 'Infinity';
+        })
+
+        var exportArray = newFinalArray.map((el) => {
             return {
                 Product: el.Product,
                 PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
@@ -387,15 +399,6 @@ else {
             }
         })
         // console.log("Export array: ", exportArray);
-
-        newFinalArray = bubu.filter((el) => {
-            return !isNaN(el.MD);
-        })
-
-        newFinalArray.forEach(function(d) {
-            d.ActualDate = new Date(d.ActualDate);
-        });
-
         /**   Convert array to csv function           */
         function pivot(arr) {
             var mp = new Map();
@@ -448,8 +451,11 @@ else {
             window.URL.revokeObjectURL(url);
             a.remove();
         }
+        /*******  End of export function */
 
-
+        newFinalArray.forEach(function(d) {
+            d.ActualDate = new Date(d.ActualDate);
+        });
         var ndx = crossfilter(newFinalArray);
         var all = ndx.groupAll();
         var forecastPeriodDim = ndx.dimension(function(d) {
@@ -527,7 +533,7 @@ else {
                 ].join('\n');
             })
             .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
-            // .xAxis().tickFormat(d3.format('d'));
+        // .xAxis().tickFormat(d3.format('d'));
 
         MDchart.selectAll('path.symbol')
             .attr('opacity', 0.3);

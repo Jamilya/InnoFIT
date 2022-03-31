@@ -63,11 +63,12 @@ else {
                     <li><a class="specialLine" href="./configuration.php">Configuration</a></li>
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
-                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz  <span class="caret"></span></a>
+                            aria-haspopup="true" aria-expanded="false"> Dashboard and Viz <span
+                                class="caret"></span></a>
                         <ul class="dropdown-menu">
-                        <li class="dropdown-header">Dashboard</li>
-                        <li><a href="./dashboard.php">Dashboard</a></li>
-                        <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">Dashboard</li>
+                            <li><a href="./dashboard.php">Dashboard</a></li>
+                            <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Basic Order Analysis</li>
                             <li><a href="./finalorder.php">Final Order Amount </a></li>
                             <li><a href="./deliveryplans.php">Delivery Plans </a></li>
@@ -380,7 +381,17 @@ else {
                 };
             }
         });
-        var exportArray = bubu.map((el) => {
+
+        firstFinalArray = bubu.filter((el) => {
+            return !isNaN(el.MSE);
+        })
+        twoFinalArrayMSE = firstFinalArray.filter((el) => {
+            return el.MSE !== Infinity;
+        })
+        newFinalArray = twoFinalArrayMSE.filter((el) => {
+            return el.MSE !== 'Infinity';
+        })
+        var exportArray = newFinalArray.map((el) => {
             return {
                 Product: el.Product,
                 PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
@@ -442,9 +453,6 @@ else {
         }
         /** End of export function */
 
-        newFinalArray = bubu.filter((el) => {
-            return !isNaN(el.MSE);
-        })
 
         newFinalArray.forEach(function(d) {
             d.ActualDate = new Date(d.ActualDate);
@@ -527,7 +535,7 @@ else {
                 ].join('\n');
             })
             .xAxis().ticks(periodsMax).tickFormat(d3.format('d'));
-            // .xAxis().tickFormat(d3.format('d'));
+        // .xAxis().tickFormat(d3.format('d'));
 
         MSEchart.yAxis().tickFormat(d3.format(".2s"));
         // console.log('ndxgroup data:', ndxDim);
