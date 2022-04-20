@@ -1,4 +1,4 @@
-# reposit
+# Readme
 Source code for the InnoFIT visualization (web) tool.
 
 The tool was created as part of the InnoFIT research project funded by the Austrian Research Promotion Agency (FFG): 
