@@ -1,5 +1,4 @@
 const calculateMape = (data) => {
-    // console.log('I would calculate MAPE: ', data);
 
     // PBD = 0 means Final Orders
     let finalOrder = data.filter((el) => {
@@ -63,11 +62,22 @@ const calculateMape = (data) => {
             }
         }
     });
-    return calculationsOrderByPBD;
+    preFinalMAPECalc = calculationsOrderByPBD.filter((el) => {
+        return !isNaN(el.MAPE);
+    })
+
+    twoMAPEcalcArray = preFinalMAPECalc.filter((el) => {
+        return el.MAPE !== Infinity;
+    })
+    theFinalMAPEcalc = twoMAPEcalcArray.filter((el) => {
+        return el.MAPE !== 'Infinity';
+    });
+
+    //////////// /// final result for MAPE////////////////////////
+    return theFinalMAPEcalc;
 }
 
 const calculateMAD = (data) => {
-    // console.log('I would calculate MAD: ', data);
 
     let absDiff = function (orignalEl, finalOrder) {
         return Math.abs(orignalEl.OrderAmount - finalOrder);
@@ -120,12 +130,20 @@ const calculateMAD = (data) => {
             };
         }
     });
-    finalMADCalc = madCalc.filter((el) => {
+    preFinalMADCalc = madCalc.filter((el) => {
         return !isNaN(el.MAD);
     })
+    twoMADcalcArray = preFinalMADCalc.filter((el) => {
+        return el.MAD !== Infinity;
+    })
+    theFinalMADcalc = twoMADcalcArray.filter((el) => {
+        return el.MAD !== 'Infinity';
+    });
+    //******** final result for MAD ******** */
 
-    return finalMADCalc;
+    return theFinalMADcalc;
 }
+
 const calculateMD = (data) => {
     let absDiff = function (orignalEl, finalOrder) {
         return orignalEl.OrderAmount - finalOrder;
@@ -176,11 +194,16 @@ const calculateMD = (data) => {
             };
         }
     });
-    finalMDCalc = mdCalc.filter((el) => {
+    preFinalMDCalc = mdCalc.filter((el) => {
         return !isNaN(el.MD);
     })
-
-    return finalMDCalc;
+    twoMDcalcArray = preFinalMDCalc.filter((el) => {
+        return el.MD !== Infinity;
+    })
+    theFinalMDcalc = twoMDcalcArray.filter((el) => {
+        return el.MD !== 'Infinity';
+    });
+    return theFinalMDcalc;
 }
 
 const calculateMSE = (data) => {
@@ -231,10 +254,16 @@ const calculateMSE = (data) => {
             };
         }
     });
-    finalMSECalc = mseCalc.filter((el) => {
+    preFinalMSECalc = mseCalc.filter((el) => {
         return !isNaN(el.MSE);
     })
-    return finalMSECalc;
+    twoMSEcalcArray = preFinalMSECalc.filter((el) => {
+        return el.MSE !== Infinity;
+    })
+    theFinalMSEcalc = twoMSEcalcArray.filter((el) => {
+        return el.MSE !== 'Infinity';
+    });
+    return theFinalMSEcalc;
 }
 const calculateRMSE = (data) => {
     let finalOrder = data.filter((el) => {
@@ -286,10 +315,16 @@ const calculateRMSE = (data) => {
             };
         }
     });
-    finalRMSECalc = rmseCalc.filter((el) => {
+    preFinalRMSECalc = rmseCalc.filter((el) => {
         return !isNaN(el.RMSE);
     })
-    return finalRMSECalc;
+    twoRMSEcalcArray = preFinalRMSECalc.filter((el) => {
+        return el.RMSE !== Infinity;
+    })
+    theFinalRMSEcalc = twoRMSEcalcArray.filter((el) => {
+        return el.RMSE !== 'Infinity';
+    });
+    return theFinalRMSEcalc;
 }
 
 const calculateNormRMSE = (data) => {
@@ -385,11 +420,23 @@ const calculateNormRMSE = (data) => {
             };
         }
     });
-    finalNRMSECalc = normRmseCalc.filter((el) => {
+    preFinalNRMSECalc = normRmseCalc.filter((el) => {
         return !isNaN(el.NRMSE);
     })
+
+    twoFinalArray = preFinalNRMSECalc.filter((el) => {
+        return el.NRMSE !== Infinity;
+    })
+    threeFinalArray = twoFinalArray.filter((el) => {
+        return el.NRMSE !== undefined;
+    })
+    finalNRMSECalc = threeFinalArray.filter((el) => {
+        return el.NRMSE !== 'Infinity';
+    });
     return finalNRMSECalc;
 }
+
+
 const calculateMPE = (data) => {
     let finalOrder = data.filter((el) => {
         return el.PeriodsBeforeDelivery == 0;
@@ -455,7 +502,20 @@ const calculateMPE = (data) => {
             }
         }
     });
-    return finalMPEcalc;
+    
+    preFinalMPECalc = finalMPEcalc.filter((el) => {
+        return !isNaN(el.MPE);
+    })
+    threeMPEcalcArray = preFinalMPECalc.filter((el) => {
+        return el.MPE !== undefined;
+    })
+    twoMPEcalcArray = threeMPEcalcArray.filter((el) => {
+        return el.MPE !== Infinity;
+    })
+    theFinalMPEcalc = twoMPEcalcArray.filter((el) => {
+        return el.MPE !== 'Infinity';
+    });
+    return theFinalMPEcalc;
 }
 
 const calculateMFB = (data) => {

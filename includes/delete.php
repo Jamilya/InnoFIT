@@ -15,6 +15,7 @@ $DB_PASSWORD = "fuSdebNbZDX+";
 $DB_NAME = "db_jnurgazina_1";
 
 // Create connection
+global $conn;
 $conn = new mysqli($DB_SERVER, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
 
 // Check connection
@@ -30,7 +31,7 @@ if(mysqli_query($conn, $sql)){
     echo "ERROR: Could not able to execute $sql. " . mysqli_error($conn);
 }
   /* Redirect browser */
-  header ("Location: /index.php");
+  header ("Location: /about.php");
   echo "Your records were deleted successfully.";
 // Close connection
 //mysqli_close($conn);

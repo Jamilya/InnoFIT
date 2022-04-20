@@ -1,12 +1,15 @@
 <?php
-if(session_id() == '' || !isset($_SESSION)) {
-    // session isn't started
-    session_start();
-}
-else {
-    header("Location: includes/login.php");
-};?>
+ob_start(); ?>
+<?php
+session_start();
 
+// if(session_id() !== '' || !isset($_SESSION["session_username"])) {
+    if(!isset($_SESSION["session_username"])) {
+    header("Location:includes/login.php");
+}
+ 
+ ?>
+<?php require_once("includes/connection.php"); ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -298,7 +301,15 @@ else {
     });
     </script>
 
-        <?php
+    <?php
+
+function datediffInWeeks($date1, $date2)
+{
+if($date1 > $date2) return datediffInWeeks($date2, $date1);
+$first = DateTime::createFromFormat('m/d/Y', $date1);
+$second = DateTime::createFromFormat('m/d/Y', $date2);
+return floor($first->diff($second)->days/7);
+}
 if (isset($_POST["import"])) {
     
     $i=0; //the first row is skipped
@@ -307,42 +318,46 @@ if (isset($_POST["import"])) {
     if ($_FILES["file"]["size"] > 0) {
         $file = fopen($fileName, "r");
         while (($column = fgetcsv($file, 0, ",")) !== FALSE) {
-            
+
             if ($i>0){
 
                 $actualDate = DateTime::createFromFormat("Y-m-d H:i:s", "$column[1]");
                 $forecastDate = DateTime::createFromFormat("Y-m-d H:i:s", "$column[2]");
                 $actualDate = date("Y-m-d H:i:s",strtotime('0 minutes',strtotime("$column[1]")));
                 $forecastDate = date("Y-m-d H:i:s",strtotime('0 minutes',strtotime("$column[2]")));
-                $pbdSubtr = 52;
+                // $pbdSubtr = 52;
                 $forecastYear = date("Y",strtotime($forecastDate));
                 $actualYear = date("Y",strtotime($actualDate));
                 $actualWeek = date("W", strtotime($actualDate));
                 $forecastWeek = date("W", strtotime($forecastDate));
 
-                if ($actualYear == $forecastYear){
-                    $pbd = $forecastWeek - $actualWeek;
-                } elseif  ($actualYear < $forecastYear && ($actualWeek != "1")){
-                    $pbd = $forecastWeek - $actualWeek + $pbdSubtr * ($forecastYear - $actualYear);
-                } elseif (($actualYear < $forecastYear) && ($actualWeek == "1")) {
-                    $pbd = $forecastWeek;
-                }
-                else {
-                    $pbd = $forecastWeek;
-                  //  $pbd = $actualWeek - $forecastWeek + $pbdSubtr; // in case of backlog = when forecast is behind the actual date
-                }
+                $newActualDate = date("m/d/Y", strtotime($actualDate));
+                $newForecastDate = date("m/d/Y", strtotime($forecastDate));
+
+                $newPBD = datediffInWeeks($newForecastDate, $newActualDate);
+                
+                // if ($actualYear == $forecastYear){
+                //     $pbd = $forecastWeek - $actualWeek;
+                // } elseif  ($actualYear < $forecastYear && ($actualWeek != "1")){
+                //     $pbd = $forecastWeek - $actualWeek + $pbdSubtr * ($forecastYear - $actualYear);
+                // } elseif (($actualYear < $forecastYear) && ($actualWeek == "1")) {
+                //     $pbd = $forecastWeek;
+                // }
+                // else {
+                //     $pbd = $forecastWeek;
+                //   //  $pbd = $actualWeek - $forecastWeek + $pbdSubtr; // in case of backlog = when forecast is behind the actual date
+                // }
                 
                 $actualDay = date("d", strtotime("$column[1]"));
                 $forecastDay = date("d", strtotime("$column[2]"));                
 
             $sqlInsert = "INSERT into `newOrders` (Product, ActualDate, ForecastDate, OrderAmount, ActualDay, ActualPeriod, ForecastDay, ForecastPeriod, ActualYear, ForecastYear, PeriodsBeforeDelivery, username, Date )
-            values ('$column[0]', '$actualDate', '$forecastDate','$column[3]', $actualDay, $actualWeek, $forecastDay, $forecastWeek, $actualYear, $forecastYear, $pbd, '{$_SESSION['session_username']}', NOW())";
+            values ('$column[0]', '$actualDate', '$forecastDate','$column[3]', $actualDay, $actualWeek, $forecastDay, $forecastWeek, $actualYear, $forecastYear, $newPBD, '{$_SESSION['session_username']}', NOW())";
             $result = mysqli_query($conn, $sqlInsert);
     
             if (! empty($result)) {
                 $type = "success";
                 $message = "Your data was successfully uploaded!";
-            // <h4><i class="icon fa fa-check"></i>Data uploaded successfully!</h4>
             echo "<script type='text/javascript'>
             alert('$message');
             window.location.href = '/about.php';
@@ -360,7 +375,6 @@ if (isset($_POST["import"])) {
     }
     }
     ?>
-
     <div class="container">
         <div class="row" style="margin-bottom: 5%;">
             <div class="col-md-12">
@@ -437,13 +451,6 @@ if (isset($_POST["import"])) {
                     <!-- <source src="movie.ogg" type="video/ogg"> -->
                 </video>
             </p>
-            <!-- <u>Step 1:</u> Create a new Excel file and add the data, so that values of each column (Product, ActualDate,
-        ForecastDate, OrderAmount) are in a separate column.
-        <br> Please keep the date in the following format: <b>YYYY-MM-DD</b>.<br>
-        <u>Step 2:</u> For MS Office in German, please add a new line in the beginning of the file: <b><br>sep=;<br></b>
-        This will create a delimiter so that the file format can be used for both English and German-based MS Office
-        documents.<br>
-        <u>Step 3:</u> Save the file as "CSV (Comma delimited) (*.csv)" -->
             <br>
             <p>The format of the table headings and structure:<br><br> <img src="/data/img/example_3.jpg"
                     alt="Data Format Example" align="middle" height="175" width="360"><br></p>

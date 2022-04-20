@@ -410,7 +410,18 @@ else {
                     MPE: mpeValue.toFixed(3)
                 }
             });
-            var exportArray = calculationsOrderByPBD.map((el) => {
+
+            // console.log('Forecast, FinalOrders, MPE all orderByPBD: ', calculationsOrderByPBD);
+            oneFinalArrayMPE = calculationsOrderByPBD.filter((el) => {
+                return !isNaN(el.MPE);
+            })
+            twoFinalArrayMPE = oneFinalArrayMPE.filter((el) => {
+                return el.MPE !== Infinity;
+            })
+            newFinalArray = twoFinalArrayMPE.filter((el) => {
+                return el.MPE !== 'Infinity';
+            })
+            var exportArray = newFinalArray.map((el) => {
                 return {
                     Product: el.Product,
                     PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
@@ -471,17 +482,6 @@ else {
                 a.remove();
             }
             /** End of export function */
-
-            // console.log('Forecast, FinalOrders, MPE all orderByPBD: ', calculationsOrderByPBD);
-            oneFinalArrayMPE = calculationsOrderByPBD.filter((el) => {
-                return !isNaN(el.MPE);
-            })
-            twoFinalArrayMPE = oneFinalArrayMPE.filter((el) => {
-                return el.NRMSE !== Infinity;
-            })
-            newFinalArray = twoFinalArrayMPE.filter((el) => {
-                return el.MPE !== 'Infinity';
-            })
 
             newFinalArray.forEach(function(d) {
                 d.ActualDate = new Date(d.ActualDate);

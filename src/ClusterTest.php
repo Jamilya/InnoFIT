@@ -84,7 +84,6 @@ else {
                             <li><a href="./meanforecastbias.php">Mean Forecast Bias (MFB)</a></li>
                         </ul>
                     </li>
-                    <!-- <li><a href="./dashboard.php">Dashboard</a></li> -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle specialLine" data-toggle="dropdown" role="button"
                             aria-haspopup="true" aria-expanded="false">Corrections <span class="caret"></span> </a>
@@ -169,10 +168,6 @@ else {
     <!-- <b>IMPORT DATA</b> -->
     <textarea id='distance' cols='1' rows='1' style='visibility:hidden'></textarea>
 
-    <!-- <input type='file' id='upload' accept='.csv' style='display: none;' onchange='showfileprops()' />
-    <input type='button' value='Choose file...' onclick="document.getElementById('upload').click();"
-        style='background-color:orange;border-radius:5px;margin: 10px 10px 10px 10px' /> -->
-
     <br>
     <div id='PBDmin' class='info'></div>
     <div id='PeriodsBeforeDelivery' class='info'></div>
@@ -213,87 +208,7 @@ else {
                 row.map(val => isNaN(val) ? JSON.stringify(val) : +val).join(',')
             ).join(' \n');
         }
-        /** Calculation of MAD and MD*/
-        // Define function of absolute difference of forecast and final orders (needed for MAD graph)
-        // let absDiff = function(orignalEl, finalOrder) {
-        //     return Math.abs(orignalEl.OrderAmount - finalOrder);
-        // }
-        // let mdDiff = function(orignalEl, finalOrder) {
-        //     return orignalEl.OrderAmount - finalOrder;
-        // }
-        // // Define final orders: PBD = 0 means Final Orders
-        // let finalOrder = data.filter((el) => {
-        //     return el.PeriodsBeforeDelivery == 0;
-        // });
-        // // Define forecast orders (which are not final orders)
-        // let uniqueArray = data.filter(function(obj) {
-        //     return finalOrder.indexOf(obj) == -1;
-        // });
-        // let valueMap = new Map();
-        // finalOrder.forEach((val) => {
-        //     let keyString = val.ActualPeriod;
-        //     let valueString = val.OrderAmount;
-        //     valueMap.set(keyString, valueString);
-        // });
-        // //Absolute values array (needed for MAD calculation)
-        // let absValuesArray = uniqueArray.map((el) => {
-        //     let value = absDiff(el, valueMap.get(el.ForecastPeriod));
-        //     let value2 = mdDiff(el, valueMap.get(el.ForecastPeriod));
-        //     return {
-        //         ActualPeriod: el.ActualPeriod,
-        //         ForecastPeriod: el.ForecastPeriod,
-        //         Product: el.Product,
-        //         PeriodsBeforeDelivery: el.PeriodsBeforeDelivery,
-        //         MAD: value,
-        //         MD: value2
-        //     };
-        // });
-        // let newAbsValuesArray = absValuesArray.filter((el) => {
-        //     return !isNaN(el.MAD);
-        // });
-        // var newSeparatedByPBD = d3.nest()
-        //     .key(function(d) {
-        //         return d.PeriodsBeforeDelivery;
-        //     })
-        //     .key(function(d) {
-        //         return d.Product;
-        //     })
-        //     .entries(newAbsValuesArray);
 
-        // let MADarray = [];
-
-        // let MADcalc = newSeparatedByPBD.map((el) => {
-        //     for (var i = 0; i < newSeparatedByPBD.length; i++) { //length 29   47
-        //         var length1 = el.values;
-        //         for (var j = 0; j < el.values.length; j++) { //length 15   4
-        //             for (var k = 0; k < length1[j].values.length - 1; k++) { //length 76    19
-        //                 let meanValue = d3.mean(length1[j].values, function(d) {
-        //                     return d.MAD;
-        //                 });
-        //                 let meanValue5 = d3.mean(length1[j].values, function(d) {
-        //                     return d.MD;
-        //                 });
-        //                 MADarray.push({
-        //                     Product: length1[j].values[k].Product,
-        //                     PeriodsBeforeDelivery: el.key,
-        //                     MAD: meanValue,
-        //                     MD: meanValue5,
-        //                     MFB: 0,
-        //                     MPE: 0,
-        //                     MAPE: 0,
-        //                     MSE: 0,
-        //                     NRMSE: 0,
-        //                     RMSE: 0
-        //                 })
-        //             }
-        //         }
-        //     }
-        // });
-
-        // /**** Remove duplicates from the MAD array */
-        // let myNewarray = MADarray;
-        // MADarray = Array.from(new Set(myNewarray.map(JSON.stringify))).map(JSON.parse);
-        // console.log("unique array", MADarray);
         let nested = d3.nest().key(function(d) {
                 return d.Product
             })
@@ -307,7 +222,6 @@ else {
             // for (let j = 0; j < nested[i].values.length; j++) {
             const currentData = nested[i].values;
             const currentProduct = nested[i].key;
-            // const currentPBD = nested[i].values[j].PeriodsBeforeDelivery;
 
             let mapeResult = calculateMape(currentData);
             let madResult = calculateMAD(currentData);
@@ -318,11 +232,11 @@ else {
             let mpeResult = calculateMPE(currentData);
             let mfbResult = calculateMFB(currentData);
 
-            for (let j = 0; j < mfbResult.length; j++) {
-                const currentPBD = mfbResult[j].PeriodsBeforeDelivery;
+            for (let j = 0; j < mpeResult.length; j++) {
+                const currentPBD = mpeResult[j].PeriodsBeforeDelivery;
                 calculationErrorMeasures.push({
                     Product: currentProduct,
-                    PeriodsBeforeDelivery: mfbResult[j].PeriodsBeforeDelivery,
+                    PeriodsBeforeDelivery: mpeResult[j].PeriodsBeforeDelivery,
                     MAD: madResult[j].MAD,
                     MD: mdResult[j].MD,
                     MFB: mfbResult[j].MFB,
@@ -334,8 +248,18 @@ else {
                 });
             }
         }
-        // console.log('final error measures:', calculationErrorMeasures);
-        let newCsvContent2 = toCsv(pivot(calculationErrorMeasures));
+        firstFinalArray = calculationErrorMeasures.filter((el) => {
+            return !isNaN(el.MPE);
+        })
+        twoFinalArrayMPE = firstFinalArray.filter((el) => {
+            return el.MPE !== Infinity;
+        })
+
+        threeFinalArrayMPE = twoFinalArrayMPE.filter((el) => {
+            return el.MPE !== 'Infinity';
+        })
+
+        let newCsvContent2 = toCsv(pivot(threeFinalArrayMPE));
 
          /** Export script */
          $("#exportFunction").click(function() {
@@ -362,11 +286,10 @@ else {
         /** End of export function */
 
         /**** Identify unique product names in the array */
-        const uniqueNames = [...new Set(calculationErrorMeasures.map(i => i.Product))];
-        // console.log('File length: ', calculationErrorMeasures.length);
+        const uniqueNames = [...new Set(threeFinalArrayMPE.map(i => i.Product))];
 
 
-        let countPBD = calculationErrorMeasures.map(function(d) {
+        let countPBD = threeFinalArrayMPE.map(function(d) {
             return d.PeriodsBeforeDelivery
         });
         let periodsMax = Math.max(...countPBD);
@@ -386,7 +309,7 @@ else {
             document.getElementById('PeriodsBeforeDelivery').style.display = 'inline-block';
             document.getElementById('productNumber').innerHTML = "Products Number: " + uniqueNames.length;
             document.getElementById('productNumber').style.display = 'inline-block';
-            document.getElementById('fileLength').innerHTML = "File length: " + calculationErrorMeasures.length + " lines (data points)";
+            document.getElementById('fileLength').innerHTML = "File length: " + threeFinalArrayMPE.length + " lines (data points)";
             document.getElementById('fileLength').style.display = 'inline-block';
             // console.log("text1: ", text1);
         }
@@ -419,18 +342,14 @@ else {
                 </select>
                 <br>
 
-
-
-
-                <!-- PARAMETER KMEANS -->
-                <div id='km_k_text' class='text'>Number Clusters =</div>
-                <!--  <input  id='km_k' type='text' maxlength=1 value=3 size=1 style='width:30px'>
-<input type="number" id="km_k" name="km_k" min="1" max="10" step="1" value="3" style='width:50px;height:25px'>
--->
-                <select id='km_k' name='km_k' class='sub' style='width:60px;height:24px;'>
+                    <!-- PARAMETER KMEANS -->
+                    <div id='km_k_text' class='text'>Number Clusters =</div>
+                    <!--  <input  id='km_k' type='text' maxlength=1 value=3 size=1 style='width:30px'>
+                    <input type="number" id="km_k" name="km_k" min="1" max="10" step="1" value="3" style='width:50px;height:25px'>
+                    -->
+                    <select id='km_k' name='km_k' class='sub' style='width:60px;height:24px;'>
                     <option value="1"> 1</option>
                     <option value="2">2</option>
-                    <!-- <option value="3" selected>3</option> -->
                     <option value="3">3</option>
                     <option value="4">4</option>
                     <option value="5">5</option>
@@ -464,7 +383,6 @@ else {
                 <select id='ag_k' name='ag_k' class='sub' style='width:60px;height:24px;display:none;'>
                     <option value="1">1</option>
                     <option value="2">2</option>
-                    <!-- <option value="3" selected>3</option> -->
                     <option value="3">3</option>
                     <option value="4">4</option>
                     <option value="5">5</option>
@@ -538,19 +456,19 @@ else {
                     </tr>
                     <tr>
                         <td valign=top colspan="2">
-                            <div id='c00' class='ccc'></div>
+                            <div id='c0' class='ccc'></div>
                         </td>
                         <td valign=top colspan="2">
-                            <div id='c01' class='ccc'></div>
+                            <div id='c1' class='ccc'></div>
                         </td>
                         <td valign=top colspan="2">
-                            <div id='c02' class='ccc'></div>
+                            <div id='c2' class='ccc'></div>
                         </td>
                         <td valign=top colspan="2">
-                            <div id='c03' class='ccc'></div>
+                            <div id='c3' class='ccc'></div>
                         </td>
                         <td valign=top colspan="2">
-                            <div id='c04' class='ccc'></div>
+                            <div id='c4' class='ccc'></div>
                         </td>
                     </tr>
                     <tr>
@@ -567,20 +485,249 @@ else {
                     </tr>
                     <tr>
                         <td valign=top colspan="2">
-                            <div id='c05' class='ccc'></div>
+                            <div id='c5' class='ccc'></div>
                         </td>
                         <td valign=top colspan="2">
-                            <div id='c06' class='ccc'></div>
+                            <div id='c6' class='ccc'></div>
                         </td>
                         <td valign=top colspan="2">
-                            <div id='c07' class='ccc'></div>
+                            <div id='c7' class='ccc'></div>
                         </td>
                         <td valign=top colspan="2">
-                            <div id='c08' class='ccc'></div>
+                            <div id='c8' class='ccc'></div>
                         </td>
                         <td valign=top colspan="2">
-                            <div id='c09' class='ccc'></div>
+                            <div id='c9' class='ccc'></div>
                         </td>
+                        <tr>
+                        <td><canvas id="plotarea10" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea11" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea12" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea13" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea14" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                    </tr>
+                    <tr>
+                        <td valign=top colspan="2">
+                            <div id='c10' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c11' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c12' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c13' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c14' class='ccc'></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><canvas id="plotarea15" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea16" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea17" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea18" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea19" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                    </tr>
+                    <tr>
+                        <td valign=top colspan="2">
+                            <div id='c15' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c16' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c17' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c18' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c19' class='ccc'></div>
+                        </td>
+                        <tr>
+                        <td><canvas id="plotarea20" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea21" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea22" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea23" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea24" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                    </tr>
+                    <tr>
+                        <td valign=top colspan="2">
+                            <div id='c20' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c21' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c22' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c23' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c24' class='ccc'></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><canvas id="plotarea25" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea26" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea27" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea28" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea29" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                    </tr>
+                    <tr>
+                        <td valign=top colspan="2">
+                            <div id='c25' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c26' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c27' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c28' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c29' class='ccc'></div>
+                        </td>
+                        <tr>
+                        <td><canvas id="plotarea30" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea31" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea32" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea33" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea34" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                    </tr>
+                    <tr>
+                        <td valign=top colspan="2">
+                            <div id='c30' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c31' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c32' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c33' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c34' class='ccc'></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><canvas id="plotarea35" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea36" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea37" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea38" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea39" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                    </tr>
+                    <tr>
+                        <td valign=top colspan="2">
+                            <div id='c35' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c36' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c37' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c38' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c39' class='ccc'></div>
+                        </td>
+                        <tr>
+                        <td><canvas id="plotarea40" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea41" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea42" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea43" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea44" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                    </tr>
+                    <tr>
+                        <td valign=top colspan="2">
+                            <div id='c40' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c41' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c42' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c43' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c44' class='ccc'></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><canvas id="plotarea45" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea46" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea47" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea48" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                        <td><canvas id="plotarea49" width="300" height="350"></canvas></td>
+                        <td><canvas width="10" height="350"></canvas></td>
+                    </tr>
+                    <tr>
+                        <td valign=top colspan="2">
+                            <div id='c45' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c46' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c47' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c48' class='ccc'></div>
+                        </td>
+                        <td valign=top colspan="2">
+                            <div id='c49' class='ccc'></div>
+                        </td>
+
                 </table>
             </div>
         </div>
@@ -688,10 +835,6 @@ else {
     function show_af() {
         document.getElementById('af_damping_text').style.display = "inline-block";
         document.getElementById('af_damping').style.display = "inline-block";
-        //  document.getElementById('af_maxiter_text').style.display = "inline-block";
-        //  document.getElementById('af_maxiter').style.display = "inline-block";
-        //  document.getElementById('af_conviter_text').style.display = "inline-block";
-        //  document.getElementById('af_conviter').style.display = "inline-block";
     }
 
     // show DOMs with parameters agglomerative
@@ -708,16 +851,6 @@ else {
     function show_km() {
         document.getElementById('km_k_text').style.display = "inline-block";
         document.getElementById('km_k').style.display = "inline-block";
-        //  document.getElementById('km_rs_text').style.display = "inline-block";
-        //  document.getElementById('km_rs').style.display = "inline-block";
-        //  document.getElementById('km_init_text').style.display = "inline-block";
-        //  document.getElementById('km_init').style.display = "inline-block";
-        //  document.getElementById('km_ninit_text').style.display = "inline-block";
-        //  document.getElementById('km_ninit').style.display = "inline-block";
-        //  document.getElementById('km_maxiter_text').style.display = "inline-block";
-        //  document.getElementById('km_maxiter').style.display = "inline-block";
-        //  document.getElementById('km_tol_text').style.display = "inline-block";
-        //  document.getElementById('km_tol').style.display = "inline-block";
     }
 
     // show DOMs with parameters
@@ -746,10 +879,6 @@ else {
     </script>
     <script src="https://pyodide-cdn2.iodide.io/v0.15.0/full/pyodide.js"></script>
 
-
-    <!-- get Pyodide files from localhost -->
-    <!--   <script src="pyodide_dev.js"></script>  -->
-
     <script type="text/javascript">
     // Start after Button Clustering!
     document.getElementById("startclustering").onclick = function() {
@@ -758,18 +887,61 @@ else {
 
     function checks() {
         document.getElementById('downloadlink').style.display = 'none';
-        document.getElementById('c00').style.display = "none";
-        document.getElementById('c01').style.display = "none";
-        document.getElementById('c02').style.display = "none";
-        document.getElementById('c03').style.display = "none";
-        document.getElementById('c04').style.display = "none";
-        document.getElementById('c05').style.display = "none";
-        document.getElementById('c06').style.display = "none";
-        document.getElementById('c07').style.display = "none";
-        document.getElementById('c08').style.display = "none";
-        document.getElementById('c09').style.display = "none";
-        document.getElementById('textbox').innerHTML = '';
+        document.getElementById('c0').style.display = "none";
+        document.getElementById('c1').style.display = "none";
+        document.getElementById('c2').style.display = "none";
+        document.getElementById('c3').style.display = "none";
+        document.getElementById('c4').style.display = "none";
+        document.getElementById('c5').style.display = "none";
+        document.getElementById('c6').style.display = "none";
+        document.getElementById('c7').style.display = "none";
+        document.getElementById('c8').style.display = "none";
+        document.getElementById('c9').style.display = "none";
 
+        document.getElementById('c10').style.display = "none";
+        document.getElementById('c11').style.display = "none";
+        document.getElementById('c12').style.display = "none";
+        document.getElementById('c13').style.display = "none";
+        document.getElementById('c14').style.display = "none";
+        document.getElementById('c15').style.display = "none";
+        document.getElementById('c16').style.display = "none";
+        document.getElementById('c17').style.display = "none";
+        document.getElementById('c18').style.display = "none";
+        document.getElementById('c19').style.display = "none";
+        
+        document.getElementById('c20').style.display = "none";
+        document.getElementById('c21').style.display = "none";
+        document.getElementById('c22').style.display = "none";
+        document.getElementById('c23').style.display = "none";
+        document.getElementById('c24').style.display = "none";
+        document.getElementById('c25').style.display = "none";
+        document.getElementById('c26').style.display = "none";
+        document.getElementById('c27').style.display = "none";
+        document.getElementById('c28').style.display = "none";
+        document.getElementById('c29').style.display = "none";
+
+        document.getElementById('c30').style.display = "none";
+        document.getElementById('c31').style.display = "none";
+        document.getElementById('c32').style.display = "none";
+        document.getElementById('c33').style.display = "none";
+        document.getElementById('c34').style.display = "none";
+        document.getElementById('c35').style.display = "none";
+        document.getElementById('c36').style.display = "none";
+        document.getElementById('c37').style.display = "none";
+        document.getElementById('c38').style.display = "none";
+        document.getElementById('c39').style.display = "none";
+
+        document.getElementById('c40').style.display = "none";
+        document.getElementById('c41').style.display = "none";
+        document.getElementById('c42').style.display = "none";
+        document.getElementById('c43').style.display = "none";
+        document.getElementById('c44').style.display = "none";
+        document.getElementById('c45').style.display = "none";
+        document.getElementById('c46').style.display = "none";
+        document.getElementById('c47').style.display = "none";
+        document.getElementById('c48').style.display = "none";
+        document.getElementById('c49').style.display = "none";
+        document.getElementById('textbox').innerHTML = '';
         var totalSeconds = 0;
         setInterval(setTime, 1000);
 
@@ -807,6 +979,50 @@ else {
         document.getElementById('plotarea7').style.display = "none";
         document.getElementById('plotarea8').style.display = "none";
         document.getElementById('plotarea9').style.display = "none";
+
+        document.getElementById('plotarea10').style.display = "none";
+        document.getElementById('plotarea11').style.display = "none";
+        document.getElementById('plotarea12').style.display = "none";
+        document.getElementById('plotarea13').style.display = "none";
+        document.getElementById('plotarea14').style.display = "none";
+        document.getElementById('plotarea15').style.display = "none";
+        document.getElementById('plotarea16').style.display = "none";
+        document.getElementById('plotarea17').style.display = "none";
+        document.getElementById('plotarea18').style.display = "none";
+        document.getElementById('plotarea19').style.display = "none";
+
+        document.getElementById('plotarea20').style.display = "none";
+        document.getElementById('plotarea21').style.display = "none";
+        document.getElementById('plotarea22').style.display = "none";
+        document.getElementById('plotarea23').style.display = "none";
+        document.getElementById('plotarea24').style.display = "none";
+        document.getElementById('plotarea25').style.display = "none";
+        document.getElementById('plotarea26').style.display = "none";
+        document.getElementById('plotarea27').style.display = "none";
+        document.getElementById('plotarea28').style.display = "none";
+        document.getElementById('plotarea29').style.display = "none";
+
+        document.getElementById('plotarea30').style.display = "none";
+        document.getElementById('plotarea31').style.display = "none";
+        document.getElementById('plotarea32').style.display = "none";
+        document.getElementById('plotarea33').style.display = "none";
+        document.getElementById('plotarea34').style.display = "none";
+        document.getElementById('plotarea35').style.display = "none";
+        document.getElementById('plotarea36').style.display = "none";
+        document.getElementById('plotarea37').style.display = "none";
+        document.getElementById('plotarea38').style.display = "none";
+        document.getElementById('plotarea39').style.display = "none";
+
+        document.getElementById('plotarea40').style.display = "none";
+        document.getElementById('plotarea41').style.display = "none";
+        document.getElementById('plotarea42').style.display = "none";
+        document.getElementById('plotarea43').style.display = "none";
+        document.getElementById('plotarea44').style.display = "none";
+        document.getElementById('plotarea45').style.display = "none";
+        document.getElementById('plotarea46').style.display = "none";
+        document.getElementById('plotarea47').style.display = "none";
+        document.getElementById('plotarea48').style.display = "none";
+        document.getElementById('plotarea49').style.display = "none";
 
         // file loaded?
         if (document.getElementById('fileLength').innerHTML.length == 0) {
@@ -935,6 +1151,11 @@ from sklearn.metrics import davies_bouldin_score, silhouette_score
 from io import StringIO
 from js import document, alert
 #print('Scikit-learn version: {}.'.format(sklearn.__version__))
+
+# **************** maximum number of clusters to be displayed ********************* 
+
+clusMax = 50
+
 # ******************** CREATE GRAPH *************************
 def graph(ctx,x0,x1,y0,y1,week,y,cent,y_range):
 	week = week.astype('int32')
@@ -1228,12 +1449,16 @@ if n_clusters >0:
 		my_string += "Cluster " + str(i) + ": " + c_string[i] + '<br>'
 else:
 	my_string = 'ConvergenceWarning: Affinity propagation did not converge, this model will not have any cluster centers.'
+
 print('ppp')
+
 for i in range(n_clusters):
-	document.getElementById("c0" + str(i)).style.display = "inline-block"
-	document.getElementById("c0" + str(i)).style.background = '#eee'
-	document.getElementById("c0" + str(i)).innerHTML = c_string2[i].replace('"','')
+	document.getElementById("c" + str(i)).style.display = "inline-block"
+	document.getElementById("c" + str(i)).style.background = '#eee'
+	document.getElementById("c" + str(i)).innerHTML = c_string2[i].replace('"','')
+
 print('qqq')
+
 # create file export
 from datetime import datetime
 timestamp = str(datetime.now().isoformat(' ', 'seconds'))
@@ -1274,12 +1499,23 @@ else:
 y_range = [round(min(y0,0),3), y1]
 c_size = [300,350] # canvas width, height
 # CLEAR ALL PLOTS
-for cnr in range(10):
+print('rrr')
+
+print(clusMax)
+
+for cnr in range(clusMax):
+# for cnr in ["%.2d" % i for i in range(clusMax)]:
 	canvas = document.getElementById('plotarea' + str(cnr))
 	ctx = canvas.getContext("2d")
 	ctx.clearRect(0, -10, c_size[0], c_size[1]-10)
+
+print('sss')
+
 # PLOT FOR ALL CLUSTERS
-for cnr in range(min(n_clusters,10)):
+# for cnr in ["%.2d" % i for i in range(min(n_clusters,clusMax))]:
+
+for cnr in range(min(n_clusters,clusMax)):
+
 	document.getElementById('plotarea' + str(cnr)).style.display = "inline-block"
 	canvas = document.getElementById('plotarea' + str(cnr))
 	ctx = canvas.getContext("2d")
