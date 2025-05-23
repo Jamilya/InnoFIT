@@ -24,7 +24,7 @@ else {
     <link rel="stylesheet" href="./css/dashboard.css">
     <link rel="stylesheet" href="./css/header.css">
     <script src="../lib/js/localforage.js"></script>
-    <script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+    <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
     <script src="../lib/js/crossfilter.js"></script>
     <script src="../lib/js/dc.js"></script>
     <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>

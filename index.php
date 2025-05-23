@@ -97,7 +97,7 @@
                                 <li class="list-group-item">University of Applied Sciences Upper Austria, Campus Steyr
                                     <ul class="list-group inner">
                                         <li class="list-group-item">UAS Steyr Project leader: <a
-                                                href="http://research.fh-ooe.at/en/staff/3584">Priv.
+                                                href="https://research.fh-ooe.at/en/staff/3584">Priv.
                                                 Doz.
                                                 FH-Prof. DI (FH) Klaus Altendorfer PhD</a></li>
                                     </ul>
