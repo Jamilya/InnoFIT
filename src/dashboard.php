@@ -23,7 +23,7 @@ else {
     <link rel="stylesheet" href="./css/dashboard.css">
     <link rel="stylesheet" href="./css/header.css">
     <script src="../lib/js/localforage.js"></script>
-    <script src="http://d3js.org/d3.v4.min.js"></script>
+    <script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
     <script src="../lib/js/crossfilter.js"></script>
     <script src="../lib/js/dc.js"></script>
     <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
@@ -36,7 +36,7 @@ else {
     });
     </script>
     <title>Dashboard</title>
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+    <script src="https://code.jquery.com/jquery-3.4.0.min.js"
         integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
     </script>
 </head>
