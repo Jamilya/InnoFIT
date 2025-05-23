@@ -13,8 +13,8 @@
     <link rel="stylesheet" href="./css/about.css">
     <link rel="stylesheet" href="./css/header.css">
 
-    <script src="http://d3js.org/d3.v4.min.js"></script>
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.0.min.js"
         integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
     </script>
     <!-- <script src="/lib/js/bootstrap.bundle.min.js"></script> -->
@@ -175,13 +175,7 @@
             </div>
         </section>
 
-        <!-- <script src="https://code.jquery.com/jquery-1.12.4.min.js"
-        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous">
-    </script>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
-    </script> -->
+
         <script src="/lib/js/bootstrap.bundle.min.js"></script>
 </body>
 
