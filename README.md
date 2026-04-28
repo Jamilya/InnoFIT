@@ -1,4 +1,6 @@
 # Readme
+**⚠️ Update: This repo is currently archived and not maintained anymore. The up-to-date version is located here: https://git.nwt.fhstp.ac.at/digitech/innofit**
+
 Source code for the InnoFIT visualization (web) tool.
 
 The tool was created as part of the InnoFIT research project funded by the Austrian Research Promotion Agency (FFG): 
